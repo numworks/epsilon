@@ -54,6 +54,24 @@ void assert_cumulative_distributive_function_direct_and_inverse_is(
   assert_cumulative_distributive_function_inverse_is(distribution, x, result);
 }
 
+void assert_right_cumulative_distributive_function_direct_is(
+    Distributions::Distribution* distribution, double x, double result) {
+  assert_value_is(distribution->rightIntegralFromAbscissa(x), result);
+}
+
+void assert_right_cumulative_distributive_function_inverse_is(
+    Distributions::Distribution* distribution, double x, double result) {
+  assert_value_is(distribution->rightIntegralInverseForProbability(result), x);
+}
+
+void assert_right_cumulative_distributive_function_direct_and_inverse_is(
+    Distributions::Distribution* distribution, double x, double result) {
+  assert_right_cumulative_distributive_function_direct_is(distribution, x,
+                                                          result);
+  assert_right_cumulative_distributive_function_inverse_is(distribution, x,
+                                                           result);
+}
+
 void assert_finite_integral_between_abscissas_is(
     Distributions::Distribution* distribution, double a, double b,
     double result) {
@@ -102,6 +120,17 @@ QUIZ_CASE(distributions_results_binomial) {
   assert_finite_integral_between_abscissas_is(&distribution, 5.0, 4.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 4.0, 5.0,
                                               0.398919847793223794688);
+
+  // B(20, 0.5)
+  distribution.setParameterAtIndex(20.0, 0);
+  distribution.setParameterAtIndex(0.5, 1);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 7.0, 0.07);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 7.0,
+                                                           0.93);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 6.0, 0.05);
+  // TODO: Should be 6
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 7.0,
+                                                           0.95);
 }
 
 QUIZ_CASE(distributions_results_uniform) {
@@ -342,6 +371,16 @@ QUIZ_CASE(distributions_results_geometric) {
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 1.0, 0.4);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 3.0, 0.384);
+
+  // Geometric distribution with probability of success 0.5
+  distribution.setParameterAtIndex(0.5, 0);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 2.0, 0.6);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
+                                                           0.4);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 1.0, 0.4);
+  // TODO: Should be 1.0
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
+                                                           0.6);
 }
 
 QUIZ_CASE(distributions_results_hypergeometric) {
@@ -358,6 +397,14 @@ QUIZ_CASE(distributions_results_hypergeometric) {
       &distribution, 34.0, 0.96721115857291561);
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 23.0, 0.0037974383856372055);
+
+  assert_cumulative_distributive_function_inverse_is(&distribution, 27.0, 0.1);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 29.0, 0.4);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 27.0,
+                                                           0.9);
+  // TODO: Should be 29.0
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 30.0,
+                                                           0.6);
 
   // H(10000, 10, 500)
   distribution.setParameterAtIndex(1000, 0);
@@ -415,6 +462,16 @@ QUIZ_CASE(distributions_results_poisson) {
       &distribution, 4, 0.00374018590580994);
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 16, 0.8354931476833607);
+
+  // POISSON(4)
+  distribution.setParameterAtIndex(4.0, 0);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 3.0, 0.3);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 3.0,
+                                                           0.7);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 2.0, 0.2);
+  // TODO: Should be 2.0
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 3.0,
+                                                           0.8);
 }
 
 QUIZ_CASE(distributions_results_fisher) {

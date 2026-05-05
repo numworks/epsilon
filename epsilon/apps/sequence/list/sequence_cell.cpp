@@ -54,6 +54,9 @@ ThemeComponent AbstractSequenceCell::backgroundColor() const {
 }
 
 void AbstractSequenceCell::setHighlighted(bool highlight) {
+  /* TODO: the order of highlight is a bit counter-intuitive. Simplify the
+   * logic so that the EvenOddCell highlight can be set first, then the subview
+   * highlights. */
   mainCell()->setHighlighted(highlight && expressionIsSelected());
   EvenOddCell::setHighlighted(highlight);
 }

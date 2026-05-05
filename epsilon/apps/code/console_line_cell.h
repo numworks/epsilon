@@ -53,7 +53,7 @@ class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
    private:
     ConsoleLineView m_consoleLineView;
   };
-  static Escher::ThemeComponent textColor(ConsoleLine* line) {
+  static Escher::ThemeComponent TextColor(const ConsoleLine* line) {
     return line->isFromCurrentSession() ? Escher::ThemeComponent::TextDefault
                                         : Escher::ThemeComponent::TextGrayDark;
   }

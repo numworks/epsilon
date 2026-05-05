@@ -23,6 +23,10 @@ class ZoomHintView : public Escher::View {
   constexpr static KDCoordinate k_tokenWidth = 10;
   constexpr static Escher::ThemeComponent k_backgroundColor =
       Shared::BannerView::k_bannerFieldFormat.style.backgroundColor;
+  constexpr static Escher::TextFormat k_legendFormat = {
+      .style = {.glyphColor = Escher::ThemeComponent::TextBanner,
+                .backgroundColor = k_backgroundColor,
+                .font = k_legendFont}};
 
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override;

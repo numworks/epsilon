@@ -11,9 +11,10 @@ ZoomHintView::ZoomHintView()
   I18n::Message messages[k_numberOfLegends] = {I18n::Message::ToZoom,
                                                I18n::Message::Or};
   for (int i = 0; i < k_numberOfLegends; i++) {
-    m_legends[i].setFont(k_legendFont);
+    m_legends[i].setFont(k_legendFormat.style.font);
     m_legends[i].setMessage(messages[i]);
-    m_legends[i].setBackgroundColor(k_backgroundColor);
+    m_legends[i].setBackgroundColor(k_legendFormat.style.backgroundColor);
+    m_legends[i].setTextColor(k_legendFormat.style.glyphColor);
     m_legends[i].setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
   }
 }

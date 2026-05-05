@@ -52,10 +52,8 @@ void assert_code_point_decode_to_chars(
   }
 }
 
-QUIZ_CASE(ion_utf8_code_point_system_parentheses) {
-  quiz_assert(UCodePointLeftSystemParenthesis == '\u0012');
-  quiz_assert(UCodePointRightSystemParenthesis == '\u0013');
-}
+static_assert(UCodePointLeftSystemParenthesis == '\u0012');
+static_assert(UCodePointRightSystemParenthesis == '\u0013');
 
 QUIZ_CASE(ion_utf8_decode_forward) {
   assert_decodes_to("\x20", 0x20);

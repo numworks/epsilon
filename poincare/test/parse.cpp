@@ -1111,9 +1111,9 @@ QUIZ_CASE(pcj_parse_combined_codepoint) {
   assert_parsed_expression_is("p̂", KUserVariable<"p̂">());
 }
 
-QUIZ_CASE(pcj_parse_dependency) {
-// DepList parsing is only activated when ASSERTIONS=1
 #if ASSERTIONS
+QUIZ_CASE(pcj_parse_dependency) {
+  // DepList parsing is only activated when ASSERTIONS=1
   assert_parsed_expression_is(
       "dep(x,{realPos(x)})",
       KDep(KUserVariable<"x">(), KDepList(KRealPos(KUserVariable<"x">()))));
@@ -1121,5 +1121,5 @@ QUIZ_CASE(pcj_parse_dependency) {
                               KDep(KList(1_e, KUserVariable<"x">(), 2_e),
                                    KDepList(KRealPos(KUserVariable<"x">()),
                                             KNonNull(KUserVariable<"x">()))));
-#endif
 }
+#endif

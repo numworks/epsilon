@@ -7,7 +7,7 @@
 using namespace OMG;
 
 QUIZ_CASE(omg_algorithm_all_equal) {
-  std::array<int, 3> case1 = {1, 1, 1};
+  std::array<int, 12> case1 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   quiz_assert(OMG::AllEqual(case1.begin(), case1.end()));
   quiz_assert(OMG::AllEqual(case1.begin(), case1.begin() + 1));
 

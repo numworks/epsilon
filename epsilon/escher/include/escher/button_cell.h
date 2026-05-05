@@ -28,6 +28,10 @@ class ButtonCell : public HighlightCell, public Responder {
   virtual ThemeComponent highlightedBackgroundColor() const {
     return ThemeComponent::SurfaceSelect;
   }
+  ThemeComponent backgroundColor() const {
+    return isHighlighted() ? highlightedBackgroundColor()
+                           : ThemeComponent::BackgroundWhite;
+  }
   void setMessage(I18n::Message message) {
     m_messageTextView.setMessage(message);
   }

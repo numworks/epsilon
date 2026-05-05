@@ -44,9 +44,7 @@ void ButtonState::layoutSubviews(bool force) {
 }
 
 void ButtonState::drawRect(KDContext* ctx, KDRect rect) const {
-  ThemeComponent backColor = isHighlighted() ? highlightedBackgroundColor()
-                                             : ThemeComponent::BackgroundWhite;
-  ctx->fillRect(bounds(), ColorPicker::Resolve(backColor));
+  ctx->fillRect(bounds(), ColorPicker::Resolve(backgroundColor()));
 }
 
 KDSize ButtonState::minimalSizeForOptimalDisplay() const {

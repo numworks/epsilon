@@ -33,9 +33,7 @@ void ButtonCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   m_messageTextView.setHighlighted(highlight);
   // Background highlight is manual because the highlight color is custom
-  m_messageTextView.setBackgroundColor(highlight
-                                           ? highlightedBackgroundColor()
-                                           : ThemeComponent::BackgroundWhite);
+  m_messageTextView.setBackgroundColor(backgroundColor());
   markWholeFrameAsDirty();
 }
 

@@ -12,6 +12,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .BackgroundWhite = Palette::White,
                    .BackgroundPopup = Palette::Black,
                    .BackgroundPopUpTitle = Palette::PopUpTitleBackground,
+                   .BackgroundButtonRow = Palette::GrayWhite,
                    .SurfaceSelect = Palette::Select,
                    .SurfaceSelectDark = Palette::SelectDark,
                    .BannerYellow = Palette::YellowDark,

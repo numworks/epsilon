@@ -13,6 +13,7 @@ namespace Escher {
   X(BackgroundWhite)         \
   X(BackgroundPopup)         \
   X(BackgroundPopUpTitle)    \
+  X(BackgroundButtonRow)     \
   X(SurfaceSelect)           \
   X(SurfaceSelectDark)       \
   X(BannerYellow)            \

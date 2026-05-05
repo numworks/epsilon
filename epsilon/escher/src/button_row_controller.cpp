@@ -148,7 +148,7 @@ void ButtonRowController::ContentView::drawRect(KDContext* ctx,
     return;
   }
   assert(m_style == Style::EmbossedGray);
-  drawRowFrame(ctx, rowHeight, ThemeComponent::TokenGrayWhite,
+  drawRowFrame(ctx, rowHeight, ThemeComponent::BackgroundButtonRow,
                ThemeComponent::BorderGrayMiddle);
 }
 

@@ -55,7 +55,7 @@ class Distribution : public Shared::StatisticalDistribution {
   double finiteIntegralBetweenAbscissas(double a, double b) const;
   double cumulativeDistributiveInverseForProbability(
       double p) const override final;
-  virtual double rightIntegralInverseForProbability(double p) const;
+  double rightIntegralInverseForProbability(double p) const;
   double evaluateAtDiscreteAbscissa(int k) const;
   constexpr static int k_maxNumberOfOperations = 1000000;
   virtual double defaultComputedValue() const { return 0.0f; }

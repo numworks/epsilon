@@ -12,7 +12,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
   models/calculation/finite_integral_calculation.cpp \
   models/calculation/left_integral_calculation.cpp \
   models/calculation/right_integral_calculation.cpp \
-  models/distribution/binomial_distribution.cpp \
   models/distribution/chi_squared_distribution.cpp \
   models/distribution/distribution.cpp \
   models/distribution/fisher_distribution.cpp \

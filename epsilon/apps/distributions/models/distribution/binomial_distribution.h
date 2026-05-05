@@ -16,7 +16,6 @@ class BinomialDistribution final : public TwoParametersDistribution {
   I18n::Message title() const override {
     return I18n::Message::BinomialDistribution;
   }
-  double rightIntegralInverseForProbability(double p) const override;
 
  protected:
   I18n::Message messageForParameterAtIndex(int index) const override {

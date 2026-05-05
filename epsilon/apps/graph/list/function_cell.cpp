@@ -2,6 +2,7 @@
 
 #include <apps/exam_mode_manager.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 
 using namespace Escher;
 

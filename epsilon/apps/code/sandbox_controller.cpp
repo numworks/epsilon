@@ -12,9 +12,7 @@ namespace Code {
 
 SandboxController::SandboxController(Responder* parentResponder)
     : ViewController(parentResponder),
-      /* TODO: check whether the Python sandbox should change color in dark
-         theme */
-      m_solidColorView(ThemeComponent::BackgroundWhite) {}
+      m_solidColorView(ThemeComponent::BasicWhite) {}
 
 StackViewController* SandboxController::stackViewController() {
   return static_cast<StackViewController*>(parentResponder());

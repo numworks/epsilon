@@ -29,12 +29,17 @@ class ConsoleLine {
     return m_type == Type::CurrentSessionResult ||
            m_type == Type::PreviousSessionResult;
   }
+
+  void setHighlighted(bool highlighted) { m_isHighlighted = highlighted; }
+  bool isHighlighted() const { return m_isHighlighted; }
+
   static inline size_t sizeOfConsoleLine(size_t textLength) {
     return 1 + textLength + 1;  // Marker, text, null termination
   }
 
  private:
   Type m_type;
+  bool m_isHighlighted = false;
   const char* m_text;
 };
 

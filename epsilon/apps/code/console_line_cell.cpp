@@ -27,7 +27,8 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(
                 ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
   ctx->drawString(
       m_line->text(), KDPointZero,
-      {.glyphColor = ColorPicker::Resolve(TextColor(m_line)),
+      {.glyphColor = ColorPicker::Resolve(
+           Highlight(TextColor(m_line), m_line->isHighlighted())),
        .backgroundColor = ColorPicker::Resolve(defaultBackgroundColor()),
        .font = SharedGlobalPrefs().font()});
 }
@@ -64,6 +65,7 @@ void ConsoleLineCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   m_scrollableView.consoleLineView()->setHighlighted(highlight);
   m_promptView.setHighlighted(highlight);
+  m_line.setHighlighted(highlight);
 }
 
 void ConsoleLineCell::reloadCell() {

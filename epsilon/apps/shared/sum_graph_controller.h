@@ -91,7 +91,8 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
     constexpr static KDCoordinate k_legendHeight = 35;
     constexpr static KDFont::Size k_font = KDFont::Size::Small;
     constexpr static Escher::TextFormat k_glyphsFormat = {
-        .style = {.backgroundColor = Escher::ThemeComponent::BannerGrayMiddle,
+        .style = {.glyphColor = Escher::ThemeComponent::TextBanner,
+                  .backgroundColor = Escher::ThemeComponent::BannerGrayMiddle,
                   .font = k_font}};
 
     int numberOfSubviews() const override { return 3; }

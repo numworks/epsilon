@@ -372,7 +372,7 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 8.0, 0.98956388142200713);
 
-  // H(100, 60, 50)
+  // H(430, 109, 400)
   distribution.setParameterAtIndex(430, 0);
   distribution.setParameterAtIndex(109, 1);
   distribution.setParameterAtIndex(400, 2);

@@ -27,6 +27,9 @@ class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
     return m_textField.isEditing() ? this : nullptr;
   }
   const char* text() const override;
+
+  void setHighlighted(bool highlighted) override;
+
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
 

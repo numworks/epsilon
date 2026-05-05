@@ -80,6 +80,11 @@ void ScriptNameCell::handleResponderChainEvent(
   }
 }
 
+void ScriptNameCell::setHighlighted(bool highlighted) {
+  EvenOddCell::setHighlighted(highlighted);
+  m_textField.setHighlighted(highlighted);
+}
+
 void ScriptNameCell::updateSubviewsBackgroundAfterChangingState() {
   m_textField.setBackgroundColor(backgroundColor());
 }

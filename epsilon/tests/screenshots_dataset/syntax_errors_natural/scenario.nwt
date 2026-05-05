@@ -1,0 +1,240 @@
+NWST
+**.**.**
+1
+en
+EXE
+ExternalText ()
+EXE
+EXE
+Clear
+ExternalText (1,2,3)
+EXE
+EXE
+Clear
+ExternalText (1,2,3,4)
+EXE
+EXE
+Clear
+ExternalText int
+LeftParenthesis
+Up
+One
+Down
+Two
+Right
+Three
+Right
+Right
+Backspace
+Four
+EXE
+EXE
+Clear
+Two
+Sto
+Two
+EXE
+EXE
+Clear
+ExternalText 2+
+EXE
+EXE
+Clear
+ExternalText ,
+EXE
+EXE
+Clear
+ExternalText 0xFFπ
+EXE
+EXE
+Clear
+ExternalText 2↗2↗2
+EXE
+EXE
+Clear
+ExternalText =5
+EXE
+EXE
+Clear
+ExternalText True not False
+EXE
+EXE
+Clear
+ExternalText and False
+EXE
+EXE
+Clear
+ExternalText *3
+EXE
+EXE
+Clear
+ExternalText !
+EXE
+EXE
+Clear
+ExternalText %
+EXE
+EXE
+Clear
+Toolbox
+Down
+Down
+EXE
+Two
+Right
+Right
+ExternalText 3,4
+EXE
+EXE
+Clear
+ExternalText ln
+Power
+ExternalText -1
+Right
+ExternalText (2)
+EXE
+EXE
+Clear
+ExternalText ln
+Power
+ExternalText 2
+Right
+ExternalText (2)
+EXE
+EXE
+Clear
+ExternalText cos(1,2)
+EXE
+EXE
+Clear
+ExternalText random(1)
+EXE
+EXE
+Clear
+ExternalText cos()
+EXE
+EXE
+Clear
+ExternalText "abcdefgh"
+EXE
+EXE
+Clear
+ExternalText "abcdefθ"
+EXE
+EXE
+Clear
+ExternalText sin2
+EXE
+EXE
+Clear
+One
+Power
+Two
+Left
+Left
+Backspace
+EXE
+EXE
+Clear
+Home
+Six
+Six
+XNT
+EXE
+Home
+One
+One
+ExternalText u+2
+EXE
+EXE
+Clear
+XNT
+Sto
+ExternalText f(x)
+EXE
+ExternalText f(1,2)
+EXE
+EXE
+Clear
+ExternalText f(f)
+EXE
+EXE
+Clear
+ExternalText {1,2,3}
+Right
+Right
+Right
+Right
+Right
+Right
+Sto
+ExternalText L
+EXE
+ExternalText L()
+EXE
+EXE
+Clear
+ExternalText L(1,2,3)
+EXE
+EXE
+Clear
+Home
+Zero
+Zero
+Zero
+Up
+Up
+EXE
+Up
+Up
+Up
+Up
+EXE
+Home
+One
+One
+Three
+Toolbox
+Down
+Down
+EXE
+Two
+Right
+Right
+Right
+Right
+Right
+Four
+EXE
+EXE
+Clear
+Toolbox
+EXE
+Two
+Right
+Right
+Right
+Backspace
+Right
+Right
+Four
+EXE
+EXE
+Clear
+Toolbox
+EXE
+Two
+Right
+Right
+Right
+Right
+Backspace
+Backspace
+LowerN
+Right
+Four
+EXE
+EXE
+Clear
+ExternalText π0x2
+EXE

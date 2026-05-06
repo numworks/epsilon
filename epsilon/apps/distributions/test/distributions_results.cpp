@@ -132,6 +132,20 @@ QUIZ_CASE(distributions_results_binomial) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 20.0,
                                                            0.0);
 
+  // B(1, 0.5)
+  distribution.setParameterAtIndex(1.0, 0);
+  distribution.setParameterAtIndex(0.5, 1);
+  assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
+                                                           1.0);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 0.0, 0.5);
+  // TODO: Should be 1.0
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+                                                           0.5);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 1.0, 1.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 1.0,
+                                                           0.0);
+
   // B(0, 1.0)
   distribution.setParameterAtIndex(0.0, 0);
   distribution.setParameterAtIndex(1.0, 1);

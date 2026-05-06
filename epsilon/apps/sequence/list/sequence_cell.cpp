@@ -20,19 +20,17 @@ View* AbstractSequenceCell::subviewAtIndex(int index) {
 void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the main background
   ctx->fillRect(bounds(), ColorPicker::Resolve(Highlight(
-                              backgroundColor(),
-                              isHighlighted() && expressionIsSelected())));
+                              backgroundColor(), expressionIsHighlighted())));
   // Draw the color indicator
   ctx->fillRect(
       KDRect(0, 0, k_verticalColorIndicatorThickness, bounds().height()),
       ColorPicker::Resolve(m_functionColor));
   // Color the ellipsis view
   KDCoordinate ellipsisWidth = displayEllipsis() ? k_ellipsisWidth : 0;
-  ctx->fillRect(
-      KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
-             bounds().height()),
-      ColorPicker::Resolve(Highlight(backgroundColor(),
-                                     isHighlighted() && ellipsisIsSelected())));
+  ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
+                       bounds().height()),
+                ColorPicker::Resolve(
+                    Highlight(backgroundColor(), ellipsisIsHighlighted())));
 }
 
 void AbstractSequenceCell::layoutSubviews(bool force) {
@@ -54,11 +52,8 @@ ThemeComponent AbstractSequenceCell::backgroundColor() const {
 }
 
 void AbstractSequenceCell::setHighlighted(bool highlight) {
-  /* TODO: the order of highlight is a bit counter-intuitive. Simplify the
-   * logic so that the EvenOddCell highlight can be set first, then the subview
-   * highlights. */
-  mainCell()->setHighlighted(highlight && expressionIsSelected());
   EvenOddCell::setHighlighted(highlight);
+  mainCell()->setHighlighted(expressionIsHighlighted());
 }
 
 void AbstractSequenceCell::setParameterSelected(bool selected) {

@@ -41,11 +41,11 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   constexpr static KDCoordinate k_ellipsisWidth =
       Escher::Metric::EllipsisCellWidth;
   virtual bool displayEllipsis() const { return true; }
-  /* Note: in the base version expressionIsSelected(), ellipsisIsSelected() and
-   * isHighlighted() mean the same thing, but it is not the case in the
-   * SequenceCell override. */
-  virtual bool expressionIsSelected() const { return isHighlighted(); }
-  virtual bool ellipsisIsSelected() const { return isHighlighted(); }
+  /* Note: in the base version expressionIsHighlighted(),
+   * ellipsisIsHighlighted() and isHighlighted() mean the same thing, but it is
+   * not the case in the SequenceCell override. */
+  virtual bool expressionIsHighlighted() const { return isHighlighted(); }
+  virtual bool ellipsisIsHighlighted() const { return isHighlighted(); }
   Escher::EllipsisView m_ellipsisView;
   Escher::ThemeComponent m_functionColor;
   bool m_parameterSelected;
@@ -63,8 +63,13 @@ class TemplatedSequenceCell : public AbstractSequenceCell, public T {
 class SequenceCell
     : public TemplatedSequenceCell<Shared::WithNonEditableExpressionCell> {
  public:
-  bool expressionIsSelected() const override { return !m_parameterSelected; }
-  bool ellipsisIsSelected() const override { return m_parameterSelected; }
+  bool expressionIsHighlighted() const override {
+    return AbstractSequenceCell::expressionIsHighlighted() &&
+           !m_parameterSelected;
+  }
+  bool ellipsisIsHighlighted() const override {
+    return AbstractSequenceCell::ellipsisIsHighlighted() && m_parameterSelected;
+  }
 
  private:
   void setEven(bool even) override;

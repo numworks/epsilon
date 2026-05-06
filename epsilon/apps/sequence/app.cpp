@@ -7,6 +7,7 @@
 
 #include <array>
 
+#include "sequence_dark_icon.h"
 #include "sequence_light_icon.h"
 
 using namespace Poincare;
@@ -23,7 +24,9 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return ImageStore::SequenceLightIcon;
+  return SharedGlobalPrefs().theme() == Theme::Dark
+             ? ImageStore::SequenceDarkIcon
+             : ImageStore::SequenceLightIcon;
 }
 
 App::Snapshot::Snapshot()

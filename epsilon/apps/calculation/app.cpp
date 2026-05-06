@@ -1,7 +1,9 @@
 #include "app.h"
 
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 
+#include "calculation_dark_icon.h"
 #include "calculation_light_icon.h"
 
 using namespace Poincare;
@@ -17,7 +19,9 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return ImageStore::CalculationLightIcon;
+  return SharedGlobalPrefs().theme() == Theme::Dark
+             ? ImageStore::CalculationDarkIcon
+             : ImageStore::CalculationLightIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

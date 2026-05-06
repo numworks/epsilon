@@ -1,8 +1,10 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 
+#include "finance_dark_icon.h"
 #include "finance_light_icon.h"
 
 namespace Finance {
@@ -10,7 +12,9 @@ namespace Finance {
 // App::Descriptor
 
 const Escher::Image* App::Descriptor::icon() const {
-  return ImageStore::FinanceLightIcon;
+  return SharedGlobalPrefs().theme() == Escher::Theme::Dark
+             ? ImageStore::FinanceDarkIcon
+             : ImageStore::FinanceLightIcon;
 }
 
 // App::Snapshot

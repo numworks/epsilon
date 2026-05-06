@@ -1,8 +1,10 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 
+#include "graph_dark_icon.h"
 #include "graph_light_icon.h"
 #include "shared/global_store.h"
 
@@ -21,7 +23,9 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return ImageStore::GraphLightIcon;
+  return SharedGlobalPrefs().theme() == Theme::Dark
+             ? ImageStore::GraphDarkIcon
+             : ImageStore::GraphLightIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

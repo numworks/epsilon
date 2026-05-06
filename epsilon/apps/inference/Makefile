@@ -63,11 +63,13 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
 
 SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   inference_light_icon.png \
+  inference_dark_icon.png \
   images/confidence_interval.png \
   images/significance_test.png \
 )))
 
 $(call depends_on_image,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/inference_light_icon.png)
+$(call depends_on_image,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/inference_dark_icon.png)
 
 $(call depends_on_transparent_image,$(PATH_apps)/inference/app.cpp,$(addprefix $(PATH_apps)/inference/images/,\
   confidence_interval.png \

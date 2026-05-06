@@ -2,9 +2,11 @@
 
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
+#include <apps/global_preferences.h>
 
 #include "images/confidence_interval.h"
 #include "images/significance_test.h"
+#include "inference_dark_icon.h"
 #include "inference_light_icon.h"
 #include "models/homogeneity_test.h"
 #include "shared/global_store.h"
@@ -14,7 +16,9 @@ using namespace Escher;
 namespace Inference {
 
 const Escher::Image* App::Descriptor::icon() const {
-  return ImageStore::InferenceLightIcon;
+  return SharedGlobalPrefs().theme() == Theme::Dark
+             ? ImageStore::InferenceDarkIcon
+             : ImageStore::InferenceLightIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

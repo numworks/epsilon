@@ -1,7 +1,9 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
+#include <apps/elements/elements_dark_icon.h>
 #include <apps/elements/elements_light_icon.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 
 #include "elements_data_base.h"
@@ -19,7 +21,9 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Escher::Image* App::Descriptor::icon() const {
-  return ImageStore::ElementsLightIcon;
+  return SharedGlobalPrefs().theme() == Escher::Theme::Dark
+             ? ImageStore::ElementsDarkIcon
+             : ImageStore::ElementsLightIcon;
 }
 
 // App::Snapshot

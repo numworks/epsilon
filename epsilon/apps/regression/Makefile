@@ -22,8 +22,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/regression/,$(addsuffix :-test, \
 
 SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/regression/, \
   regression_light_icon.png:-test \
+  regression_dark_icon.png:-test \
 ))
 
 $(call depends_on_image,$(PATH_apps)/regression/app.cpp,$(PATH_apps)/regression/regression_light_icon.png)
+$(call depends_on_image,$(PATH_apps)/regression/app.cpp,$(PATH_apps)/regression/regression_dark_icon.png)
 
 $(call i18n_with_universal,regression/i18n/base)

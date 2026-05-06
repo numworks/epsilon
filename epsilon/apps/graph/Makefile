@@ -42,8 +42,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
 
 SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/graph/, \
   graph_light_icon.png:-test \
+  graph_dark_icon.png:-test \
 ))
 
 $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_light_icon.png)
+$(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_dark_icon.png)
 
 $(call i18n_without_universal,graph/i18n/base)

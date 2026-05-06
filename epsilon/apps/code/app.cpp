@@ -1,10 +1,12 @@
 #include "app.h"
 
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <omg/utf8_helper.h>
 #include <poincare/pool.h>
 
 #include "clipboard.h"
+#include "code_dark_icon.h"
 #include "code_light_icon.h"
 #include "helpers.h"
 
@@ -18,7 +20,10 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::CodeAppCapital;
 }
 
-const Image* App::Descriptor::icon() const { return ImageStore::CodeLightIcon; }
+const Image* App::Descriptor::icon() const {
+  return SharedGlobalPrefs().theme() == Theme::Dark ? ImageStore::CodeDarkIcon
+                                                    : ImageStore::CodeLightIcon;
+}
 
 App::Snapshot::Snapshot()
 #if EPSILON_GETOPT

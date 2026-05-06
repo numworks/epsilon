@@ -1,7 +1,9 @@
 #include "app.h"
 
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 
+#include "settings_dark_icon.h"
 #include "settings_light_icon.h"
 
 using namespace Escher;
@@ -17,7 +19,9 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return ImageStore::SettingsLightIcon;
+  return SharedGlobalPrefs().theme() == Theme::Dark
+             ? ImageStore::SettingsDarkIcon
+             : ImageStore::SettingsLightIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

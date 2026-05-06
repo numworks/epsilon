@@ -2,12 +2,14 @@
 
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <ion/storage/record.h>
 
 #include <array>
 
 #include "shared/global_store.h"
+#include "stat_dark_icon.h"
 #include "stat_light_icon.h"
 
 using namespace Shared;
@@ -21,7 +23,10 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::StatsAppCapital;
 }
 
-const Image* App::Descriptor::icon() const { return ImageStore::StatLightIcon; }
+const Image* App::Descriptor::icon() const {
+  return SharedGlobalPrefs().theme() == Theme::Dark ? ImageStore::StatDarkIcon
+                                                    : ImageStore::StatLightIcon;
+}
 
 App::Snapshot::Snapshot()
     : m_storeVersion(0),

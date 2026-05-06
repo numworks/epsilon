@@ -2,11 +2,13 @@
 
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <ion/storage/record.h>
 
 #include <array>
 
+#include "regression_dark_icon.h"
 #include "regression_light_icon.h"
 #include "shared/global_store.h"
 
@@ -24,7 +26,9 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return ImageStore::RegressionLightIcon;
+  return SharedGlobalPrefs().theme() == Theme::Dark
+             ? ImageStore::RegressionDarkIcon
+             : ImageStore::RegressionLightIcon;
 }
 
 App::Snapshot::Snapshot()

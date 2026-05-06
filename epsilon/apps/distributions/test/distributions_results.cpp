@@ -129,7 +129,7 @@ QUIZ_CASE(distributions_results_binomial) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
                                                            1.0);
   assert_cumulative_distributive_function_inverse_is(&distribution, 20.0, 1.0);
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 20.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 21.0,
                                                            0.0);
 
   // B(1, 0.5)
@@ -139,11 +139,10 @@ QUIZ_CASE(distributions_results_binomial) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
                                                            1.0);
   assert_cumulative_distributive_function_inverse_is(&distribution, 0.0, 0.5);
-  // TODO: Should be 1.0
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 1.0,
                                                            0.5);
   assert_cumulative_distributive_function_inverse_is(&distribution, 1.0, 1.0);
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 1.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
                                                            0.0);
 
   // B(0, 1.0)
@@ -439,10 +438,10 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 29.0,
                                                            0.6);
   assert_cumulative_distributive_function_inverse_is(&distribution, 0.0, 0.0);
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 1.0,
                                                            1.0);
   assert_cumulative_distributive_function_inverse_is(&distribution, 50.0, 1.0);
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 50.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 51.0,
                                                            0.0);
 
   // H(10000, 10, 500)

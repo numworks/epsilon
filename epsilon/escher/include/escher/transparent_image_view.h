@@ -23,7 +23,7 @@ class TransparentImageView : public ImageView, public CellWidget {
 
  private:
   void blendInPlace(KDColor* colorBuffer, uint8_t* alphaBuffer) const;
-  ThemeComponent m_backgroundColor;
+  ThemeComponent m_backgroundColor = ThemeComponent::BackgroundWhite;
 };
 
 }  // namespace Escher

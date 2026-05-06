@@ -35,6 +35,9 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   // - Color indicator
   void setColor(Escher::ThemeComponent color) { m_functionColor = color; }
 
+  /* Background color logic is simpler than in EvenOddCell (no invisible cells)
+   * and the highlight logic is resolved separately in the drawing function,
+   * depending on which subview is selected (expression or ellipsis) */
   Escher::ThemeComponent backgroundColor() const override;
 
   void setHighlighted(bool highlight) override;

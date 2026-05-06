@@ -14,9 +14,9 @@ SOURCES_apps += $(addprefix $(PATH_apps)/elements/,$(addsuffix :-test, \
 ))
 
 SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/elements/, \
-  elements_icon.png:-test \
+  elements_light_icon.png:-test \
 ))
 
-$(call depends_on_image,$(PATH_apps)/elements/app.cpp,$(PATH_apps)/elements/elements_icon.png)
+$(call depends_on_image,$(PATH_apps)/elements/app.cpp,$(PATH_apps)/elements/elements_light_icon.png)
 
 $(call i18n_with_universal,elements/i18n/base)

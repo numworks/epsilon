@@ -7,7 +7,7 @@
 
 #include <array>
 
-#include "regression_icon.h"
+#include "regression_light_icon.h"
 #include "shared/global_store.h"
 
 using namespace Shared;
@@ -24,7 +24,7 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return ImageStore::RegressionIcon;
+  return ImageStore::RegressionLightIcon;
 }
 
 App::Snapshot::Snapshot()

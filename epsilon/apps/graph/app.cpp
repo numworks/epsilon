@@ -3,7 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 
-#include "graph_icon.h"
+#include "graph_light_icon.h"
 #include "shared/global_store.h"
 
 using namespace Poincare;
@@ -20,7 +20,9 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::FunctionAppCapital;
 }
 
-const Image* App::Descriptor::icon() const { return ImageStore::GraphIcon; }
+const Image* App::Descriptor::icon() const {
+  return ImageStore::GraphLightIcon;
+}
 
 App* App::Snapshot::unpack(Container* container) {
   return new (container->currentAppBuffer()) App(this);

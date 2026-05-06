@@ -5,7 +5,7 @@
 #include <poincare/pool.h>
 
 #include "clipboard.h"
-#include "code_icon.h"
+#include "code_light_icon.h"
 #include "helpers.h"
 
 using namespace Escher;
@@ -18,7 +18,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::CodeAppCapital;
 }
 
-const Image* App::Descriptor::icon() const { return ImageStore::CodeIcon; }
+const Image* App::Descriptor::icon() const { return ImageStore::CodeLightIcon; }
 
 App::Snapshot::Snapshot()
 #if EPSILON_GETOPT

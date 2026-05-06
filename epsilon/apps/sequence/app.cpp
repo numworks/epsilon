@@ -7,7 +7,7 @@
 
 #include <array>
 
-#include "sequence_icon.h"
+#include "sequence_light_icon.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -22,7 +22,9 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::SequenceAppCapital;
 }
 
-const Image* App::Descriptor::icon() const { return ImageStore::SequenceIcon; }
+const Image* App::Descriptor::icon() const {
+  return ImageStore::SequenceLightIcon;
+}
 
 App::Snapshot::Snapshot()
     : Shared::FunctionApp::Snapshot::Snapshot(),

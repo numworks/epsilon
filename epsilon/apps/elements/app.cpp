@@ -1,7 +1,7 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/elements/elements_icon.h>
+#include <apps/elements/elements_light_icon.h>
 #include <apps/i18n.h>
 
 #include "elements_data_base.h"
@@ -19,7 +19,7 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Escher::Image* App::Descriptor::icon() const {
-  return ImageStore::ElementsIcon;
+  return ImageStore::ElementsLightIcon;
 }
 
 // App::Snapshot

@@ -4,14 +4,16 @@
 #include <apps/i18n.h>
 #include <poincare/preferences.h>
 
-#include "solver_icon.h"
+#include "solver_light_icon.h"
 
 using namespace Shared;
 using namespace Escher;
 
 namespace Solver {
 
-const Image* App::Descriptor::icon() const { return ImageStore::SolverIcon; }
+const Image* App::Descriptor::icon() const {
+  return ImageStore::SolverLightIcon;
+}
 
 constexpr static App::Descriptor sDescriptor;
 

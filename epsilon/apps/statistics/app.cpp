@@ -8,7 +8,7 @@
 #include <array>
 
 #include "shared/global_store.h"
-#include "stat_icon.h"
+#include "stat_light_icon.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -21,7 +21,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::StatsAppCapital;
 }
 
-const Image* App::Descriptor::icon() const { return ImageStore::StatIcon; }
+const Image* App::Descriptor::icon() const { return ImageStore::StatLightIcon; }
 
 App::Snapshot::Snapshot()
     : m_storeVersion(0),

@@ -5,7 +5,7 @@
 
 #include "images/confidence_interval.h"
 #include "images/significance_test.h"
-#include "inference_icon.h"
+#include "inference_light_icon.h"
 #include "models/homogeneity_test.h"
 #include "shared/global_store.h"
 
@@ -14,7 +14,7 @@ using namespace Escher;
 namespace Inference {
 
 const Escher::Image* App::Descriptor::icon() const {
-  return ImageStore::InferenceIcon;
+  return ImageStore::InferenceLightIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

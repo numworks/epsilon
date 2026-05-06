@@ -3,14 +3,14 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 
-#include "finance_icon.h"
+#include "finance_light_icon.h"
 
 namespace Finance {
 
 // App::Descriptor
 
 const Escher::Image* App::Descriptor::icon() const {
-  return ImageStore::FinanceIcon;
+  return ImageStore::FinanceLightIcon;
 }
 
 // App::Snapshot

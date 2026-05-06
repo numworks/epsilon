@@ -2,7 +2,7 @@
 
 #include <apps/i18n.h>
 
-#include "calculation_icon.h"
+#include "calculation_light_icon.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -17,7 +17,7 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return ImageStore::CalculationIcon;
+  return ImageStore::CalculationLightIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

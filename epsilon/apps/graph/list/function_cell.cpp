@@ -46,14 +46,13 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
       KDRect(k_colorIndicatorThickness, 0,
              bounds().width() - k_colorIndicatorThickness - ellipsisWidth,
              bounds().height()),
-      ColorPicker::Resolve(Highlight(
-          backgroundColor(), isHighlighted() && expressionIsSelected())));
+      ColorPicker::Resolve(
+          Highlight(backgroundColor(), expressionIsHighlighted())));
   // Color the ellipsis view
-  ctx->fillRect(
-      KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
-             bounds().height()),
-      ColorPicker::Resolve(Highlight(backgroundColor(),
-                                     isHighlighted() && ellipsisIsSelected())));
+  ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
+                       bounds().height()),
+                ColorPicker::Resolve(
+                    Highlight(backgroundColor(), ellipsisIsHighlighted())));
 }
 
 KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
@@ -126,12 +125,10 @@ ThemeComponent AbstractFunctionCell::backgroundColor() const {
 }
 
 void AbstractFunctionCell::setHighlighted(bool highlight) {
-  /* TODO: the order of highlight is a bit counter-intuitive. Simplify the
-   * logic so that the EvenOddCell highlight can be set first, then the subview
-   * highlights. */
-  mainCell()->setHighlighted(highlight && expressionIsSelected());
-  m_messageTextView.setHighlighted(highlight && expressionIsSelected());
   EvenOddCell::setHighlighted(highlight);
+  mainCell()->setHighlighted(expressionIsHighlighted());
+  m_messageTextView.setHighlighted(expressionIsHighlighted());
+  updateSubviewsBackgroundAfterChangingState();
 }
 
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {

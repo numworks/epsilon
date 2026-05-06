@@ -50,11 +50,11 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   KDCoordinate ellipsisViewWidth() const {
     return displayEllipsis() ? Escher::Metric::EllipsisCellWidth : 0;
   }
-  /* Note: in the base version expressionIsSelected(), ellipsisIsSelected() and
-   * isHighlighted() mean the same thing, but it is not the case in the
-   * FunctionCell override. */
-  virtual bool expressionIsSelected() const { return isHighlighted(); }
-  virtual bool ellipsisIsSelected() const { return isHighlighted(); }
+  /* Note: in the base version expressionIsHighlighted(),
+   * ellipsisIsHighlighted() and isHighlighted() mean the same thing, but it is
+   * not the case in the FunctionCell override. */
+  virtual bool expressionIsHighlighted() const { return isHighlighted(); }
+  virtual bool ellipsisIsHighlighted() const { return isHighlighted(); }
 
   constexpr static KDCoordinate k_colorIndicatorThickness =
       Escher::Metric::VerticalColorIndicatorThickness;
@@ -86,8 +86,12 @@ class FunctionCell
   // - Ellipsis View
   void setParameterSelected(bool selected);
 
-  bool expressionIsSelected() const override { return !m_parameterSelected; }
-  bool ellipsisIsSelected() const override { return m_parameterSelected; }
+  bool expressionIsHighlighted() const override {
+    return isHighlighted() && !m_parameterSelected;
+  }
+  bool ellipsisIsHighlighted() const override {
+    return isHighlighted() && m_parameterSelected;
+  }
 
  private:
   void updateSubviewsBackgroundAfterChangingState() override;

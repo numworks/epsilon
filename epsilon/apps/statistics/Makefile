@@ -68,8 +68,8 @@ SOURCES_apps += $(call generated_sources_for, \
   statistics_normal_icon.png \
 )))
 
-$(call depends_on_image,apps/statistics/app.cpp,apps/statistics/assets/stat_light_icon.png)
-$(call depends_on_image,apps/statistics/app.cpp,apps/statistics/assets/stat_dark_icon.png)
+$(call depends_on_transparent_image,apps/statistics/app.cpp,apps/statistics/assets/stat_light_icon.png)
+$(call depends_on_transparent_image,apps/statistics/app.cpp,apps/statistics/assets/stat_dark_icon.png)
 
 $(call depends_on_transparent_image, \
 apps/statistics/quantitative/graph/graph_view_model.cpp, \

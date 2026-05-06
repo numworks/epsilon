@@ -22,8 +22,8 @@ SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/settings/,
   sub_menu/press_to_test_success.png \
 )))
 
-$(call depends_on_image,$(PATH_apps)/settings/app.cpp,$(PATH_apps)/settings/settings_light_icon.png)
-$(call depends_on_image,$(PATH_apps)/settings/app.cpp,$(PATH_apps)/settings/settings_dark_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/settings/app.cpp,$(PATH_apps)/settings/settings_light_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/settings/app.cpp,$(PATH_apps)/settings/settings_dark_icon.png)
 $(call depends_on_transparent_image,$(PATH_apps)/settings/sub_menu/press_to_test_controller.cpp,$(PATH_apps)/settings/sub_menu/press_to_test_success.png)
 
 $(call i18n_with_universal,settings/i18n/base)

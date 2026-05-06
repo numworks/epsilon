@@ -44,8 +44,8 @@ SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/distributi
   images/calculation4_icon.png \
 )))
 
-$(call depends_on_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_light_icon.png)
-$(call depends_on_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_dark_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_light_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_dark_icon.png)
 
 $(call depends_on_transparent_image, \
 $(PATH_apps)/distributions/controllers/distribution_controller.cpp, \

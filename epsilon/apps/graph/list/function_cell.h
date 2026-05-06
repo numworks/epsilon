@@ -87,10 +87,11 @@ class FunctionCell
   void setParameterSelected(bool selected);
 
   bool expressionIsHighlighted() const override {
-    return isHighlighted() && !m_parameterSelected;
+    return AbstractFunctionCell::expressionIsHighlighted() &&
+           !m_parameterSelected;
   }
   bool ellipsisIsHighlighted() const override {
-    return isHighlighted() && m_parameterSelected;
+    return AbstractFunctionCell::ellipsisIsHighlighted() && m_parameterSelected;
   }
 
  private:

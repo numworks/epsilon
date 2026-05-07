@@ -1,8 +1,7 @@
 #include "representatives.h"
 
 #include <omg/unreachable.h>
-
-#include "unit.h"
+#include <poincare/src/expression/k_tree.h>
 
 namespace Poincare::Internal {
 namespace Units {

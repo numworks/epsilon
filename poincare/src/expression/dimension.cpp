@@ -18,6 +18,7 @@
 #include "symbol.h"
 #include "undefined.h"
 #include "units/representatives.h"
+#include "units/unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {

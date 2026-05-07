@@ -3,6 +3,7 @@
 #include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/units/representatives.h>
+#include <poincare/src/expression/units/unit.h>
 
 namespace Poincare {
 

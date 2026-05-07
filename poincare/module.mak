@@ -73,6 +73,7 @@ $(addprefix expression/, \
   undefined.cpp \
   units/helpers.cpp \
   units/prefix.cpp \
+  units/representative.cpp \
   units/unit.cpp \
   units/representatives.cpp \
   variables.cpp \

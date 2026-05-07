@@ -1,7 +1,13 @@
 #include "prefix.h"
 
 #include <assert.h>
+#include <omg/float.h>
+#include <omg/round.h>
 #include <omg/unreachable.h>
+
+#include <cmath>
+
+#include "helpers.h"
 
 namespace Poincare::Internal {
 namespace Units {
@@ -68,6 +74,27 @@ bool PrefixSetContains(PrefixSet prefixSet, const Prefix* prefix) {
     return prefix->exponent() > 0;
   }
   OMG_UNREACHABLE;
+}
+
+const Prefix* ChooseBestInSet(PrefixSet prefixSet, double value,
+                              double exponent) {
+  if (value < OMG::Float::EpsilonLax<double>()) {
+    return Prefix::EmptyPrefix();
+  }
+  const Prefix* res = Prefix::EmptyPrefix();
+  const float magnitude = std::log10(std::fabs(value));
+  float bestOrder = magnitude;
+  for (int i = 0; i < Prefix::k_numberOfPrefixes; i++) {
+    if (!PrefixSetContains(prefixSet, Prefix::Prefixes() + i)) {
+      continue;
+    }
+    float order = magnitude - Prefix::Prefixes()[i].exponent() * exponent;
+    if (CompareMagnitudeOrders(order, bestOrder)) {
+      bestOrder = order;
+      res = Prefix::Prefixes() + i;
+    }
+  }
+  return res;
 }
 
 }  // namespace Units

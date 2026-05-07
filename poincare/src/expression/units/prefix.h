@@ -44,5 +44,10 @@ enum class PrefixSet {
 
 bool PrefixSetContains(PrefixSet prefixSet, const Prefix* prefix);
 
+// Choose the best prefix from a set for displaying a value with the given
+// exponent
+const Prefix* ChooseBestInSet(PrefixSet prefixSet, double value,
+                              double exponent);
+
 }  // namespace Units
 }  // namespace Poincare::Internal

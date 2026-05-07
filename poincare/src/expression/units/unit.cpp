@@ -284,23 +284,7 @@ const Prefix* Representative::findBestPrefix(double value,
   if (!isOutputPrefixable()) {
     return Prefix::EmptyPrefix();
   }
-  if (value < OMG::Float::EpsilonLax<double>()) {
-    return Prefix::EmptyPrefix();
-  }
-  const Prefix* res = Prefix::EmptyPrefix();
-  const float magnitude = std::log10(std::fabs(value));
-  float bestOrder = magnitude;
-  for (int i = 0; i < Prefix::k_numberOfPrefixes; i++) {
-    if (!PrefixSetContains(m_outputPrefixSet, Prefix::Prefixes() + i)) {
-      continue;
-    }
-    float order = magnitude - Prefix::Prefixes()[i].exponent() * exponent;
-    if (CompareMagnitudeOrders(order, bestOrder)) {
-      bestOrder = order;
-      res = Prefix::Prefixes() + i;
-    }
-  }
-  return res;
+  return ChooseBestInSet(m_outputPrefixSet, value, exponent);
 }
 
 Tree* Representative::pushReducedRatioExpression() const {

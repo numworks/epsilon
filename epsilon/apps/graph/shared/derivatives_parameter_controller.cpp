@@ -1,8 +1,11 @@
 #include "derivatives_parameter_controller.h"
 
+#include <apps/shared/global_store.h>
+
 #include "../app.h"
 
 using namespace Escher;
+using namespace Shared;
 
 namespace Graph {
 
@@ -74,18 +77,37 @@ void DerivativesParameterController::toggleSwitch(int row) {
       function()->setDisplayValueFirstDerivative(
           !function()->displayValueFirstDerivative());
       break;
-    case k_indexOfFirstDerivativePlot:
-      function()->setDisplayPlotFirstDerivative(
-          !function()->displayPlotFirstDerivative());
+    case k_indexOfFirstDerivativePlot: {
+      bool hasFirstDerivative = function()->displayPlotFirstDerivative();
+      if (hasFirstDerivative) {
+        GlobalStore::DeleteDerivativeOfRecord(m_record, 1);
+      } else {
+        Ion::Storage::Record::ErrorStatus error =
+            App::app()->functionStore().addDerivativeModel(m_record, 1);
+        if (error != Ion::Storage::Record::ErrorStatus::None) {
+          return;
+        }
+      }
+      function()->setDisplayPlotFirstDerivative(!hasFirstDerivative);
       break;
+    }
     case k_indexOfSecondDerivativeValue:
       function()->setDisplayValueSecondDerivative(
           !function()->displayValueSecondDerivative());
       break;
     default:
       assert(row == k_indexOfSecondDerivativePlot);
-      function()->setDisplayPlotSecondDerivative(
-          !function()->displayPlotSecondDerivative());
+      bool hasSecondDerivative = function()->displayPlotSecondDerivative();
+      if (hasSecondDerivative) {
+        GlobalStore::DeleteDerivativeOfRecord(m_record, 2);
+      } else {
+        Ion::Storage::Record::ErrorStatus error =
+            App::app()->functionStore().addDerivativeModel(m_record, 2);
+        if (error != Ion::Storage::Record::ErrorStatus::None) {
+          return;
+        }
+      }
+      function()->setDisplayPlotSecondDerivative(!hasSecondDerivative);
       break;
   }
   updateSwitchs();

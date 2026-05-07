@@ -99,6 +99,7 @@ class ContinuousFunction : public Function {
   void setDerivationOrder(uint8_t order) {
     recordData()->setDerivationOrder(order);
   }
+  const char* parentBaseName() const { return recordData()->parentBaseName(); }
   void setParentBaseName(const char* name) {
     recordData()->setParentBaseName(name);
   }

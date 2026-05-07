@@ -44,7 +44,7 @@ enum class SyntaxError : uint8_t {
   FunctionMustHaveOneParameter = 33,
   FunctionAndVariableMustHaveDistinctNames = 34,
   MissingRightParenthesis3 = 35,
-  MissingParenthesis = 36,
+  MissingParentheses = 36,
   InvalidMatrixDimension = 37,
   EmptyMatrix = 38,
   MatrixNotImplemented = 39,

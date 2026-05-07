@@ -1324,7 +1324,7 @@ Tree* RackParser::tryParseFunctionParameters(bool isBuiltinFunction) {
 Tree* RackParser::parseFunctionParameters() {
   Tree* commaSeparatedList = tryParseFunctionParameters(true);
   if (!commaSeparatedList) {
-    RaiseParseFail(SyntaxError::MissingParenthesis);
+    RaiseParseFail(SyntaxError::MissingParentheses);
   }
   return commaSeparatedList;
 }

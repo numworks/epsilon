@@ -33,8 +33,8 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
     case Poincare::SyntaxError::MissingFactorialParameterOnLeft:
     case Poincare::SyntaxError::MissingPercentParameterOnLeft:
       return I18n::Message::MissingParameterOnTheLeft;
-    case Poincare::SyntaxError::MissingParenthesis:
-      return I18n::Message::MissingParenthesis;
+    case Poincare::SyntaxError::MissingParentheses:
+      return I18n::Message::MissingParentheses;
     case Poincare::SyntaxError::MissingParenthesisInFunctionExponent:
       return I18n::Message::MissingParenthesisInFunctionExponent;
     case Poincare::SyntaxError::MissingRightBracket:

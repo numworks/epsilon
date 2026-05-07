@@ -15,6 +15,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .BackgroundButtonRow = Palette::GrayWhite,
                    .CalculationBorderEven = Palette::White,
                    .CalculationBorderOdd = Palette::WallScreen,
+                   .CalculationBorderSelected = Palette::Select,
                    .SurfaceSelect = Palette::Select,
                    .SurfaceSelectDark = Palette::SelectDark,
                    .BannerYellow = Palette::YellowDark,

@@ -38,6 +38,10 @@ class HistoryViewCell : public Escher::Bordered,
   HistoryViewCell(Responder* parentResponder = nullptr);
   static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth,
                                    KDCoordinate outputViewWidth, bool ellipsis);
+  static Escher::ThemeComponent BorderColor(bool even) {
+    return even ? Escher::ThemeComponent::CalculationBorderEven
+                : Escher::ThemeComponent::CalculationBorderOdd;
+  }
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
   void setEven(bool even) override;
   void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -74,6 +78,15 @@ class HistoryViewCell : public Escher::Bordered,
 
  private:
   constexpr static KDCoordinate k_resultWidth = 80;
+  // Like EvenOddCellWithEllipsis with a special top border.
+  class CellWithEllipsis : public Escher::EvenOddCellWithEllipsis,
+                           public Escher::Bordered {
+   public:
+    using Escher::EvenOddCellWithEllipsis::EvenOddCellWithEllipsis;
+
+   private:
+    void drawRect(KDContext* ctx, KDRect rect) const override;
+  };
 
   KDSize minimalSizeForOptimalDisplay() const override {
     // Not used: we use calculation height memoization
@@ -91,7 +104,7 @@ class HistoryViewCell : public Escher::Bordered,
   bool m_hasEllipsis;
   Escher::ScrollableLayoutView m_inputView;
   Escher::ScrollableTwoLayoutsView m_scrollableOutputView;
-  Escher::EvenOddCellWithEllipsis m_ellipsis;
+  CellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource* m_dataSource;
   OMG::Troolean m_calculationExpanded;
   bool m_calculationSingleLine;

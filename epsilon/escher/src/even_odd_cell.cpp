@@ -31,9 +31,7 @@ ThemeComponent EvenOddCell::backgroundColor() const {
   if (!isVisible()) {
     return k_hideColor;
   }
-  return Highlight(
-      m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen,
-      isHighlighted());
+  return Highlight(baseColor(), isHighlighted());
 }
 
 void EvenOddCell::drawRect(KDContext* ctx, KDRect rect) const {

@@ -120,10 +120,6 @@ KDCoordinate AbstractFunctionCell::messageTextHeight() const {
   return m_messageTextView.minimalSizeForOptimalDisplay().height();
 }
 
-ThemeComponent AbstractFunctionCell::backgroundColor() const {
-  return m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
-}
-
 void AbstractFunctionCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
   mainCell()->setHighlighted(expressionIsHighlighted());

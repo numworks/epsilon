@@ -63,7 +63,7 @@ class AbstractScrollableMultipleLayoutsView
    public:
     ContentCell(float horizontalAlignment = KDGlyph::k_alignLeft,
                 KDFont::Size font = KDFont::Size::Large);
-    ThemeComponent backgroundColor() const override;
+    ThemeComponent backgroundColor() const override { return baseColor(); }
     void setHighlighted(bool highlight) override;
     virtual void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;

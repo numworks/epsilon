@@ -30,13 +30,6 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
   m_comparisonSign.setText(k_almostEqual);
 }
 
-ThemeComponent
-AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor() const {
-  ThemeComponent background =
-      m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
-  return background;
-}
-
 void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(
     bool highlight) {
   /* Do not call HighlightCell::setHighlighted to avoid marking all cell as

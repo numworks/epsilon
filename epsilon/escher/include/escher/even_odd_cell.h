@@ -14,6 +14,7 @@ class EvenOddCell : public HighlightCell {
   virtual void setEven(bool even);
   void setVisible(bool visible) override;
   void setHighlighted(bool highlighted) override;
+  ThemeComponent baseColor() const { return m_even ? k_evenTheme : k_oddTheme; }
   virtual ThemeComponent backgroundColor() const;
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
@@ -25,6 +26,10 @@ class EvenOddCell : public HighlightCell {
  protected:
   virtual void updateSubviewsBackgroundAfterChangingState() {}
   bool m_even;
+
+ private:
+  constexpr static ThemeComponent k_evenTheme = ThemeComponent::BackgroundWhite;
+  constexpr static ThemeComponent k_oddTheme = ThemeComponent::WallScreen;
 };
 
 }  // namespace Escher

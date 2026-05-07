@@ -47,8 +47,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   Responder* responder() override { return this; }
   const Poincare::Layout& layout() const override;
   Escher::ThemeComponent backgroundColor() const override {
-    return m_even ? Escher::ThemeComponent::BackgroundWhite
-                  : Escher::ThemeComponent::WallScreen;
+    return baseColor();
   }
   void resetMemoization();
   void setCalculation(Calculation* calculation, bool expanded,

@@ -26,7 +26,9 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   /* Background color logic is simpler than in EvenOddCell (no invisible cells)
    * and the highlight logic is resolved separately in the drawing function,
    * depending on which subview is selected (expression or ellipsis) */
-  Escher::ThemeComponent backgroundColor() const override;
+  Escher::ThemeComponent backgroundColor() const override {
+    return baseColor();
+  }
 
   void setHighlighted(bool highlight) override;
 

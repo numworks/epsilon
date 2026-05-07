@@ -47,10 +47,6 @@ void AbstractSequenceCell::layoutSubviews(bool force) {
                 force);
 }
 
-ThemeComponent AbstractSequenceCell::backgroundColor() const {
-  return m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
-}
-
 void AbstractSequenceCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
   mainCell()->setHighlighted(expressionIsHighlighted());

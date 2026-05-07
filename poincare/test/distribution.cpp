@@ -139,6 +139,10 @@ QUIZ_CASE(pcj_distribution_student) {
         Distribution::CumulativeDistributiveInverseForProbability(
             student, t.probability, params),
         t.x, t.precision / 10);
+    assert_roughly_equal(
+        Distribution::CumulativeRightDistributiveInverseForProbability(
+            student, 1.0 - t.probability, params),
+        t.x, t.precision / 10);
 
     // floats
     Distribution::ParametersArray<float> fltParams = {static_cast<float>(t.k)};
@@ -154,6 +158,16 @@ QUIZ_CASE(pcj_distribution_student) {
         Distribution::CumulativeDistributiveInverseForProbability<float>(
             student, t.probability, fltParams),
         t.x, std::sqrt(t.precision));
+    /* When t.probability is too small, the precision loss of 1.0 -
+     * t.probability is too big to be able to test the cumulative right
+     * distributive inverse for probability. */
+    if (roughly_equal<float>(1.0 - static_cast<float>(1.0 - t.probability),
+                             t.probability, sqrt(t.precision))) {
+      assert_roughly_equal<float>(
+          Distribution::CumulativeRightDistributiveInverseForProbability<float>(
+              student, 1.0 - t.probability, fltParams),
+          t.x, std::sqrt(t.precision));
+    }
   }
 
   // Special cases p=0
@@ -180,8 +194,16 @@ QUIZ_CASE(pcj_distribution_student) {
           student, 0, param),
       -INFINITY);
   assert_roughly_equal<double>(
+      Distribution::CumulativeRightDistributiveInverseForProbability<double>(
+          student, 1, param),
+      -INFINITY);
+  assert_roughly_equal<double>(
       Distribution::CumulativeDistributiveInverseForProbability<double>(
           student, 1, param),
+      INFINITY);
+  assert_roughly_equal<double>(
+      Distribution::CumulativeRightDistributiveInverseForProbability<double>(
+          student, 0, param),
       INFINITY);
 
   // floats
@@ -207,8 +229,16 @@ QUIZ_CASE(pcj_distribution_student) {
           student, 0, fltParam),
       -INFINITY);
   assert_roughly_equal<float>(
+      Distribution::CumulativeRightDistributiveInverseForProbability<float>(
+          student, 1, fltParam),
+      -INFINITY);
+  assert_roughly_equal<float>(
       Distribution::CumulativeDistributiveInverseForProbability<float>(
           student, 1, fltParam),
+      INFINITY);
+  assert_roughly_equal<float>(
+      Distribution::CumulativeRightDistributiveInverseForProbability<float>(
+          student, 0, fltParam),
       INFINITY);
 }
 
@@ -294,6 +324,10 @@ QUIZ_CASE(pcj_distribution_chi2) {
         Distribution::CumulativeDistributiveInverseForProbability(
             chi2, t.probability, params),
         t.x, t.precision / 10);
+    assert_roughly_equal(
+        Distribution::CumulativeRightDistributiveInverseForProbability(
+            chi2, 1.0 - t.probability, params),
+        t.x, t.precision / 10);
 
     // floats
     Distribution::ParametersArray<float> fltParams = {static_cast<float>(t.k)};
@@ -308,6 +342,16 @@ QUIZ_CASE(pcj_distribution_chi2) {
         Distribution::CumulativeDistributiveInverseForProbability<float>(
             chi2, t.probability, fltParams),
         t.x, sqrt(t.precision));
+    /* When t.probability is too small, the precision loss of 1.0 -
+     * t.probability is too big to be able to test the cumulative right
+     * distributive inverse for probability. */
+    if (roughly_equal<float>(1.0 - static_cast<float>(1.0 - t.probability),
+                             t.probability, sqrt(t.precision))) {
+      assert_roughly_equal<float>(
+          Distribution::CumulativeRightDistributiveInverseForProbability<float>(
+              chi2, 1.0 - t.probability, fltParams),
+          t.x, sqrt(t.precision));
+    }
   }
   // Special cases
   // double
@@ -343,8 +387,16 @@ QUIZ_CASE(pcj_distribution_chi2) {
                                                                         param),
       0.);
   assert_roughly_equal<double>(
+      Distribution::CumulativeRightDistributiveInverseForProbability<double>(
+          chi2, 1, param),
+      0.);
+  assert_roughly_equal<double>(
       Distribution::CumulativeDistributiveInverseForProbability<double>(chi2, 1,
                                                                         param),
+      INFINITY);
+  assert_roughly_equal<double>(
+      Distribution::CumulativeRightDistributiveInverseForProbability<double>(
+          chi2, 0, param),
       INFINITY);
 
   // floats
@@ -380,8 +432,16 @@ QUIZ_CASE(pcj_distribution_chi2) {
           chi2, 0, fltParam),
       0.f);
   assert_roughly_equal<float>(
+      Distribution::CumulativeRightDistributiveInverseForProbability<float>(
+          chi2, 1, fltParam),
+      0.f);
+  assert_roughly_equal<float>(
       Distribution::CumulativeDistributiveInverseForProbability<float>(
           chi2, 1, fltParam),
+      INFINITY);
+  assert_roughly_equal<float>(
+      Distribution::CumulativeRightDistributiveInverseForProbability<float>(
+          chi2, 0, fltParam),
       INFINITY);
 }
 

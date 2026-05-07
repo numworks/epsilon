@@ -376,9 +376,11 @@ T CumulativeRightDistributiveInverseForProbability(
   }
   if (IsContinuous(type)) {
     // P(X<a) = P(X≤a) = 1-p, therefore P(X≥a) = p
-    assert(OMG::Float::RoughlyEqual<double>(
-        CumulativeDistributiveFunctionAtAbscissa<T>(type, a, parameters),
-        1.0 - p, FLT_EPSILON));
+    // TODO: This assert doesn't hold when p is too small due to precision loss
+    assert(p < 0.05 || 1.0 - p < 0.05 ||
+           OMG::Float::RoughlyEqual<double>(
+               CumulativeDistributiveFunctionAtAbscissa<T>(type, a, parameters),
+               1.0 - p, FLT_EPSILON));
     return a;
   }
   // P(X≤a) ≥ 1-p

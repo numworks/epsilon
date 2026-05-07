@@ -9,6 +9,7 @@
  */
 
 #include <apps/i18n.h>
+#include <omg/expiring_pointer.h>
 #include <poincare/function_properties/conic.h>
 #include <poincare/helpers/scatter_plot_iterable.h>
 #include <poincare/point_or_scalar.h>
@@ -105,6 +106,10 @@ class ContinuousFunction : public Function {
   }
   // Return the parent record for a derivative record
   Ion::Storage::Record parentRecord() const;
+  OMG::ExpiringPointer<ContinuousFunction> parentFunction() const;
+  Poincare::UserExpression equationClone() const {
+    return static_cast<const Model*>(model())->equationClone(this);
+  }
 
   bool shouldDisplayIntersections() const {
     return !properties().isScatterPlot() && isActive() &&
@@ -387,6 +392,11 @@ class ContinuousFunction : public Function {
     // Return the expression of the named function (right side of the equal)
     Poincare::UserExpression expressionClone(
         const Ion::Storage::Record* record) const override;
+    // Return the full expression (without stripping the left-hand side)
+    Poincare::UserExpression equationClone(
+        const Ion::Storage::Record* record) const {
+      return ExpressionModel::expressionClone(record);
+    }
     const Poincare::Internal::Tree* expressionTree(
         const Ion::Storage::Record* record) const override;
     // Return the entire expression that the user input. Replace symbols.

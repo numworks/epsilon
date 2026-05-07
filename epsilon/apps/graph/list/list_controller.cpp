@@ -242,9 +242,7 @@ void ListController::removeModelRow(Ion::Storage::Record record) {
     assert(f->numberOfSubCurves() == 1);
     // Update the parent's derivative toggle before removing model
     int derivationOrder = f->derivationOrder();
-    Ion::Storage::Record parentRecord = f->parentRecord();
-    OMG::ExpiringPointer<ContinuousFunction> parent =
-        modelStore()->modelForRecord(parentRecord);
+    OMG::ExpiringPointer<ContinuousFunction> parent = f->parentFunction();
     if (derivationOrder == 1) {
       parent->setDisplayPlotFirstDerivative(false);
     } else {

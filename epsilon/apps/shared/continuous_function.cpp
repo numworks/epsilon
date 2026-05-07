@@ -113,8 +113,9 @@ size_t ContinuousFunction::nameWithArgument(char* buffer, size_t bufferSize,
                                             int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
   if (isDerivative()) {
-    return ContinuousFunction(parentRecord())
-        .nameWithArgument(buffer, bufferSize, recordData()->derivationOrder());
+    ContinuousFunction parent(parentRecord());
+    return parent.nameWithArgument(buffer, bufferSize,
+                                   recordData()->derivationOrder());
   }
   size_t length = nameWithoutArgument(buffer, bufferSize, derivationOrder);
   if (isNamed()) {
@@ -184,6 +185,12 @@ Ion::Storage::Record ContinuousFunction::parentRecord() const {
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtension(recordData()->parentBaseName(),
                                      Ion::Storage::functionExtension);
+}
+
+OMG::ExpiringPointer<ContinuousFunction> ContinuousFunction::parentFunction()
+    const {
+  return GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
+      parentRecord());
 }
 
 bool ContinuousFunction::isDiscontinuousOnFloatInterval(float minBound,
@@ -726,9 +733,7 @@ const Internal::Tree* ContinuousFunction::Model::expressionTree(
 UserExpression ContinuousFunction::createDerivativeEquationFromParent() const {
   assert(isDerivative());
   ContinuousFunction parent(parentRecord());
-  UserExpression parentEquation =
-      parent.model()->ExpressionModel::expressionClone(&parent);
-  return parentEquation.getDerivative(k_unknownName, derivationOrder());
+  return parent.equationClone().getDerivative(k_unknownName, derivationOrder());
 }
 
 UserExpression ContinuousFunction::Model::originalEquation(
@@ -736,7 +741,7 @@ UserExpression ContinuousFunction::Model::originalEquation(
   ContinuousFunction f(*record);
   UserExpression unknownSymbolEquation =
       f.isDerivative() ? f.createDerivativeEquationFromParent()
-                       : ExpressionModel::expressionClone(record);
+                       : equationClone(record);
   if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
     return unknownSymbolEquation;
   }
@@ -765,7 +770,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   ContinuousFunction f(*record);
   UserExpression result = f.isDerivative()
                               ? f.createDerivativeEquationFromParent()
-                              : ExpressionModel::expressionClone(record);
+                              : equationClone(record);
   if (result.isUninitialized()) {
     return UserExpression::Undefined();
   }
@@ -913,10 +918,9 @@ Ion::Storage::Record::ErrorStatus
 ContinuousFunction::Model::renameRecordIfNeeded(
     Ion::Storage::Record* record, const char* oldName,
     bool isNewRecordCreation) const {
-  /* Use ExpressionModel::expressionClone because it does not alter
-   * the left-hand side of "f(x)=" and "f(t)=", which allows the name
-   * of the function to be found. */
-  UserExpression newExpression = ExpressionModel::expressionClone(record);
+  /* Use equationClone because it preserves the left-hand side of "f(x)=" and
+   * "f(t)=", which allows the name of the function to be found. */
+  UserExpression newExpression = equationClone(record);
   if (newExpression.isUninitialized()) {
     if (isNewRecordCreation) {
       /* The expression is not set because we are in the process of creating a

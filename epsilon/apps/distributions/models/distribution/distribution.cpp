@@ -178,35 +178,10 @@ double Distribution::cumulativeDistributiveInverseForProbability(
       m_distribution, p, constParametersArray());
 }
 
-// Return biggest [a] such that P(X≥a) ≥ p
 double Distribution::rightIntegralInverseForProbability(double p) const {
-  // Find smallest [a] such that P(X≤a) ≥ 1-p
-  double a = cumulativeDistributiveInverseForProbability(1.0 - p);
-  if (!std::isfinite(a)) {
-    return a;
-  }
-  if (isContinuous()) {
-    // P(X<a) = P(X≤a) = 1-p, therefore P(X≥a) = p
-    assert(OMG::Float::RoughlyEqual<double>(
-        cumulativeDistributiveFunctionAtAbscissa(a), 1.0 - p, FLT_EPSILON));
-    return a;
-  }
-  // P(X≤a) ≥ 1-p
-  assert(cumulativeDistributiveFunctionAtAbscissa(a) >= 1.0 - p);
-  // [a] is an integer
-  assert(std::round(a) == a);
-  // P(X≤a-1) < 1-p since [a] is the smallest solution
-  // Note: Asserting P(X≤a-1) ≤ 1-p because of evaluation errors
-  assert(std::isnan(cumulativeDistributiveFunctionAtAbscissa(a - 1)) ||
-         a <= 0 || cumulativeDistributiveFunctionAtAbscissa(a - 1) <= 1.0 - p);
-  // P(X≤a-1) < 1-p therefore P(X≥a) ≥ p, [a] may be a solution
-  if (OMG::Float::RoughlyEqual<double>(
-          cumulativeDistributiveFunctionAtAbscissa(a), 1.0 - p, FLT_EPSILON)) {
-    // P(X≤a) = 1-p, therefore P(X≥a+1) = p, [a+1] is the biggest solution
-    return a + 1.0;
-  }
-  // P(X≤a) > 1-p therefore P(X≥a+1) < p, [a] is the biggest solution
-  return a;
+  return Poincare::Distribution::
+      CumulativeRightDistributiveInverseForProbability(m_distribution, p,
+                                                       constParametersArray());
 }
 
 double Distribution::evaluateAtDiscreteAbscissa(int k) const {

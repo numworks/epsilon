@@ -364,9 +364,54 @@ T CumulativeDistributiveInverseForProbability(
   }
 }
 
+// Return biggest [a] such that P(X≥a) ≥ p
+template <typename T>
+T CumulativeRightDistributiveInverseForProbability(
+    Type type, T p, const ParametersArray<T>& parameters) {
+  // Find smallest [a] such that P(X≤a) ≥ 1-p
+  T a =
+      CumulativeDistributiveInverseForProbability<T>(type, 1.0 - p, parameters);
+  if (!std::isfinite(a)) {
+    return a;
+  }
+  if (IsContinuous(type)) {
+    // P(X<a) = P(X≤a) = 1-p, therefore P(X≥a) = p
+    assert(OMG::Float::RoughlyEqual<double>(
+        CumulativeDistributiveFunctionAtAbscissa<T>(type, a, parameters),
+        1.0 - p, FLT_EPSILON));
+    return a;
+  }
+  // P(X≤a) ≥ 1-p
+  assert(CumulativeDistributiveFunctionAtAbscissa<T>(type, a, parameters) >=
+         1.0 - p);
+  // [a] is an integer
+  assert(std::round(a) == a);
+  // P(X≤a-1) < 1-p since [a] is the smallest solution
+  // Note: Asserting P(X≤a-1) ≤ 1-p because of evaluation errors
+  assert(std::isnan(CumulativeDistributiveFunctionAtAbscissa<T>(type, a - 1.0,
+                                                                parameters)) ||
+         a <= 0.0 ||
+         CumulativeDistributiveFunctionAtAbscissa<T>(type, a - 1.0,
+                                                     parameters) <= 1.0 - p);
+  // P(X≤a-1) < 1-p therefore P(X≥a) ≥ p, [a] may be a solution
+  if (OMG::Float::RoughlyEqual<double>(
+          CumulativeDistributiveFunctionAtAbscissa<T>(type, a, parameters),
+          1.0 - p, FLT_EPSILON)) {
+    // P(X≤a) = 1-p, therefore P(X≥a+1) = p, [a+1] is the biggest solution
+    return a + 1.0;
+  }
+  // P(X≤a) > 1-p therefore P(X≥a+1) < p, [a] is the biggest solution
+  return a;
+}
+
 template float CumulativeDistributiveInverseForProbability(
-    Type type, float probability, const ParametersArray<float>& parameters);
+    Type, float, const ParametersArray<float>&);
 template double CumulativeDistributiveInverseForProbability(
-    Type type, double probability, const ParametersArray<double>& parameters);
+    Type, double, const ParametersArray<double>&);
+
+template float CumulativeRightDistributiveInverseForProbability(
+    Type, float, const ParametersArray<float>&);
+template double CumulativeRightDistributiveInverseForProbability(
+    Type, double, const ParametersArray<double>&);
 
 }  // namespace Poincare::Distribution

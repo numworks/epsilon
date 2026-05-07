@@ -3,6 +3,12 @@
 
 namespace Escher {
 
+void Bordered::drawTopBorderOfRect(KDContext* ctx, KDRect rect,
+                                   ThemeComponent borderColor) const {
+  ctx->fillRect(KDRect(0, 0, rect.width(), k_separatorThickness),
+                ColorPicker::Resolve(borderColor));
+}
+
 void Bordered::drawBorderOfRect(KDContext* ctx, KDRect rect,
                                 ThemeComponent borderColor) const {
   KDColor color = ColorPicker::Resolve(borderColor);

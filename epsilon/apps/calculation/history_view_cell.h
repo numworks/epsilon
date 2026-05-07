@@ -24,7 +24,9 @@ class HistoryViewCellDataSource {
   SubviewType m_selectedSubviewType;
 };
 
-class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
+class HistoryViewCell : public Escher::Bordered,
+                        public Escher::EvenOddCell,
+                        public Escher::Responder {
  public:
   constexpr static KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
@@ -38,6 +40,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
                                    KDCoordinate outputViewWidth, bool ellipsis);
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
   void setEven(bool even) override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
   void setHighlighted(bool highlight) override;
   void reloadSubviewHighlight();
   void setDataSource(HistoryViewCellDataSource* dataSource) {

@@ -78,6 +78,9 @@ bool PrefixSetContains(PrefixSet prefixSet, const Prefix* prefix) {
 
 const Prefix* ChooseBestInSet(PrefixSet prefixSet, double value,
                               double exponent) {
+  if (prefixSet == PrefixSet::None) {
+    return Prefix::EmptyPrefix();
+  }
   if (value < OMG::Float::EpsilonLax<double>()) {
     return Prefix::EmptyPrefix();
   }

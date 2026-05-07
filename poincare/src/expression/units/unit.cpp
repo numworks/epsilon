@@ -211,8 +211,8 @@ const Representative* Representative::defaultFindBestRepresentativeAndPrefix(
     double currentAccuracy =
         std::fabs(value / std::pow(currentRepresentative->ratio(), exponent));
     if (*prefix) {
-      currentPrefix =
-          currentRepresentative->findBestPrefix(currentAccuracy, exponent);
+      currentPrefix = ChooseBestInSet(currentRepresentative->outputPrefixSet(),
+                                      currentAccuracy, exponent);
     }
     if (CompareMagnitudeOrders(
             std::log10(currentAccuracy) - currentPrefix->exponent() * exponent,
@@ -258,7 +258,7 @@ bool Representative::canParseWithEquivalents(
 
 bool Representative::canParse(const char* symbol, size_t length,
                               const Prefix** prefix) const {
-  if (!isInputPrefixable()) {
+  if (inputPrefixSet() == PrefixSet::None) {
     if (prefix) {
       *prefix = Prefix::EmptyPrefix();
     }
@@ -277,14 +277,6 @@ bool Representative::canParse(const char* symbol, size_t length,
     }
   }
   return false;
-}
-
-const Prefix* Representative::findBestPrefix(double value,
-                                             double exponent) const {
-  if (!isOutputPrefixable()) {
-    return Prefix::EmptyPrefix();
-  }
-  return ChooseBestInSet(m_outputPrefixSet, value, exponent);
 }
 
 Tree* Representative::pushReducedRatioExpression() const {

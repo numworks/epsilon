@@ -23,7 +23,7 @@ void assert_parsed_units_simplify_to_with_prefixes() {
     const Units::Prefix* prefixes;
     constexpr static size_t bufferSize = 12;
     char buffer[bufferSize] = "1×";
-    if (representative->isOutputPrefixable()) {
+    if (representative->outputPrefixSet() != Units::PrefixSet::None) {
       numberOfPrefixes = Units::Prefix::k_numberOfPrefixes;
       prefixes = Units::Prefix::Prefixes();
     } else {

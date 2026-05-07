@@ -69,10 +69,7 @@ class Representative {
         ratioExpression(),
         Approximation::Parameters{.policy = {.optimize = true}});
   }
-  bool isInputPrefixable() const { return m_inputPrefixSet != PrefixSet::None; }
-  bool isOutputPrefixable() const {
-    return m_outputPrefixSet != PrefixSet::None;
-  }
+
   PrefixSet inputPrefixSet() const { return m_inputPrefixSet; }
   PrefixSet outputPrefixSet() const { return m_outputPrefixSet; }
 
@@ -81,7 +78,6 @@ class Representative {
                                const Representative** representative,
                                const Prefix** prefix) const;
   bool canParse(const char* symbol, size_t length, const Prefix** prefix) const;
-  const Prefix* findBestPrefix(double value, double exponent) const;
   const Tree* ratioExpression() const { return m_ratioExpression; }
   // Push reduced ratio expression on TreeStack
   Tree* pushReducedRatioExpression() const;

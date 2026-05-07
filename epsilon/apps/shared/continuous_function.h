@@ -60,6 +60,11 @@ class ContinuousFunction : public Function {
   size_t printFunctionValue(double cursorT, double cursorX, double cursorY,
                             char* buffer, size_t bufferSize,
                             int precision) const override;
+  bool isDefined() const override {
+    assert(!(isDerivative() && parentFunction()->isNull()));
+    return ExpressionModelHandle::isDefined() ||
+           (isDerivative() && parentFunction()->isDefined());
+  }
   // Return true if the ContinuousFunction is active
   bool isActive() const override {
     return Function::isActive() && properties().isEnabled();

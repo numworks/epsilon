@@ -25,8 +25,10 @@ void assert_value_is(double value, double expected) {
     char buffer[k_bufferSize];
     Poincare::Print::CustomPrintf(
         buffer, k_bufferSize, "%*.*ed instead of %*.*ed.", value,
-        Poincare::Preferences::PrintFloatMode::Decimal, 7, expected,
-        Poincare::Preferences::PrintFloatMode::Decimal, 7);
+        Poincare::Preferences::PrintFloatMode::Decimal,
+        Poincare::Preferences::VeryLargeNumberOfSignificantDigits, expected,
+        Poincare::Preferences::PrintFloatMode::Decimal,
+        Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
     quiz_assert_print_if_failure(false, buffer);
   }
 }

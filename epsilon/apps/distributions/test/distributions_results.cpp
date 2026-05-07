@@ -76,7 +76,7 @@ void assert_finite_integral_between_abscissas_is(
 }
 
 QUIZ_CASE(distributions_results_binomial) {
-  // B(32, 0.6)
+  // Binomial(32, 0.6)
   Distributions::BinomialDistribution distribution;
   distribution.setParameterAtIndex(32.0, 0);
   distribution.setParameterAtIndex(0.6, 1);
@@ -91,7 +91,7 @@ QUIZ_CASE(distributions_results_binomial) {
       &distribution, 10.0,
       0.00094770581410635293569122428181117356871254742145538330078125);
 
-  // B(17, 0.1)
+  // Binomial(17, 0.1)
   distribution.setParameterAtIndex(17.0, 0);
   distribution.setParameterAtIndex(0.1, 1);
   assert_roughly_equal<float>(
@@ -105,7 +105,7 @@ QUIZ_CASE(distributions_results_binomial) {
       &distribution, 1.0,
       0.4817852491014791294077213024138472974300384521484375);
 
-  // B(21, 0.2)
+  // Binomial(21, 0.2)
   distribution.setParameterAtIndex(21.0, 0);
   distribution.setParameterAtIndex(0.2, 1);
   assert_roughly_equal<float>(
@@ -118,7 +118,7 @@ QUIZ_CASE(distributions_results_binomial) {
   assert_finite_integral_between_abscissas_is(&distribution, 4.0, 5.0,
                                               0.398919847793223794688);
 
-  // B(20, 0.5)
+  // Binomial(20, 0.5)
   distribution.setParameterAtIndex(20.0, 0);
   distribution.setParameterAtIndex(0.5, 1);
   assert_cumulative_distributive_function_inverse_is(&distribution, 7.0, 0.07);
@@ -134,7 +134,7 @@ QUIZ_CASE(distributions_results_binomial) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 21.0,
                                                            0.0);
 
-  // B(1, 0.5)
+  // Binomial(1, 0.5)
   distribution.setParameterAtIndex(1.0, 0);
   distribution.setParameterAtIndex(0.5, 1);
   assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.0);
@@ -147,14 +147,14 @@ QUIZ_CASE(distributions_results_binomial) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
                                                            0.0);
 
-  // B(0, 1.0)
+  // Binomial(0, 1.0)
   distribution.setParameterAtIndex(0.0, 0);
   distribution.setParameterAtIndex(1.0, 1);
   assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.5);
   assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
                                                            0.5);
 
-  // B(0, 0.0)
+  // Binomial(0, 0.0)
   distribution.setParameterAtIndex(0.0, 0);
   distribution.setParameterAtIndex(0.0, 1);
   assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.5);
@@ -163,7 +163,7 @@ QUIZ_CASE(distributions_results_binomial) {
 }
 
 QUIZ_CASE(distributions_results_uniform) {
-  // U(-1, 1)
+  // Uniform(-1, 1)
   Distributions::UniformDistribution distribution;
   distribution.setParameterAtIndex(-1, 0);
   distribution.setParameterAtIndex(1, 1);
@@ -174,7 +174,7 @@ QUIZ_CASE(distributions_results_uniform) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, -0.9, (1.0 - 0.9) / 2.0);
 
-  // U(0.1, 17)
+  // Uniform(0.1, 17)
   distribution.setParameterAtIndex(0.1, 0);
   distribution.setParameterAtIndex(17., 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4.0),
@@ -186,7 +186,7 @@ QUIZ_CASE(distributions_results_uniform) {
 }
 
 QUIZ_CASE(distributions_results_exponential) {
-  // EXP(1)
+  // Exponential(1)
   Distributions::ExponentialDistribution distribution;
   distribution.setParameterAtIndex(1, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
@@ -198,7 +198,7 @@ QUIZ_CASE(distributions_results_exponential) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 2.f, 1 - std::exp(-2.f));
 
-  // EXP(13)
+  // Exponential(13)
   distribution.setParameterAtIndex(.2f, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(2),
                               .2f * std::exp(-.2f * 2.f));
@@ -209,7 +209,7 @@ QUIZ_CASE(distributions_results_exponential) {
 }
 
 QUIZ_CASE(distributions_results_normal) {
-  // N(0, 1)
+  // Normal(0, 1)
   Distributions::NormalDistribution distribution;
   distribution.setParameterAtIndex(0, 0);
   distribution.setParameterAtIndex(1, 1);
@@ -220,7 +220,7 @@ QUIZ_CASE(distributions_results_normal) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 1.6448536269514722, 0.95);
 
-  // N(123, 10.3)
+  // Normal(123, 10.3)
   distribution.setParameterAtIndex(123, 0);
   distribution.setParameterAtIndex(10.3, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(103),
@@ -230,7 +230,7 @@ QUIZ_CASE(distributions_results_normal) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 143, 0.9739161667561312);
 
-  // N(-1.2, 0.3)
+  // Normal(-1.2, 0.3)
   distribution.setParameterAtIndex(-1.2, 0);
   distribution.setParameterAtIndex(0.3, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(-1),
@@ -258,7 +258,7 @@ QUIZ_CASE(distributions_results_normal) {
 }
 
 QUIZ_CASE(distributions_results_chi_squared) {
-  // Chi Squared distribution with 1 degree of freedom
+  // Chi2(1)
   Distributions::ChiSquaredDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1), 1.2f, 1e-4);
@@ -272,7 +272,7 @@ QUIZ_CASE(distributions_results_chi_squared) {
       &distribution, 4.987,
       0.97446155200631878745554104170878417789936065673828125);
 
-  // Chi Squared distribution with 1.3 degrees of freedom
+  // Chi2(1.3)
   distribution.setParameterAtIndex(1.3, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1), 0.98f,
                               1e-5);
@@ -286,7 +286,7 @@ QUIZ_CASE(distributions_results_chi_squared) {
       &distribution, 4.987,
       0.96090315938362369507785842870362102985382080078125);
 
-  // Chi Squared distribution with 5.4 degrees of freedom
+  // Chi2(5.4)
   distribution.setParameterAtIndex(5.4, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1),
                               0.001890880662848345f, 1e-6);
@@ -302,7 +302,7 @@ QUIZ_CASE(distributions_results_chi_squared) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 20, 0.9982594816610862);
 
-  // Chi Squared distribution with 6 degrees of freedom
+  // Chi2(6)
   distribution.setParameterAtIndex(6.0, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1),
                               0.0005945183903129464f, 1e-6);
@@ -313,7 +313,7 @@ QUIZ_CASE(distributions_results_chi_squared) {
 }
 
 QUIZ_CASE(distributions_results_student) {
-  // Student distribution with 1 degree of freedom
+  // Student(1)
   Distributions::StudentDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1),
@@ -327,7 +327,7 @@ QUIZ_CASE(distributions_results_student) {
       &distribution, 3.4567,
       0.9103622230304611040452300585457123816013336181640625);
 
-  // Student distribution with 1.3 degrees of freedom
+  // Student(1.3)
   distribution.setParameterAtIndex(1.3, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1),
                               0.33047714482602075f);
@@ -341,7 +341,7 @@ QUIZ_CASE(distributions_results_student) {
       &distribution, 2.9874567,
       0.92143912473359812498330256858025677502155303955078125);
 
-  // Student distribution with 5.4 degrees of freedom
+  // Student(5.4)
   distribution.setParameterAtIndex(5.4, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1),
                               0.3787417926621869f, 1e-6);
@@ -355,7 +355,7 @@ QUIZ_CASE(distributions_results_student) {
       &distribution, 2.9874567,
       0.98612148076325445433809591122553683817386627197265625);
 
-  // Student distribution with 6 degrees of freedom
+  // Student(6)
   distribution.setParameterAtIndex(6.0, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1),
                               0.38050851123793844f);
@@ -364,7 +364,7 @@ QUIZ_CASE(distributions_results_student) {
   assert_finite_integral_between_abscissas_is(&distribution, 4.0, 5.0,
                                               0.002333318101494775250);
 
-  // Student distribution with 1000 degrees of freedom
+  // Student(1000)
   distribution.setParameterAtIndex(1000, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.01), 0.398823,
                               1e-6);
@@ -377,7 +377,7 @@ QUIZ_CASE(distributions_results_student) {
 }
 
 QUIZ_CASE(distributions_results_geometric) {
-  // Geometric distribution with probability of success 0.5
+  // Geometric(0.5)
   Distributions::GeometricDistribution distribution;
   distribution.setParameterAtIndex(0.5, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(3), 1.f / 8.f);
@@ -386,7 +386,7 @@ QUIZ_CASE(distributions_results_geometric) {
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
                                                                 2.0, 0.75);
 
-  // Geometric distribution with probability of success 0.2
+  // Geometric(0.2)
   distribution.setParameterAtIndex(0.2, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4), 0.1024);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
@@ -394,14 +394,14 @@ QUIZ_CASE(distributions_results_geometric) {
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
                                                                 2.0, 0.36);
 
-  // Geometric distribution with probability of success 0.4
+  // Geometric(0.4)
   distribution.setParameterAtIndex(0.4, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4), 0.0864, 1e-6);
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 1.0, 0.4);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 3.0, 0.384);
 
-  // Geometric distribution with probability of success 0.5
+  // Geometric(0.5)
   distribution.setParameterAtIndex(0.5, 0);
   assert_cumulative_distributive_function_inverse_is(&distribution, 2.0, 0.6);
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
@@ -419,7 +419,7 @@ QUIZ_CASE(distributions_results_geometric) {
 }
 
 QUIZ_CASE(distributions_results_hypergeometric) {
-  // H(100, 60, 50)
+  // Hypergeometric(100, 60, 50)
   Distributions::HypergeometricDistribution distribution;
   distribution.setParameterAtIndex(100, 0);
   distribution.setParameterAtIndex(60, 1);
@@ -446,7 +446,7 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 51.0,
                                                            0.0);
 
-  // H(10000, 10, 500)
+  // Hypergeometric(10000, 10, 500)
   distribution.setParameterAtIndex(1000, 0);
   distribution.setParameterAtIndex(10, 1);
   distribution.setParameterAtIndex(500, 2);
@@ -459,7 +459,7 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 8.0, 0.98956388142200713);
 
-  // H(430, 109, 400)
+  // Hypergeometric(430, 109, 400)
   distribution.setParameterAtIndex(430, 0);
   distribution.setParameterAtIndex(109, 1);
   distribution.setParameterAtIndex(400, 2);
@@ -472,7 +472,7 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   assert_finite_integral_between_abscissas_is(&distribution, 95.0, 102.0,
                                               0.67319633087273711);
 
-  // H(88888888888888880, 68, 88888888888888880)
+  // Hypergeometric(88888888888888880, 68, 88888888888888880)
   distribution.setParameterAtIndex(88888888888888880, 0);
   distribution.setParameterAtIndex(68, 1);
   distribution.setParameterAtIndex(88888888888888880, 2);
@@ -481,7 +481,7 @@ QUIZ_CASE(distributions_results_hypergeometric) {
 }
 
 QUIZ_CASE(distributions_results_poisson) {
-  // POISSON(1)
+  // Poisson(1)
   Distributions::PoissonDistribution distribution;
   distribution.setParameterAtIndex(1, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
@@ -493,7 +493,7 @@ QUIZ_CASE(distributions_results_poisson) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 4, 0.9963401531726563);
 
-  // POISSON(13)
+  // Poisson(13)
   distribution.setParameterAtIndex(13.0, 0);
   assert_roughly_equal<float>(
       distribution.evaluateAtAbscissa(8),
@@ -503,7 +503,7 @@ QUIZ_CASE(distributions_results_poisson) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 16, 0.8354931476833607);
 
-  // POISSON(4)
+  // Poisson(4)
   distribution.setParameterAtIndex(4.0, 0);
   assert_cumulative_distributive_function_inverse_is(&distribution, 3.0, 0.3);
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 3.0,
@@ -521,7 +521,7 @@ QUIZ_CASE(distributions_results_poisson) {
 }
 
 QUIZ_CASE(distributions_results_fisher) {
-  // Fisher distribution with d1 = 1 and d2 = 1
+  // Fisher(1, 1)
   Distributions::FisherDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
   distribution.setParameterAtIndex(1.0, 1);
@@ -535,7 +535,7 @@ QUIZ_CASE(distributions_results_fisher) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 3.3, 0.6796445888753);
 
-  // Fisher distribution with d1 = 3 and d2 = 2
+  // Fisher(3, 2)
   distribution.setParameterAtIndex(3.0, 0);
   distribution.setParameterAtIndex(2.0, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1.),
@@ -545,7 +545,7 @@ QUIZ_CASE(distributions_results_fisher) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 3.0, 0.7400733003272);
 
-  // Fisher distribution with d1 = 100 and d2 = 87
+  // Fisher(100, 87)
   distribution.setParameterAtIndex(100.0, 0);
   distribution.setParameterAtIndex(87.0, 1);
   /* Expected precision needs to be reduced from OMG::Float::Epsilon<T>()
@@ -560,7 +560,7 @@ QUIZ_CASE(distributions_results_fisher) {
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 1.425, 0.95425004959692871775);
 
-  // Fisher distribution with d1 = 4 and d2 = 2
+  // Fisher(4, 2)
   distribution.setParameterAtIndex(4.0, 0);
   distribution.setParameterAtIndex(2.0, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1.),
@@ -570,12 +570,12 @@ QUIZ_CASE(distributions_results_fisher) {
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 2.0,
                                               0.19555555555555555);
 
-  // Fisher distribution with d1 = 2 and d2 = 3
+  // Fisher(2, 3)
   distribution.setParameterAtIndex(2.0, 0);
   distribution.setParameterAtIndex(3.0, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.), 1.0);
 
-  // Fisher distribution with d1 = 1000 and d2 = 1000
+  // Fisher(1000, 1000)
   distribution.setParameterAtIndex(1000.0, 0);
   distribution.setParameterAtIndex(1000.0, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1.0), 6.30625,

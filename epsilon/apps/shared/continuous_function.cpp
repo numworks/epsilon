@@ -77,7 +77,10 @@ ContinuousFunction::ContinuousFunction(Ion::Storage::Record record)
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
     bool isNewRecordCreation) {
-  return m_model.renameRecordIfNeeded(this, isNewRecordCreation);
+  constexpr size_t nameBufferSize = Poincare::SymbolHelper::k_maxNameSize;
+  char baseName[nameBufferSize];
+  name(baseName, nameBufferSize);
+  return m_model.renameRecordIfNeeded(this, baseName, isNewRecordCreation);
 }
 
 size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
@@ -908,7 +911,8 @@ ContinuousFunction::Model::RenameRecordToHidden(Ion::Storage::Record* record) {
 
 Ion::Storage::Record::ErrorStatus
 ContinuousFunction::Model::renameRecordIfNeeded(
-    Ion::Storage::Record* record, bool isNewRecordCreation) const {
+    Ion::Storage::Record* record, const char* oldName,
+    bool isNewRecordCreation) const {
   /* Use ExpressionModel::expressionClone because it does not alter
    * the left-hand side of "f(x)=" and "f(t)=", which allows the name
    * of the function to be found. */
@@ -929,10 +933,25 @@ ContinuousFunction::Model::renameRecordIfNeeded(
   if (record->hasExtension(Ion::Storage::functionExtension)) {
     if (IsFunctionAssignment(newExpression)) {
       const UserExpression function = newExpression.cloneChildAtIndex(0);
+      const char* newName = SymbolHelper::GetName(function);
       error = Ion::Storage::Record::SetBaseNameWithExtension(
-          record, SymbolHelper::GetName(function),
-          Ion::Storage::functionExtension);
+          record, newName, Ion::Storage::functionExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
+        if (error == Ion::Storage::Record::ErrorStatus::None &&
+            strcmp(oldName, newName) != 0) {
+          /* Rename succeeded and name changed: update m_parentBaseName on all
+           * derivative records that reference this parent. */
+          ContinuousFunctionStore& store =
+              GlobalContextAccessor::ContinuousFunctionStore();
+          int n = store.numberOfModels();
+          for (int i = 0; i < n; i++) {
+            ContinuousFunction f(store.recordAtIndex(i));
+            if (f.isDerivative() &&
+                strcmp(f.recordData()->parentBaseName(), oldName) == 0) {
+              f.setParentBaseName(newName);
+            }
+          }
+        }
         return error;
       }
       // Function's name is already taken, reset records name if needed.

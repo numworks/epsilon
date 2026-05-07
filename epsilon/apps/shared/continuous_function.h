@@ -404,7 +404,8 @@ class ContinuousFunction : public Function {
         const Ion::Storage::Record* record) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
-        Ion::Storage::Record* record, bool isNewRecordCreation) const;
+        Ion::Storage::Record* record, const char* oldName,
+        bool isNewRecordCreation) const;
     // Set the record content using BuildFunctionFromLayout
     Ion::Storage::Record::ErrorStatus setContent(
         Ion::Storage::Record* record, const Poincare::Layout& l,

@@ -364,7 +364,6 @@ T CumulativeDistributiveInverseForProbability(
   }
 }
 
-// Return biggest [a] such that P(X≥a) ≥ p
 template <typename T>
 T CumulativeRightDistributiveInverseForProbability(
     Type type, T p, const ParametersArray<T>& parameters) {
@@ -395,7 +394,7 @@ T CumulativeRightDistributiveInverseForProbability(
          a <= 0.0 ||
          CumulativeDistributiveFunctionAtAbscissa<T>(type, a - 1.0,
                                                      parameters) <= 1.0 - p);
-  // P(X≤a-1) < 1-p therefore P(X≥a) ≥ p, [a] may be a solution
+  // P(X≤a-1) < 1-p therefore P(X≥a) ≥ p
   if (OMG::Float::RoughlyEqual<double>(
           CumulativeDistributiveFunctionAtAbscissa<T>(type, a, parameters),
           1.0 - p, FLT_EPSILON)) {

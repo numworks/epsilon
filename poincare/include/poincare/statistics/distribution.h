@@ -169,7 +169,7 @@ T CumulativeDistributiveFunctionAtAbscissa(
 
 /* WARNING: This has inconsistent behavior for p~0. or p~1 depending on the
  * Distribution type. It should be reworked */
-// Return smallest [a] such that P(X≤a) ≥ 1-probability
+// Return smallest [a] such that P(X≤a) ≥ probability
 template <typename T>
 T CumulativeDistributiveInverseForProbability(
     Type type, T probability, const ParametersArray<T>& parameters);

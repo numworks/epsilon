@@ -48,11 +48,6 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
       return I18n::Message::MissingSequenceIndex;
     case Poincare::SyntaxError::RightSideMustBeSymbolOrFunction:
       return I18n::Message::RightSideMustBeSymbolOrFunction;
-    case Poincare::SyntaxError::SomethingWasExpected:
-    case Poincare::SyntaxError::MissingLeftExpression1:
-    case Poincare::SyntaxError::MissingLeftExpression2:
-    case Poincare::SyntaxError::MissingLeftExpression3:
-      return I18n::Message::SomethingExpected;
     case Poincare::SyntaxError::FunctionCannotBePowered:
       return I18n::Message::ThisFunctionCantBePowered;
     case Poincare::SyntaxError::FunctionHasNoInverse:
@@ -64,6 +59,10 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
     case Poincare::SyntaxError::ParametricMustDependOnVariableLinear:
       return I18n::Message::ParametricMustDependOnVariable;
     case Poincare::SyntaxError::IncompleteExpression:
+    case Poincare::SyntaxError::MissingLeftExpression1:
+    case Poincare::SyntaxError::MissingLeftExpression2:
+    case Poincare::SyntaxError::MissingLeftExpression3:
+    case Poincare::SyntaxError::SomethingWasExpected:
       return I18n::Message::IncompleteExpression;
     case Poincare::SyntaxError::CannotParsePercentOperator:
       return I18n::Message::CannotParsePercentOperator;

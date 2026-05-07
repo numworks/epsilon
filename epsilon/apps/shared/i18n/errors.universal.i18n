@@ -7,7 +7,6 @@ FunctionMustHave1Or2Parameters = "Syntax error:\nFunction must have\n1 or 2 para
 FunctionMustHaveOnly1Parameter = "Syntax error:\nFunction must have\nonly 1 parameter"
 InvalidMatrixDimension = "Syntax error:\nInvalid matrix dimension"
 EmptyParentheses = "Syntax error:\nEmpty parentheses are not handled"
-MissingLeftBracket = "Syntax error:\nMissing left bracket"
 MissingParameterOnTheLeft = "Syntax error:\nMissing parameter on the left"
 MissingParentheses = "Syntax error:\nMissing parentheses"
 MissingParenthesisInFunctionExponent = "Syntax error:\nMissing parenthesis in\nfunction exponent"

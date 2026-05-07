@@ -171,11 +171,13 @@ CodePoint ListController::defaultXNT() {
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
-  int relativeRow;
-  modelIndexForRow(selectedRow(), &relativeRow);
-  if (relativeRow != 0) {
-    // Cell f' and f" are not editable
-    return;
+  if (!isAddModelRow(selectedRow())) {
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        modelStore()->modelForRecord(selectedRecord());
+    if (f->isDerivative()) {
+      // Derivative cells are not editable
+      return;
+    }
   }
   ExpressionModelListController::editExpression(event);
   if (m_editableCell.isTemplateButtonHighlighted()) {
@@ -279,9 +281,8 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
         ThemeComponent::TextGrayDark);
   } else if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
-    int relativeRow;
     OMG::ExpiringPointer<ContinuousFunction> f =
-        modelStore()->modelForRecord(recordAtRow(row, &relativeRow));
+        modelStore()->modelForRecord(recordAtRow(row));
     assert(!f->isNull());
     if (type == k_expressionCellType) {
       FunctionCell* functionCell = static_cast<FunctionCell*>(cell);

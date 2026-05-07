@@ -14,6 +14,7 @@
 #include "../physical_constant.h"
 #include "../simplification.h"
 #include "../systematic_reduction.h"
+#include "helpers.h"
 #include "prefix.h"
 #include "representatives.h"
 
@@ -195,22 +196,6 @@ const Representative* Representative::RepresentativeForDimension(
   return nullptr;
 }
 
-static bool compareMagnitudeOrders(float order, float otherOrder) {
-  /* Precision can be lost (with a year conversion for instance), so the order
-   * value is rounded */
-  order = OMG::LaxToZero(order);
-  otherOrder = OMG::LaxToZero(otherOrder);
-  if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) <=
-          3.0f + OMG::Float::EpsilonLax<float>() &&
-      order * otherOrder < 0.0f) {
-    /* If the two values are close, and their sign are opposed, the positive
-     * order is preferred */
-    return (order >= 0.0f);
-  }
-  // Otherwise, the closest order to 0 is preferred
-  return (std::fabs(order) < std::fabs(otherOrder));
-}
-
 const Representative* Representative::defaultFindBestRepresentativeAndPrefix(
     double value, double exponent, const Representative* begin,
     const Representative* end, const Prefix** prefix) const {
@@ -229,7 +214,7 @@ const Representative* Representative::defaultFindBestRepresentativeAndPrefix(
       currentPrefix =
           currentRepresentative->findBestPrefix(currentAccuracy, exponent);
     }
-    if (compareMagnitudeOrders(
+    if (CompareMagnitudeOrders(
             std::log10(currentAccuracy) - currentPrefix->exponent() * exponent,
             std::log10(accuracy) -
                 ((!*prefix) ? 0 : (*prefix)->exponent() * exponent))) {
@@ -310,7 +295,7 @@ const Prefix* Representative::findBestPrefix(double value,
       continue;
     }
     float order = magnitude - Prefix::Prefixes()[i].exponent() * exponent;
-    if (compareMagnitudeOrders(order, bestOrder)) {
+    if (CompareMagnitudeOrders(order, bestOrder)) {
       bestOrder = order;
       res = Prefix::Prefixes() + i;
     }

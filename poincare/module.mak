@@ -71,6 +71,7 @@ $(addprefix expression/, \
   trigonometry.cpp \
   trigonometry_exact_formulas.cpp \
   undefined.cpp \
+  units/helpers.cpp \
   units/prefix.cpp \
   units/unit.cpp \
   units/representatives.cpp \

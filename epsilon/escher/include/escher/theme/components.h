@@ -14,6 +14,8 @@ namespace Escher {
   X(BackgroundPopup)         \
   X(BackgroundPopUpTitle)    \
   X(BackgroundButtonRow)     \
+  X(CalculationBorderEven)   \
+  X(CalculationBorderOdd)    \
   X(SurfaceSelect)           \
   X(SurfaceSelectDark)       \
   X(BannerYellow)            \

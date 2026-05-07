@@ -48,8 +48,9 @@ void HistoryViewCell::setEven(bool even) {
 
 void HistoryViewCell::drawRect(KDContext* ctx, KDRect rect) const {
   EvenOddCell::drawRect(ctx, rect);
-  // TODO: introduce a special theme for different dark mode color
-  drawTopBorderOfRect(ctx, bounds(), baseColor());
+  drawTopBorderOfRect(ctx, bounds(),
+                      m_even ? ThemeComponent::CalculationBorderEven
+                             : ThemeComponent::CalculationBorderOdd);
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {

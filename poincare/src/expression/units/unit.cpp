@@ -282,7 +282,8 @@ bool Representative::canParse(const char* symbol, size_t length,
   for (size_t i = 0; i < Prefix::k_numberOfPrefixes; i++) {
     const Prefix* pre = Prefix::Prefixes() + i;
     const char* prefixSymbol = pre->symbol();
-    if (strlen(prefixSymbol) == length && canPrefix(pre, true) &&
+    if (strlen(prefixSymbol) == length &&
+        PrefixSetContains(m_inputPrefixSet, pre) &&
         strncmp(symbol, prefixSymbol, length) == 0) {
       if (prefix) {
         *prefix = pre;
@@ -291,11 +292,6 @@ bool Representative::canParse(const char* symbol, size_t length,
     }
   }
   return false;
-}
-
-bool Representative::canPrefix(const Prefix* prefix, bool input) const {
-  PrefixSet prefixSet = (input) ? m_inputPrefixSet : m_outputPrefixSet;
-  return PrefixSetContains(prefixSet, prefix);
 }
 
 const Prefix* Representative::findBestPrefix(double value,
@@ -310,7 +306,7 @@ const Prefix* Representative::findBestPrefix(double value,
   const float magnitude = std::log10(std::fabs(value));
   float bestOrder = magnitude;
   for (int i = 0; i < Prefix::k_numberOfPrefixes; i++) {
-    if (!canPrefix(Prefix::Prefixes() + i, false)) {
+    if (!PrefixSetContains(m_outputPrefixSet, Prefix::Prefixes() + i)) {
       continue;
     }
     float order = magnitude - Prefix::Prefixes()[i].exponent() * exponent;

@@ -73,12 +73,14 @@ class Representative {
   bool isOutputPrefixable() const {
     return m_outputPrefixSet != PrefixSet::None;
   }
+  PrefixSet inputPrefixSet() const { return m_inputPrefixSet; }
+  PrefixSet outputPrefixSet() const { return m_outputPrefixSet; }
+
   bool isImperial() const { return m_isImperial; }
   bool canParseWithEquivalents(const char* symbol, size_t length,
                                const Representative** representative,
                                const Prefix** prefix) const;
   bool canParse(const char* symbol, size_t length, const Prefix** prefix) const;
-  bool canPrefix(const Prefix* prefix, bool input) const;
   const Prefix* findBestPrefix(double value, double exponent) const;
   const Tree* ratioExpression() const { return m_ratioExpression; }
   // Push reduced ratio expression on TreeStack

@@ -1,3 +1,4 @@
+#include <poincare/src/expression/units/prefix.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/user_expression.h>
 
@@ -30,8 +31,8 @@ void assert_parsed_units_simplify_to_with_prefixes() {
       prefixes = Units::Prefix::EmptyPrefix();
     }
     for (int j = 0; j < numberOfPrefixes; j++) {
-      if (representative->canPrefix(prefixes + j, true) &&
-          representative->canPrefix(prefixes + j, false)) {
+      if (PrefixSetContains(representative->inputPrefixSet(), prefixes + j) &&
+          PrefixSetContains(representative->outputPrefixSet(), prefixes + j)) {
         UserExpression unit = UserExpression::Builder(
             Units::Unit::Push(representative, prefixes + j));
         unit.serialize(

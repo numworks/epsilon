@@ -16,6 +16,7 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
     case Poincare::SyntaxError::ExponentTooBig:
       return I18n::Message::ExponentTooBig;
     case Poincare::SyntaxError::ForbiddenImplicitMultiplication:
+    case Poincare::SyntaxError::NumberFollowsValidExpressionDirectly:
       return I18n::Message::ForbiddenImplicitMultiplication;
     case Poincare::SyntaxError::FunctionAndVariableMustHaveDistinctNames:
       return I18n::Message::FunctionAndVariableMustHaveDistinctNames;
@@ -80,8 +81,6 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
     case Poincare::SyntaxError::OnlyLogShouldUsePrefixLogBase1:
     case Poincare::SyntaxError::OnlyLogShouldUsePrefixLogBase2:
       return I18n::Message::OnlyLogShouldUsePrefixLogBase;
-    case Poincare::SyntaxError::NumberFollowsValidExpressionDirectly:
-      return I18n::Message::NumberFollowsValidExpressionDirectly;
     case Poincare::SyntaxError::NonAcceptableExpression:
       return I18n::Message::NonAcceptableExpression;
     case Poincare::SyntaxError::ExponentCannotExistAlone:

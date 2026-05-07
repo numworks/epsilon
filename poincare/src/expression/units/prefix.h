@@ -30,5 +30,19 @@ class Prefix {
   int8_t m_exponent = 0;
 };
 
+// Describe what subsets of Prefix are allowed for a Representative
+enum class PrefixSet {
+  None,
+  PositiveLongScale,
+  NegativeLongScale,
+  Positive,
+  Negative,
+  NegativeAndKilo,
+  LongScale,
+  All,
+};
+
+bool PrefixSetContains(PrefixSet prefixSet, const Prefix* prefix);
+
 }  // namespace Units
 }  // namespace Poincare::Internal

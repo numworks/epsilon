@@ -294,36 +294,8 @@ bool Representative::canParse(const char* symbol, size_t length,
 }
 
 bool Representative::canPrefix(const Prefix* prefix, bool input) const {
-  Prefixable prefixable = (input) ? m_inputPrefixable : m_outputPrefixable;
-  if (prefix->exponent() == 0) {
-    return true;
-  }
-  if (prefixable == Prefixable::None) {
-    return false;
-  }
-  if (prefixable == Prefixable::All) {
-    return true;
-  }
-  if (prefixable == Prefixable::LongScale) {
-    return prefix->exponent() % 3 == 0;
-  }
-  if (prefixable == Prefixable::NegativeAndKilo) {
-    return prefix->exponent() < 0 || prefix->exponent() == 3;
-  }
-  if (prefixable == Prefixable::NegativeLongScale) {
-    return prefix->exponent() < 0 && prefix->exponent() % 3 == 0;
-  }
-  if (prefixable == Prefixable::PositiveLongScale) {
-    return prefix->exponent() > 0 && prefix->exponent() % 3 == 0;
-  }
-  if (prefixable == Prefixable::Negative) {
-    return prefix->exponent() < 0;
-  }
-  if (prefixable == Prefixable::Positive) {
-    return prefix->exponent() > 0;
-  }
-  assert(false);
-  return false;
+  PrefixSet prefixSet = (input) ? m_inputPrefixSet : m_outputPrefixSet;
+  return PrefixSetContains(prefixSet, prefix);
 }
 
 const Prefix* Representative::findBestPrefix(double value,

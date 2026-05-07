@@ -33,16 +33,6 @@ class Representative {
   // Operators
   bool operator==(const Representative&) const = default;
   bool operator!=(const Representative&) const = default;
-  enum class Prefixable {
-    None,
-    PositiveLongScale,
-    NegativeLongScale,
-    Positive,
-    Negative,
-    NegativeAndKilo,
-    LongScale,
-    All,
-  };
 #if POINCARE_UNIT
   constexpr static int k_numberOfDimensions = 25;
 #else
@@ -79,11 +69,9 @@ class Representative {
         ratioExpression(),
         Approximation::Parameters{.policy = {.optimize = true}});
   }
-  bool isInputPrefixable() const {
-    return m_inputPrefixable != Prefixable::None;
-  }
+  bool isInputPrefixable() const { return m_inputPrefixSet != PrefixSet::None; }
   bool isOutputPrefixable() const {
-    return m_outputPrefixable != Prefixable::None;
+    return m_outputPrefixSet != PrefixSet::None;
   }
   bool isImperial() const { return m_isImperial; }
   bool canParseWithEquivalents(const char* symbol, size_t length,
@@ -100,12 +88,12 @@ class Representative {
   // TODO it may be marked consteval with Clang but not with GCC
   template <KTreeConcept T>
   constexpr Representative(Aliases rootSymbol, T ratioExpression,
-                           Prefixable inputPrefixable,
-                           Prefixable outputPrefixable, bool isImperial = false)
+                           PrefixSet inputPrefixSet, PrefixSet outputPrefixSet,
+                           bool isImperial = false)
       : m_rootSymbols(rootSymbol),
         m_ratioExpression(ratioExpression),
-        m_inputPrefixable(inputPrefixable),
-        m_outputPrefixable(outputPrefixable),
+        m_inputPrefixSet(inputPrefixSet),
+        m_outputPrefixSet(outputPrefixSet),
         m_isImperial(isImperial) {
 #if !PLATFORM_DEVICE
     /* This assert prohibits building device in debug because it generates code
@@ -126,8 +114,8 @@ class Representative {
    * */
 
   const Tree* m_ratioExpression;
-  const Prefixable m_inputPrefixable;
-  const Prefixable m_outputPrefixable;
+  const PrefixSet m_inputPrefixSet;
+  const PrefixSet m_outputPrefixSet;
   const bool m_isImperial;
 };
 
@@ -137,8 +125,6 @@ class Unit {
 
   constexpr static int k_maxTextLen =
       Prefix::k_maxTextLen + Representative::k_maxTextLen;
-
-  using Prefixable = Representative::Prefixable;
 
   static bool CanParse(ForwardUnicodeDecoder* name,
                        const Representative** representative,

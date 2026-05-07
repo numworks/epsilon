@@ -7,7 +7,7 @@
 namespace Poincare::Internal {
 namespace Units {
 
-using enum Representative::Prefixable;
+using enum PrefixSet;
 
 const Time::Representatives<const Time> Time::representatives = {
     .second = {"s", 1_e, All, NegativeLongScale},

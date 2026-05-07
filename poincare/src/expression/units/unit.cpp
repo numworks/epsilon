@@ -14,28 +14,11 @@
 #include "../physical_constant.h"
 #include "../simplification.h"
 #include "../systematic_reduction.h"
+#include "prefix.h"
 #include "representatives.h"
 
 namespace Poincare::Internal {
 namespace Units {
-
-// Prefix
-const Prefix* Prefix::Prefixes() { return Unit::k_prefixes; }
-
-const Prefix* Prefix::EmptyPrefix() {
-  return Prefixes() + Unit::k_emptyPrefixIndex;
-}
-
-uint8_t Prefix::ToId(const Prefix* prefix) {
-  uint8_t id = (prefix - Prefixes());
-  assert(FromId(id) == prefix);
-  return id;
-}
-
-const Prefix* Prefix::FromId(uint8_t id) {
-  assert(id < k_numberOfPrefixes);
-  return Prefixes() + id;
-}
 
 // Representative
 const Representative* const* Representative::DefaultRepresentatives() {
@@ -1184,9 +1167,9 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     // Equivalence to mph and km/h
     targetRepresentative = isImperial ? &Distance::representatives.mile
                                       : &Distance::representatives.meter;
-    const Prefix* distancePrefix = isImperial
-                                       ? Prefix::EmptyPrefix()
-                                       : &Prefix::Prefixes()[k_kiloPrefixIndex];
+    const Prefix* distancePrefix =
+        isImperial ? Prefix::EmptyPrefix()
+                   : &Prefix::Prefixes()[Prefix::k_kiloPrefixIndex];
     units = KMult.node<2>->cloneNode();
     Push(targetRepresentative, distancePrefix);
     KPow->cloneNode();

@@ -24,7 +24,7 @@ void assert_parsed_units_simplify_to_with_prefixes() {
     char buffer[bufferSize] = "1×";
     if (representative->isOutputPrefixable()) {
       numberOfPrefixes = Units::Prefix::k_numberOfPrefixes;
-      prefixes = Units::Unit::k_prefixes;
+      prefixes = Units::Prefix::Prefixes();
     } else {
       numberOfPrefixes = 1;
       prefixes = Units::Prefix::EmptyPrefix();

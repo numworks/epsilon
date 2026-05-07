@@ -48,7 +48,7 @@ struct AllRepresentatives {
 #define DEFINE_KUNIT(DIMENSION, NAME)                                 \
   constexpr KTree NAME =                                              \
       KTree<Poincare::Internal::Type::Unit, UNIT_ID(DIMENSION, NAME), \
-            Units::Unit::k_emptyPrefixIndex>()
+            Units::Prefix::k_emptyPrefixIndex>()
 
 namespace Poincare::Internal::KTrees::KUnits {
 
@@ -76,7 +76,7 @@ DEFINE_KUNIT(distance, inch);
 
 constexpr KTree kilometer =
     KTree<Poincare::Internal::Type::Unit, UNIT_ID(distance, meter),
-          Units::Unit::k_kiloPrefixIndex>();
+          Units::Prefix::k_kiloPrefixIndex>();
 
 DEFINE_KUNIT(angle, radian);
 DEFINE_KUNIT(angle, degree);

@@ -196,8 +196,9 @@ double Distribution::rightIntegralInverseForProbability(double p) const {
   // [a] is an integer
   assert(std::round(a) == a);
   // P(X≤a-1) < 1-p since [a] is the smallest solution
+  // Note: Asserting P(X≤a-1) ≤ 1-p because of evaluation errors
   assert(std::isnan(cumulativeDistributiveFunctionAtAbscissa(a - 1)) ||
-         a <= 0 || cumulativeDistributiveFunctionAtAbscissa(a - 1) < 1.0 - p);
+         a <= 0 || cumulativeDistributiveFunctionAtAbscissa(a - 1) <= 1.0 - p);
   // P(X≤a-1) < 1-p therefore P(X≥a) ≥ p, [a] may be a solution
   if (OMG::Float::RoughlyEqual<double>(
           cumulativeDistributiveFunctionAtAbscissa(a), 1.0 - p, FLT_EPSILON)) {

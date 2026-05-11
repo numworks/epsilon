@@ -18,7 +18,7 @@ void PopupItemView::setHighlighted(bool highlighted) {
   if (m_cell) {
     m_cell->setHighlighted(highlighted);
   }
-  m_caret.setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
+  m_caret.setHighlighted(highlighted);
   HighlightCell::setHighlighted(highlighted);
 }
 

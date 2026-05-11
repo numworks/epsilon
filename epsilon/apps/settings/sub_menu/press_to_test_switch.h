@@ -25,8 +25,7 @@ class AlternateSwitchAndImage : public Escher::CellWidget {
   }
   void setHighlighted(bool highlighted) override {
     m_switch.setHighlighted(highlighted);
-    m_image.setBackgroundColor(
-        Escher::AbstractMenuCell::BackgroundColor(highlighted));
+    m_image.setHighlighted(highlighted);
   }
   bool canBeActivatedByEvent(Ion::Events::Event event) const override {
     return view() == &m_switch

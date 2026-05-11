@@ -36,7 +36,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .TextGrayVeryDark = Palette::GrayVeryDark,
                    .TextWhite = Palette::White,
                    .TextPurple = Palette::PurpleBright,
-                   .TextBlueishGray = Palette::BlueishGray,
+                   .TextBlueishGray = Palette::PYTHON_BlueishGray,
                    .BorderWhite = Palette::White,
                    .BorderWallScreen = Palette::WallScreen,
                    .BorderGrayMiddle = Palette::GrayMiddle,
@@ -93,7 +93,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .DataOrangeLight = Palette::OrangeLight,
                    .DataVioletLight = Palette::VioletLight,
                    .DataMintLight = Palette::MintLight,
-                   .PythonGutterText = Palette::BlueishGray,
+                   .PythonGutterText = Palette::PYTHON_BlueishGray,
                    .PythonGutterBackground = Palette::PYTHON_WallScreenDarker};
 
 }  // namespace Escher

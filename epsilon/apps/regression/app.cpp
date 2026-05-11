@@ -4,12 +4,12 @@
 #include <apps/apps_container_helper.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/icons/dark/regression_dark_icon.h>
+#include <apps/icons/light/regression_light_icon.h>
 #include <ion/storage/record.h>
 
 #include <array>
 
-#include "regression_dark_icon.h"
-#include "regression_light_icon.h"
 #include "shared/global_store.h"
 
 using namespace Shared;

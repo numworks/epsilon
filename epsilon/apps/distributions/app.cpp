@@ -2,9 +2,9 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
+#include <apps/icons/dark/distributions_dark_icon.h>
+#include <apps/icons/light/distributions_light_icon.h>
 
-#include "distributions_dark_icon.h"
-#include "distributions_light_icon.h"
 #include "shared/global_store.h"
 
 using namespace Escher;

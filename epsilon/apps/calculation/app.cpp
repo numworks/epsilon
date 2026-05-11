@@ -2,9 +2,8 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
-
-#include "calculation_dark_icon.h"
-#include "calculation_light_icon.h"
+#include <apps/icons/dark/calculation_dark_icon.h>
+#include <apps/icons/light/calculation_light_icon.h>
 
 using namespace Poincare;
 using namespace Shared;

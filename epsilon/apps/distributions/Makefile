@@ -25,27 +25,27 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
   test/distributions_parameters.cpp:+test \
 )
 
-SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
-  distributions_light_icon.png \
-  distributions_dark_icon.png \
-  images/binomial_icon.png \
-  images/chi_squared_icon.png \
-  images/exponential_icon.png \
-  images/fisher_icon.png \
-  images/geometric_icon.png \
-  images/hypergeometric_icon.png \
-  images/normal_icon.png \
-  images/poisson_icon.png \
-  images/student_icon.png \
-  images/uniform_icon.png \
-  images/calculation1_icon.png \
-  images/calculation2_icon.png \
-  images/calculation3_icon.png \
-  images/calculation4_icon.png \
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/,$(addsuffix :-test, \
+  icons/light/distributions_light_icon.png \
+  icons/dark/distributions_dark_icon.png \
+  distributions/images/binomial_icon.png \
+  distributions/images/chi_squared_icon.png \
+  distributions/images/exponential_icon.png \
+  distributions/images/fisher_icon.png \
+  distributions/images/geometric_icon.png \
+  distributions/images/hypergeometric_icon.png \
+  distributions/images/normal_icon.png \
+  distributions/images/poisson_icon.png \
+  distributions/images/student_icon.png \
+  distributions/images/uniform_icon.png \
+  distributions/images/calculation1_icon.png \
+  distributions/images/calculation2_icon.png \
+  distributions/images/calculation3_icon.png \
+  distributions/images/calculation4_icon.png \
 )))
 
-$(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_light_icon.png)
-$(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_dark_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/icons/light/distributions_light_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/icons/dark/distributions_dark_icon.png)
 
 $(call depends_on_transparent_image, \
 $(PATH_apps)/distributions/controllers/distribution_controller.cpp, \

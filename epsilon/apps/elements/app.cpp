@@ -1,10 +1,10 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/elements/elements_dark_icon.h>
-#include <apps/elements/elements_light_icon.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/icons/dark/elements_dark_icon.h>
+#include <apps/icons/light/elements_light_icon.h>
 
 #include "elements_data_base.h"
 

@@ -3,9 +3,9 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/icons/dark/graph_dark_icon.h>
+#include <apps/icons/light/graph_light_icon.h>
 
-#include "graph_dark_icon.h"
-#include "graph_light_icon.h"
 #include "shared/global_store.h"
 
 using namespace Poincare;

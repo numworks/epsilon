@@ -2,13 +2,12 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
+#include <apps/icons/dark/sequence_dark_icon.h>
+#include <apps/icons/light/sequence_light_icon.h>
 #include <apps/shared/global_store.h>
 #include <poincare/helpers/sequence.h>
 
 #include <array>
-
-#include "sequence_dark_icon.h"
-#include "sequence_light_icon.h"
 
 using namespace Poincare;
 using namespace Escher;

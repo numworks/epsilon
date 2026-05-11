@@ -3,10 +3,9 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/icons/dark/solver_dark_icon.h>
+#include <apps/icons/light/solver_light_icon.h>
 #include <poincare/preferences.h>
-
-#include "solver_dark_icon.h"
-#include "solver_light_icon.h"
 
 using namespace Shared;
 using namespace Escher;

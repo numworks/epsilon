@@ -3,9 +3,8 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
-
-#include "finance_dark_icon.h"
-#include "finance_light_icon.h"
+#include <apps/icons/dark/finance_dark_icon.h>
+#include <apps/icons/light/finance_light_icon.h>
 
 namespace Finance {
 

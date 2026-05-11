@@ -39,13 +39,13 @@ $(addsuffix :-test, \
   test/calculation_store.cpp:+test \
 )
 
-SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/calculation/, \
-  calculation_light_icon.png:-test \
-  calculation_dark_icon.png:-test \
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/icons/, \
+  light/calculation_light_icon.png:-test \
+  dark/calculation_dark_icon.png:-test \
 ))
 
-$(eval $(call depends_on_transparent_image,$(PATH_apps)/calculation/app.cpp,$(PATH_apps)/calculation/calculation_light_icon.png))
-$(eval $(call depends_on_transparent_image,$(PATH_apps)/calculation/app.cpp,$(PATH_apps)/calculation/calculation_dark_icon.png))
+$(eval $(call depends_on_transparent_image,$(PATH_apps)/calculation/app.cpp,$(PATH_apps)/icons/light/calculation_light_icon.png))
+$(eval $(call depends_on_transparent_image,$(PATH_apps)/calculation/app.cpp,$(PATH_apps)/icons/dark/calculation_dark_icon.png))
 
 $(call i18n_without_universal,calculation/i18n/base)
 $(call i18n_without_universal,calculation/additional_results/i18n/unit_comparison)

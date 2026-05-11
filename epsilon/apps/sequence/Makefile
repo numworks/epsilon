@@ -24,12 +24,12 @@ SOURCES_apps += $(addprefix $(PATH_apps)/sequence/,$(addsuffix :-test, \
   test/sequence.cpp:+test \
 )
 
-SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/sequence/, \
-  sequence_light_icon.png:-test \
-  sequence_dark_icon.png:-test \
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/icons/, \
+  light/sequence_light_icon.png:-test \
+  dark/sequence_dark_icon.png:-test \
 ))
 
-$(call depends_on_transparent_image,$(PATH_apps)/sequence/app.cpp,$(PATH_apps)/sequence/sequence_light_icon.png)
-$(call depends_on_transparent_image,$(PATH_apps)/sequence/app.cpp,$(PATH_apps)/sequence/sequence_dark_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/sequence/app.cpp,$(PATH_apps)/icons/light/sequence_light_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/sequence/app.cpp,$(PATH_apps)/icons/dark/sequence_dark_icon.png)
 
 $(call i18n_without_universal,sequence/i18n/base)

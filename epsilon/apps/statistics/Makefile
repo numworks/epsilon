@@ -57,19 +57,19 @@ quantitative/test/store.cpp:+test \
 )
 
 SOURCES_apps += $(call generated_sources_for, \
-  $(addprefix $(PATH_apps)/statistics/assets/,$(addsuffix :-test, \
-  stat_light_icon.png \
-  stat_dark_icon.png \
-  bar_icon.png \
-  pie_icon.png \
-  box_icon.png \
-  histogram_icon.png \
-  cumulative_icon.png \
-  statistics_normal_icon.png \
+  $(addprefix $(PATH_apps)/,$(addsuffix :-test, \
+  icons/light/stat_light_icon.png \
+  icons/dark/stat_dark_icon.png \
+  statistics/assets/bar_icon.png \
+  statistics/assets/pie_icon.png \
+  statistics/assets/box_icon.png \
+  statistics/assets/histogram_icon.png \
+  statistics/assets/cumulative_icon.png \
+  statistics/assets/statistics_normal_icon.png \
 )))
 
-$(call depends_on_transparent_image,apps/statistics/app.cpp,apps/statistics/assets/stat_light_icon.png)
-$(call depends_on_transparent_image,apps/statistics/app.cpp,apps/statistics/assets/stat_dark_icon.png)
+$(call depends_on_transparent_image,apps/statistics/app.cpp,apps/icons/light/stat_light_icon.png)
+$(call depends_on_transparent_image,apps/statistics/app.cpp,apps/icons/dark/stat_dark_icon.png)
 
 $(call depends_on_transparent_image, \
 apps/statistics/quantitative/graph/graph_view_model.cpp, \

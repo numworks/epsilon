@@ -4,13 +4,13 @@
 #include <apps/apps_container_helper.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/icons/dark/stat_dark_icon.h>
+#include <apps/icons/light/stat_light_icon.h>
 #include <ion/storage/record.h>
 
 #include <array>
 
 #include "shared/global_store.h"
-#include "stat_dark_icon.h"
-#include "stat_light_icon.h"
 
 using namespace Shared;
 using namespace Escher;

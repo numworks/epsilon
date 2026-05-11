@@ -2,12 +2,12 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/icons/dark/code_dark_icon.h>
+#include <apps/icons/light/code_light_icon.h>
 #include <omg/utf8_helper.h>
 #include <poincare/pool.h>
 
 #include "clipboard.h"
-#include "code_dark_icon.h"
-#include "code_light_icon.h"
 #include "helpers.h"
 
 using namespace Escher;

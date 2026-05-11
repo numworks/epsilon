@@ -25,13 +25,13 @@ SOURCES_apps += $(addprefix $(PATH_apps)/code/,$(addsuffix :-test, \
   test/templates.cpp:+test \
 )
 
-SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/code/, \
-  code_light_icon.png:-test \
-  code_dark_icon.png:-test \
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/icons/, \
+  light/code_light_icon.png:-test \
+  dark/code_dark_icon.png:-test \
 ))
 
-$(call depends_on_transparent_image,$(PATH_apps)/code/app.cpp,$(PATH_apps)/code/code_light_icon.png)
-$(call depends_on_transparent_image,$(PATH_apps)/code/app.cpp,$(PATH_apps)/code/code_dark_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/code/app.cpp,$(PATH_apps)/icons/light/code_light_icon.png)
+$(call depends_on_transparent_image,$(PATH_apps)/code/app.cpp,$(PATH_apps)/icons/dark/code_dark_icon.png)
 
 $(call i18n_with_universal,code/i18n/base)
 $(call i18n_with_universal,code/i18n/catalog)

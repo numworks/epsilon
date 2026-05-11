@@ -3,11 +3,11 @@
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
 #include <apps/global_preferences.h>
+#include <apps/icons/dark/inference_dark_icon.h>
+#include <apps/icons/light/inference_light_icon.h>
+#include <apps/inference/images/confidence_interval.h>
+#include <apps/inference/images/significance_test.h>
 
-#include "images/confidence_interval.h"
-#include "images/significance_test.h"
-#include "inference_dark_icon.h"
-#include "inference_light_icon.h"
 #include "models/homogeneity_test.h"
 #include "shared/global_store.h"
 

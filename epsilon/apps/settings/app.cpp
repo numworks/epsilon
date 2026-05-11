@@ -2,9 +2,8 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
-
-#include "settings_dark_icon.h"
-#include "settings_light_icon.h"
+#include <apps/icons/dark/settings_dark_icon.h>
+#include <apps/icons/light/settings_light_icon.h>
 
 using namespace Escher;
 

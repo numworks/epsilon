@@ -40,12 +40,12 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
   test/optimal_range.cpp:+test \
 )
 
-SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/graph/, \
-  graph_light_icon.png:-test \
-  graph_dark_icon.png:-test \
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/icons/, \
+  light/graph_light_icon.png:-test \
+  dark/graph_dark_icon.png:-test \
 ))
 
-$(call depends_on_transparent_image,apps/graph/app.cpp,apps/graph/graph_light_icon.png)
-$(call depends_on_transparent_image,apps/graph/app.cpp,apps/graph/graph_dark_icon.png)
+$(call depends_on_transparent_image,apps/graph/app.cpp,apps/icons/light/graph_light_icon.png)
+$(call depends_on_transparent_image,apps/graph/app.cpp,apps/icons/dark/graph_dark_icon.png)
 
 $(call i18n_without_universal,graph/i18n/base)

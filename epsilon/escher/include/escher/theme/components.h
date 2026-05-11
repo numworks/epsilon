@@ -93,7 +93,7 @@ namespace Escher {
   X(DataOrangeLight)           \
   X(DataVioletLight)           \
   X(DataMintLight)             \
-  X(PythonGutterText)          \
+  X(PythonText)                \
   X(PythonGutterBackground)
 
 /* TODO: check the following colors which are not in the specs but used anyway:

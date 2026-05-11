@@ -72,7 +72,7 @@ void EditorView::layoutSubviews(bool force) {
 /* EditorView::GutterView */
 
 void EditorView::GutterView::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor textColor = ColorPicker::Resolve(ThemeComponent::PythonGutterText);
+  KDColor textColor = ColorPicker::Resolve(ThemeComponent::PythonText);
   KDColor backgroundColor =
       ColorPicker::Resolve(ThemeComponent::PythonGutterBackground);
 

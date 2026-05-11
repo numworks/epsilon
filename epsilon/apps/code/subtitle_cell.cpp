@@ -1,6 +1,8 @@
 #include "subtitle_cell.h"
 
 #include <assert.h>
+#include <escher/theme/highlight.h>
+
 using namespace Escher;
 
 namespace Code {
@@ -13,9 +15,7 @@ SubtitleCell::SubtitleCell()
                             .font = KDFont::Size::Small}}) {}
 
 void SubtitleCell::drawRect(KDContext* ctx, KDRect rect) const {
-  ThemeComponent backColor =
-      isHighlighted() ? ThemeComponent::SurfaceSelect : k_backgroundColor;
-  drawInnerRect(ctx, bounds(), backColor);
+  drawInnerRect(ctx, bounds(), Highlight(k_backgroundColor, isHighlighted()));
   drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 

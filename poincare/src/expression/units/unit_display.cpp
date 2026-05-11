@@ -12,6 +12,7 @@
 #include "../dimension.h"
 #include "../integer.h"
 #include "../systematic_reduction.h"
+#include "best_unit_selection.h"
 #include "prefix.h"
 #include "representative.h"
 #include "representatives.h"
@@ -256,7 +257,7 @@ static void ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
       NAry::SquashIfPossible(units);
     }
     if (unitDisplay != UnitDisplay::AutomaticPrefixFreeMetric) {
-      Unit::ChooseBestRepresentativeAndPrefixForValue(
+      ChooseBestRepresentativeAndPrefixForValue(
           units, &value,
           unitDisplay == UnitDisplay::AutomaticMetric
               ? Preferences::UnitFormat::Metric
@@ -396,8 +397,8 @@ static bool ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     return false;
   }
   if (optimizePrefix) {
-    Unit::ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-        units, &value, unitFormat, false);
+    ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(units, &value,
+                                                          unitFormat, false);
   }
   e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
   // Multiply e with units

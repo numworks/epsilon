@@ -31,21 +31,12 @@ class Unit {
   // Returns true if the unit name cannot be used as a variable name
   static bool IsNameReserved(const Representative* representative);
 
-  static void ChooseBestRepresentativeAndPrefixForValue(
-      Tree* units, double* value, Preferences::UnitFormat unitFormat);
-
   static bool AllowImplicitAddition(
       const Representative* smallestRepresentative,
       const Representative* biggestRepresentative);
 
   static bool IsUnitOrPowerOfUnit(const Tree* e);
   static bool ForceMarginLeftOfUnit(const Tree* e);
-
-  /* Optimize prefix for the given unit and value.
-   * Can optimize representative as well. */
-  static void ChooseBestRepresentativeAndPrefix(
-      Tree* unit, double* value, double exponent,
-      Preferences::UnitFormat unitFormat, bool optimizeRepresentative);
 
   static bool IsNonKelvinTemperature(const Representative* representative);
   // Remove units and Convert tree to Kelvin.
@@ -85,14 +76,8 @@ class Unit {
   static Tree* ExactConvertToUnit(const Tree* e, TreeRef& targetUnit);
   // Return true if Imperial units should be used in output
   static bool DisplayImperialUnitsInOutput(const Tree* inputUnits);
-
-  // Optimize representative and prefix for a single unit factor (or Pow(unit)).
-  static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-      Tree* unit, double* value, Preferences::UnitFormat unitFormat,
-      bool optimizeRepresentative);
 };
 
-Tree* ChooseBestDerivedUnits(SIVector* unitCoefficients);
 bool IsCombinationOfUnits(const Tree* e);
 
 bool HasUnit(const Tree* e);

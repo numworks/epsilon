@@ -26,12 +26,12 @@ using namespace Escher;
 
 namespace Code {
 
-static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
+static inline ThemeComponent TokenTheme(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
-    return ColorPicker::Resolve(ThemeComponent::PythonString);
+    return ThemeComponent::PythonString;
   }
   if (tokenKind == MP_TOKEN_INTEGER || tokenKind == MP_TOKEN_FLOAT_OR_IMAG) {
-    return ColorPicker::Resolve(ThemeComponent::PythonNumber);
+    return ThemeComponent::PythonNumber;
   }
   static_assert(MP_TOKEN_ELLIPSIS + 1 == MP_TOKEN_KW_FALSE &&
                     MP_TOKEN_KW_FALSE + 1 == MP_TOKEN_KW_NONE &&
@@ -70,10 +70,10 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
                     MP_TOKEN_KW_WITH + 1 == MP_TOKEN_KW_YIELD &&
                     MP_TOKEN_KW_YIELD + 1 == MP_TOKEN_OP_ASSIGN &&
                     MP_TOKEN_OP_ASSIGN + 1 == MP_TOKEN_OP_TILDE,
-                "MP_TOKEN order changed, so Code::PythonTextArea::TokenColor "
+                "MP_TOKEN order changed, so Code::PythonTextArea::TokenTheme "
                 "might need to change too.");
   if (tokenKind >= MP_TOKEN_KW_FALSE && tokenKind <= MP_TOKEN_KW_YIELD) {
-    return ColorPicker::Resolve(ThemeComponent::PythonKeyword);
+    return ThemeComponent::PythonKeyword;
   }
   static_assert(
       MP_TOKEN_OP_TILDE + 1 == MP_TOKEN_OP_LESS &&
@@ -120,15 +120,15 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
           MP_TOKEN_DEL_PERIOD + 1 == MP_TOKEN_DEL_SEMICOLON &&
           MP_TOKEN_DEL_SEMICOLON + 1 == MP_TOKEN_DEL_EQUAL &&
           MP_TOKEN_DEL_EQUAL + 1 == MP_TOKEN_DEL_MINUS_MORE,
-      "MP_TOKEN order changed, so Code::PythonTextArea::TokenColor might need "
+      "MP_TOKEN order changed, so Code::PythonTextArea::TokenTheme might need "
       "to change too.");
 
   if ((tokenKind >= MP_TOKEN_OP_TILDE &&
        tokenKind <= MP_TOKEN_DEL_DBL_STAR_EQUAL) ||
       tokenKind == MP_TOKEN_DEL_EQUAL || tokenKind == MP_TOKEN_DEL_MINUS_MORE) {
-    return ColorPicker::Resolve(ThemeComponent::PythonOperator);
+    return ThemeComponent::PythonOperator;
   }
-  return ColorPicker::Resolve(ThemeComponent::PythonDefault);
+  return ThemeComponent::PythonDefault;
 }
 
 static inline size_t TokenLength(mp_lexer_t* lex, const char* tokenPosition) {
@@ -322,12 +322,12 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
       }
 
       // If the token is being autocompleted, use ThemeComponent::PythonDefault
-      KDColor color =
+      ThemeComponent theme =
           (tokenFrom <= autocompleteStart && autocompleteStart < tokenEnd)
-              ? ColorPicker::Resolve(ThemeComponent::PythonDefault)
-              : TokenColor(lex->tok_kind);
+              ? ThemeComponent::PythonDefault
+              : TokenTheme(lex->tok_kind);
 
-      if (color != ColorPicker::Resolve(ThemeComponent::PythonDefault) &&
+      if (theme != ThemeComponent::PythonDefault &&
           (lex->tok_kind == MP_TOKEN_INTEGER ||
            lex->tok_kind == MP_TOKEN_FLOAT_OR_IMAG)) {
         /* Check if the token can actually be parsed because lexer might label
@@ -344,7 +344,7 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
           nlr_pop();
         } else {
           // Parsing raised an exception, use ThemeComponent::PythonDefault.
-          color = ColorPicker::Resolve(ThemeComponent::PythonDefault);
+          theme = ThemeComponent::PythonDefault;
         }
       }
 
@@ -352,7 +352,7 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
                lex->tok_kind);
       drawStringAt(ctx, line,
                    UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
-                   tokenFrom, tokenLength, color,
+                   tokenFrom, tokenLength, ColorPicker::Resolve(theme),
                    ColorPicker::Resolve(ThemeComponent::PythonBackground),
                    selectionStart, selectionEnd,
                    ColorPicker::Resolve(ThemeComponent::PythonHighlight));

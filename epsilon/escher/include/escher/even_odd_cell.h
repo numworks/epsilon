@@ -23,13 +23,16 @@ class EvenOddCell : public HighlightCell {
       .horizontalAlignment = KDGlyph::k_alignRight};
 
  protected:
-  ThemeComponent baseColor() const { return m_even ? k_evenTheme : k_oddTheme; }
+  ThemeComponent baseColor() const {
+    return m_even ? k_evenComponent : k_oddComponent;
+  }
   virtual void updateSubviewsBackgroundAfterChangingState() {}
   bool m_even;
 
  private:
-  constexpr static ThemeComponent k_evenTheme = ThemeComponent::BackgroundWhite;
-  constexpr static ThemeComponent k_oddTheme = ThemeComponent::WallScreen;
+  constexpr static ThemeComponent k_evenComponent =
+      ThemeComponent::BackgroundWhite;
+  constexpr static ThemeComponent k_oddComponent = ThemeComponent::WallScreen;
 };
 
 }  // namespace Escher

@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <escher/scrollable_multiple_layouts_view.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 #include <omg/unreachable.h>
 
 #include <algorithm>
@@ -452,7 +453,7 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
 }
 
 void AbstractScrollableMultipleLayoutsView::setHighlighted(bool highlighted) {
-  setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
+  setBackgroundColor(Highlight(k_defaultBackground, highlighted));
 }
 
 KDSize ScrollableTwoLayoutsView::minimalSizeForOptimalDisplayFullSize() const {

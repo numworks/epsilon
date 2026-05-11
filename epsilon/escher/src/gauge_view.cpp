@@ -1,6 +1,7 @@
 #include <escher/gauge_view.h>
 #include <escher/menu_cell.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 
 namespace Escher {
 
@@ -33,8 +34,7 @@ void GaugeView::setLevel(float level) {
 }
 
 void GaugeView::setHighlighted(bool highlighted) {
-  ThemeComponent backgroundColor =
-      AbstractMenuCell::BackgroundColor(highlighted);
+  ThemeComponent backgroundColor = Highlight(k_defaultBackground, highlighted);
   if (m_backgroundColor != backgroundColor) {
     m_backgroundColor = backgroundColor;
     markWholeFrameAsDirty();

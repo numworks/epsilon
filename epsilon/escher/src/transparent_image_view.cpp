@@ -1,4 +1,5 @@
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 #include <escher/transparent_image_view.h>
 #include <ion.h>
 #include <omg/memory.h>
@@ -53,7 +54,7 @@ void TransparentImageView::blendInPlace(KDColor* colorBuffer,
 }
 
 void TransparentImageView::setHighlighted(bool highlighted) {
-  setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
+  setBackgroundColor(Highlight(k_defaultBackground, highlighted));
 }
 
 }  // namespace Escher

@@ -42,7 +42,7 @@ void ScrollableLayoutView::setExpressionBackgroundColor(
 void ScrollableLayoutView::setHighlighted(bool highlighted) {
   m_layoutView.setHighlighted(highlighted);
   ScrollableView::setBackgroundColor(
-      AbstractMenuCell::BackgroundColor(highlighted));
+      Highlight(k_defaultBackground, highlighted));
 }
 
 }  // namespace Escher

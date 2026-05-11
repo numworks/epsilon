@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/responder.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 #include <ion/events.h>
 #include <poincare/layout.h>
@@ -31,6 +32,9 @@ class CellWidget {
   virtual bool canBeActivatedByEvent(Ion::Events::Event event) const {
     return event == Ion::Events::EXE || event == Ion::Events::OK;
   }
+
+  constexpr static Escher::ThemeComponent k_defaultBackground =
+      Escher::ThemeComponent::BackgroundWhite;
 };
 
 class EmptyCellWidget : public CellWidget {

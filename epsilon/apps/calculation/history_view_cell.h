@@ -38,7 +38,7 @@ class HistoryViewCell : public Escher::Bordered,
   HistoryViewCell(Responder* parentResponder = nullptr);
   static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth,
                                    KDCoordinate outputViewWidth, bool ellipsis);
-  static Escher::ThemeComponent BorderColor(bool even) {
+  constexpr static Escher::ThemeComponent BorderColor(bool even) {
     return even ? Escher::ThemeComponent::CalculationBorderEven
                 : Escher::ThemeComponent::CalculationBorderOdd;
   }

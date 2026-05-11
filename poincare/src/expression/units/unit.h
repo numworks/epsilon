@@ -74,8 +74,6 @@ class Unit {
   [[nodiscard]] static bool RemoveNonUnits(Tree* e, bool preserveAdd);
   // Convert tree from base unit to target unit without approximation
   static Tree* ExactConvertToUnit(const Tree* e, TreeRef& targetUnit);
-  // Return true if Imperial units should be used in output
-  static bool DisplayImperialUnitsInOutput(const Tree* inputUnits);
 };
 
 bool IsCombinationOfUnits(const Tree* e);

@@ -42,6 +42,23 @@ static bool GetUnits(Tree* extractedUnits, Tree** unit1, Tree** unit2) {
   return true;
 }
 
+// Return true if Imperial units should be used in output
+static bool DisplayImperialUnitsInOutput(const Tree* inputUnits) {
+  bool hasImperialUnits = false;
+  for (const Tree* e : inputUnits->selfAndDescendants()) {
+    if (e->isUnit()) {
+      if (Unit::GetRepresentative(e)->isImperial()) {
+        hasImperialUnits = true;
+      } else if (Unit::GetRepresentative(e) != &Volume::representatives.liter) {
+        // Use metric representatives if any other metric unit is involved.
+        return false;
+      }
+      // Liter representative is tolerated for imperial unit input.
+    }
+  }
+  return hasImperialUnits;
+}
+
 static bool IsVolumeAndHasOnlyVolumeUnits(const Tree* e) {
   if (Dimension::Get(e).unit.vector != Volume::Dimension) {
     return false;
@@ -214,7 +231,7 @@ static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
     return;
   }
   // Fallback on automatic imperial display or prefix free metric display
-  UnitDisplay display = Unit::DisplayImperialUnitsInOutput(inputUnits)
+  UnitDisplay display = DisplayImperialUnitsInOutput(inputUnits)
                             ? UnitDisplay::AutomaticImperial
                             : UnitDisplay::AutomaticPrefixFreeMetric;
   assert(display == UnitDisplay::AutomaticPrefixFreeMetric ||
@@ -495,7 +512,7 @@ static bool ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
     list = angleRepresentativesList;
     length = std::size(angleRepresentativesList);
   } else if (unitFormat == Preferences::UnitFormat::Imperial &&
-             Unit::DisplayImperialUnitsInOutput(inputUnits)) {
+             DisplayImperialUnitsInOutput(inputUnits)) {
     if (vector == Mass::Dimension) {
       list = massRepresentativesList;
       length = std::size(massRepresentativesList);

@@ -276,22 +276,6 @@ Tree* Unit::GetBaseUnits(SIVector vector) {
   return result;
 }
 
-bool Unit::DisplayImperialUnitsInOutput(const Tree* inputUnits) {
-  bool hasImperialUnits = false;
-  for (const Tree* e : inputUnits->selfAndDescendants()) {
-    if (e->isUnit()) {
-      if (GetRepresentative(e)->isImperial()) {
-        hasImperialUnits = true;
-      } else if (GetRepresentative(e) != &Volume::representatives.liter) {
-        // Use metric representatives if any other metric unit is involved.
-        return false;
-      }
-      // Liter representative is tolerated for imperial unit input.
-    }
-  }
-  return hasImperialUnits;
-}
-
 Tree* Unit::ExactConvertToUnit(const Tree* e, TreeRef& targetUnit) {
   // Make sure targetUnit does not contain non-units or additions of units.
   [[maybe_unused]] bool treeRemoved = RemoveNonUnits(targetUnit, false);

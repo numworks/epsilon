@@ -23,14 +23,13 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(
     KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(),
-                ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
-  ctx->drawString(
-      m_line->text(), KDPointZero,
-      {.glyphColor = ColorPicker::Resolve(
-           Highlight(TextColor(m_line), m_line->isHighlighted())),
-       .backgroundColor = ColorPicker::Resolve(defaultBackgroundColor()),
-       .font = SharedGlobalPrefs().font()});
+  ctx->fillRect(bounds(), ColorPicker::Resolve(k_defaultBackground));
+  ctx->drawString(m_line->text(), KDPointZero,
+                  {.glyphColor = ColorPicker::Resolve(
+                       Highlight(TextColor(m_line), m_line->isHighlighted())),
+                   .backgroundColor = ColorPicker::Resolve(
+                       Highlight(k_defaultBackground, isHighlighted())),
+                   .font = SharedGlobalPrefs().font()});
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::

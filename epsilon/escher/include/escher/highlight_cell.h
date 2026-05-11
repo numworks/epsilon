@@ -35,11 +35,8 @@ class HighlightCell : public View {
   };
   bool isHighlighted() const { return m_state == State::Highlighted; }
 
- protected:
-  Escher::ThemeComponent defaultBackgroundColor() const {
-    return isHighlighted() ? Escher::ThemeComponent::SurfaceSelect
-                           : Escher::ThemeComponent::BackgroundWhite;
-  }
+  constexpr static Escher::ThemeComponent k_defaultBackground =
+      Escher::ThemeComponent::BackgroundWhite;
 
  private:
   /* Not all cells keep m_state up to date, as they may not rely on it for

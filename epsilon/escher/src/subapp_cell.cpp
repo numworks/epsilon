@@ -22,8 +22,7 @@ void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
 
 void SubappCell::setHighlighted(bool highlighted) {
   HighlightCell::setHighlighted(highlighted);
-  ThemeComponent backgroundColor = defaultBackgroundColor();
-  m_icon.setBackgroundColor(backgroundColor);
+  m_icon.setBackgroundColor(Highlight(k_defaultBackground, isHighlighted()));
   m_title.setHighlighted(highlighted);
   m_subTitle.setHighlighted(highlighted);
 }

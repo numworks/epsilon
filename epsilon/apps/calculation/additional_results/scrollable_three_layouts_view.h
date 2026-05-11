@@ -3,6 +3,7 @@
 #include <escher/menu_cell.h>
 #include <escher/scrollable_multiple_layouts_view.h>
 #include <escher/theme/components.h>
+#include <escher/theme/highlight.h>
 #include <poincare/layout.h>
 
 #include "../calculation.h"
@@ -56,8 +57,8 @@ class ScrollableThreeLayoutsView
     using Escher::AbstractScrollableMultipleLayoutsView::ContentCell::
         ContentCell;
     Escher::ThemeComponent backgroundColor() const override {
-      return m_highlightWholeCell ? defaultBackgroundColor()
-                                  : Escher::ThemeComponent::BackgroundWhite;
+      return Escher::Highlight(k_defaultBackground,
+                               m_highlightWholeCell && isHighlighted());
     }
     void setEven(bool even) override { return; }
     Escher::LayoutView* leftLayoutView() const override {

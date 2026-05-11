@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <escher/scrollable_multiple_layouts_view.h>
+#include <escher/theme/color_picker.h>
 #include <omg/unreachable.h>
 
 #include <algorithm>
@@ -28,6 +29,11 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
       m_displayComparisonSign(true),
       m_horizontalAlignment(horizontalAlignment) {
   m_comparisonSign.setText(k_almostEqual);
+}
+
+void AbstractScrollableMultipleLayoutsView::ContentCell::drawRect(
+    KDContext* ctx, KDRect rect) const {
+  ctx->fillRect(rect, ColorPicker::Resolve(backgroundColor()));
 }
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(

@@ -14,7 +14,12 @@ class EvenOddCell : public HighlightCell {
   virtual void setEven(bool even);
   void setVisible(bool visible) override;
   void setHighlighted(bool highlighted) override;
+  /* The background color defines one color for even cells, one for odd cells
+   * and one for invisible cells. The highlight color is resolved separately at
+   * the drawing step by calling the Highlight method. */
   virtual ThemeComponent backgroundColor() const;
+  /* By default, an EvenOddCell is filled with its even / odd / hide background
+   * color, applying highlight */
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
   constexpr static KDCoordinate k_horizontalMargin = Metric::SmallCellMargin;

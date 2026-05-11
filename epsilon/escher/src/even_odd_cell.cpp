@@ -31,12 +31,12 @@ ThemeComponent EvenOddCell::backgroundColor() const {
   if (!isVisible()) {
     return k_hideColor;
   }
-  return Highlight(baseColor(), isHighlighted());
+  return baseColor();
 }
 
 void EvenOddCell::drawRect(KDContext* ctx, KDRect rect) const {
-  ThemeComponent background = backgroundColor();
-  ctx->fillRect(rect, ColorPicker::Resolve(background));
+  ctx->fillRect(rect, ColorPicker::Resolve(
+                          Highlight(backgroundColor(), isHighlighted())));
 }
 
 }  // namespace Escher

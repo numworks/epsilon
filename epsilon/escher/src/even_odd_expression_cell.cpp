@@ -38,11 +38,12 @@ void EvenOddExpressionCell::setMargins(KDHorizontalMargins margins) {
 
 void EvenOddExpressionCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the margins
-  ctx->fillRect(KDRect(0, 0, m_margins.left(), bounds().height()),
-                ColorPicker::Resolve(backgroundColor()));
+  KDColor background =
+      ColorPicker::Resolve(Highlight(backgroundColor(), isHighlighted()));
+  ctx->fillRect(KDRect(0, 0, m_margins.left(), bounds().height()), background);
   ctx->fillRect(KDRect(bounds().width() - m_margins.right(), 0,
                        m_margins.right(), bounds().height()),
-                ColorPicker::Resolve(backgroundColor()));
+                background);
 }
 
 void EvenOddExpressionCell::updateSubviewsBackgroundAfterChangingState() {

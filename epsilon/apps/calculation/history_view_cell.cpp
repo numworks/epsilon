@@ -2,6 +2,7 @@
 
 #include <apps/constant.h>
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 #include <poincare/exception_checkpoint.h>
 #include <string.h>
 
@@ -47,7 +48,7 @@ void HistoryViewCell::setEven(bool even) {
 }
 
 void HistoryViewCell::drawRect(KDContext* ctx, KDRect rect) const {
-  EvenOddCell::drawRect(ctx, rect);
+  ctx->fillRect(rect, Escher::ColorPicker::Resolve(backgroundColor()));
   drawTopBorderOfRect(ctx, bounds(), BorderColor(m_even));
 }
 

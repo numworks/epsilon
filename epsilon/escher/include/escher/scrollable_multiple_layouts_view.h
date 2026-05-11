@@ -64,6 +64,9 @@ class AbstractScrollableMultipleLayoutsView
     ContentCell(float horizontalAlignment = KDGlyph::k_alignLeft,
                 KDFont::Size font = KDFont::Size::Large);
     ThemeComponent backgroundColor() const override { return baseColor(); }
+    /* AbstractScrollableMultipleLayoutsView is filled with the even / odd
+     * color. Highlight is applied to the subviews only */
+    void drawRect(KDContext* ctx, KDRect rect) const override;
     void setHighlighted(bool highlight) override;
     virtual void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;

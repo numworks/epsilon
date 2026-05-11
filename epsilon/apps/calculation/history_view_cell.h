@@ -44,6 +44,8 @@ class HistoryViewCell : public Escher::Bordered,
   }
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
   void setEven(bool even) override;
+  /* HistoryViewCell is filled with the even / odd color. Highlight is applied
+   * to the subviews only */
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void setHighlighted(bool highlight) override;
   void reloadSubviewHighlight();
@@ -53,9 +55,13 @@ class HistoryViewCell : public Escher::Bordered,
   bool displaysSingleLine() const { return m_calculationSingleLine; }
   Responder* responder() override { return this; }
   const Poincare::Layout& layout() const override;
+  /* The background color returns an even / odd color, there are no invisible
+   * cells */
   Escher::ThemeComponent backgroundColor() const override {
     return baseColor();
   }
+  /* HistoryViewCell is filled with the even / odd color. Highlight is applied
+   * to the subviews only */
   void resetMemoization();
   void setCalculation(Calculation* calculation, bool expanded,
                       bool canChangeDisplayOutput = false);

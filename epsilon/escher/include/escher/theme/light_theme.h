@@ -94,7 +94,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .DataVioletLight = Palette::VioletLight,
                    .DataMintLight = Palette::MintLight,
                    .PythonGutterText = Palette::BlueishGray,
-                   .PythonGutterBackground = Palette::WallScreenDarker,
+                   .PythonGutterBackground = Palette::PYTHON_WallScreenDarker,
                    .PythonBackground = Palette::White,
                    .PythonDefault = Palette::Black};
 

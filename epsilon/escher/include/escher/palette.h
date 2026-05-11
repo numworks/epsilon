@@ -28,7 +28,6 @@ class Palette {
   constexpr static KDColor SelectDark = KDColor::RGB24(0xb0b8d8);
   constexpr static KDColor WallScreen = KDColor::RGB24(0xf7f9fa);
   constexpr static KDColor WallScreenDark = KDColor::RGB24(0xe0e6ed);
-  constexpr static KDColor WallScreenDarker = KDColor::RGB24(0xe4e6e7);
   constexpr static KDColor PopUpTitleBackground = KDColor::RGB24(0x696475);
   constexpr static KDColor LowBattery = KDColor::RGB24(0xf30211);
 
@@ -80,6 +79,7 @@ class Palette {
   constexpr static KDColor PYTHON_DarkBlue = KDColor::RGB24(0x032f62);
   // The Python gray is between GrayMiddle and GrayDarkMiddle
   constexpr static KDColor PYTHON_GrayMiddle = KDColor::RGB24(0xC6C6C6);
+  constexpr static KDColor PYTHON_WallScreenDarker = KDColor::RGB24(0xe4e6e7);
 };
 
 }  // namespace Escher

@@ -95,7 +95,9 @@ namespace Escher {
   X(DataVioletLight)           \
   X(DataMintLight)             \
   X(PythonGutterText)          \
-  X(PythonGutterBackground)
+  X(PythonGutterBackground)    \
+  X(PythonBackground)          \
+  X(PythonDefault)
 
 /* TODO: check the following colors which are not in the specs but used anyway:
  * - TextBluishGray (python app)
@@ -108,15 +110,22 @@ namespace Escher {
  * same value in all themes. A fixed component color also doesn't need to be
  * stored in the ThemeContainer, it is resolved directly in the
  * ThemeContainer::get switch. */
-#define FIXED_COMPONENTS(X)          \
-  X(BasicBlack, BasicColor::Black)   \
-  X(BasicWhite, BasicColor::White)   \
-  X(BasicRed, BasicColor::Red)       \
-  X(BasicGreen, BasicColor::Green)   \
-  X(BasicBlue, BasicColor::Blue)     \
-  X(BasicYellow, BasicColor::Yellow) \
-  X(BasicOrange, BasicColor::Orange) \
-  X(BasicPurple, BasicColor::Purple)
+#define FIXED_COMPONENTS(X)                         \
+  X(BasicBlack, BasicColor::Black)                  \
+  X(BasicWhite, BasicColor::White)                  \
+  X(BasicRed, BasicColor::Red)                      \
+  X(BasicGreen, BasicColor::Green)                  \
+  X(BasicBlue, BasicColor::Blue)                    \
+  X(BasicYellow, BasicColor::Yellow)                \
+  X(BasicOrange, BasicColor::Orange)                \
+  X(BasicPurple, BasicColor::Purple)                \
+  X(PythonComment, Palette::PYTHON_KhakiGray)       \
+  X(PythonNumber, Palette::PYTHON_DarkCyan)         \
+  X(PythonKeyword, Palette::PYTHON_Red)             \
+  X(PythonOperator, Palette::PYTHON_RaspberryRed)   \
+  X(PythonString, Palette::PYTHON_DarkBlue)         \
+  X(PythonAutocomplete, Palette::PYTHON_GrayMiddle) \
+  X(PythonHighlight, Palette::Select)
 
 enum class ThemeComponent : uint8_t {
 #define X(name) name,

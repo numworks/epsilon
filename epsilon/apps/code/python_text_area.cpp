@@ -1,6 +1,6 @@
 #include "python_text_area.h"
 
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <omg/utf8_helper.h>
 #include <python/port/port.h>
 
@@ -26,22 +26,12 @@ using namespace Escher;
 
 namespace Code {
 
-constexpr KDColor CommentColor = Palette::PYTHON_KhakiGray;
-constexpr KDColor NumberColor = Palette::PYTHON_DarkCyan;
-constexpr KDColor KeywordColor = Palette::PYTHON_Red;
-constexpr KDColor OperatorColor = Palette::PYTHON_RaspberryRed;
-constexpr KDColor StringColor = Palette::PYTHON_DarkBlue;
-constexpr KDColor AutocompleteColor = Palette::PYTHON_GrayMiddle;
-constexpr KDColor BackgroundColor = Palette::White;
-constexpr KDColor HighlightColor = Palette::Select;
-constexpr KDColor DefaultColor = Palette::Black;
-
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
-    return StringColor;
+    return ColorPicker::Resolve(ThemeComponent::PythonString);
   }
   if (tokenKind == MP_TOKEN_INTEGER || tokenKind == MP_TOKEN_FLOAT_OR_IMAG) {
-    return NumberColor;
+    return ColorPicker::Resolve(ThemeComponent::PythonNumber);
   }
   static_assert(MP_TOKEN_ELLIPSIS + 1 == MP_TOKEN_KW_FALSE &&
                     MP_TOKEN_KW_FALSE + 1 == MP_TOKEN_KW_NONE &&
@@ -83,7 +73,7 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
                 "MP_TOKEN order changed, so Code::PythonTextArea::TokenColor "
                 "might need to change too.");
   if (tokenKind >= MP_TOKEN_KW_FALSE && tokenKind <= MP_TOKEN_KW_YIELD) {
-    return KeywordColor;
+    return ColorPicker::Resolve(ThemeComponent::PythonKeyword);
   }
   static_assert(
       MP_TOKEN_OP_TILDE + 1 == MP_TOKEN_OP_LESS &&
@@ -136,9 +126,9 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if ((tokenKind >= MP_TOKEN_OP_TILDE &&
        tokenKind <= MP_TOKEN_DEL_DBL_STAR_EQUAL) ||
       tokenKind == MP_TOKEN_DEL_EQUAL || tokenKind == MP_TOKEN_DEL_MINUS_MORE) {
-    return OperatorColor;
+    return ColorPicker::Resolve(ThemeComponent::PythonOperator);
   }
-  return DefaultColor;
+  return ColorPicker::Resolve(ThemeComponent::PythonDefault);
 }
 
 static inline size_t TokenLength(mp_lexer_t* lex, const char* tokenPosition) {
@@ -248,7 +238,7 @@ void PythonTextArea::ContentView::unloadSyntaxHighlighter() {
 }
 
 void PythonTextArea::ContentView::clearRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(rect, BackgroundColor);
+  ctx->fillRect(rect, ColorPicker::Resolve(ThemeComponent::PythonBackground));
 }
 
 #define LOG_DRAWING 0
@@ -279,8 +269,10 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
     drawStringAt(ctx, line, fromColumn, spacesStart,
                  std::min(text + byteLength, firstNonSpace) - spacesStart,
-                 StringColor, BackgroundColor, selectionStart, selectionEnd,
-                 HighlightColor);
+                 ColorPicker::Resolve(ThemeComponent::PythonString),
+                 ColorPicker::Resolve(ThemeComponent::PythonBackground),
+                 selectionStart, selectionEnd,
+                 ColorPicker::Resolve(ThemeComponent::PythonHighlight));
   }
   if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
     return;
@@ -304,8 +296,10 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         drawStringAt(
             ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, tokenEnd),
             tokenEnd, std::min(text + byteLength, tokenFrom) - tokenEnd,
-            StringColor, BackgroundColor, selectionStart, selectionEnd,
-            HighlightColor);
+            ColorPicker::Resolve(ThemeComponent::PythonString),
+            ColorPicker::Resolve(ThemeComponent::PythonBackground),
+            selectionStart, selectionEnd,
+            ColorPicker::Resolve(ThemeComponent::PythonHighlight));
       }
       tokenLength = TokenLength(lex, tokenFrom);
       tokenEnd = tokenFrom + tokenLength;
@@ -327,14 +321,15 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         }
       }
 
-      // If the token is being autocompleted, use DefaultColor
+      // If the token is being autocompleted, use ThemeComponent::PythonDefault
       KDColor color =
           (tokenFrom <= autocompleteStart && autocompleteStart < tokenEnd)
-              ? DefaultColor
+              ? ColorPicker::Resolve(ThemeComponent::PythonDefault)
               : TokenColor(lex->tok_kind);
 
-      if (color != DefaultColor && (lex->tok_kind == MP_TOKEN_INTEGER ||
-                                    lex->tok_kind == MP_TOKEN_FLOAT_OR_IMAG)) {
+      if (color != ColorPicker::Resolve(ThemeComponent::PythonDefault) &&
+          (lex->tok_kind == MP_TOKEN_INTEGER ||
+           lex->tok_kind == MP_TOKEN_FLOAT_OR_IMAG)) {
         /* Check if the token can actually be parsed because lexer might label
          * tokens that cannot be parsed as integer or float */
         nlr_buf_t nlrNumberColorParse;
@@ -348,8 +343,8 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
           }
           nlr_pop();
         } else {
-          // Parsing raised an exception, use DefaultColor.
-          color = DefaultColor;
+          // Parsing raised an exception, use ThemeComponent::PythonDefault.
+          color = ColorPicker::Resolve(ThemeComponent::PythonDefault);
         }
       }
 
@@ -357,8 +352,10 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
                lex->tok_kind);
       drawStringAt(ctx, line,
                    UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
-                   tokenFrom, tokenLength, color, BackgroundColor,
-                   selectionStart, selectionEnd, HighlightColor);
+                   tokenFrom, tokenLength, color,
+                   ColorPicker::Resolve(ThemeComponent::PythonBackground),
+                   selectionStart, selectionEnd,
+                   ColorPicker::Resolve(ThemeComponent::PythonHighlight));
 
       if (skipCombining) {
         mp_lexer_to_next(lex);
@@ -369,22 +366,29 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
 
     tokenFrom += tokenLength;
 
-    // Even if the token is being autocompleted, use CommentColor
+    /* Even if the token is being autocompleted, use
+     * ThemeComponent::PythonComment */
     if (tokenFrom < text + byteLength) {
       LOG_DRAW("Draw comment \"%.*s\" from %d\n",
                byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);
-      drawStringAt(
-          ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
-          tokenFrom, text + byteLength - tokenFrom, CommentColor,
-          BackgroundColor, selectionStart, selectionEnd, HighlightColor);
+      drawStringAt(ctx, line,
+                   UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
+                   tokenFrom, text + byteLength - tokenFrom,
+                   ColorPicker::Resolve(ThemeComponent::PythonComment),
+                   ColorPicker::Resolve(ThemeComponent::PythonBackground),
+                   selectionStart, selectionEnd,
+                   ColorPicker::Resolve(ThemeComponent::PythonHighlight));
     }
 
     mp_lexer_free(lex);
     nlr_pop();
   } else {  // Uncaught exception
     MicroPython::ExecutionEnvironment::HandleExceptionSilently();
-    drawStringAt(ctx, line, fromColumn, text, byteLength, DefaultColor,
-                 BackgroundColor, selectionStart, selectionEnd, HighlightColor);
+    drawStringAt(ctx, line, fromColumn, text, byteLength,
+                 ColorPicker::Resolve(ThemeComponent::PythonDefault),
+                 ColorPicker::Resolve(ThemeComponent::PythonBackground),
+                 selectionStart, selectionEnd,
+                 ColorPicker::Resolve(ThemeComponent::PythonHighlight));
   }
 
   // Redraw the autocompleted word in the right color
@@ -396,7 +400,9 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, autocompleteStart),
         autocompleteStart,
         std::min(text + byteLength, m_autocompletionEnd) - autocompleteStart,
-        AutocompleteColor, BackgroundColor, nullptr, nullptr, HighlightColor);
+        ColorPicker::Resolve(ThemeComponent::PythonAutocomplete),
+        ColorPicker::Resolve(ThemeComponent::PythonBackground), nullptr,
+        nullptr, ColorPicker::Resolve(ThemeComponent::PythonHighlight));
   }
 }
 

@@ -36,7 +36,6 @@ constexpr static ThemeContainer k_lightTheme =
                    .TextGrayVeryDark = Palette::GrayVeryDark,
                    .TextWhite = Palette::White,
                    .TextPurple = Palette::PurpleBright,
-                   .TextBlueishGray = Palette::PYTHON_BlueishGray,
                    .BorderWhite = Palette::White,
                    .BorderWallScreen = Palette::WallScreen,
                    .BorderGrayMiddle = Palette::GrayMiddle,

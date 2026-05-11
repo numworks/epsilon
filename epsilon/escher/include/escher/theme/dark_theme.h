@@ -38,8 +38,6 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .TextGrayVeryDark = Palette::DARK_VioletPale,
     .TextWhite = Palette::Black,
     .TextPurple = Palette::DARK_VioletPale,
-    // TODO: check BluishGray mapping (if any)
-    .TextBlueishGray = Palette::DARK_VioletMiddle,
     .BorderWhite = Palette::DARK_VioletDeep,
     .BorderWallScreen = Palette::DARK_VioletDeep,
     .BorderGrayMiddle = Palette::DARK_VioletDeep,

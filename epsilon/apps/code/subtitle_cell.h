@@ -37,7 +37,7 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
   constexpr static Escher::ThemeComponent k_backgroundColor =
       Escher::ThemeComponent::WallScreen;
   constexpr static Escher::ThemeComponent k_textColor =
-      Escher::ThemeComponent::TextBlueishGray;
+      Escher::ThemeComponent::PythonGutterText;
 
   int numberOfSubviews() const override { return 1; }
   Escher::View* subviewAtIndex(int index) override {

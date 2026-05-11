@@ -37,7 +37,6 @@ namespace Escher {
   X(TextGrayVeryDark)          \
   X(TextWhite)                 \
   X(TextPurple)                \
-  X(TextBlueishGray)           \
   X(BorderWhite)               \
   X(BorderWallScreen)          \
   X(BorderGrayMiddle)          \
@@ -98,7 +97,6 @@ namespace Escher {
   X(PythonGutterBackground)
 
 /* TODO: check the following colors which are not in the specs but used anyway:
- * - TextBlueishGray (python app)
  * - AxisGrayDark (additional result complex graph)
  * - AxisGrayBright (polar grid)
  */

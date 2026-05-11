@@ -128,7 +128,7 @@ static inline ThemeComponent TokenTheme(mp_token_kind_t tokenKind) {
       tokenKind == MP_TOKEN_DEL_EQUAL || tokenKind == MP_TOKEN_DEL_MINUS_MORE) {
     return ThemeComponent::PythonOperator;
   }
-  return ThemeComponent::PythonDefault;
+  return ThemeComponent::TextDefault;
 }
 
 static inline size_t TokenLength(mp_lexer_t* lex, const char* tokenPosition) {
@@ -238,7 +238,7 @@ void PythonTextArea::ContentView::unloadSyntaxHighlighter() {
 }
 
 void PythonTextArea::ContentView::clearRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(rect, ColorPicker::Resolve(ThemeComponent::PythonBackground));
+  ctx->fillRect(rect, ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
 }
 
 #define LOG_DRAWING 0
@@ -269,7 +269,7 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
     drawStringAt(ctx, line, fromColumn, spacesStart,
                  std::min(text + byteLength, firstNonSpace) - spacesStart,
-                 ThemeComponent::PythonString, ThemeComponent::PythonBackground,
+                 ThemeComponent::PythonString, ThemeComponent::BackgroundWhite,
                  selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
   }
   if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
@@ -294,7 +294,7 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         drawStringAt(
             ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, tokenEnd),
             tokenEnd, std::min(text + byteLength, tokenFrom) - tokenEnd,
-            ThemeComponent::PythonString, ThemeComponent::PythonBackground,
+            ThemeComponent::PythonString, ThemeComponent::BackgroundWhite,
             selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
       }
       tokenLength = TokenLength(lex, tokenFrom);
@@ -317,13 +317,13 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         }
       }
 
-      // If the token is being autocompleted, use ThemeComponent::PythonDefault
+      // If the token is being autocompleted, use ThemeComponent::TextDefault
       ThemeComponent theme =
           (tokenFrom <= autocompleteStart && autocompleteStart < tokenEnd)
-              ? ThemeComponent::PythonDefault
+              ? ThemeComponent::TextDefault
               : TokenTheme(lex->tok_kind);
 
-      if (theme != ThemeComponent::PythonDefault &&
+      if (theme != ThemeComponent::TextDefault &&
           (lex->tok_kind == MP_TOKEN_INTEGER ||
            lex->tok_kind == MP_TOKEN_FLOAT_OR_IMAG)) {
         /* Check if the token can actually be parsed because lexer might label
@@ -339,8 +339,8 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
           }
           nlr_pop();
         } else {
-          // Parsing raised an exception, use ThemeComponent::PythonDefault.
-          theme = ThemeComponent::PythonDefault;
+          // Parsing raised an exception, use ThemeComponent::TextDefault.
+          theme = ThemeComponent::TextDefault;
         }
       }
 
@@ -348,7 +348,7 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
                lex->tok_kind);
       drawStringAt(
           ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
-          tokenFrom, tokenLength, theme, ThemeComponent::PythonBackground,
+          tokenFrom, tokenLength, theme, ThemeComponent::BackgroundWhite,
           selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
 
       if (skipCombining) {
@@ -368,7 +368,7 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
       drawStringAt(
           ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
           tokenFrom, text + byteLength - tokenFrom,
-          ThemeComponent::PythonComment, ThemeComponent::PythonBackground,
+          ThemeComponent::PythonComment, ThemeComponent::BackgroundWhite,
           selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
     }
 
@@ -377,9 +377,8 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
   } else {  // Uncaught exception
     MicroPython::ExecutionEnvironment::HandleExceptionSilently();
     drawStringAt(ctx, line, fromColumn, text, byteLength,
-                 ThemeComponent::PythonDefault,
-                 ThemeComponent::PythonBackground, selectionStart, selectionEnd,
-                 ThemeComponent::PythonHighlight);
+                 ThemeComponent::TextDefault, ThemeComponent::BackgroundWhite,
+                 selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
   }
 
   // Redraw the autocompleted word in the right color
@@ -391,7 +390,7 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, autocompleteStart),
         autocompleteStart,
         std::min(text + byteLength, m_autocompletionEnd) - autocompleteStart,
-        ThemeComponent::PythonAutocomplete, ThemeComponent::PythonBackground,
+        ThemeComponent::PythonAutocomplete, ThemeComponent::BackgroundWhite,
         nullptr, nullptr, ThemeComponent::PythonHighlight);
   }
 }

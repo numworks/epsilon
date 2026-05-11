@@ -95,9 +95,7 @@ namespace Escher {
   X(DataVioletLight)           \
   X(DataMintLight)             \
   X(PythonGutterText)          \
-  X(PythonGutterBackground)    \
-  X(PythonBackground)          \
-  X(PythonDefault)
+  X(PythonGutterBackground)
 
 /* TODO: check the following colors which are not in the specs but used anyway:
  * - TextBluishGray (python app)

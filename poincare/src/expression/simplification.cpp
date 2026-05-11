@@ -13,6 +13,7 @@
 #include "systematic_reduction.h"
 #include "undefined.h"
 #include "units/unit.h"
+#include "units/unit_display.h"
 #include "variables.h"
 
 namespace Poincare::Internal::Simplification {
@@ -208,7 +209,7 @@ bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
   bool changed = false;
 #if POINCARE_UNIT
   if (!e->isUndefined() &&
-      Units::Unit::ProjectToBestUnits(e, dimension, unitParameters)) {
+      Units::ProjectToBestUnits(e, dimension, unitParameters)) {
     if (e->isUndefined()) {
       return true;
     }

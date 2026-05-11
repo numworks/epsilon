@@ -72,11 +72,6 @@ class Unit {
   // Push base SI units matching the vector
   static Tree* GetBaseUnits(SIVector vector);
 
-  // Project expression and unit according to unitDisplay strategy
-  static bool ProjectToBestUnits(Tree* e, Dimension dimension,
-                                 const UnitParameters& unitParameters);
-
- private:
   // From Kelvin value, return value in given temperature representative
   static double KelvinValueToRepresentative(
       double value, const Representative* representative);
@@ -90,20 +85,11 @@ class Unit {
   static Tree* ExactConvertToUnit(const Tree* e, TreeRef& targetUnit);
   // Return true if Imperial units should be used in output
   static bool DisplayImperialUnitsInOutput(const Tree* inputUnits);
-  /* This and all following functions remove inputUnits before returning */
-  static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
-                                     Dimension dimension, AngleUnit angleUnit);
-  // Select best unit for tree
-  static void ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
-                                    Dimension dimension,
-                                    UnitDisplay unitDisplay);
-  static bool ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits);
-  static bool ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
-                                     Dimension dimension,
-                                     Preferences::UnitFormat unitFormat);
-  static bool ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
-                                        Dimension dimension,
-                                        Preferences::UnitFormat unitFormat);
+
+  // Optimize representative and prefix for a single unit factor (or Pow(unit)).
+  static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+      Tree* unit, double* value, Preferences::UnitFormat unitFormat,
+      bool optimizeRepresentative);
 };
 
 Tree* ChooseBestDerivedUnits(SIVector* unitCoefficients);

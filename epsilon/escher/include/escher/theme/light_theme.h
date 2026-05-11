@@ -93,4 +93,5 @@ constexpr static ThemeContainer k_lightTheme =
                    .DataOrangeLight = Palette::OrangeLight,
                    .DataVioletLight = Palette::VioletLight,
                    .DataMintLight = Palette::MintLight};
+
 }  // namespace Escher

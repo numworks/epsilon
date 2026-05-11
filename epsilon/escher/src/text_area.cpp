@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <escher/clipboard.h>
 #include <escher/text_area.h>
+#include <escher/text_format.h>
 #include <escher/text_input_helpers.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
@@ -524,21 +525,22 @@ void TextArea::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
 
 void TextArea::ContentView::drawStringAt(
     KDContext* ctx, int line, int column, const char* text, int length,
-    KDColor textColor, KDColor backgroundColor, const char* selectionStart,
-    const char* selectionEnd, KDColor backgroundHighlightColor) const {
+    ThemeComponent textComponent, ThemeComponent backgroundComponent,
+    const char* selectionStart, const char* selectionEnd,
+    ThemeComponent highlightedBackgroundComponent) const {
   if (length < 0) {
     return;
   }
   KDSize glyphSize = KDFont::GlyphSize(textFormat().style.font);
-  KDGlyph::Style glyphStyle{.glyphColor = textColor,
-                            .backgroundColor = backgroundColor,
-                            .font = textFormat().style.font};
+  TextStyle glyphStyle{.glyphColor = textComponent,
+                       .backgroundColor = backgroundComponent,
+                       .font = textFormat().style.font};
 
   bool drawSelection = selectionStart != nullptr && selectionEnd > text &&
                        selectionStart < text + length;
   KDPoint nextPoint = ctx->drawString(
       text, KDPoint(column * glyphSize.width(), line * glyphSize.height()),
-      glyphStyle,
+      ToKDGlyphStyle(glyphStyle),
       drawSelection
           ? (selectionStart >= text
                  ? std::min<KDCoordinate>(length, selectionStart - text)
@@ -548,19 +550,22 @@ void TextArea::ContentView::drawStringAt(
     return;
   }
   const char* highlightedDrawStart = std::max(selectionStart, text);
+  TextStyle highlightedGlyphStyle{
+      .glyphColor = textComponent,
+      .backgroundColor = highlightedBackgroundComponent,
+      .font = textFormat().style.font};
   size_t highlightedDrawLength =
       std::min(selectionEnd - highlightedDrawStart,
                length - (highlightedDrawStart - text));
 
   nextPoint = ctx->drawString(highlightedDrawStart, nextPoint,
-                              {.glyphColor = textColor,
-                               .backgroundColor = backgroundHighlightColor,
-                               .font = textFormat().style.font},
+                              ToKDGlyphStyle(highlightedGlyphStyle),
                               highlightedDrawLength);
 
   const char* notHighlightedDrawStart =
       highlightedDrawStart + highlightedDrawLength;
-  ctx->drawString(notHighlightedDrawStart, nextPoint, glyphStyle,
+  ctx->drawString(notHighlightedDrawStart, nextPoint,
+                  ToKDGlyphStyle(glyphStyle),
                   length - (notHighlightedDrawStart - text));
 }
 

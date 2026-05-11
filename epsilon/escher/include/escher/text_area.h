@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <escher/text_input.h>
+#include <escher/theme/components.h>
 #include <omg/directions.h>
 #include <string.h>
 
@@ -117,9 +118,10 @@ class TextArea : public TextInput {
     }
     void drawRect(KDContext* ctx, KDRect rect) const override;
     void drawStringAt(KDContext* ctx, int line, int column, const char* text,
-                      int length, KDColor textColor, KDColor backgroundColor,
+                      int length, ThemeComponent textComponent,
+                      ThemeComponent backgroundComponent,
                       const char* selectionStart, const char* selectionEnd,
-                      KDColor backgroundHighlightColor) const;
+                      ThemeComponent highlightedBackgroundComponent) const;
     virtual void drawLine(KDContext* ctx, int line, const char* text,
                           size_t length, int fromColumn, int toColumn,
                           const char* selectionStart,

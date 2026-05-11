@@ -269,10 +269,8 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
     drawStringAt(ctx, line, fromColumn, spacesStart,
                  std::min(text + byteLength, firstNonSpace) - spacesStart,
-                 ColorPicker::Resolve(ThemeComponent::PythonString),
-                 ColorPicker::Resolve(ThemeComponent::PythonBackground),
-                 selectionStart, selectionEnd,
-                 ColorPicker::Resolve(ThemeComponent::PythonHighlight));
+                 ThemeComponent::PythonString, ThemeComponent::PythonBackground,
+                 selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
   }
   if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
     return;
@@ -296,10 +294,8 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         drawStringAt(
             ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, tokenEnd),
             tokenEnd, std::min(text + byteLength, tokenFrom) - tokenEnd,
-            ColorPicker::Resolve(ThemeComponent::PythonString),
-            ColorPicker::Resolve(ThemeComponent::PythonBackground),
-            selectionStart, selectionEnd,
-            ColorPicker::Resolve(ThemeComponent::PythonHighlight));
+            ThemeComponent::PythonString, ThemeComponent::PythonBackground,
+            selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
       }
       tokenLength = TokenLength(lex, tokenFrom);
       tokenEnd = tokenFrom + tokenLength;
@@ -350,12 +346,10 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
 
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom,
                lex->tok_kind);
-      drawStringAt(ctx, line,
-                   UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
-                   tokenFrom, tokenLength, ColorPicker::Resolve(theme),
-                   ColorPicker::Resolve(ThemeComponent::PythonBackground),
-                   selectionStart, selectionEnd,
-                   ColorPicker::Resolve(ThemeComponent::PythonHighlight));
+      drawStringAt(
+          ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
+          tokenFrom, tokenLength, theme, ThemeComponent::PythonBackground,
+          selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
 
       if (skipCombining) {
         mp_lexer_to_next(lex);
@@ -371,13 +365,11 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
     if (tokenFrom < text + byteLength) {
       LOG_DRAW("Draw comment \"%.*s\" from %d\n",
                byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);
-      drawStringAt(ctx, line,
-                   UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
-                   tokenFrom, text + byteLength - tokenFrom,
-                   ColorPicker::Resolve(ThemeComponent::PythonComment),
-                   ColorPicker::Resolve(ThemeComponent::PythonBackground),
-                   selectionStart, selectionEnd,
-                   ColorPicker::Resolve(ThemeComponent::PythonHighlight));
+      drawStringAt(
+          ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
+          tokenFrom, text + byteLength - tokenFrom,
+          ThemeComponent::PythonComment, ThemeComponent::PythonBackground,
+          selectionStart, selectionEnd, ThemeComponent::PythonHighlight);
     }
 
     mp_lexer_free(lex);
@@ -385,10 +377,9 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
   } else {  // Uncaught exception
     MicroPython::ExecutionEnvironment::HandleExceptionSilently();
     drawStringAt(ctx, line, fromColumn, text, byteLength,
-                 ColorPicker::Resolve(ThemeComponent::PythonDefault),
-                 ColorPicker::Resolve(ThemeComponent::PythonBackground),
-                 selectionStart, selectionEnd,
-                 ColorPicker::Resolve(ThemeComponent::PythonHighlight));
+                 ThemeComponent::PythonDefault,
+                 ThemeComponent::PythonBackground, selectionStart, selectionEnd,
+                 ThemeComponent::PythonHighlight);
   }
 
   // Redraw the autocompleted word in the right color
@@ -400,9 +391,8 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
         ctx, line, UTF8Helper::GlyphOffsetAtCodePoint(text, autocompleteStart),
         autocompleteStart,
         std::min(text + byteLength, m_autocompletionEnd) - autocompleteStart,
-        ColorPicker::Resolve(ThemeComponent::PythonAutocomplete),
-        ColorPicker::Resolve(ThemeComponent::PythonBackground), nullptr,
-        nullptr, ColorPicker::Resolve(ThemeComponent::PythonHighlight));
+        ThemeComponent::PythonAutocomplete, ThemeComponent::PythonBackground,
+        nullptr, nullptr, ThemeComponent::PythonHighlight);
   }
 }
 

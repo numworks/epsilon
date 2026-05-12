@@ -275,19 +275,6 @@ static Coordinate2D<T> evaluateXYSecondCurve(T t, const void* model,
   return static_cast<const ContinuousFunction*>(model)->evaluateXYAtParameter(
       t, 1);
 }
-template <typename T>
-static Coordinate2D<T> evaluateXYFirstDerivative(T t, const void* model,
-                                                 const void*) {
-  return static_cast<const ContinuousFunction*>(model)
-      ->evaluateXYDerivativeAtParameter(t, 1);
-}
-template <typename T>
-static Coordinate2D<T> evaluateXYSecondDerivative(T t, const void* model,
-                                                  const void*) {
-  return static_cast<const ContinuousFunction*>(model)
-      ->evaluateXYDerivativeAtParameter(t, 2);
-}
-
 static Coordinate2D<float> evaluateInfinity(float t, const void*, const void*) {
   return Coordinate2D<float>(INFINITY, INFINITY);
 }
@@ -312,17 +299,9 @@ GraphView::Curve2DEvaluation<T> GraphView::subCurveEvaluation(
   if (subCurveIndex == 0) {
     return evaluateXY<T>;
   }
-  if (f->numberOfSubCurves() > 1) {
-    assert(f->numberOfSubCurves() == 2);
-    assert(subCurveIndex == 1);
-    return evaluateXYSecondCurve<T>;
-  }
-  assert(f->numberOfSubCurves() == 1);
-  assert(f->numberOfSubCurves(true) > 1);
-  int derivationOrder = f->derivationOrderFromSubCurveIndex(subCurveIndex);
-  assert(derivationOrder == 1 || derivationOrder == 2);
-  return derivationOrder == 1 ? evaluateXYFirstDerivative<T>
-                              : evaluateXYSecondDerivative<T>;
+  assert(f->numberOfSubCurves() == 2);
+  assert(subCurveIndex == 1);
+  return evaluateXYSecondCurve<T>;
 }
 
 void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
@@ -399,7 +378,7 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
   }
 
   // - Draw subcurves
-  int n = f->numberOfSubCurves(true);
+  int n = f->numberOfSubCurves();
   for (int i = n - 1; i >= 0; i--) {
     Curve2DEvaluation<float> evaluationFloat = subCurveEvaluation<float>(f, i);
     CurveDrawing secondCurve(Curve2D(evaluationFloat, f), context(), tStart,
@@ -409,9 +388,6 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
         subCurveEvaluation<double>(f, i);
     secondCurve.setPrecisionOptions(true, evaluationDouble, discontinuity);
     Curve2D pLower, pUpper;
-    /* If the function only has 1 real subcurve (f->numberOfSubCurves(false)),
-     * it means that the remaining subcurves (f->numberOfSubCurves(true)) are
-     * the derivatives. */
     if (i == 0) {
       pLower = patternLower;
       pUpper = patternUpper;

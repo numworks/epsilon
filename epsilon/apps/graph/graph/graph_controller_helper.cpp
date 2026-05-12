@@ -22,7 +22,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     int* subCurveIndex) {
   OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore().modelForRecord(record);
-  assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves(true));
+  assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves());
   const double tCursor = cursor->t();
   double tMin = function->tMin();
   double tMax = function->tMax();

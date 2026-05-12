@@ -117,6 +117,12 @@ const Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
       graphController->functionOrSequenceContext();
   OMG::ExpiringPointer<const ContinuousFunction> function =
       functionContext.modelForRecord(functionContext.activeRecordAtIndex(j));
+  if (function->isDerivative()) {
+    constexpr size_t bufferSize = Shared::Function::k_maxNameWithArgumentSize;
+    char buffer[bufferSize];
+    size_t length = function->nameWithArgument(buffer, bufferSize);
+    return Layout::String(buffer, length);
+  }
   return function->layout();
 }
 
@@ -124,11 +130,9 @@ void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   OMG::ExpiringPointer<const ContinuousFunction> f =
       functionOrSequenceContext().modelForRecord(record);
-  int derivationOrder =
-      f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
   bool displayOrdinate, displayValueFirstDerivative,
       displayValueSecondDerivative;
-  f->valuesToDisplayOnDerivativeCurve(derivationOrder, &displayOrdinate,
+  f->valuesToDisplayOnDerivativeCurve(f->derivationOrder(), &displayOrdinate,
                                       &displayValueFirstDerivative,
                                       &displayValueSecondDerivative);
   m_bannerView.setDisplayParameters(
@@ -259,9 +263,7 @@ void GraphController::openMenuForSelectedCurve() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   OMG::ExpiringPointer<const ContinuousFunction> f =
       functionOrSequenceContext().modelForRecord(record);
-  int derivationOrder =
-      f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
-  m_curveParameterController.setRecord(record, derivationOrder);
+  m_curveParameterController.setRecord(record, f->derivationOrder());
   /* Remove cursor highlighting and ring to ensure clean cursor if we enter
    * another controllers */
   setCursorIsRing(false);

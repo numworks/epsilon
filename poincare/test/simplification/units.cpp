@@ -302,7 +302,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to(
       "1×π×_°", "π×_°",
       SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
-  simplifies_to("π×π×_rad×_m", "9.8696044010894×_m×_rad");
+  simplifies_to("π×π×_rad×_m", "9.8696044010894×_rad×_m");
   simplifies_to("π×π×_rad×_rad", "π^2×_rad^2");
   simplifies_to("0.2_rad", "1/5×_rad");
   simplifies_to("-0.2_rad", "-1/5×_rad");

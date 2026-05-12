@@ -8,9 +8,9 @@ struct AllRepresentatives {
   /* This structure is used to compute representatives ids from their names in a
    * constexpr way, it should not be instanciated or used for anything else. */
   AllRepresentatives() = delete;
+  decltype(Angle::representatives) angle;
   decltype(Time::representatives) time;
   decltype(Distance::representatives) distance;
-  decltype(Angle::representatives) angle;
   decltype(Mass::representatives) mass;
   decltype(Current::representatives) current;
   decltype(Temperature::representatives) temperature;

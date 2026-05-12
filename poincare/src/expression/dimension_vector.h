@@ -34,14 +34,16 @@ struct SIVector {
   /* Vector for UndefUnit. Values do not matter since UndefUnit is meant to have
    * the same dimension as any other unit. */
   constexpr static SIVector Undef() {
-    return SIVector{.time = k_undefCoefficient,
-                    .distance = k_undefCoefficient,
-                    .angle = k_undefCoefficient,
-                    .mass = k_undefCoefficient,
-                    .current = k_undefCoefficient,
-                    .temperature = k_undefCoefficient,
-                    .amountOfSubstance = k_undefCoefficient,
-                    .luminousIntensity = k_undefCoefficient};
+    return SIVector{
+        .angle = k_undefCoefficient,
+        .time = k_undefCoefficient,
+        .distance = k_undefCoefficient,
+        .mass = k_undefCoefficient,
+        .current = k_undefCoefficient,
+        .temperature = k_undefCoefficient,
+        .amountOfSubstance = k_undefCoefficient,
+        .luminousIntensity = k_undefCoefficient,
+    };
   }
 
   /* Return [false] if operation overflowed.
@@ -82,14 +84,16 @@ struct SIVector {
   [[nodiscard]] constexpr bool setCoefficientAtIndex(uint8_t i,
                                                      int8_t coefficient) {
     assert(i < k_numberOfBaseUnits);
-    int8_t* coefficientsAddresses[] = {&time,
-                                       &distance,
-                                       &angle,
-                                       &mass,
-                                       &current,
-                                       &temperature,
-                                       &amountOfSubstance,
-                                       &luminousIntensity};
+    int8_t* coefficientsAddresses[] = {
+        &angle,  //
+        &time,
+        &distance,
+        &mass,
+        &current,
+        &temperature,
+        &amountOfSubstance,
+        &luminousIntensity,
+    };
     static_assert(std::size(coefficientsAddresses) == k_numberOfBaseUnits);
     *(coefficientsAddresses[i]) = coefficient;
     return true;
@@ -109,21 +113,23 @@ struct SIVector {
 
   constexpr int8_t coefficientAtIndex(uint8_t i) const {
     assert(i < k_numberOfBaseUnits);
-    const int8_t coefficients[] = {time,
-                                   distance,
-                                   angle,
-                                   mass,
-                                   current,
-                                   temperature,
-                                   amountOfSubstance,
-                                   luminousIntensity};
+    const int8_t coefficients[] = {
+        angle,  //
+        time,
+        distance,
+        mass,
+        current,
+        temperature,
+        amountOfSubstance,
+        luminousIntensity,
+    };
     static_assert(std::size(coefficients) == k_numberOfBaseUnits);
     return coefficients[i];
   }
 
+  int8_t angle = 0;
   int8_t time = 0;
   int8_t distance = 0;
-  int8_t angle = 0;
   int8_t mass = 0;
   int8_t current = 0;
   int8_t temperature = 0;

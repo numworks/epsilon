@@ -13,12 +13,10 @@ namespace Units {
 const Representative* const* Representative::DefaultRepresentatives() {
   static const Representative* defaultRepresentatives[k_numberOfDimensions] = {
 #if POINCARE_UNIT
+    Angle::representatives,
 #if !POINCARE_UNIT_ONLY_ANGLES
     Time::representatives,
     Distance::representatives,
-#endif
-    Angle::representatives,
-#if !POINCARE_UNIT_ONLY_ANGLES
     Mass::representatives,
     Current::representatives,
     Temperature::representatives,

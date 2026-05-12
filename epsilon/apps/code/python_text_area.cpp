@@ -26,52 +26,53 @@ using namespace Escher;
 
 namespace Code {
 
-static inline ThemeComponent TokenTheme(mp_token_kind_t tokenKind) {
+static inline ThemeComponent TokenComponent(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
     return ThemeComponent::PythonString;
   }
   if (tokenKind == MP_TOKEN_INTEGER || tokenKind == MP_TOKEN_FLOAT_OR_IMAG) {
     return ThemeComponent::PythonNumber;
   }
-  static_assert(MP_TOKEN_ELLIPSIS + 1 == MP_TOKEN_KW_FALSE &&
-                    MP_TOKEN_KW_FALSE + 1 == MP_TOKEN_KW_NONE &&
-                    MP_TOKEN_KW_NONE + 1 == MP_TOKEN_KW_TRUE &&
-                    MP_TOKEN_KW_TRUE + 1 == MP_TOKEN_KW___DEBUG__ &&
-                    MP_TOKEN_KW___DEBUG__ + 1 == MP_TOKEN_KW_AND &&
-                    MP_TOKEN_KW_AND + 1 == MP_TOKEN_KW_AS &&
-                    MP_TOKEN_KW_AS + 1 == MP_TOKEN_KW_ASSERT
-                    /* Here there are keywords that depend on
-                     * MICROPY_PY_ASYNC_AWAIT, we do not test them */
-                    && MP_TOKEN_KW_BREAK + 1 == MP_TOKEN_KW_CLASS &&
-                    MP_TOKEN_KW_CLASS + 1 == MP_TOKEN_KW_CONTINUE &&
-                    MP_TOKEN_KW_CONTINUE + 1 == MP_TOKEN_KW_DEF &&
-                    MP_TOKEN_KW_DEF + 1 == MP_TOKEN_KW_DEL &&
-                    MP_TOKEN_KW_DEL + 1 == MP_TOKEN_KW_ELIF &&
-                    MP_TOKEN_KW_ELIF + 1 == MP_TOKEN_KW_ELSE &&
-                    MP_TOKEN_KW_ELSE + 1 == MP_TOKEN_KW_EXCEPT &&
-                    MP_TOKEN_KW_EXCEPT + 1 == MP_TOKEN_KW_FINALLY &&
-                    MP_TOKEN_KW_FINALLY + 1 == MP_TOKEN_KW_FOR &&
-                    MP_TOKEN_KW_FOR + 1 == MP_TOKEN_KW_FROM &&
-                    MP_TOKEN_KW_FROM + 1 == MP_TOKEN_KW_GLOBAL &&
-                    MP_TOKEN_KW_GLOBAL + 1 == MP_TOKEN_KW_IF &&
-                    MP_TOKEN_KW_IF + 1 == MP_TOKEN_KW_IMPORT &&
-                    MP_TOKEN_KW_IMPORT + 1 == MP_TOKEN_KW_IN &&
-                    MP_TOKEN_KW_IN + 1 == MP_TOKEN_KW_IS &&
-                    MP_TOKEN_KW_IS + 1 == MP_TOKEN_KW_LAMBDA &&
-                    MP_TOKEN_KW_LAMBDA + 1 == MP_TOKEN_KW_NONLOCAL &&
-                    MP_TOKEN_KW_NONLOCAL + 1 == MP_TOKEN_KW_NOT &&
-                    MP_TOKEN_KW_NOT + 1 == MP_TOKEN_KW_OR &&
-                    MP_TOKEN_KW_OR + 1 == MP_TOKEN_KW_PASS &&
-                    MP_TOKEN_KW_PASS + 1 == MP_TOKEN_KW_RAISE &&
-                    MP_TOKEN_KW_RAISE + 1 == MP_TOKEN_KW_RETURN &&
-                    MP_TOKEN_KW_RETURN + 1 == MP_TOKEN_KW_TRY &&
-                    MP_TOKEN_KW_TRY + 1 == MP_TOKEN_KW_WHILE &&
-                    MP_TOKEN_KW_WHILE + 1 == MP_TOKEN_KW_WITH &&
-                    MP_TOKEN_KW_WITH + 1 == MP_TOKEN_KW_YIELD &&
-                    MP_TOKEN_KW_YIELD + 1 == MP_TOKEN_OP_ASSIGN &&
-                    MP_TOKEN_OP_ASSIGN + 1 == MP_TOKEN_OP_TILDE,
-                "MP_TOKEN order changed, so Code::PythonTextArea::TokenTheme "
-                "might need to change too.");
+  static_assert(
+      MP_TOKEN_ELLIPSIS + 1 == MP_TOKEN_KW_FALSE &&
+          MP_TOKEN_KW_FALSE + 1 == MP_TOKEN_KW_NONE &&
+          MP_TOKEN_KW_NONE + 1 == MP_TOKEN_KW_TRUE &&
+          MP_TOKEN_KW_TRUE + 1 == MP_TOKEN_KW___DEBUG__ &&
+          MP_TOKEN_KW___DEBUG__ + 1 == MP_TOKEN_KW_AND &&
+          MP_TOKEN_KW_AND + 1 == MP_TOKEN_KW_AS &&
+          MP_TOKEN_KW_AS + 1 == MP_TOKEN_KW_ASSERT
+          /* Here there are keywords that depend on
+           * MICROPY_PY_ASYNC_AWAIT, we do not test them */
+          && MP_TOKEN_KW_BREAK + 1 == MP_TOKEN_KW_CLASS &&
+          MP_TOKEN_KW_CLASS + 1 == MP_TOKEN_KW_CONTINUE &&
+          MP_TOKEN_KW_CONTINUE + 1 == MP_TOKEN_KW_DEF &&
+          MP_TOKEN_KW_DEF + 1 == MP_TOKEN_KW_DEL &&
+          MP_TOKEN_KW_DEL + 1 == MP_TOKEN_KW_ELIF &&
+          MP_TOKEN_KW_ELIF + 1 == MP_TOKEN_KW_ELSE &&
+          MP_TOKEN_KW_ELSE + 1 == MP_TOKEN_KW_EXCEPT &&
+          MP_TOKEN_KW_EXCEPT + 1 == MP_TOKEN_KW_FINALLY &&
+          MP_TOKEN_KW_FINALLY + 1 == MP_TOKEN_KW_FOR &&
+          MP_TOKEN_KW_FOR + 1 == MP_TOKEN_KW_FROM &&
+          MP_TOKEN_KW_FROM + 1 == MP_TOKEN_KW_GLOBAL &&
+          MP_TOKEN_KW_GLOBAL + 1 == MP_TOKEN_KW_IF &&
+          MP_TOKEN_KW_IF + 1 == MP_TOKEN_KW_IMPORT &&
+          MP_TOKEN_KW_IMPORT + 1 == MP_TOKEN_KW_IN &&
+          MP_TOKEN_KW_IN + 1 == MP_TOKEN_KW_IS &&
+          MP_TOKEN_KW_IS + 1 == MP_TOKEN_KW_LAMBDA &&
+          MP_TOKEN_KW_LAMBDA + 1 == MP_TOKEN_KW_NONLOCAL &&
+          MP_TOKEN_KW_NONLOCAL + 1 == MP_TOKEN_KW_NOT &&
+          MP_TOKEN_KW_NOT + 1 == MP_TOKEN_KW_OR &&
+          MP_TOKEN_KW_OR + 1 == MP_TOKEN_KW_PASS &&
+          MP_TOKEN_KW_PASS + 1 == MP_TOKEN_KW_RAISE &&
+          MP_TOKEN_KW_RAISE + 1 == MP_TOKEN_KW_RETURN &&
+          MP_TOKEN_KW_RETURN + 1 == MP_TOKEN_KW_TRY &&
+          MP_TOKEN_KW_TRY + 1 == MP_TOKEN_KW_WHILE &&
+          MP_TOKEN_KW_WHILE + 1 == MP_TOKEN_KW_WITH &&
+          MP_TOKEN_KW_WITH + 1 == MP_TOKEN_KW_YIELD &&
+          MP_TOKEN_KW_YIELD + 1 == MP_TOKEN_OP_ASSIGN &&
+          MP_TOKEN_OP_ASSIGN + 1 == MP_TOKEN_OP_TILDE,
+      "MP_TOKEN order changed, so Code::PythonTextArea::TokenComponent "
+      "might need to change too.");
   if (tokenKind >= MP_TOKEN_KW_FALSE && tokenKind <= MP_TOKEN_KW_YIELD) {
     return ThemeComponent::PythonKeyword;
   }
@@ -120,7 +121,8 @@ static inline ThemeComponent TokenTheme(mp_token_kind_t tokenKind) {
           MP_TOKEN_DEL_PERIOD + 1 == MP_TOKEN_DEL_SEMICOLON &&
           MP_TOKEN_DEL_SEMICOLON + 1 == MP_TOKEN_DEL_EQUAL &&
           MP_TOKEN_DEL_EQUAL + 1 == MP_TOKEN_DEL_MINUS_MORE,
-      "MP_TOKEN order changed, so Code::PythonTextArea::TokenTheme might need "
+      "MP_TOKEN order changed, so Code::PythonTextArea::TokenComponent might "
+      "need "
       "to change too.");
 
   if ((tokenKind >= MP_TOKEN_OP_TILDE &&
@@ -321,7 +323,7 @@ void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
       ThemeComponent theme =
           (tokenFrom <= autocompleteStart && autocompleteStart < tokenEnd)
               ? ThemeComponent::TextDefault
-              : TokenTheme(lex->tok_kind);
+              : TokenComponent(lex->tok_kind);
 
       if (theme != ThemeComponent::TextDefault &&
           (lex->tok_kind == MP_TOKEN_INTEGER ||

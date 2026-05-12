@@ -29,15 +29,10 @@ class EvenOddCell : public HighlightCell {
 
  protected:
   ThemeComponent baseColor() const {
-    return m_even ? k_evenComponent : k_oddComponent;
+    return m_even ? ThemeComponent::CellEven : ThemeComponent::CellOdd;
   }
   virtual void updateSubviewsBackgroundAfterChangingState() {}
   bool m_even;
-
- private:
-  constexpr static ThemeComponent k_evenComponent =
-      ThemeComponent::BackgroundWhite;
-  constexpr static ThemeComponent k_oddComponent = ThemeComponent::WallScreen;
 };
 
 }  // namespace Escher

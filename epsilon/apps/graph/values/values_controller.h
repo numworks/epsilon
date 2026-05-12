@@ -145,7 +145,7 @@ class ValuesController : public Shared::ValuesController,
   Shared::Interval* intervalAtColumn(int column) override;
   I18n::Message valuesParameterMessageAtColumn(int column) const override;
   Shared::ExpressionFunctionTitleCell* functionTitleCells(int j) override;
-  Escher::EvenOddExpressionCell* valueCells(int j) override;
+  Escher::EvenOddTableExpressionCell* valueCells(int j) override;
   int abscissaCellsCount() const override {
     return k_maxNumberOfDisplayableAbscissaCells;
   }
@@ -188,7 +188,8 @@ class ValuesController : public Shared::ValuesController,
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::ExpressionFunctionTitleCell
       m_functionTitleCells[k_maxNumberOfDisplayableColumns];
-  Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
+  Escher::EvenOddTableExpressionCell
+      m_valueCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddTableMessageTextCell
       m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Escher::EvenOddEditableTextCell<

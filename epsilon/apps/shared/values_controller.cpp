@@ -134,7 +134,8 @@ void ValuesController::fillCellForLocation(HighlightCell* cell, int column,
       SharedGlobalPrefs().numberOfSignificantDigits());
   // The cell is not a title cell and not editable
   if (typeAtLocation(column, row) == k_notEditableValueCellType) {
-    EvenOddExpressionCell* myCell = static_cast<EvenOddExpressionCell*>(cell);
+    EvenOddTableExpressionCell* myCell =
+        static_cast<EvenOddTableExpressionCell*>(cell);
     // Special case: last row
     if (row == numberOfElementsInColumn(column) + k_numberOfTitleRows) {
       myCell->setLayout(KRackL());
@@ -335,7 +336,7 @@ void ValuesController::resetLayoutMemoization() {
   const int numberOfCells = k_maxNumberOfDisplayableCells;
   for (int i = 0; i < numberOfCells; i++) {
     *memoizedLayoutAtIndex(i) = Layout();
-    EvenOddExpressionCell* valueCell = valueCells(i);
+    EvenOddTableExpressionCell* valueCell = valueCells(i);
     assert(valueCell);
     valueCell->setLayout(Layout());
   }
@@ -526,7 +527,7 @@ void ValuesController::initializeInterval() {
 void ValuesController::initValueCells() {
   int numberOfValueCells = k_maxNumberOfDisplayableCells;
   for (int i = 0; i < numberOfValueCells; i++) {
-    EvenOddExpressionCell* valueCell = valueCells(i);
+    EvenOddTableExpressionCell* valueCell = valueCells(i);
     assert(valueCell);
     valueCell->setFont(k_cellFont);
     valueCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);

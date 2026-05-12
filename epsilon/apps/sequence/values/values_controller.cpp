@@ -193,7 +193,7 @@ Shared::ExpressionFunctionTitleCell* ValuesController::functionTitleCells(
   return &m_sequenceTitleCells[j];
 }
 
-Escher::EvenOddExpressionCell* ValuesController::valueCells(int j) {
+Escher::EvenOddTableExpressionCell* ValuesController::valueCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
   return &m_valueCells[j];
 }

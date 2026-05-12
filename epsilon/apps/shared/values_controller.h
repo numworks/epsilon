@@ -166,7 +166,7 @@ class ValuesController : public EditableCellTableViewController,
   virtual Interval* intervalAtColumn(int column) = 0;
   virtual I18n::Message valuesParameterMessageAtColumn(int column) const = 0;
   virtual ExpressionFunctionTitleCell* functionTitleCells(int j) = 0;
-  virtual Escher::EvenOddExpressionCell* valueCells(int j) = 0;
+  virtual Escher::EvenOddTableExpressionCell* valueCells(int j) = 0;
   virtual int abscissaCellsCount() const = 0;
   virtual Escher::AbstractEvenOddEditableTextCell* abscissaCells(int j) = 0;
   virtual int abscissaTitleCellsCount() const = 0;

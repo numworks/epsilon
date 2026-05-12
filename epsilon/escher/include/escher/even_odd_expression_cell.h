@@ -36,4 +36,16 @@ class EvenOddExpressionCell : public EvenOddCell {
   KDHorizontalMargins m_margins;
 };
 
+// Same as EvenOddExpressionCell but uses the table even / odd color scheme
+class EvenOddTableExpressionCell : public EvenOddExpressionCell {
+ public:
+  using EvenOddExpressionCell::EvenOddExpressionCell;
+
+ protected:
+  ThemeComponent baseColor() const override {
+    return m_even ? ThemeComponent::CellTableEven
+                  : ThemeComponent::CellTableOdd;
+  }
+};
+
 }  // namespace Escher

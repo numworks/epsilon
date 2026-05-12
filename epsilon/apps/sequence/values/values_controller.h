@@ -85,7 +85,7 @@ class ValuesController : public Shared::ValuesController,
     return I18n::Message::N;
   }
   Shared::ExpressionFunctionTitleCell* functionTitleCells(int j) override;
-  Escher::EvenOddExpressionCell* valueCells(int j) override;
+  Escher::EvenOddTableExpressionCell* valueCells(int j) override;
   int abscissaCellsCount() const override {
     return k_maxNumberOfDisplayableRows;
   }
@@ -105,7 +105,8 @@ class ValuesController : public Shared::ValuesController,
 
   Shared::ExpressionFunctionTitleCell
       m_sequenceTitleCells[k_maxNumberOfDisplayableColumns];
-  Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
+  Escher::EvenOddTableExpressionCell
+      m_valueCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddTableMessageTextCell m_abscissaTitleCell;
   Escher::EvenOddEditableTextCell<
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits>

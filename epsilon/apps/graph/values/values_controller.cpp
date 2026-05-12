@@ -182,7 +182,7 @@ KDSize ValuesController::ApproximatedParametricCellSize() {
 }
 
 KDSize ValuesController::CellSizeWithLayout(const Layout& l) {
-  EvenOddExpressionCell tempCell;
+  EvenOddTableExpressionCell tempCell;
   tempCell.setFont(k_cellFont);
   tempCell.setLayout(l);
   bool addVerticalMargin =
@@ -461,7 +461,7 @@ Shared::ExpressionFunctionTitleCell* ValuesController::functionTitleCells(
   return &m_functionTitleCells[j];
 }
 
-EvenOddExpressionCell* ValuesController::valueCells(int j) {
+EvenOddTableExpressionCell* ValuesController::valueCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
   return &m_valueCells[j];
 }

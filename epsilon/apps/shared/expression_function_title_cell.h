@@ -24,7 +24,7 @@ class ExpressionFunctionTitleCell : public FunctionTitleCell {
  protected:
   void layoutSubviews(bool force = false) override;
 
-  Escher::EvenOddExpressionCell m_titleTextView;
+  Escher::EvenOddTableExpressionCell m_titleTextView;
 
  private:
   constexpr static float k_alignment = KDGlyph::k_alignCenter;

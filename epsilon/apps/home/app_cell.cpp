@@ -69,7 +69,7 @@ void AppCell::reloadCell() {
   TextView* t = const_cast<TextView*>(textView());
   t->setTextColor(isHighlighted() ? ThemeComponent::TextWhite
                                   : ThemeComponent::TextDefault);
-  t->setBackgroundColor(isHighlighted() ? ThemeComponent::TokenYellow
+  t->setBackgroundColor(isHighlighted() ? ThemeComponent::SurfaceSelectApps
                                         : ThemeComponent::BackgroundWhite);
 }
 

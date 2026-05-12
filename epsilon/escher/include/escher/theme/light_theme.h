@@ -18,6 +18,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .CalculationBorderSelected = Palette::Select,
                    .SurfaceSelect = Palette::Select,
                    .SurfaceSelectDark = Palette::SelectDark,
+                   .SurfaceSelectApps = Palette::YellowDark,
                    .BannerYellow = Palette::YellowDark,
                    .BannerPurple = Palette::PurpleBright,
                    .BannerGrayWhite = Palette::GrayWhite,

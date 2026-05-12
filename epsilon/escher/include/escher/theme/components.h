@@ -19,6 +19,7 @@ namespace Escher {
   X(CalculationBorderSelected) \
   X(SurfaceSelect)             \
   X(SurfaceSelectDark)         \
+  X(SurfaceSelectApps)         \
   X(BannerYellow)              \
   X(BannerPurple)              \
   X(BannerGrayWhite)           \

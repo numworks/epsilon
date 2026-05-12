@@ -16,15 +16,15 @@ void ImageView::drawRect(KDContext* ctx, KDRect rect) const {
   assert(bounds().width() == m_image->width());
   assert(bounds().height() == m_image->height());
 
-  KDColor pixelBuffer[k_maxPixelBufferSize];
-  int pixelBufferSize = m_image->width() * m_image->height();
-  assert(pixelBufferSize <= k_maxPixelBufferSize);
+  int imageSize = m_image->width() * m_image->height();
+  assert(imageSize <= k_maxImageSize);
+  KDColor pixelBuffer[k_maxImageSize];
   // That's a VERY big buffer we're allocating on the stack
   assert(Ion::stackSafe());
 
   OMG::Memory::Decompress(
       m_image->compressedPixelData(), reinterpret_cast<uint8_t*>(pixelBuffer),
-      m_image->compressedPixelDataSize(), pixelBufferSize * sizeof(KDColor));
+      m_image->compressedPixelDataSize(), imageSize * sizeof(KDColor));
 
   ctx->fillRectWithPixels(bounds(), pixelBuffer, nullptr);
 }

@@ -22,6 +22,9 @@ class TransparentImageView : public ImageView, public CellWidget {
   void setHighlighted(bool highlighted) override;
 
  private:
+  // App icon images are 55 x 56 = 3080
+  constexpr static int k_maxTransparentImageSize = 3100;
+
   void blendInPlace(KDColor* colorBuffer, uint8_t* alphaBuffer) const;
   ThemeComponent m_backgroundColor = ThemeComponent::BackgroundWhite;
 };

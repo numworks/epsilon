@@ -57,11 +57,25 @@ class EvenOddBufferTextCell : public AbstractEvenOddBufferTextCell {
   BufferTextViewClass m_bufferTextView;
 };
 
+/* Overrides EvenOddBufferTextCell baseColor() to use the default (non-table)
+ * even/odd color scheme */
+template <class BufferTextViewClass>
+class EvenOddNonTableBufferTextCell
+    : public EvenOddBufferTextCell<BufferTextViewClass> {
+ public:
+  using EvenOddBufferTextCell<BufferTextViewClass>::EvenOddBufferTextCell;
+
+ protected:
+  ThemeComponent baseColor() const override { return EvenOddCell::baseColor(); }
+};
+
 template <int numberOfSignificantDigits =
               AbstractEvenOddBufferTextCell::k_defaultPrecision>
 using FloatEvenOddBufferTextCell =
     EvenOddBufferTextCell<FloatBufferTextView<numberOfSignificantDigits>>;
 using SmallFontEvenOddBufferTextCell =
     EvenOddBufferTextCell<OneLineBufferTextView<KDFont::Size::Small>>;
+using SmallFontEvenOddNonTableBufferTextCell =
+    EvenOddNonTableBufferTextCell<OneLineBufferTextView<KDFont::Size::Small>>;
 
 }  // namespace Escher

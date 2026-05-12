@@ -36,6 +36,30 @@ class Helper : public Representative {
   const SIVector siVector() const override { return R::Dimension; }
 };
 
+class Angle : public Helper<Angle> {
+ public:
+  constexpr static SIVector Dimension{.angle = 1};
+
+  template <class R>
+  struct Representatives : Helper::Representatives {
+    R radian;
+    R arcSecond;
+    R arcMinute;
+    R degree;
+    R gradian;
+  };
+
+  static const Representative* DefaultRepresentativeForAngleUnit(
+      AngleUnit angleUnit);
+
+  const Representative* bestRepresentativeAndPrefix(
+      double value, double exponent, Preferences::UnitFormat unitFormat,
+      const Prefix** prefix, const Representative* forcedRepr) const override;
+
+  using Helper::Helper;
+  const static Representatives<const Self> representatives;
+};
+
 class Time : public Helper<Time> {
  public:
   constexpr static SIVector Dimension{.time = 1};
@@ -71,30 +95,6 @@ class Distance : public Helper<Distance> {
     R yard;
     R mile;
   };
-
-  const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, Preferences::UnitFormat unitFormat,
-      const Prefix** prefix, const Representative* forcedRepr) const override;
-
-  using Helper::Helper;
-  const static Representatives<const Self> representatives;
-};
-
-class Angle : public Helper<Angle> {
- public:
-  constexpr static SIVector Dimension{.angle = 1};
-
-  template <class R>
-  struct Representatives : Helper::Representatives {
-    R radian;
-    R arcSecond;
-    R arcMinute;
-    R degree;
-    R gradian;
-  };
-
-  static const Representative* DefaultRepresentativeForAngleUnit(
-      AngleUnit angleUnit);
 
   const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, Preferences::UnitFormat unitFormat,

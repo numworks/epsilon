@@ -8,6 +8,15 @@ namespace Units {
 
 using enum PrefixSet;
 
+/* Only AngleRepresentative have non-float ratio expression because exact
+ * result are expected. */
+const Angle::Representatives<const Angle> Angle::representatives = {
+    .radian = {"rad", 1_e, None, None},
+    .arcSecond = {"\"", KDiv(π_e, 648000_e), None, None},
+    .arcMinute = {"'", KDiv(π_e, 10800_e), None, None},
+    .degree = {"°", KDiv(π_e, 180_e), None, None},
+    .gradian = {"gon", KDiv(π_e, 200_e), None, None}};
+
 const Time::Representatives<const Time> Time::representatives = {
     .second = {"s", 1_e, All, NegativeLongScale},
     .minute = {"min", 60_e, None, None},
@@ -27,15 +36,6 @@ const Distance::Representatives<const Distance> Distance::representatives = {
     .foot = {"ft", KMult(12_e, 0.0254_e), None, None, true},
     .yard = {"yd", KMult(36_e, 0.0254_e), None, None, true},
     .mile = {"mi", KMult(63360_e, 0.0254_e), None, None, true}};
-
-/* Only AngleRepresentative have non-float ratio expression because exact
- * result are expected. */
-const Angle::Representatives<const Angle> Angle::representatives = {
-    .radian = {"rad", 1_e, None, None},
-    .arcSecond = {"\"", KDiv(π_e, 648000_e), None, None},
-    .arcMinute = {"'", KDiv(π_e, 10800_e), None, None},
-    .degree = {"°", KDiv(π_e, 180_e), None, None},
-    .gradian = {"gon", KDiv(π_e, 200_e), None, None}};
 
 const Mass::Representatives<const Mass> Mass::representatives = {
     // kg is a dedicated non-prefixable unit to be used in SI

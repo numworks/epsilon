@@ -75,6 +75,7 @@ $(addprefix expression/, \
   units/helpers.cpp \
   units/prefix.cpp \
   units/representative.cpp \
+  units/temperature.cpp \
   units/unit.cpp \
   units/unit_display.cpp \
   units/representatives.cpp \

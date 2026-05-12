@@ -13,6 +13,7 @@
 #include "prefix.h"
 #include "representative.h"
 #include "representatives.h"
+#include "temperature.h"
 
 namespace Poincare::Internal {
 namespace Units {
@@ -97,11 +98,6 @@ bool Unit::ForceMarginLeftOfUnit(const Tree* e) {
   return true;
 }
 
-bool Unit::IsNonKelvinTemperature(const Representative* representative) {
-  return representative == &Temperature::representatives.celsius ||
-         representative == &Temperature::representatives.fahrenheit;
-}
-
 void Unit::RemoveUnit(Tree* unit) {
   const Representative* representative = GetRepresentative(unit);
   // Temperature units should have been escaped before.
@@ -112,51 +108,6 @@ void Unit::RemoveUnit(Tree* unit) {
   Integer::Push(10);
   Integer::Push(GetPrefix(unit)->exponent());
   unit->moveTreeOverTree(result);
-}
-
-void Unit::RemoveTemperatureUnit(Tree* root) {
-  assert(Dimension::DeepCheck(root));
-  // Find and remove the unit.
-  const Representative* representative = nullptr;
-  for (Tree* child : root->selfAndDescendants()) {
-    if (child->isUnit()) {
-      const Representative* childRepresentative =
-          Units::Unit::GetRepresentative(child);
-      if (IsNonKelvinTemperature(childRepresentative)) {
-        assert(representative == nullptr);
-        representative = childRepresentative;
-        child->cloneTreeOverTree(1_e);
-#if !ASSERTIONS
-        break;
-#endif
-      }
-    }
-  }
-  assert(IsNonKelvinTemperature(representative));
-  bool isCelsius = (representative == &Temperature::representatives.celsius);
-  // A -> (A + origin) * ratio
-  TreeRef ratio = representative->pushReducedRatioExpression();
-  root->moveTreeOverTree(PatternMatching::Create(
-      KMult(KAdd(KA, KB), KC), {.KA = root,
-                                .KB = isCelsius ? Temperature::celsiusOrigin
-                                                : Temperature::fahrenheitOrigin,
-                                .KC = ratio}));
-  ratio->removeTree();
-}
-
-double Unit::KelvinValueToRepresentative(double value,
-                                         const Representative* representative) {
-  if (representative == &Temperature::representatives.kelvin) {
-    return value;
-  }
-  assert(IsNonKelvinTemperature(representative));
-  bool isCelsius = (representative == &Temperature::representatives.celsius);
-  // A -> (A / ratio) - origin
-  return (value / representative->ratio()) -
-         Approximation::To<double>(
-             isCelsius ? Temperature::celsiusOrigin
-                       : Temperature::fahrenheitOrigin,
-             Approximation::Parameters{.policy = {.optimize = true}});
 }
 
 Tree* Unit::Push(const Representative* unitRepresentative,

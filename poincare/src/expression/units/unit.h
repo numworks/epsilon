@@ -38,9 +38,6 @@ class Unit {
   static bool IsUnitOrPowerOfUnit(const Tree* e);
   static bool ForceMarginLeftOfUnit(const Tree* e);
 
-  static bool IsNonKelvinTemperature(const Representative* representative);
-  // Remove units and Convert tree to Kelvin.
-  static void RemoveTemperatureUnit(Tree* root);
   // Replace with reduced SI ratio only.
   static void RemoveUnit(Tree* unit);
   // Replace units and physical constants with their reduced Basic SI value
@@ -63,9 +60,6 @@ class Unit {
   // Push base SI units matching the vector
   static Tree* GetBaseUnits(SIVector vector);
 
-  // From Kelvin value, return value in given temperature representative
-  static double KelvinValueToRepresentative(
-      double value, const Representative* representative);
   /* Remove subtrees that don't contain units. Return true if the entire tree
    * has been removed. Only Mult, Pow, and Add (if preserveAdd) are preserved.
    * Warning: the caller of RemoveNonUnits must imperatively check or assert the

@@ -18,6 +18,7 @@
 #include "symbol.h"
 #include "undefined.h"
 #include "units/representatives.h"
+#include "units/temperature.h"
 #include "units/unit.h"
 #include "variables.h"
 
@@ -222,7 +223,7 @@ bool Dimension::isSimpleRadianAngleUnit() const {
 }
 
 bool Dimension::hasNonKelvinTemperatureUnit() const {
-  return isUnit() && Units::Unit::IsNonKelvinTemperature(unit.representative);
+  return isUnit() && Units::IsNonKelvinTemperature(unit.representative);
 }
 
 int Dimension::ListLength(const Tree* e,

@@ -16,6 +16,7 @@
 #include "prefix.h"
 #include "representative.h"
 #include "representatives.h"
+#include "temperature.h"
 #include "unit.h"
 
 namespace Poincare::Internal {
@@ -120,9 +121,9 @@ bool ProjectToBestUnits(Tree* e, Dimension dimension,
     unitDisplay = UnitDisplay::AutomaticInput;
     assert(!Dimension::Get(e).isScalar());
   }
-  if (Unit::IsNonKelvinTemperature(dimension.unit.representative)) {
+  if (IsNonKelvinTemperature(dimension.unit.representative)) {
     // Temperature units must be removed from root expression
-    Unit::RemoveTemperatureUnit(e);
+    RemoveTemperatureUnitFromRoot(e);
   }
   // Turn e into its SI value. 2_m + _yd -> 3.8288
   Tree::ApplyShallowTopDown(e, Unit::ShallowRemoveUnit);
@@ -210,9 +211,8 @@ static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
     assert(!dimension.isAngleUnit());
     double value = Approximation::To<double>(
         e, Approximation::Parameters{.policy = {.optimize = true}});
-    if (Unit::IsNonKelvinTemperature(Unit::GetRepresentative(unit1))) {
-      value = Unit::KelvinValueToRepresentative(value,
-                                                Unit::GetRepresentative(unit1));
+    if (IsNonKelvinTemperature(Unit::GetRepresentative(unit1))) {
+      value = TemperatureFromKelvin(value, Unit::GetRepresentative(unit1));
     } else {
       // Correct the value since e is in basic SI
       value /= Approximation::To<double>(
@@ -297,13 +297,12 @@ static bool ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
   [[maybe_unused]] bool treeRemoved = Unit::RemoveNonUnits(inputUnits, false);
   assert(!treeRemoved);
   if (inputUnits->isUnit() &&
-      Unit::IsNonKelvinTemperature(Unit::GetRepresentative(inputUnits))) {
+      IsNonKelvinTemperature(Unit::GetRepresentative(inputUnits))) {
     // Handle non kelvin temperature conversion separately.
-    e->moveTreeOverTree(
-        SharedTreeStack->pushDoubleFloat(Unit::KelvinValueToRepresentative(
-            Approximation::To<double>(
-                e, Approximation::Parameters{.policy = {.optimize = true}}),
-            Unit::GetRepresentative(inputUnits))));
+    e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(TemperatureFromKelvin(
+        Approximation::To<double>(
+            e, Approximation::Parameters{.policy = {.optimize = true}}),
+        Unit::GetRepresentative(inputUnits))));
     e->cloneNodeAtNode(KMult.node<2>);
     return true;
   }
@@ -352,11 +351,10 @@ static bool ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
                                       : &Temperature::representatives.celsius;
     units = Unit::Push(targetRepresentative, Prefix::EmptyPrefix());
     assert(e->nextTree() == units);
-    e->moveTreeOverTree(
-        SharedTreeStack->pushDoubleFloat(Unit::KelvinValueToRepresentative(
-            Approximation::To<double>(
-                e, Approximation::Parameters{.policy = {.optimize = true}}),
-            targetRepresentative)));
+    e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(TemperatureFromKelvin(
+        Approximation::To<double>(
+            e, Approximation::Parameters{.policy = {.optimize = true}}),
+        targetRepresentative)));
     e->cloneNodeAtNode(KMult.node<2>);
     return true;
   } else if (isAngle) {

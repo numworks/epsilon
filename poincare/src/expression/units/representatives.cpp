@@ -17,6 +17,7 @@ const Angle::Representatives<const Angle> Angle::representatives = {
     .degree = {"°", KDiv(π_e, 180_e), None, None},
     .gradian = {"gon", KDiv(π_e, 200_e), None, None}};
 
+#if !POINCARE_UNIT_ONLY_ANGLES
 const Time::Representatives<const Time> Time::representatives = {
     .second = {"s", 1_e, All, NegativeLongScale},
     .minute = {"min", 60_e, None, None},
@@ -137,25 +138,7 @@ const Volume::Representatives<const Volume> Volume::representatives = {
 
 const Speed::Representatives<const Speed> Speed::representatives = {
     .none = {nullptr, 1_e, None, None}};
-
-const Representative* Distance::bestRepresentativeAndPrefix(
-    double value, double exponent, Preferences::UnitFormat unitFormat,
-    const Prefix** prefix, const Representative* forcedRepr) const {
-  bool useMetricRepresentative;
-  if (forcedRepr) {
-    useMetricRepresentative = forcedRepr == &representatives.meter;
-  } else {
-    useMetricRepresentative = unitFormat == Preferences::UnitFormat::Metric;
-  }
-  return useMetricRepresentative ? /* Exclude imperial units from the search. */
-             defaultFindBestRepresentativeAndPrefix(
-                 value, exponent, &representatives.meter, &representatives.inch,
-                 prefix)
-                                 : /* Exclude meters from the search. */
-             defaultFindBestRepresentativeAndPrefix(
-                 value, exponent, &representatives.meter + 1,
-                 representatives.end(), prefix);
-}
+#endif
 
 const Representative* Angle::bestRepresentativeAndPrefix(
     double value, double exponent, Preferences::UnitFormat unitFormat,
@@ -190,6 +173,26 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
       return &representatives.gradian;
   }
   OMG_UNREACHABLE;
+}
+
+#if !POINCARE_UNIT_ONLY_ANGLES
+const Representative* Distance::bestRepresentativeAndPrefix(
+    double value, double exponent, Preferences::UnitFormat unitFormat,
+    const Prefix** prefix, const Representative* forcedRepr) const {
+  bool useMetricRepresentative;
+  if (forcedRepr) {
+    useMetricRepresentative = forcedRepr == &representatives.meter;
+  } else {
+    useMetricRepresentative = unitFormat == Preferences::UnitFormat::Metric;
+  }
+  return useMetricRepresentative ? /* Exclude imperial units from the search. */
+             defaultFindBestRepresentativeAndPrefix(
+                 value, exponent, &representatives.meter, &representatives.inch,
+                 prefix)
+                                 : /* Exclude meters from the search. */
+             defaultFindBestRepresentativeAndPrefix(
+                 value, exponent, &representatives.meter + 1,
+                 representatives.end(), prefix);
 }
 
 const Representative* Mass::bestRepresentativeAndPrefix(
@@ -256,6 +259,7 @@ const Representative* Volume::bestRepresentativeAndPrefix(
   return defaultFindBestRepresentativeAndPrefix(
       value, exponent, &representatives.cup, representatives.end(), prefix);
 }
+#endif
 
 }  // namespace Units
 }  // namespace Poincare::Internal

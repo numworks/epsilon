@@ -60,6 +60,7 @@ class Angle : public Helper<Angle> {
   const static Representatives<const Self> representatives;
 };
 
+#if !POINCARE_UNIT_ONLY_ANGLES
 class Time : public Helper<Time> {
  public:
   constexpr static SIVector Dimension{.time = 1};
@@ -443,6 +444,7 @@ class Speed : public Helper<Speed> {
   using Helper::Helper;
   const static Representatives<const Self> representatives;
 };
+#endif
 
 // Implicit addition
 
@@ -452,6 +454,26 @@ struct RepresentativesList {
 };
 
 #if POINCARE_UNIT
+constexpr static const Representative*
+    k_angleRepresentativesAllowingImplicitAddition[] = {
+        &Angle::representatives.arcSecond, &Angle::representatives.arcMinute,
+        &Angle::representatives.degree};
+
+#if POINCARE_UNIT_ONLY_ANGLES
+constexpr static const Representative* k_representativesWithoutLeftMargin[] = {
+    &Angle::representatives.arcSecond,
+    &Angle::representatives.arcMinute,
+    &Angle::representatives.degree,
+};
+
+constexpr static RepresentativesList
+    k_representativesAllowingImplicitAddition[] = {
+        {k_angleRepresentativesAllowingImplicitAddition,
+         std::size(k_angleRepresentativesAllowingImplicitAddition)}};
+constexpr static int k_representativesAllowingImplicitAdditionLength =
+    std::size(k_representativesAllowingImplicitAddition);
+
+#else
 // These must be sorted in order, from smallest to biggest
 constexpr const Representative*
     k_timeRepresentativesAllowingImplicitAddition[] = {
@@ -467,11 +489,6 @@ constexpr static const Representative*
 constexpr static const Representative*
     k_massRepresentativesAllowingImplicitAddition[] = {
         &Mass::representatives.ounce, &Mass::representatives.pound};
-
-constexpr static const Representative*
-    k_angleRepresentativesAllowingImplicitAddition[] = {
-        &Angle::representatives.arcSecond, &Angle::representatives.arcMinute,
-        &Angle::representatives.degree};
 
 constexpr static RepresentativesList
     k_representativesAllowingImplicitAddition[] = {
@@ -493,19 +510,8 @@ constexpr static const Representative* k_representativesWithoutLeftMargin[] = {
     &Temperature::representatives.celsius,
     &Temperature::representatives.fahrenheit,
 };
+#endif
 #else
-constexpr const Representative*
-    k_timeRepresentativesAllowingImplicitAddition[] = {};
-
-constexpr static const Representative*
-    k_distanceRepresentativesAllowingImplicitAddition[] = {};
-
-constexpr static const Representative*
-    k_massRepresentativesAllowingImplicitAddition[] = {};
-
-constexpr static const Representative*
-    k_angleRepresentativesAllowingImplicitAddition[] = {};
-
 constexpr static RepresentativesList
     k_representativesAllowingImplicitAddition[] = {};
 constexpr static int k_representativesAllowingImplicitAdditionLength = 0;

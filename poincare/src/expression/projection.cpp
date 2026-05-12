@@ -253,6 +253,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     Decimal::Project(e);
     changed = true;
   }
+#if !POINCARE_UNIT_ONLY_ANGLES
   if (e->isUnitOrPhysicalConstant() && args->m_hasNonKelvinTemperatureUnit &&
       Units::Unit::GetRepresentative(e)->siVector() !=
           Units::Temperature::Dimension) {
@@ -260,6 +261,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
      * (12_km / 6_mm)×_°C -> (12 000 / 0.006)×_°C */
     Units::Unit::RemoveUnit(e);
   }
+#endif
 
   // Project angles depending on context
   AngleUnit angleUnit = args->angleUnit;

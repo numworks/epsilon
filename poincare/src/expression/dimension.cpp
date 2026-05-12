@@ -678,7 +678,11 @@ Dimension Dimension::Get(const Tree* e,
           [[maybe_unused]] bool success = unitVector.addAllCoefficients(
               dim.unit.vector, secondDivisionChild ? -1 : 1);
           assert(success);
-          if (dim.unit.vector.angle != 0 || dim.unit.vector.temperature != 0) {
+          if (dim.unit.vector.angle != 0
+#if !POINCARE_UNIT_ONLY_ANGLES
+              || dim.unit.vector.temperature != 0
+#endif
+          ) {
             // Only angle and temperature representatives matter.
             /* TODO: refactor to avoid setting representative on a mult/div
              * expression.
@@ -825,9 +829,13 @@ bool Dimension::operator==(const Dimension& other) const {
       // UndefUnif has the same dimension as any other unit.
       return true;
     }
+#if !POINCARE_UNIT_ONLY_ANGLES
     return unit.vector == other.unit.vector &&
            (unit.vector != Units::Temperature::Dimension ||
             unit.representative == other.unit.representative);
+#else
+    return unit.vector == other.unit.vector;
+#endif
   }
   return true;
 }

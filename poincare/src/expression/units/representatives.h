@@ -34,13 +34,6 @@ class Helper : public Representative {
     return reinterpret_cast<const Representative*>(&R::representatives);
   };
   const SIVector siVector() const override { return R::Dimension; }
-  bool isBaseUnit() const override {
-    if constexpr (R::Dimension.isSI()) {
-      return this == representativesOfSameDimension();
-    } else {
-      return false;
-    }
-  }
 };
 
 class Time : public Helper<Time> {

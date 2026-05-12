@@ -34,6 +34,8 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
     case ThemeComponent::BackgroundWhite:
     case ThemeComponent::CellEven:
     case ThemeComponent::CellOdd:
+    case ThemeComponent::CellTableEven:
+    case ThemeComponent::CellTableOdd:
       return ThemeComponent::SurfaceSelect;
     case ThemeComponent::TextWhite:
     case ThemeComponent::TokenYellow:

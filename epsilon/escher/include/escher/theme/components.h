@@ -19,6 +19,8 @@ namespace Escher {
   X(CalculationBorderSelected) \
   X(CellEven)                  \
   X(CellOdd)                   \
+  X(CellTableEven)             \
+  X(CellTableOdd)              \
   X(SurfaceSelect)             \
   X(SurfaceSelectDark)         \
   X(SurfaceSelectApps)         \

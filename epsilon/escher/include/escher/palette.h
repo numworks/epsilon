@@ -78,7 +78,7 @@ class Palette {
   constexpr static KDColor PYTHON_DarkBlue = KDColor::RGB24(0x032f62);
   // The Python gray is between GrayMiddle and GrayDarkMiddle
   constexpr static KDColor PYTHON_GrayMiddle = KDColor::RGB24(0xC6C6C6);
-  constexpr static KDColor PYTHON_WallScreenDarker = KDColor::RGB24(0xe4e6e7);
+  constexpr static KDColor PYTHON_GrayLight = KDColor::RGB24(0xe4e6e7);
   constexpr static KDColor PYTHON_BlueishGray = KDColor::RGB24(0x919ea4);
 };
 

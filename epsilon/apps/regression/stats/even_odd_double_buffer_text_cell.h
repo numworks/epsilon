@@ -4,6 +4,7 @@
 #include <escher/even_odd_cell.h>
 #include <escher/responder.h>
 #include <escher/text_format.h>
+#include <escher/theme/components.h>
 
 namespace Regression {
 
@@ -32,6 +33,10 @@ class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
   bool handleEvent(Ion::Events::Event event) override;
 
  protected:
+  Escher::ThemeComponent baseColor() const override {
+    return m_even ? Escher::ThemeComponent::CellTableEven
+                  : Escher::ThemeComponent::CellTableOdd;
+  }
   bool m_firstTextSelected;
   Escher::FloatEvenOddBufferTextCell<> m_firstBufferTextView;
   Escher::FloatEvenOddBufferTextCell<> m_secondBufferTextView;

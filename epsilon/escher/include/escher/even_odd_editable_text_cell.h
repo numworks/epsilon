@@ -18,6 +18,11 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
  protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
+  ThemeComponent baseColor() const override {
+    return m_even ? ThemeComponent::CellTableEven
+                  : ThemeComponent::CellTableOdd;
+  }
+
  private:
   constexpr static KDCoordinate k_rightMargin = Escher::Metric::SmallCellMargin;
   const AbstractEditableTextCell* editableTextCell() const {

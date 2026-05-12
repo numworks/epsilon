@@ -28,6 +28,10 @@ class AbstractEvenOddBufferTextCell : public EvenOddCell {
   int numberOfSubviews() const override;
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
+  ThemeComponent baseColor() const override {
+    return m_even ? ThemeComponent::CellTableEven
+                  : ThemeComponent::CellTableOdd;
+  }
   virtual AbstractBufferTextView* bufferTextView() = 0;
   AbstractBufferTextView* bufferTextView() const {
     return const_cast<AbstractEvenOddBufferTextCell*>(this)->bufferTextView();

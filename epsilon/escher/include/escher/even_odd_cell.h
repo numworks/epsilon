@@ -28,7 +28,7 @@ class EvenOddCell : public HighlightCell {
       .horizontalAlignment = KDGlyph::k_alignRight};
 
  protected:
-  ThemeComponent baseColor() const {
+  virtual ThemeComponent baseColor() const {
     return m_even ? ThemeComponent::CellEven : ThemeComponent::CellOdd;
   }
   virtual void updateSubviewsBackgroundAfterChangingState() {}

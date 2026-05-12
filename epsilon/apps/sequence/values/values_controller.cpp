@@ -204,7 +204,8 @@ Escher::AbstractEvenOddEditableTextCell* ValuesController::abscissaCells(
   return &m_abscissaCells[j];
 }
 
-Escher::EvenOddMessageTextCell* ValuesController::abscissaTitleCells(int j) {
+Escher::EvenOddTableMessageTextCell* ValuesController::abscissaTitleCells(
+    int j) {
   assert(j >= 0 && j < abscissaTitleCellsCount());
   return &m_abscissaTitleCell;
 }

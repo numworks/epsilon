@@ -135,7 +135,8 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
   // Calculation title and symbols
   if (type == k_calculationTitleCellType ||
       type == k_calculationSymbolCellType) {
-    EvenOddMessageTextCell* myCell = static_cast<EvenOddMessageTextCell*>(cell);
+    EvenOddTableMessageTextCell* myCell =
+        static_cast<EvenOddTableMessageTextCell*>(cell);
     myCell->setTextColor(type == k_calculationTitleCellType
                              ? ThemeComponent::TextDefault
                              : ThemeComponent::TextGrayDark);

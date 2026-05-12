@@ -38,7 +38,7 @@ class InputGoodnessTable : public DoubleColumnTableCell {
   GoodnessTest* inference() { return static_cast<GoodnessTest*>(m_inference); }
   CategoricalController* categoricalController() override;
 
-  Escher::EvenOddMessageTextCell m_header[k_maxNumberOfColumns];
+  Escher::EvenOddTableMessageTextCell m_header[k_maxNumberOfColumns];
   InputGoodnessController* m_inputGoodnessController;
 };
 

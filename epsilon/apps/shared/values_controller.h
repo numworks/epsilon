@@ -170,7 +170,7 @@ class ValuesController : public EditableCellTableViewController,
   virtual int abscissaCellsCount() const = 0;
   virtual Escher::AbstractEvenOddEditableTextCell* abscissaCells(int j) = 0;
   virtual int abscissaTitleCellsCount() const = 0;
-  virtual Escher::EvenOddMessageTextCell* abscissaTitleCells(int j) = 0;
+  virtual Escher::EvenOddTableMessageTextCell* abscissaTitleCells(int j) = 0;
   virtual Escher::SelectableViewController* functionParameterController() = 0;
   virtual Shared::ColumnParameters* functionParameters() = 0;
 

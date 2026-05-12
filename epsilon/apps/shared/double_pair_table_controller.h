@@ -94,9 +94,9 @@ class DoublePairTableController
   Escher::SelectableTableView m_selectableTableView;
 
   Escher::SolidColorCell m_hideableCell[k_numberOfHeaderColumns];
-  Escher::EvenOddMessageTextCell
+  Escher::EvenOddTableMessageTextCell
       m_calculationTitleCells[k_maxNumberOfDisplayableRows];
-  Escher::EvenOddMessageTextCell
+  Escher::EvenOddTableMessageTextCell
       m_calculationSymbolCells[k_maxNumberOfDisplayableRows];
 };
 

@@ -91,7 +91,7 @@ class ValuesController : public Shared::ValuesController,
   }
   Escher::AbstractEvenOddEditableTextCell* abscissaCells(int j) override;
   int abscissaTitleCellsCount() const override { return 1; }
-  Escher::EvenOddMessageTextCell* abscissaTitleCells(int j) override;
+  Escher::EvenOddTableMessageTextCell* abscissaTitleCells(int j) override;
 
   Escher::SelectableViewController* functionParameterController() override {
     return sequenceColumnParameterController();
@@ -106,7 +106,7 @@ class ValuesController : public Shared::ValuesController,
   Shared::ExpressionFunctionTitleCell
       m_sequenceTitleCells[k_maxNumberOfDisplayableColumns];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
-  Escher::EvenOddMessageTextCell m_abscissaTitleCell;
+  Escher::EvenOddTableMessageTextCell m_abscissaTitleCell;
   Escher::EvenOddEditableTextCell<
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits>
       m_abscissaCells[k_maxNumberOfDisplayableRows];

@@ -30,4 +30,16 @@ class EvenOddMessageTextCell : public EvenOddCell {
   KDCoordinate m_leftMargin;
 };
 
+// Same as EvenOddMessageTextCell but uses the table even / odd color scheme
+class EvenOddTableMessageTextCell : public EvenOddMessageTextCell {
+ public:
+  using EvenOddMessageTextCell::EvenOddMessageTextCell;
+
+ protected:
+  ThemeComponent baseColor() const override {
+    return m_even ? ThemeComponent::CellTableEven
+                  : ThemeComponent::CellTableOdd;
+  }
+};
+
 }  // namespace Escher

@@ -98,8 +98,8 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
             I18n::Message::ModeFrequency, I18n::Message::ModeFrequencySymbol};
         message = modeFrequencyTitles[column];
       }
-      EvenOddMessageTextCell* calcTitleCell =
-          static_cast<EvenOddMessageTextCell*>(cell);
+      EvenOddTableMessageTextCell* calcTitleCell =
+          static_cast<EvenOddTableMessageTextCell*>(cell);
       calcTitleCell->setTextColor(column == 1 ? ThemeComponent::TextGrayDark
                                               : ThemeComponent::TextDefault);
       calcTitleCell->setMessage(message);

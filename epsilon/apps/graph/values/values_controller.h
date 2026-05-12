@@ -153,7 +153,7 @@ class ValuesController : public Shared::ValuesController,
   int abscissaTitleCellsCount() const override {
     return k_maxNumberOfDisplayableSymbolTypes;
   }
-  Escher::EvenOddMessageTextCell* abscissaTitleCells(int j) override;
+  Escher::EvenOddTableMessageTextCell* abscissaTitleCells(int j) override;
   Escher::SelectableViewController* functionParameterController() override {
     return parameterController<Escher::SelectableViewController>();
   }
@@ -189,7 +189,7 @@ class ValuesController : public Shared::ValuesController,
   Shared::ExpressionFunctionTitleCell
       m_functionTitleCells[k_maxNumberOfDisplayableColumns];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
-  Escher::EvenOddMessageTextCell
+  Escher::EvenOddTableMessageTextCell
       m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Escher::EvenOddEditableTextCell<
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits>

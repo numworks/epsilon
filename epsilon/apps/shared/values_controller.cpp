@@ -494,8 +494,8 @@ void ValuesController::setTitleCellText(HighlightCell* cell, int column) {
     return;
   }
   if (typeAtLocation(column, 0) == k_abscissaTitleCellType) {
-    EvenOddMessageTextCell* myTitleCell =
-        static_cast<EvenOddMessageTextCell*>(cell);
+    EvenOddTableMessageTextCell* myTitleCell =
+        static_cast<EvenOddTableMessageTextCell*>(cell);
     myTitleCell->setMessage(valuesParameterMessageAtColumn(column));
     return;
   }

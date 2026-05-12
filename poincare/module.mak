@@ -78,6 +78,7 @@ $(addprefix expression/, \
   units/temperature.cpp \
   units/unit.cpp \
   units/unit_display.cpp \
+  units/unit_display_only_angles.cpp \
   units/representatives.cpp \
   variables.cpp \
   vector.cpp \

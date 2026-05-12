@@ -1,3 +1,6 @@
+// TODO: replace with config flavor
+#if !POINCARE_UNIT_ONLY_ANGLES
+
 #include "unit_display.h"
 
 #include <omg/float.h>
@@ -543,3 +546,5 @@ static bool ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
 
 }  // namespace Units
 }  // namespace Poincare::Internal
+
+#endif

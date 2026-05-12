@@ -1,3 +1,6 @@
+// TODO: replace with config flavor
+#if !POINCARE_UNIT_ONLY_ANGLES
+
 #include "best_unit_selection.h"
 
 #include <poincare/src/expression/k_tree.h>
@@ -194,3 +197,5 @@ void ChooseBestRepresentativeAndPrefixForValue(
 
 }  // namespace Units
 }  // namespace Poincare::Internal
+
+#endif

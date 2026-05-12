@@ -1,3 +1,6 @@
+// TODO: replace with config flavor
+#if !POINCARE_UNIT_ONLY_ANGLES
+
 #include "temperature.h"
 
 #include <poincare/src/expression/k_tree.h>
@@ -65,3 +68,5 @@ double TemperatureFromKelvin(double value,
 
 }  // namespace Units
 }  // namespace Poincare::Internal
+
+#endif

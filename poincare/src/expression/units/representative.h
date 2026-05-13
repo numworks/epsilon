@@ -51,6 +51,10 @@ class Representative {
   /* representativesOfSameDimension returns a pointer to the array containing
    * all representatives for this's dimension. */
   virtual const Representative* representativesOfSameDimension() const = 0;
+
+#if !POINCARE_UNIT_ONLY_ANGLES
+  /* Is function is dead code is scandium but has to be explicitely
+   * #ifed since it’s virtual. Remove virtuality ? */
   virtual const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr = nullptr) const {
@@ -62,6 +66,7 @@ class Representative {
         value, exponent, representativesOfSameDimension(),
         representativesOfSameDimension() + numberOfRepresentatives(), prefix);
   }
+#endif
 
   Aliases rootSymbols() const { return m_rootSymbols; }
   double ratio() const {

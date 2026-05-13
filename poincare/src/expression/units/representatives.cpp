@@ -140,6 +140,23 @@ const Speed::Representatives<const Speed> Speed::representatives = {
     .none = {nullptr, 1_e, None, None}};
 #endif
 
+const Representative* Angle::DefaultRepresentativeForAngleUnit(
+    AngleUnit angleUnit) {
+  switch (angleUnit) {
+    case AngleUnit::Degree:
+      return &representatives.degree;
+    case AngleUnit::None:
+      OMG_UNREACHABLE;
+      [[fallthrough]];
+    case AngleUnit::Radian:
+      return &representatives.radian;
+    case AngleUnit::Gradian:
+      return &representatives.gradian;
+  }
+  OMG_UNREACHABLE;
+}
+
+#if !POINCARE_UNIT_ONLY_ANGLES
 const Representative* Angle::bestRepresentativeAndPrefix(
     double value, double exponent, Preferences::UnitFormat unitFormat,
     const Prefix** prefix, const Representative* forcedRepr) const {
@@ -159,23 +176,6 @@ const Representative* Angle::bestRepresentativeAndPrefix(
       value, exponent, &representatives.radian, representatives.end(), prefix);
 }
 
-const Representative* Angle::DefaultRepresentativeForAngleUnit(
-    AngleUnit angleUnit) {
-  switch (angleUnit) {
-    case AngleUnit::Degree:
-      return &representatives.degree;
-    case AngleUnit::None:
-      OMG_UNREACHABLE;
-      [[fallthrough]];
-    case AngleUnit::Radian:
-      return &representatives.radian;
-    case AngleUnit::Gradian:
-      return &representatives.gradian;
-  }
-  OMG_UNREACHABLE;
-}
-
-#if !POINCARE_UNIT_ONLY_ANGLES
 const Representative* Distance::bestRepresentativeAndPrefix(
     double value, double exponent, Preferences::UnitFormat unitFormat,
     const Prefix** prefix, const Representative* forcedRepr) const {

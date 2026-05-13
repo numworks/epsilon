@@ -6,6 +6,7 @@
 #include <escher/message_text_view.h>
 #include <escher/stack_view_controller.h>
 
+#include "data_field.h"
 #include "single_element_view.h"
 
 namespace Elements {

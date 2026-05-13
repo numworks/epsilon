@@ -3,11 +3,12 @@
 #include <omg/print.h>
 
 #include "app.h"
+#include "elements_view_data_source.h"
 
 namespace Elements {
 
 void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), m_backgroundColor);
+  ctx->fillRect(bounds(), Escher::ColorPicker::Resolve(m_backgroundColor));
 
   ElementsViewDataSource* dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();

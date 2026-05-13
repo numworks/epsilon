@@ -1,14 +1,13 @@
 #pragma once
 
+#include <escher/theme/components.h>
 #include <escher/view.h>
-
-#include "elements_view_data_source.h"
 
 namespace Elements {
 
 class SingleElementView : public Escher::View {
  public:
-  SingleElementView(KDColor backgroundColor)
+  SingleElementView(Escher::ThemeComponent backgroundColor)
       : m_backgroundColor(backgroundColor) {}
 
   void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -26,7 +25,7 @@ class SingleElementView : public Escher::View {
   constexpr static KDFont::Size k_symbolFont = KDFont::Size::Large;
   constexpr static KDFont::Size k_numbersFont = KDFont::Size::Small;
 
-  KDColor m_backgroundColor;
+  Escher::ThemeComponent m_backgroundColor;
 };
 
 }  // namespace Elements

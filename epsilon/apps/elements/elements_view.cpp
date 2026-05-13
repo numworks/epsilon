@@ -8,7 +8,7 @@
 namespace Elements {
 
 ElementsView::ElementsView()
-    : m_singleElementView(Escher::Palette::White),
+    : m_singleElementView(k_backgroundColor),
       m_nameView(I18n::Message::Default,
                  Escher::TextFormatWithoutColors{
                      .font = KDFont::Size::Small,

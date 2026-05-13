@@ -14,7 +14,7 @@ DetailsListController::DetailsListController(
     StackViewController* parentResponder)
     : ListWithTopAndBottomController(parentResponder, &m_topElementView,
                                      &m_bottomMessageView),
-      m_topElementView(Escher::Palette::WallScreen),
+      m_topElementView(Escher::ThemeComponent::WallScreen),
       m_bottomMessageView(I18n::Message::ElementsDataConditions,
                           k_messageFormat) {}
 

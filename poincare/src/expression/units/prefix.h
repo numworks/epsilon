@@ -7,11 +7,18 @@ namespace Units {
 
 class Prefix {
  public:
+#if POINCARE_UNIT_ONLY_ANGLES
+  constexpr static int k_numberOfPrefixes = 1;
+  constexpr static int k_maxTextLen = 0;
+
+  constexpr static int k_emptyPrefixIndex = 0;
+#else
   constexpr static int k_numberOfPrefixes = 13;
   constexpr static int k_maxTextLen = 2;  // "da"
 
   constexpr static int k_emptyPrefixIndex = 6;
   constexpr static int k_kiloPrefixIndex = 9;
+#endif
 
   constexpr Prefix() = default;
   constexpr Prefix(const char* symbol, int8_t exponent)

@@ -16,6 +16,11 @@ namespace Units {
  * constructed from their pointers. This way we can easily check if two Prefix
  * objects are equal by comparing pointers. This saves us from overloading the
  * == operator on Prefix and saves time at execution. */
+#if POINCARE_UNIT_ONLY_ANGLES
+static constexpr Prefix k_prefixes[Prefix::k_numberOfPrefixes] = {
+    Prefix("", 0),
+};
+#else
 static constexpr Prefix k_prefixes[Prefix::k_numberOfPrefixes] = {
     Prefix("p", -12), Prefix("n", -9), Prefix("μ", -6), Prefix("m", -3),
     Prefix("c", -2),  Prefix("d", -1), Prefix("", 0),   Prefix("da", 1),
@@ -27,6 +32,7 @@ static_assert(k_prefixes[Prefix::k_emptyPrefixIndex].exponent() == 0,
               "Index for the Empty Prefix is incorrect.");
 static_assert(k_prefixes[Prefix::k_kiloPrefixIndex].exponent() == 3,
               "Index for the Kilo Prefix is incorrect.");
+#endif
 
 const Prefix* Prefix::Prefixes() { return k_prefixes; }
 

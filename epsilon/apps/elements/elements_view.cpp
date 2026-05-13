@@ -43,7 +43,7 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
     drawElementBorder(previousSelection, backgroundColor, ctx, rect);
   }
   if (ElementsDataBase::IsElement(selection)) {
-    drawElementBorder(selection, dataSource->field()->getColors(selection).fg(),
+    drawElementBorder(selection, dataSource->filteredColors(selection).fg(),
                       ctx, rect);
   }
 }

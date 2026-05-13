@@ -19,7 +19,7 @@ class ImageView : public View {
 
  private:
   // Boot logo image is 188 x 21 = 3948
-  constexpr static int k_maxImageSize = 4000;
+  constexpr static int k_maxImageSize = 188 * 21;
 };
 
 }  // namespace Escher

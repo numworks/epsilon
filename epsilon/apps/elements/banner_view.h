@@ -63,6 +63,10 @@ class BannerView : public Escher::View {
    public:
     using Escher::SolidColorView::SolidColorView;
 
+    void setHighlighted(bool highlight) {
+      m_ellipsisView.setHighlighted(highlight);
+    }
+
    private:
     int numberOfSubviews() const override { return 1; }
     Escher::View* subviewAtIndex(int index) override {

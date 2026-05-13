@@ -91,9 +91,11 @@ void BannerView::layoutSubviews(bool force) {
     m_dotView.setColor(dataSource->field()->getColors(z).fg());
     x += dotRect.width() + k_dotLegendMargin;
     buttonColor = k_backgroundColor;
+    m_button.setHighlighted(false);
   } else {
     setChildFrame(&m_dotView, KDRectZero, force);
     buttonColor = k_selectedButtonColor;
+    m_button.setHighlighted(true);
   }
 
   setChildFrame(&m_button,

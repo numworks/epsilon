@@ -182,7 +182,8 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   ContinuousFunctionProperties properties = function()->properties();
   bool isEquality = properties.isEquality();
-  assert(function()->canDisplayDerivative() || shouldDisplayIntersectionCell());
+  assert(function()->canDisplayDerivative() || function()->isDerivative() ||
+         shouldDisplayIntersectionCell());
   selectRow(0);
   bool isCartesian = properties.isCartesian();
   bool isOfDegreeTwo = properties.isOfDegreeTwo();

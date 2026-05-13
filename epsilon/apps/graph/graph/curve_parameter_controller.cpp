@@ -231,7 +231,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
           derivationOrder);
     } else {
       assert(firstComponent);
-      function()->nameWithArgument(buffer, bufferSize);
+      function()->nameWithArgument(buffer, bufferSize, derivationOrder);
     }
   }
   m_parameterCells[row].label()->setText(buffer);
@@ -314,7 +314,7 @@ void CurveParameterController::setRecord(Ion::Storage::Record record,
   m_record = record;
   m_derivationOrder = derivationOrder;
   m_calculationCell.setVisible(
-      (function()->canDisplayDerivative() && m_derivationOrder == 0) ||
+      function()->canDisplayDerivative() || function()->isDerivative() ||
       (function()->shouldDisplayIntersections() &&
        App::app()->functionStore().numberOfIntersectableFunctions() > 1));
   selectRow(0);

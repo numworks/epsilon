@@ -83,6 +83,17 @@ void ion_main(int argc, const char* const argv[]) {
       continue;
     }
 
+    if (strcmp(argv[i], "--theme") == 0 && argc > i + 1) {
+      if (strcmp(argv[i + 1], "dark") == 0) {
+        GlobalPreferences::SharedGlobalPreferences()->setTheme(
+            Escher::Theme::Dark);
+      } else {
+        GlobalPreferences::SharedGlobalPreferences()->setTheme(
+            Escher::Theme::Light);
+      }
+      continue;
+    }
+
     const char* appNames[] = {"home", EPSILON_APPS_NAMES};
 
     /* Option to open a given app at run-time:

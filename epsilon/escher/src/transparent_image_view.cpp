@@ -29,8 +29,9 @@ void TransparentImageView::drawRect(KDContext* ctx, KDRect rect) const {
    * transparencies, which are encoded on 1 byte per pixel */
   constexpr int k_maxSizeOfPixelBuffer =
       k_maxTransparentImageSize * (sizeof(KDColor) + sizeof(uint8_t));
-  /* Note: "/" is an integer division so make sure that k_maxSizeOfPixelBuffer
-   * is an even integer */
+  /* Note: "/" is an integer division so k_maxSizeOfPixelBuffer must be an even
+   * integer */
+  static_assert(k_maxSizeOfPixelBuffer % sizeof(KDColor) == 0);
   KDColor pixelBuffer[k_maxSizeOfPixelBuffer / sizeof(KDColor)];
 
   int sizeOfPixelBuffer = imageSize * (sizeof(KDColor) + sizeof(uint8_t));

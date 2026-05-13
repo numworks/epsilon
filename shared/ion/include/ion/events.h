@@ -136,9 +136,12 @@ class Journal {
     strlcpy(m_startingLanguage, language, k_languageSize);
   }
   constexpr static int k_languageSize = 3;
+  bool startingDarkMode() const { return m_startingDarkMode; }
+  void setStartingDarkMode(bool dark) { m_startingDarkMode = dark; }
 
  private:
   char m_startingLanguage[k_languageSize] = {0};
+  bool m_startingDarkMode = false;
 };
 
 void replayFrom(Journal* l);

@@ -57,7 +57,7 @@ void StackView::pushStack(const ViewController* vc) {
     if (numberOfStacks == 0) {
       textColor = ThemeComponent::TextWhite;
       backgroundColor = ThemeComponent::BackgroundBoxTitle;
-      separatorColor = ThemeComponent::BorderPurpleDark;
+      separatorColor = ThemeComponent::BorderBoxTitleCell;
     }
   } else {
     assert(m_style == Style::WhiteUniform);

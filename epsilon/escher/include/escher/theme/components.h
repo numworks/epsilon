@@ -46,7 +46,7 @@ namespace Escher {
   X(BorderGrayDarkMiddle)      \
   X(BorderGrayDark)            \
   X(BorderPurple)              \
-  X(BorderPurpleDark)          \
+  X(BorderBoxTitleCell)        \
   X(BorderYellowDark)          \
   X(ButtonLightBorderMain)     \
   X(ButtonLightBorderBottom)   \

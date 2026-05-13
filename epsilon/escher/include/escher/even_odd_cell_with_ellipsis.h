@@ -10,6 +10,11 @@ class EvenOddCellWithEllipsis : public EvenOddCell {
  public:
   EvenOddCellWithEllipsis();
 
+  void setHighlighted(bool highlight) override {
+    EvenOddCell::setHighlighted(highlight);
+    m_ellipsisView.setHighlighted(highlight);
+  }
+
  private:
   int numberOfSubviews() const override { return 1; }
   View* subviewAtIndex(int index) override {

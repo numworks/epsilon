@@ -1,5 +1,6 @@
 #include "plot_view_plots.h"
 
+#include <escher/bordered.h>
 #include <float.h>
 
 #include <algorithm>
@@ -481,22 +482,15 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
 
     //   Step 4: Draw
     // Interior
-    KDRect barRect(left + borderWidth, top + borderWidth,
-                   barWidth - 2 * borderWidth, barHeight - borderWidth);
-    ctx->fillRect(barRect, color);
+    KDRect innerBarRect(left + borderWidth, top + borderWidth,
+                        barWidth - 2 * borderWidth, barHeight - borderWidth);
+    ctx->fillRect(innerBarRect, color);
     if (borderWidth > 0) {
       assert(m_highlightWithBorder);
-      // Left border
-      ctx->fillRect(KDRect(left, top, borderWidth, barHeight),
-                    m_highlightColor);
-      // Top border
-      ctx->fillRect(KDRect(left + borderWidth, top, barWidth - 2 * borderWidth,
-                           borderWidth),
-                    m_highlightColor);
-      // Right border
-      ctx->fillRect(
-          KDRect(left + barWidth - borderWidth, top, borderWidth, barHeight),
-          m_highlightColor);
+      Escher::Bordered::DrawOuterBorderOfRect(
+          ctx, innerBarRect, borderWidth, m_highlightColor,
+          Escher::Bordered::Mask{
+              .top = true, .right = true, .bottom = false, .left = true});
     }
   }
 }

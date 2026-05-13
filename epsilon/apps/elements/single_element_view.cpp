@@ -1,5 +1,6 @@
 #include "single_element_view.h"
 
+#include <escher/bordered.h>
 #include <omg/print.h>
 
 #include "app.h"
@@ -19,20 +20,8 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
                 (bounds().height() - k_totalSize) / 2 + k_borderSize,
                 k_cellSize, k_cellSize);
   ctx->fillRect(bgRect, colors.bg());
-
-  KDRect borders[4] = {
-      KDRect(bgRect.x() - k_borderSize, bgRect.y() - k_borderSize, k_totalSize,
-             k_borderSize),  // Top
-      KDRect(bgRect.x() - k_borderSize, bgRect.y() + k_cellSize, k_totalSize,
-             k_borderSize),  // Bottom
-      KDRect(bgRect.x() - k_borderSize, bgRect.y(), k_borderSize,
-             k_cellSize),  // Left
-      KDRect(bgRect.x() + bgRect.width(), bgRect.y(), k_borderSize,
-             k_cellSize),  // Right
-  };
-  for (KDRect r : borders) {
-    ctx->fillRect(r, colors.fg());
-  }
+  Escher::Bordered::DrawOuterBorderOfRect(ctx, bgRect, k_borderSize,
+                                          colors.fg());
 
   const char* symbol = ElementsDataBase::Symbol(z);
   KDCoordinate symbolXOffset = k_symbolZAMargin;

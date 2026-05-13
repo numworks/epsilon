@@ -6,28 +6,15 @@ namespace Escher {
 
 void Bordered::drawTopBorderOfRect(KDContext* ctx, KDRect rect,
                                    ThemeComponent borderColor) const {
-  assert(rect.origin() == KDPointZero);
-  ctx->fillRect(KDRect(0, 0, rect.width(), k_separatorThickness),
-                ColorPicker::Resolve(borderColor));
+  DrawInnerBorderOfRect(
+      ctx, rect, k_separatorThickness, ColorPicker::Resolve(borderColor),
+      Mask{.top = true, .right = false, .bottom = false, .left = false});
 }
 
 void Bordered::drawBorderOfRect(KDContext* ctx, KDRect rect,
                                 ThemeComponent borderColor) const {
-  assert(rect.origin() == KDPointZero);
-  KDColor color = ColorPicker::Resolve(borderColor);
-  KDCoordinate width = rect.width();
-  KDCoordinate height = rect.height();
-  // Draw rectangle around cell
-  ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), color);
-  ctx->fillRect(KDRect(0, k_separatorThickness, k_separatorThickness,
-                       height - k_separatorThickness),
-                color);
-  ctx->fillRect(KDRect(width - k_separatorThickness, k_separatorThickness,
-                       k_separatorThickness, height - k_separatorThickness),
-                color);
-  ctx->fillRect(
-      KDRect(0, height - k_separatorThickness, width, k_separatorThickness),
-      color);
+  DrawInnerBorderOfRect(ctx, rect, k_separatorThickness,
+                        ColorPicker::Resolve(borderColor));
 }
 
 void Bordered::drawInnerRect(KDContext* ctx, KDRect rect,
@@ -37,6 +24,56 @@ void Bordered::drawInnerRect(KDContext* ctx, KDRect rect,
                        rect.width() - 2 * k_separatorThickness,
                        rect.height() - 2 * k_separatorThickness),
                 ColorPicker::Resolve(backgroundColor));
+}
+
+void Bordered::DrawOuterBorderOfRect(KDContext* ctx, KDRect rect,
+                                     KDCoordinate size, KDColor color,
+                                     Mask mask) {
+  KDRect newRect = KDRect(rect.x() - size, rect.y() - size,
+                          rect.width() + 2 * size, rect.height() + 2 * size);
+  // Do not draw corners adjacents to a single border
+  return PrivateDrawInnerBorderOfRect(ctx, newRect, size, color, mask, false);
+}
+
+void Bordered::DrawInnerBorderOfRect(KDContext* ctx, KDRect rect,
+                                     KDCoordinate size, KDColor color,
+                                     Mask mask) {
+  // Draw corners adjacents to a single border
+  return PrivateDrawInnerBorderOfRect(ctx, rect, size, color, mask, true);
+}
+
+void Bordered::PrivateDrawInnerBorderOfRect(KDContext* ctx, KDRect rect,
+                                            KDCoordinate size, KDColor color,
+                                            const Mask mask,
+                                            bool drawAllCorners) {
+  /* Note : This code is optimized to work with simple masks. Otherwise,
+   * additional code to better handle corners may be needed. */
+  assert(mask.left == mask.right);
+  assert(drawAllCorners || (mask.left && mask.right));
+  // Note : corners may be drawn twice with drawAllCorners and most masks
+  KDCoordinate sideBorderOffset = drawAllCorners ? 0 : size;
+  KDRect borders[4] = {
+      // Top and top corners
+      mask.top ? KDRect(rect.left(), rect.top(), rect.width(), size)
+               : KDRectZero,
+      // Bottom and bottom corners
+      mask.bottom ? KDRect(rect.left(), rect.top() + rect.height() - size,
+                           rect.width(), size)
+                  : KDRectZero,
+      // Left (and left corners if drawAllCorners)
+      mask.left ? KDRect(rect.left(), rect.top() + sideBorderOffset, size,
+                         rect.height() - 2 * sideBorderOffset)
+                : KDRectZero,
+      // Right (and right corners if drawAllCorners)
+      mask.right ? KDRect(rect.left() + rect.width() - size,
+                          rect.top() + sideBorderOffset, size,
+                          rect.height() - 2 * sideBorderOffset)
+                 : KDRectZero,
+  };
+  for (KDRect r : borders) {
+    // fillRect will escape if rect is empty
+    ctx->fillRect(r.intersectedWith(rect), color);
+  }
 }
 
 }  // namespace Escher

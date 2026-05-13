@@ -1,5 +1,6 @@
 #include "elements_view.h"
 
+#include <escher/bordered.h>
 #include <escher/theme/color_picker.h>
 
 #include "app.h"
@@ -149,19 +150,7 @@ void ElementsView::drawElementBorder(AtomicNumber z, KDColor color,
                                      KDContext* ctx, KDRect rect) const {
   assert(ElementsDataBase::IsElement(z));
   KDRect cell = RectForCell(TableLayout::CellForElement(z));
-  KDRect margins[4] = {
-      KDRect(cell.x() - k_cellMargin, cell.y() - k_cellMargin,
-             cell.width() + 2 * k_cellMargin, k_cellMargin),  // Top
-      KDRect(cell.x() - k_cellMargin, cell.y() + cell.height(),
-             cell.width() + 2 * k_cellMargin, k_cellMargin),  // Bottom
-      KDRect(cell.x() - k_cellMargin, cell.y(), k_cellMargin,
-             cell.height()),  // Left
-      KDRect(cell.x() + cell.width(), cell.y(), k_cellMargin,
-             cell.height()),  // Right
-  };
-  for (KDRect r : margins) {
-    ctx->fillRect(r.intersectedWith(rect), color);
-  }
+  Escher::Bordered::DrawOuterBorderOfRect(ctx, cell, k_cellMargin, color);
 }
 
 void ElementsView::drawLigatures(KDContext* ctx) const {

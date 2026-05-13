@@ -1,5 +1,6 @@
 #include "bar_graph_view.h"
 
+#include <escher/bordered.h>
 #include <escher/theme/color_picker.h>
 
 namespace Statistics::Categorical {
@@ -98,19 +99,10 @@ void BarGraphView::ContentView::drawCategory(KDContext* ctx, KDRect rect,
             : k_border,
         barHeight);
     if (barRect.width() > 0 && barRect.height() > 0) {
-      // Left
-      ctx->fillRect(KDRect(xOffset, yOffset + k_maxBarHeight - barHeight,
-                           borderWidth, barHeight),
-                    borderColor);
-      // Top
-      ctx->fillRect(KDRect(xOffset, yOffset + k_maxBarHeight - barHeight,
-                           k_barWidth, borderWidth),
-                    borderColor);
-      // Right
-      ctx->fillRect(
-          KDRect(xOffset + k_barWidth - borderWidth,
-                 yOffset + k_maxBarHeight - barHeight, borderWidth, barHeight),
-          borderColor);
+      Escher::Bordered::DrawInnerBorderOfRect(
+          ctx, barRect, borderWidth, borderColor,
+          Escher::Bordered::Mask{
+              .top = true, .right = true, .bottom = false, .left = true});
     }
     xOffset += k_barWidth;
   }

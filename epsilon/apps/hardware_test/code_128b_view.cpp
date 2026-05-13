@@ -1,5 +1,6 @@
 #include "code_128b_view.h"
 
+#include <escher/bordered.h>
 #include <kandinsky/basic_color.h>
 #include <string.h>
 
@@ -105,16 +106,8 @@ void Code128BView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->drawString(m_data, KDPoint(k_stringOffset, k_stringOffset));
 
   // Draw a red border to test the screen centered position
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_outlineThickness),
-                k_borderColor);
-  ctx->fillRect(KDRect(bounds().width() - k_outlineThickness, 0,
-                       k_outlineThickness, bounds().height()),
-                k_borderColor);
-  ctx->fillRect(KDRect(0, bounds().height() - k_outlineThickness,
-                       bounds().width(), k_outlineThickness),
-                k_borderColor);
-  ctx->fillRect(KDRect(0, 0, k_outlineThickness, bounds().height()),
-                k_borderColor);
+  Escher::Bordered::DrawInnerBorderOfRect(ctx, bounds(), k_outlineThickness,
+                                          k_borderColor);
 
   KDColor enhanceColor = BasicColor::Black;
   ctx->fillRect(

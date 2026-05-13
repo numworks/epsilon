@@ -16,6 +16,8 @@ TEXT_ARG(language, "--language", "",
          "Start with the given language and associated country",
          "en|fr|nl|pt|de|es")
 
+TEXT_ARG(theme, "--theme", "", "Start with the given theme", "light|dark")
+
 TEXT_ARG(openApp, "--open-app", "",
          "Open given application instead of the home menu", "application")
 

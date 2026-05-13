@@ -160,6 +160,8 @@ int main(int argc, char* argv[]) {
       replayJournalLanguage = "none";
     }
     args.language = replayJournalLanguage;
+    args.theme =
+        Journal::replayJournal()->startingDarkMode() ? "dark" : "light";
   }
 
   if (args.screenshotPath) {
@@ -238,9 +240,12 @@ int main(int argc, char* argv[]) {
     dlclose(handle);
   } else {
 #endif
-    // These two arguments are handled by ion_main
+    // These arguments are handled by ion_main
     parser.push(ArgumentNames::language, args.language);
     parser.push(ArgumentNames::openApp, args.openApp);
+    if (args.theme) {
+      parser.push(ArgumentNames::theme, args.theme);
+    }
     ion_main(parser.argc(), parser.argv());
 #if ION_SIMULATOR_EXTERNAL_APP
   }

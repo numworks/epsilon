@@ -22,6 +22,13 @@ constexpr static size_t sPropertiesLength = 1;
 #error NWS_PROJECT_ID must be defined
 #endif
 constexpr static uint8_t sProjectId = NWS_PROJECT_ID;
+/* The properties byte packs multiple fields:
+ * - bits 1:0 = project ID (1 = epsilon, 2 = scandium)
+ * - bits 6:2 = not yet assigned
+ * - bit  7   = dark mode (0 = light, 1 = dark)
+ * This ensures existing files (values 1 and 2) are read as light mode. */
+constexpr static uint8_t sProjectIdMask = 0x03;
+constexpr static uint8_t sDarkModeBit = 0x80;
 constexpr static size_t sLanguageLength =
     Ion::Events::Journal::k_languageSize - 1;
 constexpr static const char* sWildcardLanguage = "**";
@@ -48,10 +55,12 @@ static inline bool loadHeaderAfterMagic(const char* afterMagic) {
       strncmp(version, sWildcardVersion, sVersionLength) != 0) {
     return false;
   }
-  // TODO: properties will contain other data than just the project ID
-  if (*properties != sProjectId) {
+  uint8_t propertiesByte = static_cast<uint8_t>(*properties);
+  if ((propertiesByte & sProjectIdMask) != sProjectId) {
     return false;
   }
+  Journal::replayJournal()->setStartingDarkMode(
+      (propertiesByte & sDarkModeBit) != 0);
   if (strncmp(language, sWildcardLanguage, sLanguageLength) != 0) {
     Journal::replayJournal()->setStartingLanguage(language);
   }
@@ -359,6 +368,9 @@ static inline bool save(FILE* f, bool toText) {
 #endif
 
   // Magic + version + properties
+  Ion::Events::Journal* journal = Journal::logJournal();
+  uint8_t propertiesByte =
+      sProjectId | (journal->startingDarkMode() ? sDarkModeBit : 0);
   if (toText) {
     fprintf(f, "%s\n", sTextMagic);
     fwrite(version, sVersionLength, 1, f);
@@ -367,15 +379,12 @@ static inline bool save(FILE* f, bool toText) {
   } else {
     if (fwrite(sMagic, sMagicLength, 1, f) != 1 ||
         fwrite(version, sVersionLength, 1, f) != 1 ||
-        fwrite(&sProjectId, sPropertiesLength, 1, f) != 1)
-    // TODO: also write other properties
-    {
+        fwrite(&propertiesByte, sPropertiesLength, 1, f) != 1) {
       return false;
     }
   }
 
   // Language
-  Ion::Events::Journal* journal = Journal::logJournal();
   const char* lang = journal->startingLanguage()[0] != 0
                          ? journal->startingLanguage()
                          : sWildcardLanguage;

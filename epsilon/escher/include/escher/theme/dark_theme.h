@@ -12,7 +12,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .BackgroundWhite = Palette::Black,
     // TODO: check color of popups (black in light theme)
     .BackgroundPopup = Palette::DARK_VioletPale,
-    .BackgroundBoxTitle = Palette::BoxTitleBackground,
+    .BackgroundBoxTitle = Palette::DARK_VioletMiddle,
     .BackgroundButtonRow = Palette::Black,
     .CalculationBorderEven = Palette::DARK_VioletDeep,
     .CalculationBorderOdd = Palette::DARK_VioletDeep,

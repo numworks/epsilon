@@ -28,7 +28,7 @@ class Palette {
   constexpr static KDColor SelectDark = KDColor::RGB24(0xb0b8d8);
   constexpr static KDColor WallScreen = KDColor::RGB24(0xf7f9fa);
   constexpr static KDColor WallScreenDark = KDColor::RGB24(0xe0e6ed);
-  constexpr static KDColor PopUpTitleBackground = KDColor::RGB24(0x696475);
+  constexpr static KDColor BoxTitleBackground = KDColor::RGB24(0x696475);
   constexpr static KDColor LowBattery = KDColor::RGB24(0xf30211);
 
   // Data colors

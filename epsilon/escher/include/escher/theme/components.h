@@ -12,7 +12,7 @@ namespace Escher {
   X(WallScreenDark)            \
   X(BackgroundWhite)           \
   X(BackgroundPopup)           \
-  X(BackgroundPopUpTitle)      \
+  X(BackgroundBoxTitle)        \
   X(BackgroundButtonRow)       \
   X(CalculationBorderEven)     \
   X(CalculationBorderOdd)      \

@@ -1,5 +1,6 @@
 #include <escher/ellipsis_view.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 #include <kandinsky/color.h>
 
 namespace Escher {
@@ -36,8 +37,9 @@ void EllipsisView::drawRect(KDContext* ctx, KDRect rect) const {
    * we could use a fixed TokenGrayDark or similar component. Alternatively, we
    * could have a theme-specific behavior here (blending in light mode but not
    * in dark mode), but it would be less generic if we add custom themes. */
-  ctx->blendRectWithMask(frame, ColorPicker::Resolve(k_color),
-                         (const uint8_t*)ellipsisMask, ellipsisWorkingBuffer);
+  ctx->blendRectWithMask(
+      frame, ColorPicker::Resolve(Highlight(k_color, m_isHighlighted)),
+      (const uint8_t*)ellipsisMask, ellipsisWorkingBuffer);
 }
 
 KDSize EllipsisView::minimalSizeForOptimalDisplay() const {

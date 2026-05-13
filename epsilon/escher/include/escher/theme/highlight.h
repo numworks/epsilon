@@ -21,6 +21,7 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
   switch (component) {
     case ThemeComponent::TextDefault:
     case ThemeComponent::TextTables:
+    case ThemeComponent::TokenEllipsis:
       return ThemeComponent::TextSelect;
     case ThemeComponent::TextGrayDark:
       return ThemeComponent::TextSelectGrayDark;

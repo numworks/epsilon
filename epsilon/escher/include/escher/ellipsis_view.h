@@ -13,8 +13,12 @@ class EllipsisView : public ArbitraryShapedView {
   constexpr static KDCoordinate k_ellipsisHeight = 3;
   constexpr static KDCoordinate k_ellipsisWidth = 17;
 
+  void setHighlighted(bool highlight) { m_isHighlighted = highlight; }
+
  private:
   constexpr static ThemeComponent k_color = ThemeComponent::TokenEllipsis;
+
+  bool m_isHighlighted = false;
 };
 
 }  // namespace Escher

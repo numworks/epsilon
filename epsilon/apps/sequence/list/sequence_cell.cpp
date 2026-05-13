@@ -50,6 +50,7 @@ void AbstractSequenceCell::layoutSubviews(bool force) {
 void AbstractSequenceCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
   mainCell()->setHighlighted(expressionIsHighlighted());
+  m_ellipsisView.setHighlighted(ellipsisIsHighlighted());
 }
 
 void AbstractSequenceCell::setParameterSelected(bool selected) {

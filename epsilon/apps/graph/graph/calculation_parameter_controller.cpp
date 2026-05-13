@@ -190,7 +190,8 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   bool isSimpleCartesianEquality = isCartesian && isEquality && !isOfDegreeTwo;
   bool isAlongY = properties.isAlongY();
   assert(isCartesian || properties.isPolar() || properties.isParametric());
-  m_tangentCell.setVisible(isEquality && !isOfDegreeTwo && !isAlongY);
+  m_tangentCell.setVisible(isEquality && !isOfDegreeTwo && !isAlongY &&
+                           !function()->isDerivative());
   m_preimageCell.setVisible(isSimpleCartesianEquality && !isAlongY);
   m_intersectionCell.setVisible(shouldDisplayIntersectionCell());
   m_intersectionRegionCell.setVisible(shouldDisplayIntersectionRegionCell());

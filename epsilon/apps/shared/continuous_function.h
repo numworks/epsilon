@@ -84,11 +84,13 @@ class ContinuousFunction : public Function {
 
   // Whether or not we can display the derivative
   bool canDisplayDerivative() const {
-    return properties().canDisplayDerivative();
+    return !isDerivative() && properties().canDisplayDerivative();
   }
   bool canComputeArea() const { return properties().canComputeArea(); }
   bool canPlotDerivatives() const { return properties().canPlotDerivatives(); }
-  bool canComputeTangent() const { return properties().canDisplayDerivative(); }
+  bool canComputeTangent() const {
+    return !isDerivative() && properties().canDisplayDerivative();
+  }
   // If the ContinuousFunction should be considered active in table
   bool isActiveInTable() const {
     return properties().canBeActiveInTable() && isActive() && !isDerivative();

@@ -17,6 +17,11 @@ class ColorPicker {
     return Get(GetCurrentTheme(), component);
   };
 
+  // TODO : Use Theme components instead
+  inline static bool isCurrentThemeDark() {
+    return GetCurrentTheme() == Theme::Dark;
+  }
+
  private:
   /* GetCurrentTheme is defined in the .cpp so that the details of how the
    * theme is accessed are hidden. Currently for Epsilon (the only project which

@@ -115,7 +115,9 @@ void ElementsView::layoutSubviews(bool force) {
   m_nameView.setBackgroundColor(
       Escher::ColorPicker::Resolve(k_backgroundColor));
   m_nameView.setMessage(ElementsDataBase::Name(z));
-  m_nameView.setTextColor(dataSource->field()->getColors(z).fg());
+  m_nameView.setTextColor(Escher::ColorPicker::isCurrentThemeDark()
+                              ? Escher::Palette::DARK_VioletPale
+                              : dataSource->field()->getColors(z).fg());
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   setChildFrame(&m_nameView,
                 KDRect(KDPoint(cellRect.x() + cellRect.width() +
@@ -141,7 +143,9 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,
   KDPoint textOrigin(cell.x() + (cell.width() - symbolSize.width()) / 2,
                      cell.y() + (cell.height() - symbolSize.height()) / 2 + 1);
   ctx->drawString(symbol, textOrigin,
-                  {.glyphColor = colors.fg(),
+                  {.glyphColor = Escher::ColorPicker::isCurrentThemeDark()
+                                     ? Escher::Palette::Black
+                                     : colors.fg(),
                    .backgroundColor = colors.bg(),
                    .font = KDFont::Size::Small});
 }

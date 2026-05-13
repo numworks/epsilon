@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <poincare/layout.h>
 #include <stddef.h>
 

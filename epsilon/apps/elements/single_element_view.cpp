@@ -52,10 +52,13 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
       bgRect.x() + (k_cellSize - symbolSize.width() - symbolXOffset) / 2 +
           symbolXOffset,
       bgRect.y() + (k_cellSize - symbolSize.height()) / 2);
-  KDGlyph::Style numbersStyle{.glyphColor = colors.fg(),
+  KDColor glyphColor = Escher::ColorPicker::isCurrentThemeDark()
+                           ? Escher::Palette::Black
+                           : colors.fg();
+  KDGlyph::Style numbersStyle{.glyphColor = glyphColor,
                               .backgroundColor = colors.bg(),
                               .font = k_numbersFont};
-  KDGlyph::Style symbolStyle{.glyphColor = colors.fg(),
+  KDGlyph::Style symbolStyle{.glyphColor = glyphColor,
                              .backgroundColor = colors.bg(),
                              .font = k_symbolFont};
   ctx->drawString(symbol, symbolOrigin, symbolStyle);

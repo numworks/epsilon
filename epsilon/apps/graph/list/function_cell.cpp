@@ -124,6 +124,7 @@ void AbstractFunctionCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
   mainCell()->setHighlighted(expressionIsHighlighted());
   m_messageTextView.setHighlighted(expressionIsHighlighted());
+  m_ellipsisView.setHighlighted(ellipsisIsHighlighted());
   updateSubviewsBackgroundAfterChangingState();
 }
 

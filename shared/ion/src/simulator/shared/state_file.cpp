@@ -17,7 +17,7 @@ constexpr static const char* sMagic = "NWSF";
 constexpr static size_t sMagicLength = 4;
 constexpr static size_t sVersionLength = 8;
 constexpr static const char* sWildcardVersion = "**.**.**";
-constexpr static size_t sProjectIdLength = 1;
+constexpr static size_t sPropertiesLength = 1;
 #ifndef NWS_PROJECT_ID
 #error NWS_PROJECT_ID must be defined
 #endif
@@ -26,26 +26,30 @@ constexpr static size_t sLanguageLength =
     Ion::Events::Journal::k_languageSize - 1;
 constexpr static const char* sWildcardLanguage = "**";
 constexpr static size_t sHeaderLength =
-    sMagicLength + sVersionLength + sProjectIdLength + sLanguageLength;
+    sMagicLength + sVersionLength + sPropertiesLength + sLanguageLength;
 
 /* File format:
  *   "NWSF" : Magic
  * + "XXXXXXXX" : Software version
- * + 0x01 or 0x02 : Project ID (1 = epsilon, 2 = scandium)
+ * + 0xXX : Properties byte
+ *          bits 1:0 = project ID (1 = epsilon, 2 = scandium)
+ *          bits 6:2 = not yet assigned
+ *          bit  7   = dark mode (0 = light, 1 = dark)
  * + "XX" : Language code (en, fr, nl, pt, it, de, or es)
  * + EVENTS...
  */
 
 static inline bool loadHeaderAfterMagic(const char* afterMagic) {
   const char* version = afterMagic;
-  const char* projectId = version + sVersionLength;
-  const char* language = projectId + sProjectIdLength;
+  const char* properties = version + sVersionLength;
+  const char* language = properties + sPropertiesLength;
 
   if (strncmp(version, softwareVersion(), sVersionLength) != 0 &&
       strncmp(version, sWildcardVersion, sVersionLength) != 0) {
     return false;
   }
-  if (*projectId != sProjectId) {
+  // TODO: properties will contain other data than just the project ID
+  if (*properties != sProjectId) {
     return false;
   }
   if (strncmp(language, sWildcardLanguage, sLanguageLength) != 0) {
@@ -265,7 +269,7 @@ static inline bool loadFile(FILE* f, bool headlessStateFile) {
     }
     // Binary header: read remaining bytes after magic
     constexpr size_t sRemainingHeaderLength =
-        sVersionLength + sProjectIdLength + sLanguageLength;
+        sVersionLength + sPropertiesLength + sLanguageLength;
     char header[sRemainingHeaderLength + 1];
     header[sRemainingHeaderLength] = 0;
     if (fread(header, sRemainingHeaderLength, 1, f) != 1) {
@@ -354,15 +358,18 @@ static inline bool save(FILE* f, bool toText) {
       softwareVersion();
 #endif
 
-  // Magic + version + project ID
+  // Magic + version + properties
   if (toText) {
     fprintf(f, "%s\n", sTextMagic);
     fwrite(version, sVersionLength, 1, f);
     fprintf(f, "\n%d\n", sProjectId);
+    // TODO: also write other properties
   } else {
     if (fwrite(sMagic, sMagicLength, 1, f) != 1 ||
         fwrite(version, sVersionLength, 1, f) != 1 ||
-        fwrite(&sProjectId, sProjectIdLength, 1, f) != 1) {
+        fwrite(&sProjectId, sPropertiesLength, 1, f) != 1)
+    // TODO: also write other properties
+    {
       return false;
     }
   }

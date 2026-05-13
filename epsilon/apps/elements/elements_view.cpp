@@ -111,6 +111,8 @@ void ElementsView::layoutSubviews(bool force) {
                   cellSize);
   setChildFrame(&m_singleElementView, cellRect, true);
 
+  m_nameView.setBackgroundColor(
+      Escher::ColorPicker::Resolve(k_backgroundColor));
   m_nameView.setMessage(ElementsDataBase::Name(z));
   m_nameView.setTextColor(dataSource->field()->getColors(z).fg());
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();

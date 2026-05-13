@@ -895,10 +895,17 @@ ContinuousFunction::Model::renameRecordIfNeeded(
               GlobalContextAccessor::ContinuousFunctionStore();
           int n = store.numberOfModels();
           for (int i = 0; i < n; i++) {
-            ContinuousFunction f(store.recordAtIndex(i));
-            if (f.isDerivative() &&
-                strcmp(f.recordData()->parentBaseName(), oldName) == 0) {
-              f.setParentBaseName(newName);
+            /* ContinuousFunction constructor calls updateNameIfNeeded, which
+             * may trigger cache invalidation of the current record being
+             * renamed. We access RecordDataBuffer directly to avoid that.
+             */
+            Ion::Storage::Record r = store.recordAtIndex(i);
+            RecordDataBuffer* data = reinterpret_cast<RecordDataBuffer*>(
+                const_cast<void*>(r.value().buffer));
+            assert(data);
+            if (data->derivationOrder() > 0 &&
+                strcmp(data->parentBaseName(), oldName) == 0) {
+              data->setParentBaseName(newName);
             }
           }
         }

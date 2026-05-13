@@ -13,8 +13,10 @@ double Trigonometry::PiInAngleUnit(AngleUnit angleUnit) {
       return M_PI;
     case AngleUnit::Degree:
       return 180.0;
+#if !POINCARE_UNIT_ONLY_ANGLES
     case AngleUnit::Gradian:
       return 200.0;
+#endif
   }
   OMG_UNREACHABLE;
 }

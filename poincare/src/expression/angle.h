@@ -19,8 +19,10 @@ class Angle {
         return 1_e;
       case AngleUnit::Degree:
         return KMult(1_e / 180_e, π_e);
+#if !POINCARE_UNIT_ONLY_ANGLES
       case AngleUnit::Gradian:
         return KMult(1_e / 200_e, π_e);
+#endif
     }
     OMG_UNREACHABLE;
   }
@@ -34,8 +36,10 @@ class Angle {
         return 1_e;
       case AngleUnit::Degree:
         return KMult(180_e, KPow(π_e, -1_e));
+#if !POINCARE_UNIT_ONLY_ANGLES
       case AngleUnit::Gradian:
         return KMult(200_e, KPow(π_e, -1_e));
+#endif
     }
     OMG_UNREACHABLE;
   }
@@ -49,8 +53,10 @@ class Angle {
         [[fallthrough]];
       case AngleUnit::Radian:
         return KMult(2_e, π_e);
+#if !POINCARE_UNIT_ONLY_ANGLES
       case AngleUnit::Gradian:
         return 400_e;
+#endif
     }
     OMG_UNREACHABLE;
   }

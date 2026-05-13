@@ -46,7 +46,9 @@ class Angle : public Helper<Angle> {
     R arcSecond;
     R arcMinute;
     R degree;
+#if !POINCARE_UNIT_ONLY_ANGLES
     R gradian;
+#endif
   };
 
   static const Representative* DefaultRepresentativeForAngleUnit(

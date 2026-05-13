@@ -15,7 +15,10 @@ const Angle::Representatives<const Angle> Angle::representatives = {
     .arcSecond = {"\"", KDiv(π_e, 648000_e), None, None},
     .arcMinute = {"'", KDiv(π_e, 10800_e), None, None},
     .degree = {"°", KDiv(π_e, 180_e), None, None},
-    .gradian = {"gon", KDiv(π_e, 200_e), None, None}};
+#if !POINCARE_UNIT_ONLY_ANGLES
+    .gradian = {"gon", KDiv(π_e, 200_e), None, None}
+#endif
+};
 
 #if !POINCARE_UNIT_ONLY_ANGLES
 const Time::Representatives<const Time> Time::representatives = {
@@ -150,8 +153,10 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
       [[fallthrough]];
     case AngleUnit::Radian:
       return &representatives.radian;
+#if !POINCARE_UNIT_ONLY_ANGLES
     case AngleUnit::Gradian:
       return &representatives.gradian;
+#endif
   }
   OMG_UNREACHABLE;
 }

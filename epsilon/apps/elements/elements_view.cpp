@@ -40,11 +40,17 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
   AtomicNumber previousSelection = dataSource->previousElement();
   if (ElementsDataBase::IsElement(previousSelection) &&
       previousSelection != selection) {
-    drawElementBorder(previousSelection, backgroundColor, ctx, rect);
+    drawElementBorder(previousSelection, backgroundColor, ctx, rect,
+                      dataSource->filteredColors(previousSelection).bg());
   }
   if (ElementsDataBase::IsElement(selection)) {
-    drawElementBorder(selection, dataSource->filteredColors(selection).fg(),
-                      ctx, rect);
+    KDColor borderColor = Escher::ColorPicker::isCurrentThemeDark()
+                              ? Escher::Palette::DARK_VioletPale
+                              : dataSource->filteredColors(selection).fg();
+    KDColor innerColor = Escher::ColorPicker::isCurrentThemeDark()
+                             ? Escher::Palette::Black
+                             : dataSource->filteredColors(selection).bg();
+    drawElementBorder(selection, borderColor, ctx, rect, innerColor);
   }
 }
 
@@ -151,10 +157,12 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,
 }
 
 void ElementsView::drawElementBorder(AtomicNumber z, KDColor color,
-                                     KDContext* ctx, KDRect rect) const {
+                                     KDContext* ctx, KDRect rect,
+                                     KDColor innerColor) const {
   assert(ElementsDataBase::IsElement(z));
   KDRect cell = RectForCell(TableLayout::CellForElement(z));
   Escher::Bordered::DrawOuterBorderOfRect(ctx, cell, k_cellMargin, color);
+  Escher::Bordered::DrawInnerBorderOfRect(ctx, cell, k_cellMargin, innerColor);
 }
 
 void ElementsView::drawLigatures(KDContext* ctx) const {

@@ -20,8 +20,19 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
                 (bounds().height() - k_totalSize) / 2 + k_borderSize,
                 k_cellSize, k_cellSize);
   ctx->fillRect(bgRect, colors.bg());
-  Escher::Bordered::DrawOuterBorderOfRect(ctx, bgRect, k_borderSize,
-                                          colors.fg());
+  Escher::Bordered::DrawOuterBorderOfRect(
+      ctx, bgRect, k_borderSize,
+      Escher::ColorPicker::isCurrentThemeDark()
+          ? Escher::Palette::DARK_VioletPale
+          : colors.fg());
+
+  if (Escher::ColorPicker::isCurrentThemeDark()) {
+    // Redraw over half of the previously drawn border
+    static_assert(k_borderSize % 2 == 0, "An odd k_borderSize isn't handled");
+    constexpr KDCoordinate k_halfBorderSize = k_borderSize / 2;
+    Escher::Bordered::DrawOuterBorderOfRect(ctx, bgRect, k_halfBorderSize,
+                                            Escher::Palette::Black);
+  }
 
   const char* symbol = ElementsDataBase::Symbol(z);
   KDCoordinate symbolXOffset = k_symbolZAMargin;

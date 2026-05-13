@@ -30,14 +30,14 @@ void TransparentImageView::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor pixelBuffer[k_maxTransparentImageSize *
                       (sizeof(KDColor) + sizeof(uint8_t)) / sizeof(KDColor)];
 
-  int pixelBufferSize = imageSize * (sizeof(KDColor) + sizeof(uint8_t));
+  int sizeOfPixelBuffer = imageSize * (sizeof(KDColor) + sizeof(uint8_t));
 
   // That's a VERY big buffer we're allocating on the stack
   assert(Ion::stackSafe());
 
-  OMG::Memory::Decompress(m_image->compressedPixelData(),
-                          reinterpret_cast<uint8_t*>(pixelBuffer),
-                          m_image->compressedPixelDataSize(), pixelBufferSize);
+  OMG::Memory::Decompress(
+      m_image->compressedPixelData(), reinterpret_cast<uint8_t*>(pixelBuffer),
+      m_image->compressedPixelDataSize(), sizeOfPixelBuffer);
 
   uint8_t* mask =
       reinterpret_cast<uint8_t*>(pixelBuffer) + sizeof(KDColor) * imageSize;

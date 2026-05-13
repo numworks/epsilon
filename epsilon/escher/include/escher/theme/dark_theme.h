@@ -73,7 +73,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .TokenGrayBright = Palette::DARK_VioletMiddle,
     .TokenGrayDarkest = Palette::DARK_VioletDeep,
     .TokenGrayDark = Palette::DARK_VioletDeep,
-    .TokenEllipsis = Palette::DARK_VioletDeep,
+    .TokenEllipsis = Palette::DARK_VioletPale,
     // TODO: decide on battery logo colors
     .TokenBatteryLevel = Palette::YellowLightBattery,
     .TokenLowBattery = Palette::LowBattery,

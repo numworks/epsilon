@@ -38,9 +38,13 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
   ElementsViewDataSource* dataSource = App::app()->elementsViewDataSource();
   AtomicNumber selection = dataSource->selectedElement();
   AtomicNumber previousSelection = dataSource->previousElement();
+  /* TODO: drawElementBorder should take rect into account, to avoid redrawing
+   * area that haven't been dirtied. In most cases, rect contains the entire
+   * cell rect, thanks to cursorMoved calling dirtyElement. The excessive border
+   * draw currently only happens with pop-ups like Store menu. */
   if (ElementsDataBase::IsElement(previousSelection) &&
       previousSelection != selection) {
-    drawElementBorder(previousSelection, backgroundColor, ctx, rect,
+    drawElementBorder(previousSelection, backgroundColor, ctx,
                       dataSource->filteredColors(previousSelection).bg());
   }
   if (ElementsDataBase::IsElement(selection)) {
@@ -50,7 +54,7 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
     KDColor innerColor = Escher::ColorPicker::IsCurrentThemeDark()
                              ? Escher::Palette::Black
                              : dataSource->filteredColors(selection).bg();
-    drawElementBorder(selection, borderColor, ctx, rect, innerColor);
+    drawElementBorder(selection, borderColor, ctx, innerColor);
   }
 }
 
@@ -157,15 +161,9 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,
 }
 
 void ElementsView::drawElementBorder(AtomicNumber z, KDColor color,
-                                     KDContext* ctx, KDRect rect,
-                                     KDColor innerColor) const {
+                                     KDContext* ctx, KDColor innerColor) const {
   assert(ElementsDataBase::IsElement(z));
   KDRect cell = RectForCell(TableLayout::CellForElement(z));
-  /* Note: rect can be ignored as long as it contains the borders drawn.
-   * Otherwise, drawn areas should be intersected with rect. */
-  assert(rect.containsRect(KDRect(
-      cell.x() - k_cellMargin, cell.y() - k_cellMargin,
-      cell.width() + 2 * k_cellMargin, cell.height() + 2 * k_cellMargin)));
   Escher::Bordered::DrawOuterBorderOfRect(ctx, cell, k_cellMargin, color);
   Escher::Bordered::DrawInnerBorderOfRect(ctx, cell, k_cellMargin, innerColor);
 }

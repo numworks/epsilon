@@ -18,7 +18,7 @@ class ColorPicker {
   };
 
   // TODO : Use Theme components instead
-  inline static bool isCurrentThemeDark() {
+  inline static bool IsCurrentThemeDark() {
     return GetCurrentTheme() == Theme::Dark;
   }
 

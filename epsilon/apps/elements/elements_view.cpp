@@ -44,10 +44,10 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
                       dataSource->filteredColors(previousSelection).bg());
   }
   if (ElementsDataBase::IsElement(selection)) {
-    KDColor borderColor = Escher::ColorPicker::isCurrentThemeDark()
+    KDColor borderColor = Escher::ColorPicker::IsCurrentThemeDark()
                               ? Escher::Palette::DARK_VioletPale
                               : dataSource->filteredColors(selection).fg();
-    KDColor innerColor = Escher::ColorPicker::isCurrentThemeDark()
+    KDColor innerColor = Escher::ColorPicker::IsCurrentThemeDark()
                              ? Escher::Palette::Black
                              : dataSource->filteredColors(selection).bg();
     drawElementBorder(selection, borderColor, ctx, rect, innerColor);
@@ -121,7 +121,7 @@ void ElementsView::layoutSubviews(bool force) {
   m_nameView.setBackgroundColor(
       Escher::ColorPicker::Resolve(k_backgroundColor));
   m_nameView.setMessage(ElementsDataBase::Name(z));
-  m_nameView.setTextColor(Escher::ColorPicker::isCurrentThemeDark()
+  m_nameView.setTextColor(Escher::ColorPicker::IsCurrentThemeDark()
                               ? Escher::Palette::DARK_VioletPale
                               : dataSource->field()->getColors(z).fg());
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
@@ -149,7 +149,7 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,
   KDPoint textOrigin(cell.x() + (cell.width() - symbolSize.width()) / 2,
                      cell.y() + (cell.height() - symbolSize.height()) / 2 + 1);
   ctx->drawString(symbol, textOrigin,
-                  {.glyphColor = Escher::ColorPicker::isCurrentThemeDark()
+                  {.glyphColor = Escher::ColorPicker::IsCurrentThemeDark()
                                      ? Escher::Palette::Black
                                      : colors.fg(),
                    .backgroundColor = colors.bg(),

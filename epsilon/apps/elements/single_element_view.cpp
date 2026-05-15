@@ -1,6 +1,7 @@
 #include "single_element_view.h"
 
 #include <escher/bordered.h>
+#include <escher/theme/color_picker.h>
 #include <omg/print.h>
 
 #include "app.h"
@@ -22,11 +23,11 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bgRect, colors.bg());
   Escher::Bordered::DrawOuterBorderOfRect(
       ctx, bgRect, k_borderSize,
-      Escher::ColorPicker::isCurrentThemeDark()
+      Escher::ColorPicker::IsCurrentThemeDark()
           ? Escher::Palette::DARK_VioletPale
           : colors.fg());
 
-  if (Escher::ColorPicker::isCurrentThemeDark()) {
+  if (Escher::ColorPicker::IsCurrentThemeDark()) {
     // Redraw over half of the previously drawn border
     static_assert(k_borderSize % 2 == 0, "An odd k_borderSize isn't handled");
     constexpr KDCoordinate k_halfBorderSize = k_borderSize / 2;
@@ -63,7 +64,7 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
       bgRect.x() + (k_cellSize - symbolSize.width() - symbolXOffset) / 2 +
           symbolXOffset,
       bgRect.y() + (k_cellSize - symbolSize.height()) / 2);
-  KDColor glyphColor = Escher::ColorPicker::isCurrentThemeDark()
+  KDColor glyphColor = Escher::ColorPicker::IsCurrentThemeDark()
                            ? Escher::Palette::Black
                            : colors.fg();
   KDGlyph::Style numbersStyle{.glyphColor = glyphColor,

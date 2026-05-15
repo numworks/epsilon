@@ -312,6 +312,10 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
   }
   finishEdition();
   layoutField->clearLayout();
+  if (event.isMoveEvent()) {
+    // Bubble up to selectableListView first, then this.
+    selectableListView()->handleEvent(event) || handleEvent(event);
+  }
   return true;
 }
 

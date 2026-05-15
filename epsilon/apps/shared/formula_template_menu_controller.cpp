@@ -141,13 +141,13 @@ UserExpression FormulaTemplateMenuController::templateExpressionForCell(
     return UserExpression::Parse(k_templates[static_cast<int>(cell) - 1],
                                  EmptySymbolContext{}, {.preserveInput = true});
   }
-  // Build the expression "X2+X3"
+  // Build the expression "X2-X3"
   if (cell == Cell::OtherColumns) {
     char name1[DoublePairStore::k_columnNamesLength + 1];
     char name2[DoublePairStore::k_columnNamesLength + 1];
-    fillSumColumnNames(name1, name2);
+    fillDifferenceColumnNames(name1, name2);
     return UserExpression::Create(
-        KAdd(KA, KB), {.KA = SymbolHelper::BuildUserVariable(
+        KSub(KA, KB), {.KA = SymbolHelper::BuildUserVariable(
                            name1, DoublePairStore::k_columnNamesLength),
                        .KB = SymbolHelper::BuildUserVariable(
                            name2, DoublePairStore::k_columnNamesLength)});
@@ -185,7 +185,7 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(BufferTemplateCell* cell,
   if (index == 0) {
     char name1[DoublePairStore::k_columnNamesLength + 1];
     char name2[DoublePairStore::k_columnNamesLength + 1];
-    fillSumColumnNames(name1, name2);
+    fillDifferenceColumnNames(name1, name2);
     Print::CustomPrintf(buffer, k_bufferSize, I18n::translate(message), name1,
                         name2);
     cell->subLabel()->setText(buffer);
@@ -206,7 +206,7 @@ int getSeriesIndex(const char* columnName) {
   return static_cast<int>(columnName[1] - '1');
 }
 
-void FormulaTemplateMenuController::fillSumColumnNames(
+void FormulaTemplateMenuController::fillDifferenceColumnNames(
     char* columnName1, char* columnName2) const {
   char currentColumnName[DoublePairStore::k_columnNamesLength + 1];
   m_storeColumnHelper->fillColumnNameFromStore(

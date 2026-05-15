@@ -71,7 +71,7 @@ class FormulaTemplateMenuController
           I18n::Message::FormulaTemplateInt,
           I18n::Message::FormulaTemplateRand,
           I18n::Message::FormulaTemplateLog,
-          I18n::Message::FormulaTemplateSum,
+          I18n::Message::FormulaTemplateDifference,
           I18n::Message::FormulaTemplateList,
       };
 
@@ -85,7 +85,7 @@ class FormulaTemplateMenuController
   Poincare::UserExpression templateExpressionForCell(Cell cell);
   void computeUninitializedLayouts();
   void fillSubLabelBuffer(BufferTemplateCell* cell, int index);
-  void fillSumColumnNames(char* columnName1, char* columnName2) const;
+  void fillDifferenceColumnNames(char* columnName1, char* columnName2) const;
   void fillOtherAppColumnName(char* buffer) const;
 
   Escher::MenuCell<Escher::MessageTextView> m_emptyTemplateCell;

@@ -161,6 +161,11 @@ void ElementsView::drawElementBorder(AtomicNumber z, KDColor color,
                                      KDColor innerColor) const {
   assert(ElementsDataBase::IsElement(z));
   KDRect cell = RectForCell(TableLayout::CellForElement(z));
+  /* Note: rect can be ignored as long as it contains the borders drawn.
+   * Otherwise, drawn areas should be intersected with rect. */
+  assert(rect.containsRect(KDRect(
+      cell.x() - k_cellMargin, cell.y() - k_cellMargin,
+      cell.width() + 2 * k_cellMargin, cell.height() + 2 * k_cellMargin)));
   Escher::Bordered::DrawOuterBorderOfRect(ctx, cell, k_cellMargin, color);
   Escher::Bordered::DrawInnerBorderOfRect(ctx, cell, k_cellMargin, innerColor);
 }

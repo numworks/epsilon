@@ -124,10 +124,10 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
         // Handled later
         return false;
       }
-    }
-    if (!m_parameterColumnSelected &&
-        ((event == Ion::Events::Right && parameterColumnPosition().isRight()) ||
-         (event == Ion::Events::Left && parameterColumnPosition().isLeft()))) {
+    } else if ((event == Ion::Events::Right &&
+                parameterColumnPosition().isRight()) ||
+               (event == Ion::Events::Left &&
+                parameterColumnPosition().isLeft())) {
       // Enter parameter column
       m_parameterColumnSelected = true;
       selectableListView()->reloadData(true, false);

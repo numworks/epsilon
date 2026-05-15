@@ -161,14 +161,16 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       (event == Ion::Events::Copy || event == Ion::Events::Cut)) {
     Ion::Clipboard::sendBufferToSystemClipboard();
   }
-
+  bool shouldRedraw = !didProcessEvent && alphaLockWantsRedraw;
+  bool shouldForceRedraw = false;
   if (event.isKeyPress()) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
     Ion::Backlight::setBrightness(SharedGlobalPrefs().brightnessLevel());
+    shouldForceRedraw = m_focusManager.dispatchEvent(event);
   }
-  if (!didProcessEvent && alphaLockWantsRedraw) {
-    window()->redraw();
+  if (shouldRedraw || shouldForceRedraw) {
+    window()->redraw(shouldForceRedraw);
     return true;
   }
   return didProcessEvent || alphaLockWantsRedraw;

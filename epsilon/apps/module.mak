@@ -14,6 +14,7 @@ $(call create_module,apps,1, \
   empty_battery_window.cpp \
   exam_mode_manager.cpp \
   exam_pop_up_controller.cpp:-test \
+  focus_manager.cpp \
   global_preferences.cpp \
   init.cpp:-test \
   lock_view.cpp:-test \

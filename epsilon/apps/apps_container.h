@@ -9,6 +9,7 @@
 #include "battery_timer.h"
 #include "empty_battery_window.h"
 #include "exam_pop_up_controller.h"
+#include "focus_manager.h"
 #ifdef HARDWARE_CHECKUP
 #include "hardware_checkup/app.h"
 #endif
@@ -91,6 +92,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
   Escher::BlinkTimer m_blinkTimer;
+  FocusManager m_focusManager;
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;

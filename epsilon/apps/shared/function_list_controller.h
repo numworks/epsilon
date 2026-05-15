@@ -42,6 +42,8 @@ class FunctionListController : public ExpressionModelListController,
  protected:
   Escher::StackViewController* stackController() const;
   Escher::TabViewController* tabController() const;
+  bool layoutFieldShouldFinishEditing(Escher::LayoutField* layoutField,
+                                      Ion::Events::Event event) override;
 
   bool m_parameterColumnSelected;
 

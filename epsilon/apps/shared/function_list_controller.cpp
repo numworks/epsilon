@@ -177,4 +177,12 @@ TabViewController* FunctionListController::tabController() const {
                                              ->parentResponder());
 }
 
+bool FunctionListController::layoutFieldShouldFinishEditing(
+    Escher::LayoutField* layoutField, Ion::Events::Event event) {
+  // Allow non-repeating right event to end edition
+  return ExpressionModelListController::layoutFieldShouldFinishEditing(
+             layoutField, event) ||
+         (event == Ion::Events::Right && !Ion::Events::isRepeating());
+}
+
 }  // namespace Shared

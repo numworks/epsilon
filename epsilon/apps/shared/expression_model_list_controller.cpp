@@ -274,6 +274,15 @@ static CodePoint symbolForEquation(const UserExpression& expression) {
   return symbol;
 }
 
+bool ExpressionModelListController::layoutFieldShouldFinishEditing(
+    Escher::LayoutField* layoutField, Ion::Events::Event event) {
+  // Allow non-repeating up and down events to end edition
+  return MathLayoutFieldDelegate::layoutFieldShouldFinishEditing(layoutField,
+                                                                 event) ||
+         ((event == Ion::Events::Down || event == Ion::Events::Up) &&
+          !Ion::Events::isRepeating());
+}
+
 bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());

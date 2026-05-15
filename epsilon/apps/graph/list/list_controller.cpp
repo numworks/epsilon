@@ -152,10 +152,6 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
     }
   }
 
-  if (event.isMoveEvent()) {
-    return true;
-  }
-
   return ExpressionModelListController::layoutFieldDidReceiveEvent(layoutField,
                                                                    event);
 }

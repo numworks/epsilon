@@ -46,6 +46,8 @@ class ExpressionModelListController
   constexpr static KDCoordinate k_expressionMargin = 5;
 
   // LayoutDelegate
+  bool layoutFieldShouldFinishEditing(Escher::LayoutField* layoutField,
+                                      Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;

@@ -57,6 +57,12 @@ def main():
         default=5.0,
         help="percentage threshold for reporting (default 5)",
     )
+    parser.add_argument(
+        "--min-instructions",
+        type=int,
+        default=20000,
+        help="ignore tests whose base and head counts are both below this (default 20000)",
+    )
     args = parser.parse_args()
 
     base = parse_log(args.base)
@@ -85,6 +91,8 @@ def main():
     for name in common:
         b, h = base[name], head[name]
         if b == 0:
+            continue
+        if b < args.min_instructions and h < args.min_instructions:
             continue
         delta = (h - b) / b * 100.0
         if abs(delta) >= args.threshold:

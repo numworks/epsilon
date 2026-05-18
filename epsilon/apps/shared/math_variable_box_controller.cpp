@@ -470,18 +470,17 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
         record.hasExtension(Ion::Storage::regressionListExtension)) {
       return false;
     }
+    bool isFunction = record.hasExtension(Storage::functionExtension);
     bool isParametricFunction = false;
     constexpr size_t bufferSize = SymbolHelper::k_maxNameSize;
     char buffer[bufferSize];
     size_t length = 0;
-    if (record.hasExtension(Storage::functionExtension)) {
+    if (isFunction) {
       OMG::ExpiringPointer<const ContinuousFunction> f =
           GlobalContextAccessor::ContinuousFunctionContext().modelForRecord(
               record);
-      if (f->properties().isEnabledParametric()) {
-        isParametricFunction = true;
-        length = f->name(buffer, bufferSize);
-      }
+      isParametricFunction = f->properties().isEnabledParametric();
+      length = f->name(buffer, bufferSize);
     }
     Shared::AppWithStoreMenu* app =
         static_cast<Shared::AppWithStoreMenu*>(App::app());
@@ -494,6 +493,9 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
     if (isParametricFunction) {
       GlobalStore::DeleteParametricComponentsWithBaseName(buffer, length,
                                                           bufferSize);
+    }
+    if (isFunction) {
+      GlobalStore::DeleteDerivativeWithParentName(buffer);
     }
   }
   // Shift the memoization if needed

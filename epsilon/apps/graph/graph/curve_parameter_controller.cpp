@@ -300,8 +300,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       m_functionParameterController->setParameterDelegate(this);
       stackController()->push(m_functionParameterController);
     } else {
-      m_derivativeColumnParameterController->setRecord(m_record,
-                                                       m_derivationOrder);
+      m_derivativeColumnParameterController->setRecord(m_record);
       m_derivativeColumnParameterController->setParameterDelegate(this);
       stackController()->push(m_derivativeColumnParameterController);
     }
@@ -325,12 +324,7 @@ void CurveParameterController::setRecord(Ion::Storage::Record record,
 
 void CurveParameterController::hideDerivative(Ion::Storage::Record record,
                                               int derivationOrder) {
-  if (derivationOrder == 1) {
-    function()->setDisplayPlotFirstDerivative(false);
-  } else {
-    assert(derivationOrder == 2);
-    function()->setDisplayPlotSecondDerivative(false);
-  }
+  ParameterDelegate::hideDerivative(record, derivationOrder);
   stackController()->popUntilDepth(
       Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
       true);

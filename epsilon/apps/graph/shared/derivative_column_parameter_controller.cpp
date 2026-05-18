@@ -1,5 +1,7 @@
 #include "derivative_column_parameter_controller.h"
 
+#include <apps/shared/global_store.h>
+
 #include "../app.h"
 
 using namespace Escher;
@@ -50,6 +52,37 @@ bool DerivativeColumnParameterController::handleEvent(
   return false;
 }
 
+void ParameterDelegate::hideDerivative(Ion::Storage::Record record,
+                                       int derivationOrder) {
+  if (derivationOrder == -1) {
+    /* Standalone derivative record: update the parent's display settings and
+     * delete the derivative record */
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        App::app()->functionStore().modelForRecord(record);
+    derivationOrder = f->derivationOrder();
+    Ion::Storage::Record parentRecord = f->parentRecord();
+    OMG::ExpiringPointer<ContinuousFunction> parent =
+        App::app()->functionStore().modelForRecord(parentRecord);
+    if (derivationOrder == 1) {
+      parent->setDisplayPlotFirstDerivative(false);
+    } else {
+      assert(derivationOrder == 2);
+      parent->setDisplayPlotSecondDerivative(false);
+    }
+    GlobalStore::DeleteDerivativeOfRecord(parentRecord, derivationOrder);
+  } else {
+    // Derivative values column: only update the parent's display settings
+    OMG::ExpiringPointer<ContinuousFunction> parent =
+        App::app()->functionStore().modelForRecord(record);
+    if (derivationOrder == 1) {
+      parent->setDisplayValueFirstDerivative(false);
+    } else {
+      assert(derivationOrder == 2);
+      parent->setDisplayValueSecondDerivative(false);
+    }
+  }
+}
+
 const HighlightCell* DerivativeColumnParameterController::cell(int row) const {
   assert(0 <= row && row <= numberOfRows());
   if (row == 0) {
@@ -60,6 +93,7 @@ const HighlightCell* DerivativeColumnParameterController::cell(int row) const {
 
 void DerivativeColumnParameterController::setRecord(Ion::Storage::Record record,
                                                     int derivationOrder) {
+  assert(derivationOrder == -1 || derivationOrder == 1 || derivationOrder == 2);
   m_record = record;
   m_derivationOrder = derivationOrder;
   selectRow(0);

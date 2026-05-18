@@ -159,14 +159,7 @@ int ValuesController::columnToFreeze() {
 void ValuesController::hideDerivative(Ion::Storage::Record record,
                                       int derivationOrder) {
   selectCellAtLocation(selectedColumn() - 1, selectedRow());
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      functionStore()->modelForRecord(record);
-  if (derivationOrder == 1) {
-    f->setDisplayValueFirstDerivative(false);
-  } else {
-    assert(derivationOrder == 2);
-    f->setDisplayValueSecondDerivative(false);
-  }
+  ParameterDelegate::hideDerivative(record, derivationOrder);
   stackController()->pop();
 }
 

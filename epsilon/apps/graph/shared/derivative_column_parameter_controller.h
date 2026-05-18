@@ -18,10 +18,15 @@ class ParameterDelegate {
   virtual bool usePersonalizedTitle() const = 0;
   virtual bool showColorCell() const = 0;
   virtual I18n::Message hideDerivativeMessage() const = 0;
-  virtual void hideDerivative(Ion::Storage::Record record,
-                              int derivationOrder) = 0;
+  virtual void hideDerivative(Ion::Storage::Record record, int derivationOrder);
 };
 
+/* This controller handles parameters for two kinds of derivative columns:
+ * - Standalone derivative records: m_derivationOrder == -1, m_record holds
+ *   the derivative record itself.
+ * - Derivative values columns dependent on a parent: m_derivationOrder == 1
+ *   or 2, m_record holds the parent function record.
+ */
 class DerivativeColumnParameterController
     : public Shared::ColumnParameterController {
  public:
@@ -32,7 +37,7 @@ class DerivativeColumnParameterController
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return 2; }
   const Escher::HighlightCell* cell(int row) const override;
-  void setRecord(Ion::Storage::Record record, int derivationOrder);
+  void setRecord(Ion::Storage::Record record, int derivationOrder = -1);
   void setParameterDelegate(ParameterDelegate* parameterDelegate) {
     m_parameterDelegate = parameterDelegate;
   }

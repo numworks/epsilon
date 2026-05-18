@@ -82,9 +82,6 @@ class ListController : public Shared::FunctionListController,
   OMG::HorizontalDirection parameterColumnPosition() const override {
     return OMG::Direction::Right();
   }
-  int numberOfRowsForRecord(Ion::Storage::Record record) const override;
-  int derivationOrderFromRelativeRow(Shared::ContinuousFunction* f,
-                                     int relativeRow) const;
 
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;

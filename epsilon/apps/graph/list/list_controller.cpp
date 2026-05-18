@@ -214,20 +214,17 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       !isAddModelRow(selectedRow()) && m_parameterColumnSelected &&
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     // Open function parameter menu
-    int relativeRow;
-    Ion::Storage::Record record = selectedRecord(&relativeRow);
+    Ion::Storage::Record record = selectedRecord();
     OMG::ExpiringPointer<ContinuousFunction> f =
         modelStore()->modelForRecord(record);
-    int derivationOrder =
-        derivationOrderFromRelativeRow(f.pointer(), relativeRow);
-    if (derivationOrder == 0) {
+    if (f->isDerivative()) {
+      m_derivativeColumnParameterController->setRecord(record);
+      m_derivativeColumnParameterController->setParameterDelegate(this);
+      stackController()->push(m_derivativeColumnParameterController);
+    } else {
       m_functionParameterController->setRecord(record);
       m_functionParameterController->setParameterDelegate(this);
       stackController()->push(m_functionParameterController);
-    } else {
-      m_derivativeColumnParameterController->setRecord(record, derivationOrder);
-      m_derivativeColumnParameterController->setParameterDelegate(this);
-      stackController()->push(m_derivativeColumnParameterController);
     }
     return true;
   }
@@ -239,24 +236,26 @@ Shared::ListParameterController* ListController::parameterController() {
 }
 
 void ListController::removeModelRow(Ion::Storage::Record record) {
-  // Remove parametric components too
-  int relativeRow;
-  Ion::Storage::Record r = selectedRecord(&relativeRow);
-  GlobalStore::DeleteParametricComponentsOfRecord(r);
-  // If we are on a derivative row, only hide derivative
-  OMG::ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(r);
-  int derivationOrder =
-      derivationOrderFromRelativeRow(f.pointer(), relativeRow);
-  if (derivationOrder <= 0) {
+  OMG::ExpiringPointer<ContinuousFunction> f =
+      modelStore()->modelForRecord(record);
+  if (f->isDerivative()) {
+    assert(f->numberOfSubCurves() == 1);
+    // Update the parent's derivative toggle before removing model
+    int derivationOrder = f->derivationOrder();
+    Ion::Storage::Record parentRecord = f->parentRecord();
+    OMG::ExpiringPointer<ContinuousFunction> parent =
+        modelStore()->modelForRecord(parentRecord);
+    if (derivationOrder == 1) {
+      parent->setDisplayPlotFirstDerivative(false);
+    } else {
+      assert(derivationOrder == 2);
+      parent->setDisplayPlotSecondDerivative(false);
+    }
     return FunctionListController::removeModelRow(record);
   }
-  if (derivationOrder == 1) {
-    f->setDisplayPlotFirstDerivative(false);
-  } else {
-    assert(derivationOrder == 2);
-    f->setDisplayPlotSecondDerivative(false);
-  }
-  didChangeModelsList();
+  GlobalStore::DeleteParametricComponentsOfRecord(record);
+  GlobalStore::DeleteDerivativeOfRecord(record);
+  FunctionListController::removeModelRow(record);
 }
 
 int ListController::maxNumberOfDisplayableRows() const {
@@ -323,31 +322,12 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
 void ListController::hideDerivative(Ion::Storage::Record record,
                                     int derivationOrder) {
   selectableListView()->selectCell(selectableListView()->selectedRow() - 1);
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(record);
-  if (derivationOrder == 1) {
-    f->setDisplayPlotFirstDerivative(false);
-  } else {
-    assert(derivationOrder == 2);
-    f->setDisplayPlotSecondDerivative(false);
-  }
+  ParameterDelegate::hideDerivative(record, derivationOrder);
   stackController()->pop();
 }
 
 ContinuousFunctionStore* ListController::modelStore() const {
   return &App::app()->functionStore();
-}
-
-int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(record);
-  return 1 + f->displayPlotFirstDerivative() + f->displayPlotSecondDerivative();
-}
-
-int ListController::derivationOrderFromRelativeRow(ContinuousFunction* f,
-                                                   int relativeRow) const {
-  return f->derivationOrderFromRelativeIndex(
-      relativeRow, ContinuousFunction::DerivativeDisplayType::Plot);
 }
 
 bool ListController::isValidExpressionModel(const UserExpression& expression) {

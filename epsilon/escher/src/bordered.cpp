@@ -53,18 +53,18 @@ void Bordered::PrivateDrawInnerBorderOfRect(KDContext* ctx, KDRect rect,
   // Note : corners may be drawn twice with drawAllCorners and most masks
   KDCoordinate sideBorderOffset = drawAllCorners ? 0 : size;
   KDRect borders[4] = {
-      // Top and top corners
+      // Top border with left and right corners
       mask.top ? KDRect(rect.left(), rect.top(), rect.width(), size)
                : KDRectZero,
-      // Bottom and bottom corners
+      // Bottom border with left and right corners
       mask.bottom ? KDRect(rect.left(), rect.top() + rect.height() - size,
                            rect.width(), size)
                   : KDRectZero,
-      // Left (and left corners if drawAllCorners)
+      // Left border (with top and bottom corners if drawAllCorners)
       mask.left ? KDRect(rect.left(), rect.top() + sideBorderOffset, size,
                          rect.height() - 2 * sideBorderOffset)
                 : KDRectZero,
-      // Right (and right corners if drawAllCorners)
+      // Right border (with top and bottom corners if drawAllCorners)
       mask.right ? KDRect(rect.left() + rect.width() - size,
                           rect.top() + sideBorderOffset, size,
                           rect.height() - 2 * sideBorderOffset)

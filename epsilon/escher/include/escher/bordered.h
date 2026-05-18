@@ -38,7 +38,17 @@ class Bordered {
       Metric::CellSeparatorThickness;
 
  private:
-  // Use drawAllCorners if corners adjacent to a single border should be drawn
+  /* If drawAllCorners is false, corners adjacent to a single border won't be
+   * drawn. For example:
+   * drawAllCorners | Top and Right borders | All borders |
+   *                |        █████          |    █████    |
+   *    true        |        ░   █          |    █   █    |
+   *                |        ░░░░█          |    █████    |
+   *                |                       |             |
+   *                |        ░████          |    █████    |
+   *    false       |        ░   █          |    █   █    |
+   *                |        ░░░░░          |    █████    |
+   */
   static void PrivateDrawInnerBorderOfRect(KDContext* ctx, KDRect rect,
                                            KDCoordinate size, KDColor color,
                                            Mask mask, bool drawAllCorners);

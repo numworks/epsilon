@@ -48,12 +48,10 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
                       dataSource->filteredColors(previousSelection).bg());
   }
   if (ElementsDataBase::IsElement(selection)) {
-    KDColor borderColor = Escher::ColorPicker::IsCurrentThemeDark()
-                              ? Escher::Palette::DARK_VioletPale
-                              : dataSource->filteredColors(selection).fg();
-    KDColor innerColor = Escher::ColorPicker::IsCurrentThemeDark()
-                             ? Escher::Palette::Black
-                             : dataSource->filteredColors(selection).bg();
+    KDColor borderColor = Escher::ColorPicker::ResolveCustomColorForHighlight(
+        dataSource->filteredColors(selection).fg());
+    KDColor innerColor = Escher::ColorPicker::ResolveCustomColor(
+        dataSource->filteredColors(selection).bg());
     drawElementBorder(selection, borderColor, ctx, innerColor);
   }
 }
@@ -125,9 +123,8 @@ void ElementsView::layoutSubviews(bool force) {
   m_nameView.setBackgroundColor(
       Escher::ColorPicker::Resolve(k_backgroundColor));
   m_nameView.setMessage(ElementsDataBase::Name(z));
-  m_nameView.setTextColor(Escher::ColorPicker::IsCurrentThemeDark()
-                              ? Escher::Palette::DARK_VioletPale
-                              : dataSource->field()->getColors(z).fg());
+  m_nameView.setTextColor(Escher::ColorPicker::ResolveCustomColorForHighlight(
+      dataSource->field()->getColors(z).fg()));
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   setChildFrame(&m_nameView,
                 KDRect(KDPoint(cellRect.x() + cellRect.width() +
@@ -152,12 +149,11 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,
   KDSize symbolSize = KDFont::Font(KDFont::Size::Small)->stringSize(symbol);
   KDPoint textOrigin(cell.x() + (cell.width() - symbolSize.width()) / 2,
                      cell.y() + (cell.height() - symbolSize.height()) / 2 + 1);
-  ctx->drawString(symbol, textOrigin,
-                  {.glyphColor = Escher::ColorPicker::IsCurrentThemeDark()
-                                     ? Escher::Palette::Black
-                                     : colors.fg(),
-                   .backgroundColor = colors.bg(),
-                   .font = KDFont::Size::Small});
+  ctx->drawString(
+      symbol, textOrigin,
+      {.glyphColor = Escher::ColorPicker::ResolveCustomColor(colors.fg()),
+       .backgroundColor = colors.bg(),
+       .font = KDFont::Size::Small});
 }
 
 void ElementsView::drawElementBorder(AtomicNumber z, KDColor color,

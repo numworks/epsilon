@@ -1,10 +1,33 @@
 #include <escher/layout_preferences.h>
+#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 #include <escher/theme/dark_theme.h>
 #include <escher/theme/light_theme.h>
 #include <omg/unreachable.h>
 
 namespace Escher {
+
+KDColor ColorPicker::ResolveCustomColor(KDColor color) {
+  switch (GetCurrentTheme()) {
+    case Theme::Light:
+      return color;
+    case Theme::Dark:
+      return Palette::Black;
+    default:
+      OMG_UNREACHABLE
+  }
+}
+
+KDColor ColorPicker::ResolveCustomColorForHighlight(KDColor color) {
+  switch (GetCurrentTheme()) {
+    case Theme::Light:
+      return color;
+    case Theme::Dark:
+      return Palette::DARK_VioletPale;
+    default:
+      OMG_UNREACHABLE
+  }
+}
 
 Theme ColorPicker::GetCurrentTheme() { return SharedPreferences->theme(); }
 

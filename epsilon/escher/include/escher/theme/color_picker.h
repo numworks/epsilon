@@ -17,10 +17,10 @@ class ColorPicker {
     return Get(GetCurrentTheme(), component);
   };
 
-  // TODO : Use Theme components instead
-  inline static bool IsCurrentThemeDark() {
-    return GetCurrentTheme() == Theme::Dark;
-  }
+  /* Some custom colors will resolve differently depending on theme.
+   * TODO: Use ThemeComponent instead */
+  static KDColor ResolveCustomColor(KDColor color);
+  static KDColor ResolveCustomColorForHighlight(KDColor color);
 
  private:
   /* GetCurrentTheme is defined in the .cpp so that the details of how the

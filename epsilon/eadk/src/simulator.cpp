@@ -4,6 +4,7 @@ extern "C" {
 #include <ion.h>
 #include <ion/src/shared/events.h>
 
+#include <bit>
 #include <cstdlib>
 
 static inline void preemptive_termination(Ion::Events::Event e) {
@@ -53,22 +54,16 @@ float eadk_battery_voltage() { return Ion::Battery::voltage(); }
 
 static_assert(sizeof(KDColor) == sizeof(eadk_color_t), "Size mismatch");
 static inline KDColor c(eadk_color_t color) {
-  return *reinterpret_cast<KDColor*>(&color);
+  return std::bit_cast<KDColor>(color);
 }
 
 static_assert(sizeof(KDPoint) == sizeof(eadk_point_t), "Size mismatch");
 static inline KDPoint p(eadk_point_t point) {
-  /* FIXME: gcc warning in release mode (dereferencing type-punned pointer
-   * will break strict-aliasing rules [-Wstrict-aliasing]) */
-  return *reinterpret_cast<KDPoint*>(&point);
+  return std::bit_cast<KDPoint>(point);
 }
 
 static_assert(sizeof(KDRect) == sizeof(eadk_rect_t), "Size mismatch");
-static inline KDRect r(eadk_rect_t rect) {
-  /* FIXME: gcc warning in release mode (dereferencing type-punned pointer
-   * will break strict-aliasing rules [-Wstrict-aliasing]) */
-  return *reinterpret_cast<KDRect*>(&rect);
-}
+static inline KDRect r(eadk_rect_t rect) { return std::bit_cast<KDRect>(rect); }
 
 void eadk_display_push_rect(eadk_rect_t rect, const eadk_color_t* pixels) {
   Ion::Display::pushRect(r(rect), reinterpret_cast<const KDColor*>(pixels));

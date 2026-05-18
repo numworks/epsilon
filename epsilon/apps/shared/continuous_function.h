@@ -91,7 +91,7 @@ class ContinuousFunction : public Function {
   bool canComputeTangent() const { return properties().canDisplayDerivative(); }
   // If the ContinuousFunction should be considered active in table
   bool isActiveInTable() const {
-    return properties().canBeActiveInTable() && isActive();
+    return properties().canBeActiveInTable() && isActive() && !isDerivative();
   }
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;

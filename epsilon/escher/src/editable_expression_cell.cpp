@@ -15,7 +15,7 @@ EditableExpressionCell::EditableExpressionCell(
 }
 
 void EditableExpressionCell::drawRect(KDContext* ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
+  DrawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 
 void EditableExpressionCell::setHighlighted(bool highlight) {

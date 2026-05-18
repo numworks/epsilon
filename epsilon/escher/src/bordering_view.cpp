@@ -3,7 +3,7 @@
 namespace Escher {
 
 void BorderingView::drawRect(KDContext* ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), ThemeComponent::SurfaceSelect);
+  DrawBorderOfRect(ctx, bounds(), ThemeComponent::SurfaceSelect);
 }
 
 KDSize BorderingView::minimalSizeForOptimalDisplay() const {

@@ -17,7 +17,7 @@ SubappCell::SubappCell() {
 void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
   ThemeComponent backColor = Highlight(k_background, isHighlighted());
   drawInnerRect(ctx, bounds(), backColor);
-  drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
+  DrawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 
 void SubappCell::setHighlighted(bool highlighted) {

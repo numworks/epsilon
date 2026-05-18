@@ -11,8 +11,8 @@ void Bordered::drawTopBorderOfRect(KDContext* ctx, KDRect rect,
       Mask{.top = true, .right = false, .bottom = false, .left = false});
 }
 
-void Bordered::drawBorderOfRect(KDContext* ctx, KDRect rect,
-                                ThemeComponent borderColor) const {
+void Bordered::DrawBorderOfRect(KDContext* ctx, KDRect rect,
+                                ThemeComponent borderColor) {
   DrawInnerBorderOfRect(ctx, rect, k_separatorThickness,
                         ColorPicker::Resolve(borderColor));
 }

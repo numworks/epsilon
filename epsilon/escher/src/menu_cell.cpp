@@ -9,7 +9,7 @@ AbstractMenuCell::AbstractMenuCell() : Bordered(), HighlightCell() {}
 
 void AbstractMenuCell::drawRect(KDContext* ctx, KDRect rect) const {
   drawInnerRect(ctx, bounds(), Highlight(k_defaultBackground, isHighlighted()));
-  drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
+  DrawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 
 KDSize AbstractMenuCell::minimalSizeForOptimalDisplay() const {

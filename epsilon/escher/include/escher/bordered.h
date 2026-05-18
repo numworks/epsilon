@@ -8,8 +8,8 @@ namespace Escher {
 
 class Bordered {
  public:
-  void drawBorderOfRect(KDContext* ctx, KDRect rect,
-                        ThemeComponent borderColor) const;
+  static void DrawBorderOfRect(KDContext* ctx, KDRect rect,
+                               ThemeComponent borderColor);
   void drawTopBorderOfRect(KDContext* ctx, KDRect rect,
                            ThemeComponent borderColor) const;
   void drawInnerRect(KDContext* ctx, KDRect rect,

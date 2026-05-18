@@ -16,7 +16,7 @@ void IllustrationCell::layoutSubviews(bool force) {
 }
 
 void IllustrationCell::drawRect(KDContext* ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
+  DrawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 
 }  // namespace Calculation

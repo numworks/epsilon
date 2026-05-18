@@ -16,7 +16,7 @@ SubtitleCell::SubtitleCell()
 
 void SubtitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   drawInnerRect(ctx, bounds(), Highlight(k_backgroundColor, isHighlighted()));
-  drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
+  DrawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 
 void SubtitleCell::layoutSubviews(bool force) {

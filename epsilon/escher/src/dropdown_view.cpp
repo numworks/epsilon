@@ -73,7 +73,7 @@ void PopupItemView::drawRect(KDContext* ctx, KDRect rect) const {
                                : isHighlighted()
                                    ? ThemeComponent::BorderGrayDark
                                    : ThemeComponent::SurfaceSelect;
-  drawBorderOfRect(ctx, bounds(), borderColor);
+  DrawBorderOfRect(ctx, bounds(), borderColor);
 }
 
 Dropdown::DropdownPopupController::DropdownPopupController(

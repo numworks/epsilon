@@ -132,9 +132,8 @@ void GraphController::reloadBannerView() {
       functionOrSequenceContext().modelForRecord(record);
   bool displayOrdinate, displayValueFirstDerivative,
       displayValueSecondDerivative;
-  f->valuesToDisplayOnDerivativeCurve(f->derivationOrder(), &displayOrdinate,
-                                      &displayValueFirstDerivative,
-                                      &displayValueSecondDerivative);
+  f->valuesToDisplayOnCurve(&displayOrdinate, &displayValueFirstDerivative,
+                            &displayValueSecondDerivative);
   m_bannerView.setDisplayParameters(
       {.showInterest = true,
        .showOrdinate = displayOrdinate,

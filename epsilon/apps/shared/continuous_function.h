@@ -124,10 +124,8 @@ class ContinuousFunction : public Function {
   // Compute conic parameters from ContinuousFunction
   Poincare::CartesianConic cartesianConicParameters() const;
   // Return the number of subcurves to plot.
-  int numberOfSubCurves(bool includeDerivatives = false) const override {
-    return m_model.numberOfSubCurves(this) +
-           includeDerivatives *
-               (displayPlotFirstDerivative() + displayPlotSecondDerivative());
+  int numberOfSubCurves() const override {
+    return m_model.numberOfSubCurves(this);
   }
   /* Expression */
 
@@ -160,12 +158,6 @@ class ContinuousFunction : public Function {
       double t, int curveIndex = 0) const override {
     return privateEvaluateXYAtParameter<double>(t, curveIndex);
   }
-  template <typename T>
-  Poincare::Coordinate2D<T> evaluateXYDerivativeAtParameter(
-      T t, int derivationOrder) const {
-    return templatedApproximateAtParameter(
-        t, subCurveIndexFromDerivationOrder(derivationOrder));
-  }
 
   /* Derivative */
 
@@ -196,14 +188,10 @@ class ContinuousFunction : public Function {
   void setDisplayValueSecondDerivative(bool display);
   void setDisplayPlotSecondDerivative(bool display);
 
-  enum class DerivativeDisplayType : bool { Plot, Value };
-  int derivationOrderFromRelativeIndex(int relativeIndex,
-                                       DerivativeDisplayType type) const;
-  int derivationOrderFromSubCurveIndex(int subCurveIndex) const override;
-  int subCurveIndexFromDerivationOrder(int derivationOrder) const;
-  void valuesToDisplayOnDerivativeCurve(int derivationOrder, bool* image,
-                                        bool* firstDerivative,
-                                        bool* secondDerivative) const;
+  // Get derivation order from relative index in values columns
+  int derivationOrderFromRelativeIndex(int relativeIndex) const;
+  void valuesToDisplayOnCurve(bool* image, bool* firstDerivative,
+                              bool* secondDerivative) const;
 
   // Approximate derivative at t, on given sub curve if there is one
   template <typename T>

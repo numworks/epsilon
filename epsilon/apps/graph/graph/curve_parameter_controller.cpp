@@ -338,9 +338,9 @@ void CurveParameterController::viewWillAppear() {
   const bool isParametric = function()->properties().isParametric();
   const bool isPolar = function()->properties().isPolar();
   bool displayImage, displayValueFirstDerivative, displayValueSecondDerivative;
-  function()->valuesToDisplayOnDerivativeCurve(m_derivationOrder, &displayImage,
-                                               &displayValueFirstDerivative,
-                                               &displayValueSecondDerivative);
+  function()->valuesToDisplayOnCurve(&displayImage,
+                                     &displayValueFirstDerivative,
+                                     &displayValueSecondDerivative);
   parameterCell(ParameterIndex::Image1)->setVisible(displayImage);
   parameterCell(ParameterIndex::Image2)
       ->setVisible((isParametric ||

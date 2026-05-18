@@ -538,8 +538,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
       OMG::ExpiringPointer<ContinuousFunction> f =
           functionStore()->modelForRecord(record);
-      *derivationOrder = f->derivationOrderFromRelativeIndex(
-          i - index, ContinuousFunction::DerivativeDisplayType::Value);
+      *derivationOrder = f->derivationOrderFromRelativeIndex(i - index);
       return record;
     }
     index += numberOfColumnsForCurrentRecord;

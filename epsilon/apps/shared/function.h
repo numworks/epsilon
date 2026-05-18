@@ -39,9 +39,7 @@ class Function : public ExpressionModelHandle {
   Escher::ThemeComponent color() const { return recordData()->color(); }
   void setColor(Escher::ThemeComponent color) { recordData()->setColor(color); }
   void setActive(bool active);
-  virtual int numberOfSubCurves(bool includeDerivatives = false) const {
-    return 1;
-  }
+  virtual int numberOfSubCurves() const { return 1; }
   virtual bool isAlongY() const { return false; }
 
   // Definition Interval
@@ -69,10 +67,6 @@ class Function : public ExpressionModelHandle {
       double t, int subCurveIndex = 0) const = 0;
   virtual Poincare::SystemExpression sumBetweenBounds(double start,
                                                       double end) const = 0;
-
-  virtual int derivationOrderFromSubCurveIndex(int subCurveIndex) const {
-    return 0;
-  }
 
  protected:
   /* RecordDataBuffer is the layout of the data buffer of Record

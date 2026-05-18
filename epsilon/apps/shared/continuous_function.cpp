@@ -271,16 +271,9 @@ void ContinuousFunction::setDisplayPlotSecondDerivative(bool display) {
 }
 
 int ContinuousFunction::derivationOrderFromRelativeIndex(
-    int relativeIndex, DerivativeDisplayType type) const {
-  bool displayFirstDerivative, displaySecondDerivative;
-  if (type == DerivativeDisplayType::Plot) {
-    displayFirstDerivative = displayPlotFirstDerivative();
-    displaySecondDerivative = displayPlotSecondDerivative();
-  } else {
-    assert(type == DerivativeDisplayType::Value);
-    displayFirstDerivative = displayValueFirstDerivative();
-    displaySecondDerivative = displayValueSecondDerivative();
-  }
+    int relativeIndex) const {
+  bool displayFirstDerivative = displayValueFirstDerivative();
+  bool displaySecondDerivative = displayValueSecondDerivative();
   switch (relativeIndex) {
     case 0:
       return 0;
@@ -295,58 +288,12 @@ int ContinuousFunction::derivationOrderFromRelativeIndex(
   (void)displaySecondDerivative;
 }
 
-int ContinuousFunction::derivationOrderFromSubCurveIndex(
-    int subCurveIndex) const {
-  assert(numberOfSubCurves() == 0 ||
-         (0 <= subCurveIndex && subCurveIndex < numberOfSubCurves(true)));
-  return numberOfSubCurves() > 1
-             ? 0
-             : derivationOrderFromRelativeIndex(subCurveIndex,
-                                                DerivativeDisplayType::Plot);
-}
-
-int ContinuousFunction::subCurveIndexFromDerivationOrder(
-    int derivationOrder) const {
-  int subCurveIndex;
-  switch (derivationOrder) {
-    case 0:
-      subCurveIndex = 0;
-      break;
-    case 1:
-      assert(displayPlotFirstDerivative());
-      subCurveIndex = 1;
-      break;
-    default:
-      assert(derivationOrder == 2);
-      assert(displayPlotSecondDerivative());
-      subCurveIndex = displayPlotFirstDerivative() ? 2 : 1;
-      break;
-  }
-  assert(0 <= subCurveIndex && subCurveIndex < numberOfSubCurves(true));
-  return subCurveIndex;
-}
-
-void ContinuousFunction::valuesToDisplayOnDerivativeCurve(
-    int derivationOrder, bool* image, bool* firstDerivative,
-    bool* secondDerivative) const {
-  *image = false;
-  *firstDerivative = false;
-  *secondDerivative = false;
-  switch (derivationOrder) {
-    case 0:
-      *image = true;
-      *firstDerivative = displayValueFirstDerivative();
-      *secondDerivative = displayValueSecondDerivative();
-      return;
-    case 1:
-      assert(displayPlotFirstDerivative());
-      *firstDerivative = true;
-      return;
-    case 2:
-      assert(displayPlotSecondDerivative());
-      *secondDerivative = true;
-      return;
-  }
+void ContinuousFunction::valuesToDisplayOnCurve(bool* image,
+                                                bool* firstDerivative,
+                                                bool* secondDerivative) const {
+  *image = true;
+  *firstDerivative = displayValueFirstDerivative();
+  *secondDerivative = displayValueSecondDerivative();
 }
 
 template <typename T>
@@ -471,7 +418,6 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
   const PreparedFunction& e = expressionApproximated();
-
   if (properties().isScatterPlot()) {
     assert(e.dimension().isPointOrListOfPoints() ||
            e.dimension().isEmptyList());

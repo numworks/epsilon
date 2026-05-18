@@ -4,8 +4,8 @@
 
 namespace Escher {
 
-void Bordered::drawTopBorderOfRect(KDContext* ctx, KDRect rect,
-                                   ThemeComponent borderColor) const {
+void Bordered::DrawTopBorderOfRect(KDContext* ctx, KDRect rect,
+                                   ThemeComponent borderColor) {
   DrawInnerBorderOfRect(
       ctx, rect, k_separatorThickness, ColorPicker::Resolve(borderColor),
       Mask{.top = true, .right = false, .bottom = false, .left = false});

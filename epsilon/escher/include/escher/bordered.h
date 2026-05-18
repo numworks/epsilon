@@ -10,8 +10,8 @@ class Bordered {
  public:
   static void DrawBorderOfRect(KDContext* ctx, KDRect rect,
                                ThemeComponent borderColor);
-  void drawTopBorderOfRect(KDContext* ctx, KDRect rect,
-                           ThemeComponent borderColor) const;
+  static void DrawTopBorderOfRect(KDContext* ctx, KDRect rect,
+                                  ThemeComponent borderColor);
   static void DrawInnerRect(KDContext* ctx, KDRect rect,
                             ThemeComponent backgroundColor);
 

@@ -49,7 +49,7 @@ void HistoryViewCell::setEven(bool even) {
 
 void HistoryViewCell::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, Escher::ColorPicker::Resolve(backgroundColor()));
-  drawTopBorderOfRect(ctx, bounds(), BorderColor(m_even));
+  DrawTopBorderOfRect(ctx, bounds(), BorderColor(m_even));
 }
 
 void HistoryViewCell::CellWithEllipsis::drawRect(KDContext* ctx,
@@ -59,7 +59,7 @@ void HistoryViewCell::CellWithEllipsis::drawRect(KDContext* ctx,
   ThemeComponent borderColor = isHighlighted()
                                    ? ThemeComponent::CalculationBorderSelected
                                    : BorderColor(m_even);
-  drawTopBorderOfRect(ctx, bounds(), borderColor);
+  DrawTopBorderOfRect(ctx, bounds(), borderColor);
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {

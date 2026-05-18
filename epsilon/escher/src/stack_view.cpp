@@ -41,7 +41,7 @@ void StackView::pushStack(const ViewController* vc) {
     // Only 3 different stack header colors are defined
     constexpr size_t k_maxNumberOfGraduatedStacks = 3;
     assert(numberOfStacks >= 0 &&
-           numberOfStacks < k_maxNumberOfGraduatedStacks);
+           static_cast<size_t>(numberOfStacks) < k_maxNumberOfGraduatedStacks);
     textColor = ThemeComponent::TextWhite;
     constexpr std::array<ThemeComponent, k_maxNumberOfGraduatedStacks>
         k_backgrounds = {ThemeComponent::BannerPurple,

@@ -58,7 +58,7 @@ bool MemoizedCursorView::eraseCursorIfPossible(const Escher::View* parent) {
   assert(parent);
   const size_t maxSize =
       std::max(Dots::LargeDotDiameter, Dots::LargeRingDiameter);
-  assert(size() <= maxSize);
+  assert(static_cast<size_t>(size()) <= maxSize);
   KDColor cursorWorkingBuffer[maxSize * maxSize];
   KDContext* ctx = Ion::Display::Context::SharedContext;
   KDPoint previousOrigin = ctx->origin();

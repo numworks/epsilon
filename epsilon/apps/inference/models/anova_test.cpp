@@ -55,7 +55,7 @@ void ANOVATest::computeGroupData() {
     default:
       OMG_UNREACHABLE;
   }
-  assert(m_groupData.size() == numberOfGroups());
+  assert(m_groupData.size() == static_cast<size_t>(numberOfGroups()));
 }
 
 void ANOVATest::compute() {
@@ -150,7 +150,7 @@ void ANOVATest::setGroupValue(double value, int valueIndex, int groupIndex) {
       m_groups.push(GroupValues{});
     }
   }
-  assert(m_groups.size() > groupIndex);
+  assert(m_groups.size() > static_cast<size_t>(groupIndex));
 
   GroupValues& groupValues = m_groups[groupIndex];
   if (groupValues.size() > static_cast<size_t>(valueIndex)) {
@@ -162,7 +162,7 @@ void ANOVATest::setGroupValue(double value, int valueIndex, int groupIndex) {
   for (int i = groupValues.size(); i < valueIndex; ++i) {
     groupValues.push(k_undefinedValue);
   }
-  assert(groupValues.size() == valueIndex);
+  assert(groupValues.size() == static_cast<size_t>(valueIndex));
   groupValues.push(value);
 }
 

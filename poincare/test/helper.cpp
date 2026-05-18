@@ -78,7 +78,8 @@ void process_tree_and_compare(
   /* TODO: use (output != nullptr) instead, but it would require uniform float
    * numbers approximation across all platforms for tests to pass this way. */
   bool fallbackOnSerialization = true;
-  [[maybe_unused]] int previousNumberOfTrees = SharedTreeStack->numberOfTrees();
+  [[maybe_unused]] size_t previousNumberOfTrees =
+      SharedTreeStack->numberOfTrees();
   if (!expression || !expected) {
     // Parsing failed
     quiz_assert(false);

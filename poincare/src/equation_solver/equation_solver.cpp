@@ -32,7 +32,8 @@ using namespace Poincare::NumericSolver;
 namespace Poincare::EquationSolver {
 
 void VariableArray::fillWithList(const Internal::Tree* list) {
-  assert(list->isList() && list->numberOfChildren() <= capacity());
+  assert(list->isList() &&
+         static_cast<size_t>(list->numberOfChildren()) <= capacity());
   clear();
   for (const Internal::Tree* variable : list->children()) {
     push(SymbolHelper::GetName(variable));

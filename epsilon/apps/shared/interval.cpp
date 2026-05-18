@@ -28,13 +28,14 @@ bool Interval::hasSameParameters(IntervalParameters parameters) {
 }
 
 double Interval::element(int i) {
-  assert(i >= 0 && i < numberOfElements());
+  assert(i >= 0 && static_cast<size_t>(i) < numberOfElements());
   computeElements();
   return m_intervalBuffer[i];
 }
 
 void Interval::setElement(int i, double f) {
-  assert(i >= 0 && i <= numberOfElements() && i < k_maxNumberOfElements);
+  assert(i >= 0 && static_cast<size_t>(i) <= numberOfElements() &&
+         static_cast<size_t>(i) < k_maxNumberOfElements);
   computeElements();
   if (i == static_cast<int>(m_intervalBuffer.size())) {
     m_intervalBuffer.push(f);

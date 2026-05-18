@@ -12,8 +12,8 @@ class Bordered {
                                ThemeComponent borderColor);
   void drawTopBorderOfRect(KDContext* ctx, KDRect rect,
                            ThemeComponent borderColor) const;
-  void drawInnerRect(KDContext* ctx, KDRect rect,
-                     ThemeComponent backgroundColor) const;
+  static void DrawInnerRect(KDContext* ctx, KDRect rect,
+                            ThemeComponent backgroundColor);
 
   // Mask of borders to draw
   struct Mask {

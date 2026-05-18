@@ -17,8 +17,8 @@ void Bordered::DrawBorderOfRect(KDContext* ctx, KDRect rect,
                         ColorPicker::Resolve(borderColor));
 }
 
-void Bordered::drawInnerRect(KDContext* ctx, KDRect rect,
-                             ThemeComponent backgroundColor) const {
+void Bordered::DrawInnerRect(KDContext* ctx, KDRect rect,
+                             ThemeComponent backgroundColor) {
   assert(rect.origin() == KDPointZero);
   ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness,
                        rect.width() - 2 * k_separatorThickness,

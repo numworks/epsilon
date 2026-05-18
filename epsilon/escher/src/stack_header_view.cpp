@@ -23,7 +23,7 @@ StackHeaderView::StackHeaderView(const ViewController* controller,
 void StackHeaderView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect b = bounds();
   DrawBorderOfRect(ctx, b, m_separatorColor);
-  drawInnerRect(ctx, b, m_backgroundColor);
+  DrawInnerRect(ctx, b, m_backgroundColor);
   // Write title
   ctx->alignAndDrawString(
       m_controller->title(), KDPointZero, bounds().size(),

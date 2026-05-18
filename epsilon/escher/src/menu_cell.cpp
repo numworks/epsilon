@@ -8,7 +8,7 @@ namespace Escher {
 AbstractMenuCell::AbstractMenuCell() : Bordered(), HighlightCell() {}
 
 void AbstractMenuCell::drawRect(KDContext* ctx, KDRect rect) const {
-  drawInnerRect(ctx, bounds(), Highlight(k_defaultBackground, isHighlighted()));
+  DrawInnerRect(ctx, bounds(), Highlight(k_defaultBackground, isHighlighted()));
   DrawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 

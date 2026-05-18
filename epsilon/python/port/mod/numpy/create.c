@@ -169,7 +169,7 @@ mp_obj_t create_arange(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
         ndarray = ndarray_new_linear_array(0, dtype);
     } else {
         mp_float_t nb = MICROPY_FLOAT_C_FUN(ceil)((stop - start) / step);
-        size_t len = nb >= SIZE_MAX ? SIZE_MAX : (size_t)nb;
+        size_t len = nb >= (mp_float_t)SIZE_MAX ? SIZE_MAX : (size_t)nb;
         stop = start + (len - 1) * step;
         ndarray = create_linspace_arange(start, step, stop, len, dtype);
     }

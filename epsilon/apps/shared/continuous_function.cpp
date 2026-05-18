@@ -83,6 +83,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
 size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
                                                int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
+  assert(!isDerivative());
   size_t length = 0;
   if (isNamed()) {
     length += Function::name(buffer, bufferSize);
@@ -108,6 +109,10 @@ size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
 size_t ContinuousFunction::nameWithArgument(char* buffer, size_t bufferSize,
                                             int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
+  if (isDerivative()) {
+    return ContinuousFunction(parentRecord())
+        .nameWithArgument(buffer, bufferSize, recordData()->derivationOrder());
+  }
   size_t length = nameWithoutArgument(buffer, bufferSize, derivationOrder);
   if (isNamed()) {
     length += withArgument(buffer + length, bufferSize - length);

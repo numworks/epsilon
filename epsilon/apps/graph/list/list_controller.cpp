@@ -286,26 +286,22 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
     OMG::ExpiringPointer<ContinuousFunction> f =
         modelStore()->modelForRecord(recordAtRow(row, &relativeRow));
     assert(!f->isNull());
-    int derivationOrder =
-        derivationOrderFromRelativeRow(f.pointer(), relativeRow);
     if (type == k_expressionCellType) {
       FunctionCell* functionCell = static_cast<FunctionCell*>(cell);
       Layout layout;
       I18n::Message caption = I18n::Message::Default;
       bool hideMessage;
-      if (derivationOrder == 0) {
-        layout = f->layout();
-        caption = f->properties().caption();
-        hideMessage = false;
-      } else {
-        assert(derivationOrder == 1 || derivationOrder == 2);
+      if (f->isDerivative()) {
         constexpr static size_t bufferSize =
             Shared::Function::k_maxNameWithArgumentSize;
         char buffer[bufferSize];
-        size_t length =
-            f->nameWithArgument(buffer, bufferSize, derivationOrder);
+        size_t length = f->nameWithArgument(buffer, bufferSize);
         layout = Layout::String(buffer, length);
         hideMessage = true;
+      } else {
+        layout = f->layout();
+        caption = f->properties().caption();
+        hideMessage = false;
       }
       functionCell->expressionCell()->setLayout(layout);
       functionCell->setMessage(caption);

@@ -71,8 +71,7 @@ const char* CurveParameterController::title() const {
     const char* calculate = I18n::translate(I18n::Message::CalculateOnFx);
     size_t len = strlen(calculate);
     memcpy(m_title, calculate, len);
-    function()->nameWithArgument(m_title + len, k_titleSize - len,
-                                 m_derivationOrder);
+    function()->nameWithArgument(m_title + len, k_titleSize - len);
   } else {
     const char* colorName = I18n::translate(
         Shared::ColorNames::NameForCurveColor(function()->color()));
@@ -232,7 +231,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
           derivationOrder);
     } else {
       assert(firstComponent);
-      function()->nameWithArgument(buffer, bufferSize, derivationOrder);
+      function()->nameWithArgument(buffer, bufferSize);
     }
   }
   m_parameterCells[row].label()->setText(buffer);

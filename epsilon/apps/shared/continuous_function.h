@@ -50,8 +50,6 @@ class ContinuousFunction : public Function {
 
   CodePoint symbol() const override { return properties().symbol(); }
 
-  size_t nameWithoutArgument(char* buffer, size_t bufferSize,
-                             int derivationOrder = 0) const;
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
   size_t nameWithArgument(char* buffer, size_t bufferSize,
                           int derivationOrder = 0) const override;
@@ -257,6 +255,10 @@ class ContinuousFunction : public Function {
   /* Return step computed from t range or NAN if properties().isCartesian() is
    * true. */
   float rangeStep() const override;
+
+  /* Function */
+  size_t nameWithoutArgument(char* buffer, size_t bufferSize,
+                             int derivationOrder = 0) const;
 
   /* Expressions */
 

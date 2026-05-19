@@ -103,7 +103,7 @@ class StoreController : public EditableCellTableViewController,
 
   BufferFunctionTitleCell m_titleCells[k_maxNumberOfDisplayableColumns];
   Escher::EvenOddEditableTextCell<
-      Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision>
+      Escher::AbstractEvenOddTableBufferTextCell::k_defaultPrecision>
       m_editableCells[k_maxNumberOfDisplayableCells];
 
   Escher::MemoizedColumnWidthManager<6> m_widthManager;

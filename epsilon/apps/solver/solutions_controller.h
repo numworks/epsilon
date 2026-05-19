@@ -182,7 +182,7 @@ class SolutionsController : public Escher::ViewController,
   constexpr static int k_symbolCellWidth =
       KDFont::GlyphWidth(k_solutionsFont) *
           (Poincare::SymbolHelper::k_maxNameLengthWithoutQuotationMarks + 2) +
-      2 * Escher::AbstractEvenOddBufferTextCell::k_horizontalMargin;
+      2 * Escher::AbstractEvenOddTableBufferTextCell::k_horizontalMargin;
   constexpr static int k_valueCellWidth = Ion::Display::Width -
                                           k_symbolCellWidth -
                                           Escher::Metric::CommonMargins.width();

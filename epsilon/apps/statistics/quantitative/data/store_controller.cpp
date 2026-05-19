@@ -67,8 +67,8 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
   }
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(column);
-  AbstractEvenOddBufferTextCell* myCell =
-      static_cast<AbstractEvenOddBufferTextCell*>(cell);
+  AbstractEvenOddTableBufferTextCell* myCell =
+      static_cast<AbstractEvenOddTableBufferTextCell*>(cell);
   if (row > numberOfElementsInCol + 1) {
     myCell->setText("");
     myCell->setVisible(false);
@@ -84,11 +84,11 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
     myCell->setText("");
   } else {
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+        AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
         value, buffer, bufferSize,
-        AbstractEvenOddBufferTextCell::k_defaultPrecision,
+        AbstractEvenOddTableBufferTextCell::k_defaultPrecision,
         SharedGlobalPrefs().displayMode());
     myCell->setText(buffer);
     ThemeComponent textColor =

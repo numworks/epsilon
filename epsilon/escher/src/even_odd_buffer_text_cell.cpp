@@ -3,24 +3,24 @@
 
 namespace Escher {
 
-void AbstractEvenOddBufferTextCell::setHighlighted(bool highlighted) {
+void AbstractEvenOddTableBufferTextCell::setHighlighted(bool highlighted) {
   EvenOddCell::setHighlighted(highlighted);
   bufferTextView()->setHighlighted(highlighted);
 }
 
-void AbstractEvenOddBufferTextCell::
+void AbstractEvenOddTableBufferTextCell::
     updateSubviewsBackgroundAfterChangingState() {
   bufferTextView()->setBackgroundColor(backgroundColor());
 }
 
-int AbstractEvenOddBufferTextCell::numberOfSubviews() const { return 1; }
+int AbstractEvenOddTableBufferTextCell::numberOfSubviews() const { return 1; }
 
-View* AbstractEvenOddBufferTextCell::subviewAtIndex(int index) {
+View* AbstractEvenOddTableBufferTextCell::subviewAtIndex(int index) {
   assert(index == 0);
   return bufferTextView();
 }
 
-void AbstractEvenOddBufferTextCell::layoutSubviews(bool force) {
+void AbstractEvenOddTableBufferTextCell::layoutSubviews(bool force) {
   KDRect boundsThis = bounds();
   KDRect boundsBuffer =
       KDRect(boundsThis.left() + k_horizontalMargin, boundsThis.top(),

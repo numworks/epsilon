@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-class AbstractEvenOddBufferTextCell : public EvenOddCell {
+class AbstractEvenOddTableBufferTextCell : public EvenOddCell {
  public:
   constexpr static int k_defaultPrecision =
       Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
@@ -34,12 +34,13 @@ class AbstractEvenOddBufferTextCell : public EvenOddCell {
   }
   virtual AbstractBufferTextView* bufferTextView() = 0;
   AbstractBufferTextView* bufferTextView() const {
-    return const_cast<AbstractEvenOddBufferTextCell*>(this)->bufferTextView();
+    return const_cast<AbstractEvenOddTableBufferTextCell*>(this)
+        ->bufferTextView();
   };
 };
 
 template <class BufferTextViewClass>
-class EvenOddTableBufferTextCell : public AbstractEvenOddBufferTextCell {
+class EvenOddTableBufferTextCell : public AbstractEvenOddTableBufferTextCell {
 #ifndef PLATFORM_DEVICE
   // Poor man's constraint
   static_assert(std::is_base_of<AbstractBufferTextView, BufferTextViewClass>(),
@@ -49,7 +50,7 @@ class EvenOddTableBufferTextCell : public AbstractEvenOddBufferTextCell {
  public:
   EvenOddTableBufferTextCell(
       const TextFormat& format = k_smallCellDefaultFormat)
-      : AbstractEvenOddBufferTextCell(), m_bufferTextView(format) {}
+      : AbstractEvenOddTableBufferTextCell(), m_bufferTextView(format) {}
 
  private:
   AbstractBufferTextView* bufferTextView() override {
@@ -72,7 +73,7 @@ class EvenOddBufferTextCell
 };
 
 template <int numberOfSignificantDigits =
-              AbstractEvenOddBufferTextCell::k_defaultPrecision>
+              AbstractEvenOddTableBufferTextCell::k_defaultPrecision>
 using FloatEvenOddTableBufferTextCell =
     EvenOddTableBufferTextCell<FloatBufferTextView<numberOfSignificantDigits>>;
 using SmallFontEvenOddTableBufferTextCell =

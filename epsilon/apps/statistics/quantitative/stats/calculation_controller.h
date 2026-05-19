@@ -56,7 +56,7 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static KDCoordinate k_calculationCellWidth =
       Escher::Metric::SmallFontCellWidth(
           Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
-              Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision),
+              Escher::AbstractEvenOddTableBufferTextCell::k_defaultPrecision),
           Escher::EvenOddCell::k_horizontalMargin);
 
   struct CalculationRow {

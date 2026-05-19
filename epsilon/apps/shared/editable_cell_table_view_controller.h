@@ -51,7 +51,7 @@ class EditableCellTableViewController
       Escher::Metric::SmallEditableCellHeight;
   constexpr static KDCoordinate k_cellWidth =
       Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
-          Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision) *
+          Escher::AbstractEvenOddTableBufferTextCell::k_defaultPrecision) *
           KDFont::GlyphWidth(k_cellFont) +
       2 * Escher::Metric::SmallCellMargin;
 

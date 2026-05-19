@@ -114,7 +114,7 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
   }
   fillCellForLocationWithDisplayMode(
       cell, column, row, SharedGlobalPrefs().displayMode(),
-      AbstractEvenOddBufferTextCell::k_defaultPrecision);
+      AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
 }
 
 KDCoordinate StoreController::separatorBeforeColumn(int column) const {

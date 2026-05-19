@@ -56,7 +56,7 @@ class PieBannerView : public Escher::View {
   Escher::View* subviewAtIndex(int index) override;
 
   constexpr static int k_precision =
-      Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
+      Escher::AbstractEvenOddTableBufferTextCell::k_defaultPrecision;
   Escher::BufferTextView<sizeof(Store::Label)> m_categoryTitle;
   Escher::BufferTextView<9> m_colorLabel;
   Escher::BufferTextView<14> m_freqLabel;

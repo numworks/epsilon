@@ -16,7 +16,7 @@ namespace Statistics::Categorical {
 class TableViewDataSource : public Escher::TableViewDataSource,
                             public Escher::RegularTableSize1DManager {
   constexpr static int k_numberOfSignificantDigits =
-      Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
+      Escher::AbstractEvenOddTableBufferTextCell::k_defaultPrecision;
 
   using EvenOddBufferCell =
       Escher::FloatEvenOddTableBufferTextCell<k_numberOfSignificantDigits>;

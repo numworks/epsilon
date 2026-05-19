@@ -73,8 +73,8 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       char buffer[bufferSize];
       Print::CustomPrintf(buffer, bufferSize, pattern, I18n::translate(message),
                           index);
-      AbstractEvenOddBufferTextCell* bufferCell =
-          static_cast<AbstractEvenOddBufferTextCell*>(cell);
+      AbstractEvenOddTableBufferTextCell* bufferCell =
+          static_cast<AbstractEvenOddTableBufferTextCell*>(cell);
       bufferCell->setTextColor(column == 1 ? ThemeComponent::TextGrayDark
                                            : ThemeComponent::TextDefault);
       bufferCell->setText(buffer);
@@ -109,8 +109,8 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       // Display a calculation cell
       int seriesIndex = m_store->seriesIndexFromActiveSeriesIndex(column - 2);
       double calculation;
-      AbstractEvenOddBufferTextCell* calculationCell =
-          static_cast<AbstractEvenOddBufferTextCell*>(cell);
+      AbstractEvenOddTableBufferTextCell* calculationCell =
+          static_cast<AbstractEvenOddTableBufferTextCell*>(cell);
       if (row - 1 < (numberOfFixedRows - 1)) {
         int calculationIndex = findCellIndex(row - 1);
         if (std::isnan(m_memoizedCellContent[seriesIndex][calculationIndex])) {
@@ -136,11 +136,11 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
         }
       }
       constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-          AbstractEvenOddBufferTextCell::k_defaultPrecision);
+          AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
       char buffer[bufferSize];
       PoincareHelpers::ConvertFloatToText<double>(
           calculation, buffer, bufferSize,
-          AbstractEvenOddBufferTextCell::k_defaultPrecision);
+          AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
       calculationCell->setText(buffer);
       return;
     }

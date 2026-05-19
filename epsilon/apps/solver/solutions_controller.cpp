@@ -407,18 +407,20 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
       SymbolHelper::NameWithoutQuotationMarks(bufferSymbol, bufferSize, varName,
                                               strlen(varName));
     }
-    static_cast<AbstractEvenOddBufferTextCell*>(cell)->setText(bufferSymbol);
+    static_cast<AbstractEvenOddTableBufferTextCell*>(cell)->setText(
+        bufferSymbol);
   }
   if (type == k_approximateValueCellType) {
     assert(system->numberOfSolutions() > 0);
     // Get values of the solutions
     constexpr size_t bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+        AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
     char bufferValue[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(
         system->solution(row)->approximate(), bufferValue, bufferSize,
-        AbstractEvenOddBufferTextCell::k_defaultPrecision);
-    static_cast<AbstractEvenOddBufferTextCell*>(cell)->setText(bufferValue);
+        AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
+    static_cast<AbstractEvenOddTableBufferTextCell*>(cell)->setText(
+        bufferValue);
   }
   if (type == k_exactValueCellType) {
     if (definedVariablesRow < 0 || row < definedVariablesRow - 1) {

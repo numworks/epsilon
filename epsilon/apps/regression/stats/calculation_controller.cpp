@@ -74,8 +74,8 @@ bool CalculationController::canStoreCellAtLocation(int column, int row) {
     return false;
   }
   if (c == Calculation::CorrelationCoeff || c > Calculation::Regression) {
-    AbstractEvenOddBufferTextCell* bufferCell =
-        static_cast<AbstractEvenOddBufferTextCell*>(
+    AbstractEvenOddTableBufferTextCell* bufferCell =
+        static_cast<AbstractEvenOddTableBufferTextCell*>(
             m_selectableTableView.cellAtLocation(column, row));
     return strcmp(bufferCell->text(), I18n::translate(I18n::Message::Dash)) &&
            strcmp(bufferCell->text(), I18n::translate(I18n::Message::Disabled));
@@ -96,11 +96,11 @@ int CalculationController::numberOfRows() const {
          m_store->AnyActiveSeriesSatisfies(Store::DisplayRSquared);
 }
 
-void DashBufferCell(AbstractEvenOddBufferTextCell* bufferCell) {
+void DashBufferCell(AbstractEvenOddTableBufferTextCell* bufferCell) {
   bufferCell->setText(I18n::translate(I18n::Message::Dash));
 }
 
-void DisableBufferCell(AbstractEvenOddBufferTextCell* bufferCell) {
+void DisableBufferCell(AbstractEvenOddTableBufferTextCell* bufferCell) {
   bufferCell->setTextColor(ThemeComponent::TextGrayDark);
   bufferCell->setText(I18n::translate(I18n::Message::Disabled));
 }
@@ -161,11 +161,11 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
   // Regression cell
   if (c == Calculation::Regression) {
     Model* model = m_store->modelForSeries(series);
-    static_cast<AbstractEvenOddBufferTextCell*>(cell)->setText(
+    static_cast<AbstractEvenOddTableBufferTextCell*>(cell)->setText(
         Store::HasCoefficients(regressionType)
             ? model->formula()
             : I18n::translate(I18n::Message::Dash));
-    static_cast<AbstractEvenOddBufferTextCell*>(cell)->setTextColor(
+    static_cast<AbstractEvenOddTableBufferTextCell*>(cell)->setTextColor(
         ThemeComponent::TextDefault);
     return;
   }
@@ -212,22 +212,22 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
      * fixed to a value that guarantees that the displayed number will fit in
      * the cell. */
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+        AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(
         *calculation1, buffer, bufferSize,
-        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+        AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
     myCell->setFirstText(buffer);
     PoincareHelpers::ConvertFloatToText<double>(
         *calculation2, buffer, bufferSize,
-        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+        AbstractEvenOddTableBufferTextCell::k_defaultPrecision);
     myCell->setSecondText(buffer);
     return;
   }
 
   // Single calculation cells
-  AbstractEvenOddBufferTextCell* bufferCell =
-      static_cast<AbstractEvenOddBufferTextCell*>(cell);
+  AbstractEvenOddTableBufferTextCell* bufferCell =
+      static_cast<AbstractEvenOddTableBufferTextCell*>(cell);
   bufferCell->setTextColor(ThemeComponent::TextDefault);
   double result = NAN;
 

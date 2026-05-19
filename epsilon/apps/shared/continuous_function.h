@@ -92,9 +92,7 @@ class ContinuousFunction : public Function {
     return !isDerivative() && properties().canDisplayDerivative();
   }
   // If the ContinuousFunction can be shown in values table
-  bool isActiveInTable() const {
-    return properties().canBeActiveInTable() && isActive() && !isDerivative();
-  }
+  bool isActiveInTable() const;
   // If the ContinuousFunction can be shown in plot
   bool isActiveInPlot() const;
   // If the ContinuousFunction is named ("f(x)=...")

@@ -171,6 +171,19 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
   }
   return error;
 }
+bool ContinuousFunction::isActiveInTable() const {
+  if (!properties().canBeActiveInTable() || !isActive()) {
+    return false;
+  }
+  if (!isDerivative()) {
+    return true;
+  }
+  int order = derivationOrder();
+  assert(order == 1 || order == 2);
+  OMG::ExpiringPointer<ContinuousFunction> parent = parentFunction();
+  return !parent->isNull() && parent->isActive() &&
+         parent->displayValueDerivative(order);
+}
 
 bool ContinuousFunction::isActiveInPlot() const {
   if (!isActive()) {
@@ -182,7 +195,8 @@ bool ContinuousFunction::isActiveInPlot() const {
   int order = derivationOrder();
   assert(order == 1 || order == 2);
   OMG::ExpiringPointer<ContinuousFunction> parent = parentFunction();
-  return !parent->isNull() && parent->displayPlotDerivative(order);
+  return !parent->isNull() && parent->isActive() &&
+         parent->displayPlotDerivative(order);
 }
 
 bool ContinuousFunction::isNamed() const {

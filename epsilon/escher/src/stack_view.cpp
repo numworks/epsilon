@@ -35,6 +35,7 @@ void StackView::pushStack(const ViewController* vc) {
   ThemeComponent textColor = ThemeComponent::TextGrayDarkMiddle;
   ThemeComponent backgroundColor = ThemeComponent::BackgroundWhite;
   ThemeComponent separatorColor = ThemeComponent::BorderGrayBright;
+  ThemeComponent borderColor = ThemeComponent::BorderGrayBright;
 
   int numberOfStacks = m_stackHeaderViews->size();
   if (m_style == Style::GrayGradation) {
@@ -53,17 +54,20 @@ void StackView::pushStack(const ViewController* vc) {
                         ThemeComponent::BorderGrayDarkMiddle};
     backgroundColor = k_backgrounds[numberOfStacks];
     separatorColor = k_separators[numberOfStacks];
+    // TODO: borderColor should be the same as backgroundColor
+    borderColor = k_separators[numberOfStacks];
   } else if (m_style == Style::PurpleWhite) {
     if (numberOfStacks == 0) {
       textColor = ThemeComponent::TextWhite;
       backgroundColor = ThemeComponent::BackgroundBoxTitle;
       separatorColor = ThemeComponent::BorderBoxTitleCell;
+      borderColor = ThemeComponent::BorderBoxTitleCell;
     }
   } else {
     assert(m_style == Style::WhiteUniform);
   }
-  m_stackHeaderViews->push(
-      StackHeaderView(vc, textColor, backgroundColor, separatorColor));
+  m_stackHeaderViews->push(StackHeaderView(vc, textColor, backgroundColor,
+                                           separatorColor, borderColor));
 }
 
 KDSize StackView::minimalSizeForOptimalDisplay() const {

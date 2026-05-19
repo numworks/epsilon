@@ -11,18 +11,25 @@ namespace Escher {
 StackHeaderView::StackHeaderView(const ViewController* controller,
                                  ThemeComponent textColor,
                                  ThemeComponent backgroundColor,
-                                 ThemeComponent separatorColor)
+                                 ThemeComponent separatorColor,
+                                 ThemeComponent borderColor)
     : View(),
       m_textColor(textColor),
       m_backgroundColor(backgroundColor),
       m_separatorColor(separatorColor),
+      m_borderColor(borderColor),
       m_controller(controller) {
   markWholeFrameAsDirty();
 }
 
 void StackHeaderView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect b = bounds();
-  DrawBorderOfRect(ctx, b, m_separatorColor);
+  DrawInnerBorderOfRect(
+      ctx, b, k_separatorThickness, ColorPicker::Resolve(m_borderColor),
+      Mask{.top = false, .right = true, .bottom = false, .left = true});
+  DrawInnerBorderOfRect(
+      ctx, b, k_separatorThickness, ColorPicker::Resolve(m_separatorColor),
+      Mask{.top = true, .right = false, .bottom = true, .left = false});
   DrawInnerRect(ctx, b, m_backgroundColor);
   // Write title
   ctx->alignAndDrawString(

@@ -14,7 +14,8 @@ class StackHeaderView : public View, public Bordered {
       const ViewController* controller = nullptr,
       ThemeComponent textColor = ThemeComponent::TextDefault,
       ThemeComponent backgroundColor = ThemeComponent::BackgroundPopup,
-      ThemeComponent separatorColor = ThemeComponent::TokenBlack);
+      ThemeComponent separatorColor = ThemeComponent::TokenBlack,
+      ThemeComponent borderColor = ThemeComponent::TokenBlack);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:
@@ -27,7 +28,10 @@ class StackHeaderView : public View, public Bordered {
 
   ThemeComponent m_textColor;
   ThemeComponent m_backgroundColor;
+  // The separators are above and below the cell
   ThemeComponent m_separatorColor;
+  // The borders are on the left and right sides of the cell
+  ThemeComponent m_borderColor;
   const ViewController* m_controller;
 };
 

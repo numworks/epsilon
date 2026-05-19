@@ -270,6 +270,7 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
     // No need to setDisplayValues, it is already included in setDisplayPlot
     setDisplayPlotFirstDerivative(false);
     setDisplayPlotSecondDerivative(false);
+    GlobalStore::DeleteDerivativeOfRecord(*this);
   } else {
     // Derivatives are depend on their parent's, update them
     updateDerivativeModels();

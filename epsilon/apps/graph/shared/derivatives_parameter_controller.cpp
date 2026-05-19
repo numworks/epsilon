@@ -70,44 +70,77 @@ void DerivativesParameterController::updateSwitchs() {
   }
 }
 
+void DerivativesParameterController::toggleDerivativePlot(uint8_t order) {
+  bool hasPlot = function()->displayPlotDerivative(order);
+  if (hasPlot) {
+    if (order == 1) {
+      function()->setDisplayPlotFirstDerivative(false);
+    } else {
+      function()->setDisplayPlotSecondDerivative(false);
+    }
+    // setDisplayPlot(false) coupling also clears value, delete record
+    GlobalStore::DeleteDerivativeOfRecord(m_record, order);
+  } else {
+    // Create record only if neither flag was set
+    if (!function()->displayValueDerivative(order)) {
+      Ion::Storage::Record::ErrorStatus error =
+          App::app()->functionStore().addDerivativeModel(m_record, order);
+      if (error != Ion::Storage::Record::ErrorStatus::None) {
+        return;
+      }
+    }
+    if (order == 1) {
+      function()->setDisplayPlotFirstDerivative(true);
+    } else {
+      function()->setDisplayPlotSecondDerivative(true);
+    }
+  }
+}
+
+void DerivativesParameterController::toggleDerivativeValue(uint8_t order) {
+  bool hasValue = function()->displayValueDerivative(order);
+  if (hasValue) {
+    if (order == 1) {
+      function()->setDisplayValueFirstDerivative(false);
+    } else {
+      function()->setDisplayValueSecondDerivative(false);
+    }
+    // If plot is also off, delete record
+    if (!function()->displayPlotDerivative(order)) {
+      GlobalStore::DeleteDerivativeOfRecord(m_record, order);
+    }
+  } else {
+    // Create record only if plot is also off
+    if (!function()->displayPlotDerivative(order)) {
+      Ion::Storage::Record::ErrorStatus error =
+          App::app()->functionStore().addDerivativeModel(m_record, order);
+      if (error != Ion::Storage::Record::ErrorStatus::None) {
+        return;
+      }
+    }
+    if (order == 1) {
+      function()->setDisplayValueFirstDerivative(true);
+    } else {
+      function()->setDisplayValueSecondDerivative(true);
+    }
+  }
+}
+
 void DerivativesParameterController::toggleSwitch(int row) {
   assert(0 <= row && row < k_numberOfCells);
   switch (row) {
     case k_indexOfFirstDerivativeValue:
-      function()->setDisplayValueFirstDerivative(
-          !function()->displayValueFirstDerivative());
+      toggleDerivativeValue(1);
       break;
-    case k_indexOfFirstDerivativePlot: {
-      bool hasFirstDerivative = function()->displayPlotFirstDerivative();
-      if (hasFirstDerivative) {
-        GlobalStore::DeleteDerivativeOfRecord(m_record, 1);
-      } else {
-        Ion::Storage::Record::ErrorStatus error =
-            App::app()->functionStore().addDerivativeModel(m_record, 1);
-        if (error != Ion::Storage::Record::ErrorStatus::None) {
-          return;
-        }
-      }
-      function()->setDisplayPlotFirstDerivative(!hasFirstDerivative);
+    case k_indexOfFirstDerivativePlot:
+      toggleDerivativePlot(1);
       break;
-    }
     case k_indexOfSecondDerivativeValue:
-      function()->setDisplayValueSecondDerivative(
-          !function()->displayValueSecondDerivative());
+      toggleDerivativeValue(2);
       break;
     default:
       assert(row == k_indexOfSecondDerivativePlot);
-      bool hasSecondDerivative = function()->displayPlotSecondDerivative();
-      if (hasSecondDerivative) {
-        GlobalStore::DeleteDerivativeOfRecord(m_record, 2);
-      } else {
-        Ion::Storage::Record::ErrorStatus error =
-            App::app()->functionStore().addDerivativeModel(m_record, 2);
-        if (error != Ion::Storage::Record::ErrorStatus::None) {
-          return;
-        }
-      }
-      function()->setDisplayPlotSecondDerivative(!hasSecondDerivative);
+      toggleDerivativePlot(2);
       break;
   }
   updateSwitchs();

@@ -32,6 +32,8 @@ class DerivativesParameterController
   OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
   void updateSwitchs();
   void toggleSwitch(int row);
+  void toggleDerivativePlot(uint8_t order);
+  void toggleDerivativeValue(uint8_t order);
   bool switchState(int row) const;
 
   constexpr static int k_indexOfFirstDerivativeValue = 0;

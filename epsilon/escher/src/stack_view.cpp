@@ -54,8 +54,9 @@ void StackView::pushStack(const ViewController* vc) {
                         ThemeComponent::BorderGrayDarkMiddle};
     backgroundColor = k_backgrounds[numberOfStacks];
     separatorColor = k_separators[numberOfStacks];
-    // TODO: borderColor should be the same as backgroundColor
-    borderColor = k_separators[numberOfStacks];
+    /* In the GrayGradation style, there are no borders on the left / right
+     * sides, so borderColor is the same as backgroundColor */
+    borderColor = backgroundColor;
   } else if (m_style == Style::PurpleWhite) {
     if (numberOfStacks == 0) {
       textColor = ThemeComponent::TextWhite;

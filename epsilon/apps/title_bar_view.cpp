@@ -58,12 +58,13 @@ void TitleBarView::updateBatteryAnimation() {
   m_batteryView.updateBatteryAnimation();
 }
 
-int TitleBarView::numberOfSubviews() const { return 6; }
+int TitleBarView::numberOfSubviews() const { return 7; }
 
 View* TitleBarView::subviewAtIndex(int index) {
   View* views[] = {&m_titleView,          &m_preferenceView,
                    &m_examModeIconView,   &m_examModeTextView,
-                   &m_shiftAlphaLockView, &m_batteryView};
+                   &m_shiftAlphaLockView, &m_batteryView,
+                   &m_separatorView};
   assert(0 <= index && index < static_cast<int>(std::size(views)));
   return views[index];
 }
@@ -140,6 +141,10 @@ void TitleBarView::layoutSubviews(bool force) {
                            k_alphaRightMargin - shiftAlphaLockSize.width(),
                        (bounds().height() - shiftAlphaLockSize.height()) / 2,
                        shiftAlphaLockSize),
+                force);
+  setChildFrame(&m_separatorView,
+                KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
+                       bounds().width(), Metric::CellSeparatorThickness),
                 force);
 }
 

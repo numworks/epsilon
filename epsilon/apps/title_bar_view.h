@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
 #include <escher/image_view.h>
+#include <escher/solid_color_view.h>
 #include <escher/text_format.h>
 
 #include "battery_view.h"
@@ -57,4 +58,6 @@ class TitleBarView : public Escher::View {
   Escher::BufferTextView<k_preferenceTextSize> m_preferenceView;
   Escher::ImageView m_examModeIconView;
   Escher::MessageTextView m_examModeTextView;
+  Escher::SolidColorView m_separatorView{
+      Escher::ThemeComponent::SeparatorTitleBar};
 };

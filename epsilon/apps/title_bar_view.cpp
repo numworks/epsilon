@@ -69,12 +69,6 @@ View* TitleBarView::subviewAtIndex(int index) {
 }
 
 void TitleBarView::layoutSubviews(bool force) {
-  /* We here cheat to layout the main title. The application title is written
-   * with upper cases. But, as upper letters are on the same baseline as lower
-   * letters, they seem to be slightly above when they are perfectly centered
-   * (because their glyph never cross the baseline). To avoid this effect, we
-   * translate the frame of the title downwards.*/
-  constexpr int k_verticalShift = 2;
   setChildFrame(&m_titleView,
                 KDRect(0, k_verticalShift, bounds().width(),
                        bounds().height() - k_verticalShift),

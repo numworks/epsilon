@@ -40,6 +40,12 @@ class TitleBarView : public Escher::View {
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter,
       .verticalAlignment = KDGlyph::k_alignCenter};
+  /* We cheat to layout the main title. The application title is written
+   * with upper cases. But, as upper letters are on the same baseline as lower
+   * letters, they seem to be slightly above when they are perfectly centered
+   * (because their glyph never cross the baseline). To avoid this effect, we
+   * translate the frame of the title downwards.*/
+  constexpr static int k_verticalShift = 2;
 
   int numberOfSubviews() const override;
   void layoutSubviews(bool force = false) override;

@@ -167,7 +167,8 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
     Ion::Backlight::setBrightness(SharedGlobalPrefs().brightnessLevel());
-    shouldForceRedraw = m_focusManager.dispatchEvent(event);
+    shouldForceRedraw = m_focusManager.dispatchEvent(
+        event, sharedAppsContainer()->m_blinkTimer);
   }
   if (shouldRedraw || shouldForceRedraw) {
     window()->redraw(shouldForceRedraw);

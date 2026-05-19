@@ -2,6 +2,7 @@
 
 #include <escher/text_cursor_view.h>
 #include <escher/timer.h>
+#include <kandinsky/point.h>
 
 namespace Escher {
 
@@ -14,6 +15,8 @@ class BlinkTimer : public Timer {
   BlinkTimer() : Timer(k_blinkPeriod / TickDuration) {}
 
   void forceCursorVisible();
+  bool isActive() const;
+  KDPoint getOrigin() const;
 
  private:
   static TextCursorView* SharedCursor() {

@@ -37,7 +37,11 @@ int ExpressionModelListController::numberOfRows() const {
   int modelsCount = store->numberOfModels();
   int nRows = 0;
   for (int i = 0; i < modelsCount; i++) {
-    nRows += numberOfRowsForRecord(store->recordAtIndex(i));
+    Ion::Storage::Record record = store->recordAtIndex(i);
+    if (!isRecordShownInList(record)) {
+      continue;
+    }
+    nRows += numberOfRowsForRecord(record);
   }
   return nRows + hasAddModelRow() + isAddingNewModel();
 }
@@ -216,7 +220,7 @@ void ExpressionModelListController::removeModelRow(
 int ExpressionModelListController::modelIndexForRow(int row,
                                                     int* relativeRow) const {
   *relativeRow = 0;
-  if (row <= 0) {
+  if (row < 0) {
     return row;
   }
   if (isNewModelRow(row) || isAddModelRow(row)) {
@@ -228,8 +232,10 @@ int ExpressionModelListController::modelIndexForRow(int row,
     recordIndex++;
     assert(0 <= recordIndex && recordIndex < modelStore()->numberOfModels());
     Ion::Storage::Record record = modelStore()->recordAtIndex(recordIndex);
+    if (!isRecordShownInList(record)) {
+      continue;
+    }
     const int numberOfRowsForCurrentRecord = numberOfRowsForRecord(record);
-    // Otherwise, do not early escape when row is 0
     assert(numberOfRowsForCurrentRecord > 0);
     if (i <= row && row < i + numberOfRowsForCurrentRecord) {
       *relativeRow = row - i;

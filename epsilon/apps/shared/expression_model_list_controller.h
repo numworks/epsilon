@@ -134,6 +134,9 @@ class ExpressionModelListController
   virtual int numberOfRowsForRecord(Ion::Storage::Record record) const {
     return 1;
   }
+  virtual bool isRecordShownInList(Ion::Storage::Record record) const {
+    return true;
+  }
 
   void finishEdition();
 

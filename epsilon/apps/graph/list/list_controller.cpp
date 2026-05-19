@@ -305,6 +305,18 @@ void ListController::hideDerivative(Ion::Storage::Record record,
   stackController()->pop();
 }
 
+bool ListController::isRecordShownInList(Ion::Storage::Record record) const {
+  OMG::ExpiringPointer<ContinuousFunction> f =
+      modelStore()->modelForRecord(record);
+  if (!f->isDerivative()) {
+    return true;
+  }
+  int order = f->derivationOrder();
+  assert(order == 1 || order == 2);
+  OMG::ExpiringPointer<ContinuousFunction> parent = f->parentFunction();
+  return !parent->isNull() && parent->displayPlotDerivative(order);
+}
+
 ContinuousFunctionStore* ListController::modelStore() const {
   return &App::app()->functionStore();
 }

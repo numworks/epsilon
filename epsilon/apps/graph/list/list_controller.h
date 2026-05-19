@@ -42,6 +42,7 @@ class ListController : public Shared::FunctionListController,
   KDCoordinate editableRowHeight() override;
   Shared::ListParameterController* parameterController() override;
   void removeModelRow(Ion::Storage::Record record) override;
+  bool isRecordShownInList(Ion::Storage::Record record) const override;
 
   // MathToolboxExtraCellsDataSource
   int numberOfExtraCells() override { return k_numberOfToolboxExtraCells; }

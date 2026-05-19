@@ -230,13 +230,12 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
 
 size_t ValuesController::fillColumnName(int column, char* buffer) {
   if (typeAtLocation(column, 0) == k_functionTitleCellType) {
-    int derivationOrder;
-    Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
+    Ion::Storage::Record record = recordAtColumn(column);
     OMG::ExpiringPointer<ContinuousFunction> function =
         functionStore()->modelForRecord(record);
     constexpr size_t bufferNameSize =
         ContinuousFunction::k_maxNameWithArgumentSize + 1;
-    return function->nameWithArgument(buffer, bufferNameSize, derivationOrder);
+    return function->nameWithArgument(buffer, bufferNameSize);
   }
   return Shared::ValuesController::fillColumnName(column, buffer);
 }
@@ -256,18 +255,30 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   if (typeAtLocation(column, 0) != k_functionTitleCellType) {
     return;
   }
-  int derivationOrder;
-  Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
   OMG::ExpiringPointer<ContinuousFunction> function =
-      functionStore()->modelForRecord(record);
-  static_cast<FunctionTitleCell*>(cell)->setColor(function->color());
+      functionStore()->modelForRecord(recordAtColumn(column));
+  Escher::ThemeComponent color = function->color();
+  if (function->isDerivative()) {
+    Ion::Storage::Record parentRecord = function->parentRecord();
+    if (!function->isActiveInPlot()) {
+      /* If the function is not active in plot, its color is not visible. Use
+       * the parent's. */
+      color = functionStore()->modelForRecord(parentRecord)->color();
+    }
+  }
+  static_cast<FunctionTitleCell*>(cell)->setColor(color);
 }
 
 // Shared::ValuesController
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {
-  int derivationOrder;
-  return recordAtColumn(i, &derivationOrder);
+  assert(typeAtLocation(i, 0) == k_functionTitleCellType);
+  ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtColumn(&i);
+  Ion::Storage::Record record =
+      functionStore()->activeRecordOfSymbolTypeInTableAtIndex(symbolType,
+                                                              i - 1);
+  assert(!record.isNull());
+  return record;
 }
 
 void ValuesController::updateNumberOfColumns() {
@@ -286,8 +297,7 @@ void ValuesController::updateNumberOfColumns() {
     OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(record);
     int symbolTypeIndex = static_cast<int>(f->properties().symbolType());
-    m_numberOfValuesColumnsForType[symbolTypeIndex] +=
-        numberOfColumnsForRecord(record);
+    m_numberOfValuesColumnsForType[symbolTypeIndex]++;
   }
   m_numberOfColumns = 0;
   for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes;
@@ -304,18 +314,17 @@ Layout* ValuesController::memoizedLayoutAtIndex(int i) {
 
 Layout ValuesController::functionTitleLayout(int column) {
   assert(typeAtLocation(column, 0) == k_functionTitleCellType);
-  int derivationOrder;
-  Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
+  Ion::Storage::Record record = recordAtColumn(column);
   OMG::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
   constexpr size_t bufferNameSize =
       ContinuousFunction::k_maxNameWithArgumentSize + 1;
   char buffer[bufferNameSize];
-  if (derivationOrder == 0 && !function->isNamed()) {
+  if (!function->isNamed() && !function->isDerivative()) {
     return PoincareHelpers::CreateLayout(function->originalEquation(),
                                          App::app()->localContext());
   }
-  function->nameWithArgument(buffer, bufferNameSize, derivationOrder);
+  function->nameWithArgument(buffer, bufferNameSize);
   return Layout::String(buffer);
 }
 
@@ -354,19 +363,12 @@ void ValuesController::setStartEndMessages(
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
   double abscissa;
-  int derivationOrder;
   OMG::ExpiringPointer<ContinuousFunction> function =
-      functionAtIndex(column, row, &abscissa, &derivationOrder);
+      functionAtIndex(column, row, &abscissa);
   const SymbolContext& symbolContext = App::app()->localContext();
   UserExpression result;
-  if (derivationOrder >= 1) {
-    // Compute derivative approximate result
-    assert(derivationOrder == 1 || derivationOrder == 2);
-    result = UserExpression::Builder(function->approximateDerivative<double>(
-        abscissa, derivationOrder, false));
-  } else {
+  {
     // Compute exact result
-    assert(derivationOrder == 0);
     SystemExpression abscissaExpression =
         SystemExpression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;
@@ -396,7 +398,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         CAS::ShouldOnlyDisplayApproximation(function->originalEquation(),
                                             result, approximation,
                                             symbolContext)) {
-      // Do not show exact expressions in certain cases, use approximate result
+      // Do not show exact expressions in certain cases, use approximate
+      // result
       result = approximation;
     }
   }
@@ -474,16 +477,14 @@ Escher::EvenOddTableMessageTextCell* ValuesController::abscissaTitleCells(
 
 template <class T>
 T* ValuesController::parameterController() {
-  int derivationOrder;
-  Ion::Storage::Record record =
-      recordAtColumn(selectedColumn(), &derivationOrder);
-  if (derivationOrder >= 1) {
-    assert(derivationOrder == 1 || derivationOrder == 2);
-    m_derivativeColumnParameterController->setRecord(record, derivationOrder);
+  Ion::Storage::Record record = recordAtColumn(selectedColumn());
+  OMG::ExpiringPointer<ContinuousFunction> function =
+      functionStore()->modelForRecord(record);
+  if (function->isDerivative()) {
+    m_derivativeColumnParameterController->setRecord(record);
     m_derivativeColumnParameterController->setParameterDelegate(this);
     return m_derivativeColumnParameterController;
   }
-  assert(derivationOrder == 0);
   m_functionParameterController->setRecord(record);
   m_functionParameterController->setParameterDelegate(this);
   return m_functionParameterController;
@@ -523,44 +524,12 @@ void ValuesController::activateExactValues(bool activate) {
   m_exactValuesButton.setState(m_exactValuesAreActivated);
 }
 
-Ion::Storage::Record ValuesController::recordAtColumn(int i,
-                                                      int* derivationOrder) {
-  assert(typeAtLocation(i, 0) == k_functionTitleCellType);
-  ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtColumn(&i);
-  int index = 1;
-  int numberOfActiveFunctionsInTableOfSymbolType =
-      functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType);
-  for (int k = 0; k < numberOfActiveFunctionsInTableOfSymbolType; k++) {
-    Ion::Storage::Record record =
-        functionStore()->activeRecordOfSymbolTypeInTableAtIndex(symbolType, k);
-    const int numberOfColumnsForCurrentRecord =
-        numberOfColumnsForRecord(record);
-    if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
-      OMG::ExpiringPointer<ContinuousFunction> f =
-          functionStore()->modelForRecord(record);
-      *derivationOrder = f->derivationOrderFromRelativeIndex(i - index);
-      return record;
-    }
-    index += numberOfColumnsForCurrentRecord;
-  }
-  assert(false);
-  return nullptr;
-}
-
 OMG::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(
-    int column, int row, double* abscissa, int* derivationOrder) {
+    int column, int row, double* abscissa) {
   *abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
-  Ion::Storage::Record record = recordAtColumn(column, derivationOrder);
+  Ion::Storage::Record record = recordAtColumn(column);
   return functionStore()->modelForRecord(record);
-}
-
-int ValuesController::numberOfColumnsForRecord(
-    Ion::Storage::Record record) const {
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      functionStore()->modelForRecord(record);
-  return 1 + f->displayValueFirstDerivative() +
-         f->displayValueSecondDerivative();
 }
 
 int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {

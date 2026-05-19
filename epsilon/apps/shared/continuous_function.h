@@ -204,8 +204,6 @@ class ContinuousFunction : public Function {
   void disableValueDerivative(int derivationOrder);
   void disablePlotDerivative(int derivationOrder);
 
-  // Get derivation order from relative index in values columns
-  int derivationOrderFromRelativeIndex(int relativeIndex) const;
   void valuesToDisplayOnCurve(bool* image, bool* firstDerivative,
                               bool* secondDerivative) const;
 

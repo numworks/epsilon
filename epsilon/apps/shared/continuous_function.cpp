@@ -333,24 +333,6 @@ void ContinuousFunction::disablePlotDerivative(int derivationOrder) {
   }
 }
 
-int ContinuousFunction::derivationOrderFromRelativeIndex(
-    int relativeIndex) const {
-  bool displayFirstDerivative = displayValueFirstDerivative();
-  bool displaySecondDerivative = displayValueSecondDerivative();
-  switch (relativeIndex) {
-    case 0:
-      return 0;
-    case 1:
-      assert(displayFirstDerivative || displaySecondDerivative);
-      return displayFirstDerivative ? 1 : 2;
-    default:
-      assert(relativeIndex == 2 && displayFirstDerivative &&
-             displaySecondDerivative);
-      return 2;
-  }
-  (void)displaySecondDerivative;
-}
-
 void ContinuousFunction::valuesToDisplayOnCurve(bool* image,
                                                 bool* firstDerivative,
                                                 bool* secondDerivative) const {

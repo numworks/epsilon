@@ -117,11 +117,11 @@ class CalculationController : public Shared::DoublePairTableController {
 
   Shared::BufferFunctionTitleCell
       m_seriesTitleCells[k_numberOfSeriesTitleCells];
-  Escher::SmallFontEvenOddBufferTextCell
+  Escher::SmallFontEvenOddTableBufferTextCell
       m_calculationModeTitleCells[k_maxNumberOfDisplayableRows];
-  Escher::SmallFontEvenOddBufferTextCell
+  Escher::SmallFontEvenOddTableBufferTextCell
       m_calculationModeSymbolCells[k_maxNumberOfDisplayableRows];
-  Escher::FloatEvenOddBufferTextCell<>
+  Escher::FloatEvenOddTableBufferTextCell<>
       m_calculationCells[k_numberOfCalculationCells];
   double m_memoizedCellContent[Store::k_numberOfSeries][k_numberOfCalculations];
   Store* m_store;

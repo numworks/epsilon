@@ -99,7 +99,7 @@ class StoreController : public Shared::StoreController {
   Store* m_store;
   Escher::StackViewController* m_stackViewController;
   StoreParameterController m_storeParameterController;
-  Escher::FloatEvenOddBufferTextCell<>
+  Escher::FloatEvenOddTableBufferTextCell<>
       m_nonEditableCells[k_maxNumberOfNonEditableCells];
   Escher::ViewController* m_dataTypeController;
   Escher::SimpleButtonCell m_dataTypeButton;

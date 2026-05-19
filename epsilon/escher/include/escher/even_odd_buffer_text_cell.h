@@ -39,15 +39,16 @@ class AbstractEvenOddBufferTextCell : public EvenOddCell {
 };
 
 template <class BufferTextViewClass>
-class EvenOddBufferTextCell : public AbstractEvenOddBufferTextCell {
+class EvenOddTableBufferTextCell : public AbstractEvenOddBufferTextCell {
 #ifndef PLATFORM_DEVICE
   // Poor man's constraint
-  static_assert(
-      std::is_base_of<AbstractBufferTextView, BufferTextViewClass>(),
-      "EvenOddBufferTextCell must be templated with a BufferTextView class");
+  static_assert(std::is_base_of<AbstractBufferTextView, BufferTextViewClass>(),
+                "EvenOddTableBufferTextCell must be templated with a "
+                "BufferTextView class");
 #endif
  public:
-  EvenOddBufferTextCell(const TextFormat& format = k_smallCellDefaultFormat)
+  EvenOddTableBufferTextCell(
+      const TextFormat& format = k_smallCellDefaultFormat)
       : AbstractEvenOddBufferTextCell(), m_bufferTextView(format) {}
 
  private:
@@ -57,13 +58,14 @@ class EvenOddBufferTextCell : public AbstractEvenOddBufferTextCell {
   BufferTextViewClass m_bufferTextView;
 };
 
-/* Overrides EvenOddBufferTextCell baseColor() to use the default (non-table)
- * even/odd color scheme */
+/* Overrides EvenOddTableBufferTextCell baseColor() to use the default
+ * (non-table) even/odd color scheme */
 template <class BufferTextViewClass>
-class EvenOddNonTableBufferTextCell
-    : public EvenOddBufferTextCell<BufferTextViewClass> {
+class EvenOddBufferTextCell
+    : public EvenOddTableBufferTextCell<BufferTextViewClass> {
  public:
-  using EvenOddBufferTextCell<BufferTextViewClass>::EvenOddBufferTextCell;
+  using EvenOddTableBufferTextCell<
+      BufferTextViewClass>::EvenOddTableBufferTextCell;
 
  protected:
   ThemeComponent baseColor() const override { return EvenOddCell::baseColor(); }
@@ -71,11 +73,11 @@ class EvenOddNonTableBufferTextCell
 
 template <int numberOfSignificantDigits =
               AbstractEvenOddBufferTextCell::k_defaultPrecision>
-using FloatEvenOddBufferTextCell =
-    EvenOddBufferTextCell<FloatBufferTextView<numberOfSignificantDigits>>;
+using FloatEvenOddTableBufferTextCell =
+    EvenOddTableBufferTextCell<FloatBufferTextView<numberOfSignificantDigits>>;
+using SmallFontEvenOddTableBufferTextCell =
+    EvenOddTableBufferTextCell<OneLineBufferTextView<KDFont::Size::Small>>;
 using SmallFontEvenOddBufferTextCell =
     EvenOddBufferTextCell<OneLineBufferTextView<KDFont::Size::Small>>;
-using SmallFontEvenOddNonTableBufferTextCell =
-    EvenOddNonTableBufferTextCell<OneLineBufferTextView<KDFont::Size::Small>>;
 
 }  // namespace Escher

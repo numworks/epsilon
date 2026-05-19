@@ -13,7 +13,8 @@ class StatisticsController;
 class ResultsStatisticsTable
     : public CategoricalTableCell,
       public TwoHeaderColumnsOneHeaderRowTableDataSource,
-      public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
+      public DynamicCellsDataSource<
+          Escher::SmallFontEvenOddTableBufferTextCell> {
  public:
   constexpr static int k_numberOfInnerColumns =
       TableDimensions::k_resultGroupStatisticsShape.inner.columns;

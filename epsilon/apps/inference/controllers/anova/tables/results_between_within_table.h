@@ -13,7 +13,8 @@ class BetweenWithinController;
 class ResultsBetweenWithinTableCell
     : public CategoricalTableCell,
       public TwoHeaderColumnsOneHeaderRowTableDataSource,
-      public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
+      public DynamicCellsDataSource<
+          Escher::SmallFontEvenOddTableBufferTextCell> {
  public:
   constexpr static int k_numberOfInnerColumns =
       TableDimensions::k_resultBetweenWithinShape.inner.columns;

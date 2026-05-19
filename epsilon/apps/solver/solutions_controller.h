@@ -229,13 +229,12 @@ class SolutionsController : public Escher::ViewController,
   int definedVariablesMessageRow() const;
   I18n::Message noSolutionMessage();
 
-  Escher::SmallFontEvenOddNonTableBufferTextCell
-      m_symbolCells[k_numberOfSymbolCells];
+  Escher::SmallFontEvenOddBufferTextCell m_symbolCells[k_numberOfSymbolCells];
   Escher::EvenOddExpressionCell m_deltaCell;
   Poincare::Layout m_delta2Layout;
   Poincare::Layout m_delta3Layout;
   Escher::ScrollableTwoLayoutsCell m_exactValueCells[k_numberOfExactValueCells];
-  Escher::FloatEvenOddBufferTextCell<>
+  Escher::FloatEvenOddTableBufferTextCell<>
       m_approximateValueCells[k_numberOfApproximateValueCells];
   MessageCell m_messageCells[k_numberOfMessageCells];
   Escher::SolidColorCell m_emptyCell[k_numberOfEmptyCells];

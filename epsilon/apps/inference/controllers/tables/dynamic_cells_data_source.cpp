@@ -145,11 +145,11 @@ template class DynamicCellsDataSource<InferenceEvenOddBufferCell>;
 template class DynamicCellsDataSource<InferenceEvenOddEditableCell>;
 template class DynamicCellsDataSource<ParameterCell>;
 template class DynamicCellsDataSource<ResultCell>;
-template class DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>;
+template class DynamicCellsDataSource<SmallFontEvenOddTableBufferTextCell>;
 
 template class DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
                                             InferenceEvenOddEditableCell>;
 template class DoubleDynamicCellsDataSource<
-    Escher::SmallFontEvenOddBufferTextCell, InferenceEvenOddEditableCell>;
+    Escher::SmallFontEvenOddTableBufferTextCell, InferenceEvenOddEditableCell>;
 
 }  // namespace Inference

@@ -19,7 +19,7 @@ class TableViewDataSource : public Escher::TableViewDataSource,
       Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
 
   using EvenOddBufferCell =
-      Escher::FloatEvenOddBufferTextCell<k_numberOfSignificantDigits>;
+      Escher::FloatEvenOddTableBufferTextCell<k_numberOfSignificantDigits>;
   using EvenOddEditableCell =
       Escher::EvenOddEditableTextCell<k_numberOfSignificantDigits>;
 

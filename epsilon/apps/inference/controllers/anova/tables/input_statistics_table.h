@@ -13,7 +13,7 @@ class InputStatisticsController;
 class InputStatisticsTable : public InputCategoricalTableCell,
                              public TwoHeaderColumnsOneHeaderRowTableDataSource,
                              public DoubleDynamicCellsDataSource<
-                                 Escher::SmallFontEvenOddBufferTextCell,
+                                 Escher::SmallFontEvenOddTableBufferTextCell,
                                  InferenceEvenOddEditableCell> {
  public:
   constexpr static int k_numberOfInnerColumns =

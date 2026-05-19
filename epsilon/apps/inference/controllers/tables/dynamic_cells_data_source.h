@@ -10,7 +10,7 @@ namespace Inference {
 /* This DataSource allocated its cells in a external buffer provided by the app.
  */
 
-using InferenceEvenOddBufferCell = Escher::FloatEvenOddBufferTextCell<
+using InferenceEvenOddBufferCell = Escher::FloatEvenOddTableBufferTextCell<
     Poincare::Preferences::ShortNumberOfSignificantDigits>;
 using InferenceEvenOddEditableCell = Escher::EvenOddEditableTextCell<
     Poincare::Preferences::ShortNumberOfSignificantDigits>;

@@ -29,7 +29,7 @@ TitleBarView::TitleBarView()
 void TitleBarView::drawRect(KDContext* ctx, KDRect rect) const {
   /* As we cheated to layout the title view, we have to fill a very thin
    * rectangle at the top with the background color. */
-  ctx->fillRect(KDRect(0, 0, bounds().width(), 2),
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_verticalShift),
                 ColorPicker::Resolve(k_backgroundColor));
 }
 

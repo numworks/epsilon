@@ -34,8 +34,7 @@ class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
 
  protected:
   Escher::ThemeComponent baseColor() const override {
-    return m_even ? Escher::ThemeComponent::CellTableEven
-                  : Escher::ThemeComponent::CellTableOdd;
+    return BaseTableColor(m_even);
   }
   bool m_firstTextSelected;
   Escher::FloatEvenOddTableBufferTextCell<> m_firstBufferTextView;

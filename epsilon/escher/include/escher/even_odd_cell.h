@@ -31,6 +31,10 @@ class EvenOddCell : public HighlightCell {
   virtual ThemeComponent baseColor() const {
     return m_even ? ThemeComponent::CellEven : ThemeComponent::CellOdd;
   }
+  static ThemeComponent BaseTableColor(bool isEven) {
+    return isEven ? ThemeComponent::CellTableEven
+                  : ThemeComponent::CellTableOdd;
+  }
   virtual void updateSubviewsBackgroundAfterChangingState() {}
   bool m_even;
 };

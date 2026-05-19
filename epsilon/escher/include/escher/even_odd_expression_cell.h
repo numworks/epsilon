@@ -42,10 +42,7 @@ class EvenOddTableExpressionCell : public EvenOddExpressionCell {
   using EvenOddExpressionCell::EvenOddExpressionCell;
 
  protected:
-  ThemeComponent baseColor() const override {
-    return m_even ? ThemeComponent::CellTableEven
-                  : ThemeComponent::CellTableOdd;
-  }
+  ThemeComponent baseColor() const override { return BaseTableColor(m_even); }
 };
 
 }  // namespace Escher

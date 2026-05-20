@@ -92,15 +92,13 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
   float bothStart, bothEnd, singleStart, singleEnd, singleCurveStart,
       singleCurveEnd;
   if (op == Comparison::Operator::Superior) {
-    // TODO: maybe use TokenYellow and TokenPurple?
     patternBoth = Pattern(true, false, false, true,
                           ColorPicker::Resolve(ThemeComponent::BannerPurple),
-                          ColorPicker::Resolve(ThemeComponent::BannerYellow));
+                          ColorPicker::Resolve(ThemeComponent::Curve));
     singleCurveStart = range->xMin();
     if (z < xAlpha) {
       singleStart = clampedZ;
-      patternSingle =
-          Pattern(ColorPicker::Resolve(ThemeComponent::BannerYellow));
+      patternSingle = Pattern(ColorPicker::Resolve(ThemeComponent::Curve));
       bothStart = clampedXAlpha;
     } else {
       singleStart = clampedXAlpha;
@@ -116,7 +114,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
     assert(op == Comparison::Operator::Inferior);
     patternBoth = Pattern(true, false, true, false,
                           ColorPicker::Resolve(ThemeComponent::BannerPurple),
-                          ColorPicker::Resolve(ThemeComponent::BannerYellow));
+                          ColorPicker::Resolve(ThemeComponent::Curve));
     bothStart = range->xMin();
     if (z < xAlpha) {
       bothEnd = clampedZ;
@@ -126,8 +124,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
       singleEnd = clampedXAlpha;
     } else {
       bothEnd = clampedXAlpha;
-      patternSingle =
-          Pattern(ColorPicker::Resolve(ThemeComponent::BannerYellow));
+      patternSingle = Pattern(ColorPicker::Resolve(ThemeComponent::Curve));
       singleEnd = clampedZ;
     }
     singleCurveStart = singleStart = bothEnd;

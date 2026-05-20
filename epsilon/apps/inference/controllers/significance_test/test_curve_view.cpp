@@ -92,9 +92,10 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
   float bothStart, bothEnd, singleStart, singleEnd, singleCurveStart,
       singleCurveEnd;
   if (op == Comparison::Operator::Superior) {
-    patternBoth = Pattern(true, false, false, true,
-                          ColorPicker::Resolve(ThemeComponent::BannerPurple),
-                          ColorPicker::Resolve(ThemeComponent::Curve));
+    patternBoth =
+        Pattern(true, false, false, true,
+                ColorPicker::Resolve(ThemeComponent::CurveHatchedArea),
+                ColorPicker::Resolve(ThemeComponent::Curve));
     singleCurveStart = range->xMin();
     if (z < xAlpha) {
       singleStart = clampedZ;
@@ -104,7 +105,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
       singleStart = clampedXAlpha;
       patternSingle =
           Pattern(true, false, false, true,
-                  ColorPicker::Resolve(ThemeComponent::BannerPurple));
+                  ColorPicker::Resolve(ThemeComponent::CurveHatchedArea));
       bothStart = clampedZ;
     }
     singleStart -= plotView->pixelWidth();
@@ -112,15 +113,16 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
     bothEnd = range->xMax();
   } else {
     assert(op == Comparison::Operator::Inferior);
-    patternBoth = Pattern(true, false, true, false,
-                          ColorPicker::Resolve(ThemeComponent::BannerPurple),
-                          ColorPicker::Resolve(ThemeComponent::Curve));
+    patternBoth =
+        Pattern(true, false, true, false,
+                ColorPicker::Resolve(ThemeComponent::CurveHatchedArea),
+                ColorPicker::Resolve(ThemeComponent::Curve));
     bothStart = range->xMin();
     if (z < xAlpha) {
       bothEnd = clampedZ;
       patternSingle =
           Pattern(true, false, true, false,
-                  ColorPicker::Resolve(ThemeComponent::BannerPurple));
+                  ColorPicker::Resolve(ThemeComponent::CurveHatchedArea));
       singleEnd = clampedXAlpha;
     } else {
       bothEnd = clampedXAlpha;

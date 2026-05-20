@@ -22,6 +22,12 @@ class ColorPicker {
   static KDColor ResolveCustomColor(KDColor color);
   static KDColor ResolveCustomColorForHighlight(KDColor color);
 
+  // Depending on the theme, blending should be more or less intense
+  enum class BlendLevel : bool { High, Low };
+  static BlendLevel GetBlendLevel() {
+    return ThemeBlendLevel(GetCurrentTheme());
+  }
+
  private:
   /* GetCurrentTheme is defined in the .cpp so that the details of how the
    * theme is accessed are hidden. Currently for Epsilon (the only project which
@@ -32,6 +38,8 @@ class ColorPicker {
   static Theme GetCurrentTheme();
 
   static KDColor Get(Theme theme, ThemeComponent component);
+
+  static BlendLevel ThemeBlendLevel(Theme theme);
 };
 
 }  // namespace Escher

@@ -42,4 +42,15 @@ KDColor ColorPicker::Get(Theme theme, ThemeComponent component) {
   }
 }
 
+ColorPicker::BlendLevel ColorPicker::ThemeBlendLevel(Theme theme) {
+  switch (theme) {
+    case Theme::Light:
+      return BlendLevel::High;
+    case Theme::Dark:
+      return BlendLevel::Low;
+    default:
+      OMG_UNREACHABLE
+  }
+}
+
 }  // namespace Escher

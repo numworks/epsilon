@@ -5,20 +5,20 @@
 
 namespace Escher {
 
-const uint8_t ellipsisMask[EllipsisView::k_ellipsisHeight]
-                          [EllipsisView::k_ellipsisWidth] = {
-                              {0xFF, 0xDA, 0xBB, 0xD1, 0xFF, 0xFF, 0xFF, 0xDA,
-                               0xBB, 0xD1, 0xFF, 0xFF, 0xFF, 0xDA, 0xBB, 0xD1,
-                               0xFF},
-                              {0xFF, 0xBA, 0x8C, 0xA1, 0xFF, 0xFF, 0xFF, 0xBA,
-                               0x8C, 0xA1, 0xFF, 0xFF, 0xFF, 0xBA, 0x8C, 0xA1,
-                               0xFF},
-                              {0xFF, 0xD1, 0xA1, 0xC1, 0xFF, 0xFF, 0xFF, 0xD1,
-                               0xA1, 0xC1, 0xFF, 0xFF, 0xFF, 0xD1, 0xA1, 0xC1,
-                               0xFF},
+const uint8_t ellipsisMaskHighBlend[EllipsisView::k_ellipsisHeight]
+                                   [EllipsisView::k_ellipsisWidth] = {
+                                       {0xFF, 0xDA, 0xBB, 0xD1, 0xFF, 0xFF,
+                                        0xFF, 0xDA, 0xBB, 0xD1, 0xFF, 0xFF,
+                                        0xFF, 0xDA, 0xBB, 0xD1, 0xFF},
+                                       {0xFF, 0xBA, 0x8C, 0xA1, 0xFF, 0xFF,
+                                        0xFF, 0xBA, 0x8C, 0xA1, 0xFF, 0xFF,
+                                        0xFF, 0xBA, 0x8C, 0xA1, 0xFF},
+                                       {0xFF, 0xD1, 0xA1, 0xC1, 0xFF, 0xFF,
+                                        0xFF, 0xD1, 0xA1, 0xC1, 0xFF, 0xFF,
+                                        0xFF, 0xD1, 0xA1, 0xC1, 0xFF},
 };
 
-/* Same shape as ellipsisMask but with ~50% lower alpha values so the
+/* Same shape as ellipsisMaskHighBlend but with ~50% lower alpha values so the
  * dots appear more vivid against dark backgrounds (e.g. dark mode). */
 const uint8_t ellipsisMaskLowBlend[EllipsisView::k_ellipsisHeight]
                                   [EllipsisView::k_ellipsisWidth] = {
@@ -46,15 +46,14 @@ void EllipsisView::drawRect(KDContext* ctx, KDRect rect) const {
                k_ellipsisHeight);
   KDColor ellipsisWorkingBuffer[EllipsisView::k_ellipsisWidth *
                                 EllipsisView::k_ellipsisHeight];
-  /* TODO: in dark mode, blending makes the ellipsis very hard to see (violet
-   * deep blended with a black background). We should reconsider blending in
-   * light mode. Instead of blending black with a white / WallScreen background,
-   * we could use a fixed TokenGrayDark or similar component. Alternatively, we
-   * could have a theme-specific behavior here (blending in light mode but not
-   * in dark mode), but it would be less generic if we add custom themes. */
+
   ctx->blendRectWithMask(
       frame, ColorPicker::Resolve(Highlight(k_color, m_isHighlighted)),
-      (const uint8_t*)ellipsisMask, ellipsisWorkingBuffer);
+      (const uint8_t*)((ColorPicker::GetBlendLevel() ==
+                        ColorPicker::BlendLevel::High)
+                           ? ellipsisMaskHighBlend
+                           : ellipsisMaskLowBlend),
+      ellipsisWorkingBuffer);
 }
 
 KDSize EllipsisView::minimalSizeForOptimalDisplay() const {

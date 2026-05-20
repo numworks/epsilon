@@ -22,6 +22,8 @@ constexpr static size_t sPropertiesLength = 1;
 #error NWS_PROJECT_ID must be defined
 #endif
 constexpr static uint8_t sProjectId = NWS_PROJECT_ID;
+constexpr static const char* sProjectName =
+    (NWS_PROJECT_ID == 1) ? "epsilon" : "scandium";
 /* The properties byte packs multiple fields:
  * - bits 1:0 = project ID (1 = epsilon, 2 = scandium)
  * - bits 6:2 = not yet assigned
@@ -204,11 +206,12 @@ static bool loadTextFile(FILE* f) {
     return false;
   }
 
-  // Project ID
+  // Project name
   if (fgets(line, sizeof(line), f) == nullptr) {
     return false;
   }
-  if (atoi(line) != sProjectId) {
+  stripNewline(line);
+  if (strcmp(line, sProjectName) != 0) {
     return false;
   }
 
@@ -381,7 +384,7 @@ static inline bool save(FILE* f, bool toText) {
   if (toText) {
     fprintf(f, "%s\n", sTextMagic);
     fwrite(version, sVersionLength, 1, f);
-    fprintf(f, "\n%d\n", sProjectId);
+    fprintf(f, "\n%s\n", sProjectName);
   } else {
     if (fwrite(sMagic, sMagicLength, 1, f) != 1 ||
         fwrite(version, sVersionLength, 1, f) != 1 ||

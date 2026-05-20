@@ -23,9 +23,9 @@ namespace Contrast {
 void setScreenContrast(uint8_t vop, uint8_t lightGray, uint8_t darkGray) {}
 
 void getScreenContrast(uint8_t& vop, uint8_t& lightGray, uint8_t& darkGray) {
-  vop = 0;
-  lightGray = 0;
-  darkGray = 0;
+  vop = 218;
+  lightGray = 7;
+  darkGray = 13;
 }
 
 void persistScreenContrast(uint8_t vop, uint8_t lightGray, uint8_t darkGray) {}

@@ -13,6 +13,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .BackgroundPopup = Palette::Black,
                    .BackgroundBoxTitle = Palette::BoxTitleBackground,
                    .BackgroundButtonRow = Palette::GrayWhite,
+                   .BackgroundPieChartLegend = Palette::GrayMiddle,
                    .CalculationBorderEven = Palette::White,
                    .CalculationBorderOdd = Palette::WallScreen,
                    .CalculationBorderSelected = Palette::Select,

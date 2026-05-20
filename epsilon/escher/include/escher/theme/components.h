@@ -14,6 +14,7 @@ namespace Escher {
   X(BackgroundPopup)           \
   X(BackgroundBoxTitle)        \
   X(BackgroundButtonRow)       \
+  X(BackgroundPieChartLegend)  \
   X(CalculationBorderEven)     \
   X(CalculationBorderOdd)      \
   X(CalculationBorderSelected) \

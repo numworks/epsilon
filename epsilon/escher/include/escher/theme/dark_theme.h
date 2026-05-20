@@ -14,6 +14,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .BackgroundPopup = Palette::DARK_VioletPale,
     .BackgroundBoxTitle = Palette::DARK_VioletMiddle,
     .BackgroundButtonRow = Palette::Black,
+    .BackgroundPieChartLegend = Palette::Black,
     .CalculationBorderEven = Palette::DARK_VioletDeep,
     .CalculationBorderOdd = Palette::DARK_VioletDeep,
     .CalculationBorderSelected = Palette::DARK_VioletDeep,

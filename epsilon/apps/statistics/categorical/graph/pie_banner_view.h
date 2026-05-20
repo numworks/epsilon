@@ -17,7 +17,7 @@ namespace Statistics::Categorical {
  * selected category */
 class PieBannerView : public Escher::View {
   constexpr static Escher::ThemeComponent k_backgroundColor =
-      Escher::ThemeComponent::TokenGrayMiddle;
+      Escher::ThemeComponent::BackgroundPieChartLegend;
   constexpr static Escher::TextFormat k_titleFormat = {
       .style = {.backgroundColor = k_backgroundColor},
       .horizontalAlignment = KDGlyph::k_alignCenter};

@@ -18,6 +18,21 @@ const uint8_t ellipsisMask[EllipsisView::k_ellipsisHeight]
                                0xFF},
 };
 
+/* Same shape as ellipsisMask but with ~50% lower alpha values so the
+ * dots appear more vivid against dark backgrounds (e.g. dark mode). */
+const uint8_t ellipsisMaskLowBlend[EllipsisView::k_ellipsisHeight]
+                                  [EllipsisView::k_ellipsisWidth] = {
+                                      {0xFF, 0x6D, 0x5E, 0x69, 0xFF, 0xFF, 0xFF,
+                                       0x6D, 0x5E, 0x69, 0xFF, 0xFF, 0xFF, 0x6D,
+                                       0x5E, 0x69, 0xFF},
+                                      {0xFF, 0x5D, 0x46, 0x51, 0xFF, 0xFF, 0xFF,
+                                       0x5D, 0x46, 0x51, 0xFF, 0xFF, 0xFF, 0x5D,
+                                       0x46, 0x51, 0xFF},
+                                      {0xFF, 0x69, 0x51, 0x61, 0xFF, 0xFF, 0xFF,
+                                       0x69, 0x51, 0x61, 0xFF, 0xFF, 0xFF, 0x69,
+                                       0x51, 0x61, 0xFF},
+};
+
 void EllipsisView::drawRect(KDContext* ctx, KDRect rect) const {
   /* Draw the ellipsis vertically and horizontally centered in the view.
    * The heightCenter is the coordinate of the vertical middle of the view. That

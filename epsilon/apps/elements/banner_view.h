@@ -30,7 +30,7 @@ class BannerView : public Escher::View {
   constexpr static Escher::ThemeComponent k_backgroundColor =
       Escher::ThemeComponent::BannerElements;
   constexpr static Escher::ThemeComponent k_borderColor =
-      Escher::ThemeComponent::BannerGrayMiddle;
+      Escher::ThemeComponent::BorderElementsBanner;
   constexpr static Escher::ThemeComponent k_legendColor =
       Escher::ThemeComponent::TextGrayVeryDark;
   constexpr static Escher::ThemeComponent k_selectedButtonColor =

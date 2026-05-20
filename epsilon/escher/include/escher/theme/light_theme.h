@@ -50,6 +50,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .BorderGrayDark = Palette::GrayDark,
                    .BorderPurple = Palette::PurpleBright,
                    .BorderBoxTitleCell = Palette::PurpleDark,
+                   .BorderElementsBanner = Palette::GrayMiddle,
                    .BorderYellowDark = Palette::YellowDark,
                    .ButtonLightBorderMain = Palette::GrayBright,
                    .ButtonLightBorderBottom = Palette::GrayWhite,

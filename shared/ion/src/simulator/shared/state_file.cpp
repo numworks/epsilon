@@ -221,6 +221,13 @@ static bool loadTextFile(FILE* f) {
     Journal::replayJournal()->setStartingLanguage(line);
   }
 
+  // Theme
+  if (fgets(line, sizeof(line), f) == nullptr) {
+    return false;
+  }
+  stripNewline(line);
+  Journal::replayJournal()->setStartingDarkMode(strcmp(line, "dark") == 0);
+
   // Events
   while (fgets(line, sizeof(line), f) != nullptr) {
     stripNewline(line);
@@ -375,7 +382,6 @@ static inline bool save(FILE* f, bool toText) {
     fprintf(f, "%s\n", sTextMagic);
     fwrite(version, sVersionLength, 1, f);
     fprintf(f, "\n%d\n", sProjectId);
-    // TODO: also write other properties
   } else {
     if (fwrite(sMagic, sMagicLength, 1, f) != 1 ||
         fwrite(version, sVersionLength, 1, f) != 1 ||
@@ -394,6 +400,12 @@ static inline bool save(FILE* f, bool toText) {
     if (fwrite(lang, sLanguageLength, 1, f) != 1) {
       return false;
     }
+  }
+
+  // Theme
+  if (toText) {
+    // For the binary format, theme is already written in the properties byte
+    fprintf(f, "%s\n", journal->startingDarkMode() ? "dark" : "light");
   }
 
   // Events

@@ -68,6 +68,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .AxisGrayDark = Palette::GrayDark,
                    .AxisGrayVeryDark = Palette::GrayVeryDark,
                    .AxisRed = Palette::Red,
+                   .Curve = Palette::YellowDark,
                    .TokenWhite = Palette::White,
                    .TokenYellow = Palette::YellowDark,
                    .TokenRed = Palette::Red,

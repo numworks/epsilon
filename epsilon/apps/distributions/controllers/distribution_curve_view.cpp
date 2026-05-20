@@ -45,17 +45,17 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
     CurveDrawing plot(Curve2D(evaluateDistribution2D, m_distribution), nullptr,
                       m_distribution->xMin(), m_distribution->xMax(),
                       plotView->pixelWidth(),
-                      ColorPicker::Resolve(ThemeComponent::TokenYellow), true);
-    plot.setPatternOptions(
-        Pattern(ColorPicker::Resolve(ThemeComponent::TokenYellow)), lowerBound,
-        upperBound, Curve2D(evaluateZero), Curve2D(), false);
+                      ColorPicker::Resolve(ThemeComponent::Curve), true);
+    plot.setPatternOptions(Pattern(ColorPicker::Resolve(ThemeComponent::Curve)),
+                           lowerBound, upperBound, Curve2D(evaluateZero),
+                           Curve2D(), false);
     plot.draw(plotView, ctx, rect);
   } else {
     double context[] = {lowerBound, upperBound};
     HistogramDrawing plot(evaluateDistribution1D<double>, m_distribution,
                           context, barIsHighlighted, 0.f, 1.f, false, false,
                           ColorPicker::Resolve(ThemeComponent::AxisMedium),
-                          ColorPicker::Resolve(ThemeComponent::TokenYellow));
+                          ColorPicker::Resolve(ThemeComponent::Curve));
     plot.draw(plotView, ctx, rect);
   }
 }

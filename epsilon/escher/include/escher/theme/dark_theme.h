@@ -70,6 +70,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .AxisGrayDark = Palette::DARK_AxisSecondary,
     .AxisGrayVeryDark = Palette::DARK_AxisSecondary,
     .AxisRed = Palette::Red,
+    .Curve = Palette::DARK_VioletDeep,
     .TokenWhite = Palette::Black,
     .TokenYellow = Palette::DARK_VioletDeep,
     // TODO: confirm TokenRed and TokenPurple

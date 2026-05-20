@@ -69,6 +69,7 @@ namespace Escher {
   X(AxisGrayDark)              \
   X(AxisGrayVeryDark)          \
   X(AxisRed)                   \
+  X(Curve)                     \
   X(TokenWhite)                \
   X(TokenYellow)               \
   X(TokenRed)                  \

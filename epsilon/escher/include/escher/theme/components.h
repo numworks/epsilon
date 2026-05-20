@@ -26,7 +26,7 @@ namespace Escher {
   X(SurfaceSelectApps)         \
   X(BannerYellow)              \
   X(BannerPurple)              \
-  X(BannerGrayWhite)           \
+  X(BannerElements)            \
   X(BannerGrayMiddle)          \
   X(BannerGrayDarkMiddle)      \
   X(BannerGrayDark)            \

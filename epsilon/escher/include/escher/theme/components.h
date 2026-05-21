@@ -52,7 +52,6 @@ namespace Escher {
   X(BorderPurple)              \
   X(BorderBoxTitleCell)        \
   X(BorderElementsBanner)      \
-  X(BorderYellowDark)          \
   X(SeparatorTitleBar)         \
   X(ButtonLightBorderMain)     \
   X(ButtonLightBorderBottom)   \

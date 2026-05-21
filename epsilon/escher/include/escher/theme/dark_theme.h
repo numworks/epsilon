@@ -53,7 +53,6 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .BorderPurple = Palette::Black,
     .BorderBoxTitleCell = Palette::DARK_VioletMiddle,
     .BorderElementsBanner = Palette::DARK_VioletDeep,
-    .BorderYellowDark = Palette::Black,
     .SeparatorTitleBar = Palette::Black,
     .ButtonLightBorderMain = Palette::DARK_VioletMiddle,
     .ButtonLightBorderBottom = Palette::DARK_VioletMiddle,

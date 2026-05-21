@@ -8,6 +8,8 @@ Poincare::LayoutStyle ToPoincareLayoutStyle(const LayoutStyle& layoutStyle) {
       .textStyle = ToKDGlyphStyle(layoutStyle.textStyle),
       .backgroundSelectionColor =
           ColorPicker::Resolve(layoutStyle.backgroundSelectionColor),
+      .glyphSelectionColor =
+          ColorPicker::Resolve(layoutStyle.glyphSelectionColor),
       .requiredPlaceholderColor =
           ColorPicker::Resolve(layoutStyle.requiredPlaceholderColor),
       .optionalPlaceholderColor =

@@ -31,8 +31,10 @@ void assert_parsed_units_simplify_to_with_prefixes() {
       prefixes = Units::Prefix::EmptyPrefix();
     }
     for (int j = 0; j < numberOfPrefixes; j++) {
-      if (PrefixSetContains(representative->inputPrefixSet(), prefixes + j) &&
-          PrefixSetContains(representative->outputPrefixSet(), prefixes + j)) {
+      if (PrefixSetContainsPrefix(representative->inputPrefixSet(),
+                                  prefixes + j) &&
+          PrefixSetContainsPrefix(representative->outputPrefixSet(),
+                                  prefixes + j)) {
         UserExpression unit = UserExpression::Builder(
             Units::Unit::Push(representative, prefixes + j));
         unit.serialize(

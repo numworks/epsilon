@@ -43,7 +43,7 @@ const Prefix* Prefix::FromId(uint8_t id) {
   return Prefixes() + id;
 }
 
-bool PrefixSetContains(PrefixSet prefixSet, const Prefix* prefix) {
+bool PrefixSetContainsPrefix(PrefixSet prefixSet, const Prefix* prefix) {
   using enum PrefixSet;
 
   if (prefix->exponent() == 0) {
@@ -88,7 +88,7 @@ const Prefix* ChooseBestInSet(PrefixSet prefixSet, double value,
   const float magnitude = std::log10(std::fabs(value));
   float bestOrder = magnitude;
   for (int i = 0; i < Prefix::k_numberOfPrefixes; i++) {
-    if (!PrefixSetContains(prefixSet, Prefix::Prefixes() + i)) {
+    if (!PrefixSetContainsPrefix(prefixSet, Prefix::Prefixes() + i)) {
       continue;
     }
     float order = magnitude - Prefix::Prefixes()[i].exponent() * exponent;

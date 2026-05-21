@@ -157,7 +157,7 @@ bool Representative::canParse(const char* symbol, size_t length,
     const Prefix* pre = Prefix::Prefixes() + i;
     const char* prefixSymbol = pre->symbol();
     if (strlen(prefixSymbol) == length &&
-        PrefixSetContains(m_inputPrefixSet, pre) &&
+        PrefixSetContainsPrefix(m_inputPrefixSet, pre) &&
         strncmp(symbol, prefixSymbol, length) == 0) {
       if (prefix) {
         *prefix = pre;

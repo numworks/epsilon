@@ -42,7 +42,7 @@ enum class PrefixSet {
   All,
 };
 
-bool PrefixSetContains(PrefixSet prefixSet, const Prefix* prefix);
+bool PrefixSetContainsPrefix(PrefixSet prefixSet, const Prefix* prefix);
 
 // Choose the best prefix from a set for displaying a value with the given
 // exponent

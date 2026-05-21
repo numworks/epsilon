@@ -40,6 +40,11 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
     case ThemeComponent::TextWhite:
     case ThemeComponent::TokenYellow:
     case ThemeComponent::SurfaceSelect:
+    case ThemeComponent::PythonComment:
+    case ThemeComponent::PythonNumber:
+    case ThemeComponent::PythonKeyword:
+    case ThemeComponent::PythonString:
+    case ThemeComponent::PythonOperator:
       // These colors do not change when highlighted
       return component;
     default:

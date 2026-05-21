@@ -87,7 +87,7 @@ KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root,
 void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
                   const LayoutStyle& style, const SimpleLayoutCursor& cursor,
                   const LayoutSelection& selection) {
-  Render::s_font = style.font;
+  Render::s_font = style.textStyle.font;
   SimpleLayoutCursor localCursor = cursor;
   RackLayout::s_cursor = &localCursor;
   Tree* withMemo = CloneWithRackMemoized(l, &localCursor);
@@ -183,7 +183,7 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
       return;
     }
     if ((!child || child->isCodePointLayout()) &&
-        p.x() + KDFont::GlyphWidth(context->style.font,
+        p.x() + KDFont::GlyphWidth(context->style.textStyle.font,
                                    child ? CodePointLayout::GetCodePoint(child)
                                          : ::CodePoint(' ')) <
             context->ctx->clippingRect()
@@ -199,10 +199,13 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
         context->index >= context->selection.leftPosition() &&
         context->index < context->selection.rightPosition()) {
 #if POINCARE_SCANDIUM_LAYOUTS
-      childStyle.backgroundColor = context->style.backgroundSelectionColor;
-      childStyle.glyphColor = context->style.backgroundColor;
+      childStyle.textStyle.backgroundColor =
+          context->style.backgroundSelectionColor;
+      childStyle.textStyle.glyphColor =
+          context->style.textStyle.backgroundColor;
 #else
-      childStyle.backgroundColor = context->style.backgroundSelectionColor;
+      childStyle.textStyle.backgroundColor =
+          context->style.backgroundSelectionColor;
 #endif
     }
     if (child) {
@@ -922,16 +925,18 @@ void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
       Pair::Height(childHeight, k_minVerticalMargin);
 
   KDRect frame(k_widthMargin, k_minVerticalMargin, k_curveWidth, k_curveHeight);
-  ctx->fillRectWithMask(frame.translatedBy(p), style.glyphColor,
-                        style.backgroundColor, (const uint8_t*)topLeftCurve,
-                        parenthesisWorkingBuffer, !left, false);
+  ctx->fillRectWithMask(frame.translatedBy(p), style.textStyle.glyphColor,
+                        style.textStyle.backgroundColor,
+                        (const uint8_t*)topLeftCurve, parenthesisWorkingBuffer,
+                        !left, false);
 
   frame = KDRect(k_widthMargin,
                  parenthesisHeight - k_curveHeight - k_minVerticalMargin,
                  k_curveWidth, k_curveHeight);
-  ctx->fillRectWithMask(frame.translatedBy(p), style.glyphColor,
-                        style.backgroundColor, (const uint8_t*)topLeftCurve,
-                        parenthesisWorkingBuffer, !left, true);
+  ctx->fillRectWithMask(frame.translatedBy(p), style.textStyle.glyphColor,
+                        style.textStyle.backgroundColor,
+                        (const uint8_t*)topLeftCurve, parenthesisWorkingBuffer,
+                        !left, true);
 
   KDCoordinate barX =
       k_widthMargin + (left ? 0 : k_curveWidth - Pair::k_lineThickness);
@@ -940,7 +945,7 @@ void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
   ctx->fillRect(KDRect(barX, k_curveHeight + k_minVerticalMargin,
                        Pair::k_lineThickness, barHeight)
                     .translatedBy(p),
-                style.glyphColor);
+                style.textStyle.glyphColor);
 }
 
 void RenderSquareBrackets(
@@ -964,24 +969,24 @@ void RenderSquareBrackets(
   if (renderTopBar) {
     ctx->fillRect(KDRect(horizontalBarX, verticalBarY, horizontalBarLength,
                          k_lineThickness),
-                  style.glyphColor);
+                  style.textStyle.glyphColor);
   }
   if (renderBottomBar) {
     ctx->fillRect(KDRect(horizontalBarX,
                          verticalBarY + verticalBarLength - k_lineThickness,
                          horizontalBarLength, k_lineThickness),
-                  style.glyphColor);
+                  style.textStyle.glyphColor);
   }
 
   ctx->fillRect(
       KDRect(verticalBarX, verticalBarY, k_lineThickness, verticalBarLength),
-      style.glyphColor);
+      style.textStyle.glyphColor);
 
   if (renderDoubleBar) {
     verticalBarX += (left ? 1 : -1) * (k_lineThickness + k_doubleBarMargin);
     ctx->fillRect(
         KDRect(verticalBarX, verticalBarY, k_lineThickness, verticalBarLength),
-        style.glyphColor);
+        style.textStyle.glyphColor);
   }
 }
 
@@ -1018,37 +1023,39 @@ void RenderCurlyBracesWithChildHeight(bool left, KDCoordinate childHeight,
   KDCoordinate dy = 0;
   KDRect frame(k_widthMargin + curveLeftOffset, dy, k_curveWidth,
                k_curveHeight);
-  ctx->fillRectWithMask(frame.translatedBy(p), style.glyphColor,
-                        style.backgroundColor, (const uint8_t*)topLeftCurve,
-                        workingBuffer, !left, false);
+  ctx->fillRectWithMask(frame.translatedBy(p), style.textStyle.glyphColor,
+                        style.textStyle.backgroundColor,
+                        (const uint8_t*)topLeftCurve, workingBuffer, !left,
+                        false);
 
   // Top bar
   dy += k_curveHeight;
   frame =
       KDRect(k_widthMargin + barLeftOffset, dy, k_lineThickness, topBarHeight);
-  ctx->fillRect(frame.translatedBy(p), style.glyphColor);
+  ctx->fillRect(frame.translatedBy(p), style.textStyle.glyphColor);
 
   // Center piece
   dy += topBarHeight;
   frame = KDRect(k_widthMargin + centerLeftOffset, dy, k_centerWidth,
                  k_centerHeight);
-  ctx->fillRectWithMask(frame.translatedBy(p), style.glyphColor,
-                        style.backgroundColor, (const uint8_t*)leftCenter,
-                        workingBuffer, !left);
+  ctx->fillRectWithMask(frame.translatedBy(p), style.textStyle.glyphColor,
+                        style.textStyle.backgroundColor,
+                        (const uint8_t*)leftCenter, workingBuffer, !left);
 
   // Bottom bar
   dy += k_centerHeight;
   frame = KDRect(k_widthMargin + barLeftOffset, dy, k_lineThickness,
                  bottomBarHeight);
-  ctx->fillRect(frame.translatedBy(p), style.glyphColor);
+  ctx->fillRect(frame.translatedBy(p), style.textStyle.glyphColor);
 
   // Bottom curve
   dy += bottomBarHeight;
   frame =
       KDRect(k_widthMargin + curveLeftOffset, dy, k_curveWidth, k_curveHeight);
-  ctx->fillRectWithMask(frame.translatedBy(p), style.glyphColor,
-                        style.backgroundColor, (const uint8_t*)topLeftCurve,
-                        workingBuffer, !left, true);
+  ctx->fillRectWithMask(frame.translatedBy(p), style.textStyle.glyphColor,
+                        style.textStyle.backgroundColor,
+                        (const uint8_t*)topLeftCurve, workingBuffer, !left,
+                        true);
 }
 
 void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
@@ -1072,7 +1079,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       KDCoordinate upperLayoutHeight = Height(UpperLayout(l));
       KDCoordinate lowerLayoutHeight = Height(LowerLayout(l));
       KDCoordinate right =
-          Parenthesis::k_parenthesisWidth + RowsWidth(l, style.font);
+          Parenthesis::k_parenthesisWidth + RowsWidth(l, style.textStyle.font);
       KDCoordinate bottom = upperLayoutHeight + k_point2DRowsSeparator;
       // Draw left parenthesis
       RenderParenthesisWithChildHeight(true, upperLayoutHeight, ctx, p, style);
@@ -1081,13 +1088,13 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                                        p.translatedBy(KDPoint(right, bottom)),
                                        style);
       // Draw comma
-      KDCoordinate topMargin = UpperMargin(l, style.font);
-      KDCoordinate commaHeight = KDFont::GlyphHeight(style.font);
+      KDCoordinate topMargin = UpperMargin(l, style.textStyle.font);
+      KDCoordinate commaHeight = KDFont::GlyphHeight(style.textStyle.font);
       assert(commaHeight <= upperLayoutHeight);
       KDCoordinate commaPositionY =
           topMargin + (upperLayoutHeight - commaHeight) / 2;
       ctx->drawString(",", p.translatedBy(KDPoint(right, commaPositionY)),
-                      style);
+                      style.textStyle);
       return;
     }
     case LayoutType::Conj: {
@@ -1095,7 +1102,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           KDRect(p.x() + Conjugate::k_horizontalMargin, p.y(),
                  Width(l->child(0)) + 2 * Conjugate::k_horizontalOverflow,
                  Conjugate::k_overlineWidth),
-          style.glyphColor);
+          style.textStyle.glyphColor);
       return;
     }
     case LayoutType::Sqrt:
@@ -1109,8 +1116,9 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           p.y() + Baseline(l) + radicandSize.height() - Baseline(l->child(0)) -
               k_leftRadixHeight,
           k_leftRadixWidth, k_leftRadixHeight);
-      ctx->fillRectWithMask(leftRadixFrame, style.glyphColor,
-                            style.backgroundColor, (const uint8_t*)radixPixel,
+      ctx->fillRectWithMask(leftRadixFrame, style.textStyle.glyphColor,
+                            style.textStyle.backgroundColor,
+                            (const uint8_t*)radixPixel,
                             (KDColor*)workingBuffer);
       // If the indice is higher than the root.
       if (indexSize.height() >
@@ -1122,7 +1130,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                        k_radixLineThickness - k_topPadding,
                    k_radixLineThickness,
                    radicandSize.height() + k_topPadding + k_radixLineThickness),
-            style.glyphColor);
+            style.textStyle.glyphColor);
         // Horizontal radix bar
         ctx->fillRect(
             KDRect(
@@ -1131,19 +1139,19 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                     k_radixLineThickness - k_topPadding,
                 radicandSize.width() + 2 * k_horizontalPadding,
                 k_radixLineThickness),
-            style.glyphColor);
+            style.textStyle.glyphColor);
       } else {
         ctx->fillRect(
             KDRect(p.x() + k_leftMargin + indexSize.width(),
                    k_topMargin + p.y(), k_radixLineThickness,
                    radicandSize.height() + k_topPadding + k_radixLineThickness),
-            style.glyphColor);
+            style.textStyle.glyphColor);
         ctx->fillRect(KDRect(p.x() + k_leftMargin + indexSize.width() +
                                  k_radixLineThickness,
                              k_topMargin + p.y(),
                              radicandSize.width() + 2 * k_horizontalPadding,
                              k_radixLineThickness),
-                      style.glyphColor);
+                      style.textStyle.glyphColor);
       }
       return;
     }
@@ -1152,31 +1160,32 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       KDCoordinate baseline = Baseline(l);
 
       // d/dx...
+      ctx->drawString(k_dString,
+                      PositionOfDInNumerator(l, baseline, style.textStyle.font)
+                          .translatedBy(p),
+                      style.textStyle);
       ctx->drawString(
           k_dString,
-          PositionOfDInNumerator(l, baseline, style.font).translatedBy(p),
-          style);
-      ctx->drawString(
-          k_dString,
-          PositionOfDInDenominator(l, baseline, style.font).translatedBy(p),
-          style);
+          PositionOfDInDenominator(l, baseline, style.textStyle.font)
+              .translatedBy(p),
+          style.textStyle);
 
       KDRect horizontalBar = KDRect(
           Fraction::k_horizontalMargin, baseline - Fraction::k_lineHeight,
-          FractionBarWidth(l, style.font), Fraction::k_lineHeight);
-      ctx->fillRect(horizontalBar.translatedBy(p), style.glyphColor);
+          FractionBarWidth(l, style.textStyle.font), Fraction::k_lineHeight);
+      ctx->fillRect(horizontalBar.translatedBy(p), style.textStyle.glyphColor);
 
       // ...(f)...
       KDSize derivandSize = Size(l->child(k_derivandIndex));
 
       KDPoint leftParenthesisPosition =
-          PositionOfLeftParenthesis(l, baseline, style.font);
+          PositionOfLeftParenthesis(l, baseline, style.textStyle.font);
       RenderParenthesisWithChildHeight(true, derivandSize.height(), ctx,
                                        leftParenthesisPosition.translatedBy(p),
                                        style);
 
-      KDPoint rightParenthesisPosition =
-          PositionOfRightParenthesis(l, baseline, style.font, derivandSize);
+      KDPoint rightParenthesisPosition = PositionOfRightParenthesis(
+          l, baseline, style.textStyle.font, derivandSize);
 
       RenderParenthesisWithChildHeight(false, derivandSize.height(), ctx,
                                        rightParenthesisPosition.translatedBy(p),
@@ -1188,23 +1197,24 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           rightParenthesisPosition.x() + Parenthesis::k_parenthesisWidth +
               k_barHorizontalMargin,
           0, k_barWidth,
-          AbscissaBaseline(l, baseline, style.font) -
+          AbscissaBaseline(l, baseline, style.textStyle.font) -
               Baseline(l->child(k_variableIndex)) + variableSize.height());
-      ctx->fillRect(verticalBar.translatedBy(p), style.glyphColor);
+      ctx->fillRect(verticalBar.translatedBy(p), style.textStyle.glyphColor);
 
       KDPoint variableAssignmentPosition =
-          PositionOfVariableInAssignmentSlot(l, baseline, style.font);
-      KDPoint equalPosition = variableAssignmentPosition.translatedBy(
-          KDPoint(variableSize.width(),
-                  Baseline(l->child(k_variableIndex)) -
-                      KDFont::Font(style.font)->stringSize("=").height() / 2));
-      ctx->drawString("=", equalPosition.translatedBy(p), style);
+          PositionOfVariableInAssignmentSlot(l, baseline, style.textStyle.font);
+      KDPoint equalPosition = variableAssignmentPosition.translatedBy(KDPoint(
+          variableSize.width(),
+          Baseline(l->child(k_variableIndex)) -
+              KDFont::Font(style.textStyle.font)->stringSize("=").height() /
+                  2));
+      ctx->drawString("=", equalPosition.translatedBy(p), style.textStyle);
 
       // Draw the copy of x
-      KDPoint copyPosition =
-          GetVariableSlot(l) == VariableSlot::Fraction
-              ? variableAssignmentPosition
-              : PositionOfVariableInFractionSlot(l, baseline, style.font);
+      KDPoint copyPosition = GetVariableSlot(l) == VariableSlot::Fraction
+                                 ? variableAssignmentPosition
+                                 : PositionOfVariableInFractionSlot(
+                                       l, baseline, style.textStyle.font);
       DrawRack(l->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
                style, {});
 
@@ -1212,8 +1222,9 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
         // Draw the copy of the order
         KDPoint copyPosition =
             GetOrderSlot(l) == OrderSlot::Denominator
-                ? PositionOfOrderInNumerator(l, baseline, style.font)
-                : PositionOfOrderInDenominator(l, baseline, style.font);
+                ? PositionOfOrderInNumerator(l, baseline, style.textStyle.font)
+                : PositionOfOrderInDenominator(l, baseline,
+                                               style.textStyle.font);
         DrawRack(l->child(k_orderIndex), ctx, copyPosition.translatedBy(p),
                  style, {});
       }
@@ -1235,22 +1246,22 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
 
       // Upper part
       KDRect topSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
-      ctx->fillRectWithMask(topSymbolFrame, style.glyphColor,
-                            style.backgroundColor,
+      ctx->fillRectWithMask(topSymbolFrame, style.textStyle.glyphColor,
+                            style.textStyle.backgroundColor,
                             (const uint8_t*)topSymbolPixel,
                             (KDColor*)workingBuffer, false, false);
 
       // Central bar
       offsetY = offsetY + k_symbolHeight;
       ctx->fillRect(KDRect(offsetX, offsetY, k_lineThickness, centralArgHeight),
-                    style.glyphColor);
+                    style.textStyle.glyphColor);
 
       // Lower part
       offsetX = offsetX - k_symbolWidth + k_lineThickness;
       offsetY = offsetY + centralArgHeight;
       KDRect bottomSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
-      ctx->fillRectWithMask(bottomSymbolFrame, style.glyphColor,
-                            style.backgroundColor,
+      ctx->fillRectWithMask(bottomSymbolFrame, style.textStyle.glyphColor,
+                            style.textStyle.backgroundColor,
                             (const uint8_t*)bottomSymbolPixel,
                             (KDColor*)workingBuffer, false, false);
 
@@ -1261,8 +1272,8 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                   integrandSize.width() + k_differentialHorizontalMargin,
                   Baseline(integrand) - KDFont::GlyphHeight(s_font) / 2));
       ctx->drawString("d", dPosition,
-                      {.glyphColor = style.glyphColor,
-                       .backgroundColor = style.backgroundColor,
+                      {.glyphColor = style.textStyle.glyphColor,
+                       .backgroundColor = style.textStyle.backgroundColor,
                        .font = s_font});
       return;
     }
@@ -1273,7 +1284,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       ctx->fillRect(KDRect(p.x() + Fraction::k_horizontalMargin, fractionLineY,
                            Width(l) - 2 * Fraction::k_horizontalMargin,
                            Fraction::k_lineHeight),
-                    style.glyphColor);
+                    style.textStyle.glyphColor);
       return;
     }
     case LayoutType::Parentheses:
@@ -1292,11 +1303,11 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           if (AutocompletedPair::IsTemporary(l,
                                              left ? Side::Left : Side::Right)) {
 #if POINCARE_SCANDIUM_LAYOUTS
-            braceStyle.glyphColor = style.optionalPlaceholderColor;
+            braceStyle.textStyle.glyphColor = style.optionalPlaceholderColor;
 #else
-            braceStyle.glyphColor =
-                KDColor::Blend(style.glyphColor, style.backgroundColor,
-                               Pair::k_temporaryBlendAlpha);
+            braceStyle.textStyle.glyphColor = KDColor::Blend(
+                style.textStyle.glyphColor, style.textStyle.backgroundColor,
+                Pair::k_temporaryBlendAlpha);
 #endif
           }
           if (l->isCurlyBracesLayout()) {
@@ -1342,7 +1353,8 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       KDPoint inferiorEqualPosition = KDPoint(
           PositionOfVariable(l, s_font).x() + Width(l->child(k_variableIndex)),
           VariableSlotBaseline(l, s_font) - KDFont::GlyphHeight(s_font) / 2);
-      ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), style);
+      ctx->drawString("≤", inferiorEqualPosition.translatedBy(p),
+                      style.textStyle);
       return;
     }
     case LayoutType::Product:
@@ -1363,20 +1375,20 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
 
       // Draw top bar
       ctx->fillRect(KDRect(left, top, SymbolWidth(s_font), k_lineThickness),
-                    style.glyphColor);
+                    style.textStyle.glyphColor);
 
       if (l->layoutType() == LayoutType::Product) {
         // Draw vertical bars
         ctx->fillRect(KDRect(left, top, k_lineThickness, SymbolHeight(s_font)),
-                      style.glyphColor);
+                      style.textStyle.glyphColor);
         ctx->fillRect(KDRect(left + SymbolWidth(s_font), top, k_lineThickness,
                              SymbolHeight(s_font)),
-                      style.glyphColor);
+                      style.textStyle.glyphColor);
       } else {
         // Draw bottom bar
         ctx->fillRect(KDRect(left, top + SymbolHeight(s_font) - 1,
                              SymbolWidth(s_font), k_lineThickness),
-                      style.glyphColor);
+                      style.textStyle.glyphColor);
 
         constexpr KDCoordinate k_maxSymbolHeight =
             SymbolHeight(KDFont::Size::Large) - 2;
@@ -1406,8 +1418,9 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
 
         KDColor workingBuffer[k_maxSymbolWidth * k_maxSymbolHeight];
         KDRect symbolFrame(left, top + 1, symbolWidth, symbolHeight);
-        ctx->fillRectWithMask(symbolFrame, style.glyphColor,
-                              style.backgroundColor, (const uint8_t*)maskBuffer,
+        ctx->fillRectWithMask(symbolFrame, style.textStyle.glyphColor,
+                              style.textStyle.backgroundColor,
+                              (const uint8_t*)maskBuffer,
                               (KDColor*)workingBuffer);
       }
       // Render the "="
@@ -1419,7 +1432,8 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                   Baseline(l->child(k_variableIndex)) -
                       KDFont::Font(s_font)->stringSize(k_equalSign).height() /
                           2));
-      ctx->drawString(k_equalSign, equalPosition.translatedBy(p), style);
+      ctx->drawString(k_equalSign, equalPosition.translatedBy(p),
+                      style.textStyle);
 
       // Render the parentheses
       KDSize argumentSize = Size(l->child(k_argumentIndex));
@@ -1449,7 +1463,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
         int height = KDFont::GlyphHeight(s_font);
         ctx->fillRect(
             KDRect(p.translatedBy(KDPoint(width / 2, height / 2 - 1)), 1, 1),
-            style.glyphColor);
+            style.textStyle.glyphColor);
         return;
       }
       // General case
@@ -1457,7 +1471,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           2 * sizeof(::CodePoint) + 1;  // Null-terminating char
       char buffer[bufferSize];
       CodePointLayout::CopyName(l, buffer, bufferSize);
-      ctx->drawString(buffer, p, style);
+      ctx->drawString(buffer, p, style.textStyle);
       return;
     }
     case LayoutType::VerticalOffset:
@@ -1468,7 +1482,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
     case LayoutType::PtPermute: {
       using namespace PtCombinatorics;
       KDCoordinate combinationSymbolX = Width(l->child(k_nIndex));
-      KDCoordinate combinationSymbolY = AboveSymbol(l, style.font);
+      KDCoordinate combinationSymbolY = AboveSymbol(l, style.textStyle.font);
       KDPoint base =
           p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));
 
@@ -1482,31 +1496,34 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
         KDPoint bottom(base.x() + leftMargin, base.y() + k_symbolHeight);
         KDPoint slashTop(bottom.x() + k_symbolWidth / 2, base.y());
         KDPoint slashBottom = bottom;
-        ctx->drawAntialiasedLine(slashTop, slashBottom, style.glyphColor,
-                                 style.backgroundColor);
+        ctx->drawAntialiasedLine(slashTop, slashBottom,
+                                 style.textStyle.glyphColor,
+                                 style.textStyle.backgroundColor);
         KDPoint antiSlashTop(bottom.x() + k_symbolWidth / 2 + 1, base.y());
         KDPoint antiSlashBottom(bottom.x() + k_symbolWidth, bottom.y());
         ctx->drawAntialiasedLine(antiSlashTop, antiSlashBottom,
-                                 style.glyphColor, style.backgroundColor);
+                                 style.textStyle.glyphColor,
+                                 style.textStyle.backgroundColor);
         KDCoordinate mBar = 2;
         KDCoordinate yBar = base.y() + k_symbolHeight - PtBinomial::k_barHeight;
         ctx->drawLine(KDPoint(bottom.x() + mBar, yBar),
                       KDPoint(bottom.x() + k_symbolWidth - mBar, yBar),
-                      style.glyphColor);
+                      style.textStyle.glyphColor);
       } else {
         // Big C
         KDColor workingBuffer[k_symbolWidth * k_symbolHeight];
         KDRect symbolUpperFrame(base.x() + k_margin, base.y(), k_symbolWidth,
                                 k_symbolHeight / 2);
-        ctx->fillRectWithMask(symbolUpperFrame, style.glyphColor,
-                              style.backgroundColor, PtPermute::symbolUpperHalf,
-                              workingBuffer);
+        ctx->fillRectWithMask(symbolUpperFrame, style.textStyle.glyphColor,
+                              style.textStyle.backgroundColor,
+                              PtPermute::symbolUpperHalf, workingBuffer);
         KDRect symbolLowerFrame(base.x() + k_margin,
                                 base.y() + k_symbolHeight / 2, k_symbolWidth,
                                 k_symbolHeight / 2);
-        ctx->fillRectWithMask(symbolLowerFrame, style.glyphColor,
-                              style.backgroundColor, PtPermute::symbolUpperHalf,
-                              workingBuffer, false, true);
+        ctx->fillRectWithMask(symbolLowerFrame, style.textStyle.glyphColor,
+                              style.textStyle.backgroundColor,
+                              PtPermute::symbolUpperHalf, workingBuffer, false,
+                              true);
       }
       return;
     }
@@ -1526,22 +1543,22 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       assert(grid->numberOfColumns() == 2);
 
       // Draw the curly brace
-      RenderCurlyBracesWithChildHeight(true, grid->height(style.font), ctx, p,
-                                       style);
+      RenderCurlyBracesWithChildHeight(true, grid->height(style.textStyle.font),
+                                       ctx, p, style);
 
       // Draw the commas
       KDCoordinate commaAbscissa = CurlyBraces::k_curlyBraceWidth +
-                                   grid->columnWidth(0, style.font) +
+                                   grid->columnWidth(0, style.textStyle.font) +
                                    k_gridEntryMargin;
       int nbRows = grid->numberOfRows() - !grid->isEditing();
       for (int i = 0; i < nbRows; i++) {
         const Rack* leftChild = l->child(i * 2);
         int rightChildIndex = i * 2 + 1;
         KDPoint leftChildPosition = PositionOfChild(l, i * 2);
-        KDPoint commaPosition =
-            KDPoint(commaAbscissa, leftChildPosition.y() + Baseline(leftChild) -
-                                       KDFont::GlyphHeight(style.font) / 2);
-        KDGlyph::Style commaStyle = style;
+        KDPoint commaPosition = KDPoint(
+            commaAbscissa, leftChildPosition.y() + Baseline(leftChild) -
+                               KDFont::GlyphHeight(style.textStyle.font) / 2);
+        KDGlyph::Style commaStyle = style.textStyle;
         if (grid->childIsPlaceholder(rightChildIndex)) {
           if (!grid->isEditing()) {
             continue;
@@ -1557,13 +1574,13 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       assert(grid->numberOfColumns() == 2);
       // Draw the curly brace
       if (grid->numberOfRows() > 1) {
-        RenderCurlyBracesWithChildHeight(true, grid->height(style.font), ctx, p,
-                                         style);
+        RenderCurlyBracesWithChildHeight(
+            true, grid->height(style.textStyle.font), ctx, p, style);
       }
       // Draw the equal signs
       KDCoordinate equalAbscissa = CurlyBraces::k_curlyBraceWidth +
                                    GridWithCurlyBraces::k_horizontalMargin +
-                                   grid->columnWidth(0, style.font) +
+                                   grid->columnWidth(0, style.textStyle.font) +
                                    k_gridEntryMargin;
       int nbRows = grid->numberOfRows();
       for (int i = 0; i < nbRows; i++) {
@@ -1573,7 +1590,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
             KDPoint(equalAbscissa,
                     leftChildPosition.y() + Baseline(leftChild) -
                         KDFont::Font(s_font)->stringSize("=").height() / 2);
-        ctx->drawString("=", equalPosition.translatedBy(p), style);
+        ctx->drawString("=", equalPosition.translatedBy(p), style.textStyle);
       }
       return;
     }

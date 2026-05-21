@@ -43,23 +43,6 @@ static bool GetUnits(Tree* extractedUnits, Tree** unit1, Tree** unit2) {
   return true;
 }
 
-// Return true if Imperial units should be used in output
-static bool DisplayImperialUnitsInOutput(const Tree* inputUnits) {
-  bool hasImperialUnits = false;
-  for (const Tree* e : inputUnits->selfAndDescendants()) {
-    if (e->isUnit()) {
-      if (Unit::GetRepresentative(e)->isImperial()) {
-        hasImperialUnits = true;
-      } else if (Unit::GetRepresentative(e) != &Volume::representatives.liter) {
-        // Use metric representatives if any other metric unit is involved.
-        return false;
-      }
-      // Liter representative is tolerated for imperial unit input.
-    }
-  }
-  return hasImperialUnits;
-}
-
 static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
                                    Dimension dimension, AngleUnit angleUnit);
 static void ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
@@ -163,6 +146,23 @@ bool ProjectToBestUnits(Tree* e, Dimension dimension,
     e->cloneTreeOverTree(KUndefUnit);
   }
   return true;
+}
+
+// Return true if Imperial units should be used in output
+static bool DisplayImperialUnitsInOutput(const Tree* inputUnits) {
+  bool hasImperialUnits = false;
+  for (const Tree* e : inputUnits->selfAndDescendants()) {
+    if (e->isUnit()) {
+      if (Unit::GetRepresentative(e)->isImperial()) {
+        hasImperialUnits = true;
+      } else if (Unit::GetRepresentative(e) != &Volume::representatives.liter) {
+        // Use metric representatives if any other metric unit is involved.
+        return false;
+      }
+      // Liter representative is tolerated for imperial unit input.
+    }
+  }
+  return hasImperialUnits;
 }
 
 static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,

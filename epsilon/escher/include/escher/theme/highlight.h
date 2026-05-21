@@ -10,7 +10,7 @@ namespace Escher {
 /* Returns the highlighted version of a ThemeComponent if isHighlighted is true.
  * Returns the component otherwise. Useful for text and background highlights */
 constexpr static ThemeComponent Highlight(ThemeComponent component,
-                                          bool isHighlighted) {
+                                          bool isHighlighted = true) {
   if (!isHighlighted) {
     return component;
   }

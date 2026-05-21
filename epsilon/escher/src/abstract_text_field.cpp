@@ -66,9 +66,8 @@ void AbstractTextField::ContentView::drawRect(KDContext* ctx,
     ctx->drawString(
         text() + selectionOffset,
         glyphFrameAtPosition(text(), textToDraw).origin(),
-        {.glyphColor = ColorPicker::Resolve(Highlight(textColor, true)),
-         .backgroundColor =
-             ColorPicker::Resolve(Highlight(backgroundColor, true)),
+        {.glyphColor = ColorPicker::Resolve(Highlight(textColor)),
+         .backgroundColor = ColorPicker::Resolve(Highlight(backgroundColor)),
          .font = textFormat().style.font},
         selectionLength);
     textToDraw += selectionLength;

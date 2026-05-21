@@ -554,7 +554,7 @@ void TextArea::ContentView::drawStringAt(KDContext* ctx, int line, int column,
   const char* highlightedDrawStart = std::max(selectionStart, text);
   TextStyle highlightedGlyphStyle{
       .glyphColor = textComponent,
-      .backgroundColor = Escher::Highlight(backgroundComponent, true),
+      .backgroundColor = Escher::Highlight(backgroundComponent),
       .font = textFormat().style.font};
   size_t highlightedDrawLength =
       std::min(selectionEnd - highlightedDrawStart,

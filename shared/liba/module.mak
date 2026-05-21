@@ -165,9 +165,8 @@ $(call all_objects_for,$(addprefix $(PATH_liba)/src/external/openbsd/,e_expf.c s
 $(call import_module,liba_bridge,$(PATH_liba)/src/bridge)
 $(call create_module,liba_bridge,1, \
   bridge.c \
-  asserts.cpp \
+  asserts.cpp:+fuzzer_triage \
   fuzzer_triage.cpp:+fuzzer_triage \
 )
 
 SFLAGS_liba_bridge := -I$(PATH_liba_bridge)
-

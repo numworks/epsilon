@@ -76,8 +76,8 @@ bool PrefixSetContainsPrefix(PrefixSet prefixSet, const Prefix* prefix) {
   OMG_UNREACHABLE;
 }
 
-const Prefix* ChooseBestInSet(PrefixSet prefixSet, double value,
-                              double exponent) {
+const Prefix* ChooseBestPrefix(PrefixSet prefixSet, double value,
+                               double exponent) {
   if (prefixSet == PrefixSet::None) {
     return Prefix::EmptyPrefix();
   }

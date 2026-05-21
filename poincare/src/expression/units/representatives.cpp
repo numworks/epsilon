@@ -249,7 +249,7 @@ const Representative* Volume::bestRepresentativeAndPrefix(
   if (useMetricRepresentative) {
     // Convert from m^3 to liter value
     value = value / representatives.liter.ratio();
-    *prefix = ChooseBestInSet(
+    *prefix = ChooseBestPrefix(
         representativesOfSameDimension()->outputPrefixSet(), value, exponent);
     return &representatives.liter;
   }

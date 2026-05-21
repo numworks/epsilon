@@ -100,8 +100,8 @@ const Representative* Representative::defaultFindBestRepresentativeAndPrefix(
     double currentAccuracy =
         std::fabs(value / std::pow(currentRepresentative->ratio(), exponent));
     if (*prefix) {
-      currentPrefix = ChooseBestInSet(currentRepresentative->outputPrefixSet(),
-                                      currentAccuracy, exponent);
+      currentPrefix = ChooseBestPrefix(currentRepresentative->outputPrefixSet(),
+                                       currentAccuracy, exponent);
     }
     if (CompareMagnitudeOrders(
             std::log10(currentAccuracy) - currentPrefix->exponent() * exponent,

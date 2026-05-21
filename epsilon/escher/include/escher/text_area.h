@@ -120,8 +120,8 @@ class TextArea : public TextInput {
     void drawStringAt(KDContext* ctx, int line, int column, const char* text,
                       int length, ThemeComponent textComponent,
                       ThemeComponent backgroundComponent,
-                      const char* selectionStart, const char* selectionEnd,
-                      ThemeComponent highlightedBackgroundComponent) const;
+                      const char* selectionStart,
+                      const char* selectionEnd) const;
     virtual void drawLine(KDContext* ctx, int line, const char* text,
                           size_t length, int fromColumn, int toColumn,
                           const char* selectionStart,

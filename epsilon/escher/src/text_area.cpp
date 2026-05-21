@@ -3,6 +3,7 @@
 #include <escher/text_area.h>
 #include <escher/text_format.h>
 #include <escher/text_input_helpers.h>
+#include <escher/theme/highlight.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <limits.h>
@@ -523,11 +524,12 @@ void TextArea::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
   }
 }
 
-void TextArea::ContentView::drawStringAt(
-    KDContext* ctx, int line, int column, const char* text, int length,
-    ThemeComponent textComponent, ThemeComponent backgroundComponent,
-    const char* selectionStart, const char* selectionEnd,
-    ThemeComponent highlightedBackgroundComponent) const {
+void TextArea::ContentView::drawStringAt(KDContext* ctx, int line, int column,
+                                         const char* text, int length,
+                                         ThemeComponent textComponent,
+                                         ThemeComponent backgroundComponent,
+                                         const char* selectionStart,
+                                         const char* selectionEnd) const {
   if (length < 0) {
     return;
   }
@@ -552,7 +554,7 @@ void TextArea::ContentView::drawStringAt(
   const char* highlightedDrawStart = std::max(selectionStart, text);
   TextStyle highlightedGlyphStyle{
       .glyphColor = textComponent,
-      .backgroundColor = highlightedBackgroundComponent,
+      .backgroundColor = Escher::Highlight(backgroundComponent, true),
       .font = textFormat().style.font};
   size_t highlightedDrawLength =
       std::min(selectionEnd - highlightedDrawStart,

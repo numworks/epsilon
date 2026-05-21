@@ -15,6 +15,7 @@ namespace Graph {
  */
 class ParameterDelegate {
  public:
+  constexpr static int k_isStandaloneDerivative = -1;
   virtual bool usePersonalizedTitle() const = 0;
   virtual bool showColorCell() const = 0;
   virtual I18n::Message hideDerivativeMessage() const = 0;
@@ -22,10 +23,12 @@ class ParameterDelegate {
 };
 
 /* This controller handles parameters for two kinds of derivative columns:
- * - Standalone derivative records: m_derivationOrder == -1, m_record holds
- *   the derivative record itself.
+ * - Standalone derivative records: m_derivationOrder ==
+ *   k_isStandaloneDerivative, m_record holds the derivative record itself.
+ *   (used in ListController and CurveParameterController)
  * - Derivative values columns dependent on a parent: m_derivationOrder == 1
  *   or 2, m_record holds the parent function record.
+ *   (used in ValuesController)
  */
 class DerivativeColumnParameterController
     : public Shared::ColumnParameterController {
@@ -37,7 +40,9 @@ class DerivativeColumnParameterController
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return 2; }
   const Escher::HighlightCell* cell(int row) const override;
-  void setRecord(Ion::Storage::Record record, int derivationOrder = -1);
+  void setRecord(
+      Ion::Storage::Record record,
+      int derivationOrder = ParameterDelegate::k_isStandaloneDerivative);
   void setParameterDelegate(ParameterDelegate* parameterDelegate) {
     m_parameterDelegate = parameterDelegate;
   }

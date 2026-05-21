@@ -13,7 +13,7 @@ DerivativeColumnParameterController::DerivativeColumnParameterController(
     Responder* parentResponder)
     : ColumnParameterController(parentResponder),
       m_colorParameterController(nullptr),
-      m_derivationOrder(-1),
+      m_derivationOrder(ParameterDelegate::k_isStandaloneDerivative),
       m_parameterDelegate(nullptr) {
   m_colorCell.label()->setMessage(I18n::Message::Color);
 }
@@ -54,7 +54,7 @@ bool DerivativeColumnParameterController::handleEvent(
 
 void ParameterDelegate::hideDerivative(Ion::Storage::Record record,
                                        int derivationOrder) {
-  if (derivationOrder == -1) {
+  if (derivationOrder == k_isStandaloneDerivative) {
     /* Standalone derivative record: update the parent's display settings and
      * delete the derivative record */
     OMG::ExpiringPointer<ContinuousFunction> f =
@@ -86,7 +86,8 @@ const HighlightCell* DerivativeColumnParameterController::cell(int row) const {
 
 void DerivativeColumnParameterController::setRecord(Ion::Storage::Record record,
                                                     int derivationOrder) {
-  assert(derivationOrder == -1 || derivationOrder == 1 || derivationOrder == 2);
+  assert(derivationOrder == ParameterDelegate::k_isStandaloneDerivative ||
+         derivationOrder == 1 || derivationOrder == 2);
   m_record = record;
   m_derivationOrder = derivationOrder;
   selectRow(0);

@@ -99,6 +99,7 @@ size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
                                              : k_ordinateSymbol));
   }
   if (derivationOrder > 0) {
+    // Add apostrophes for derivatives
     const CodePoint derivative =
         derivationOrder == 1
             ? Poincare::Internal::Derivation::k_firstOrderSymbol
@@ -113,6 +114,7 @@ size_t ContinuousFunction::nameWithArgument(char* buffer, size_t bufferSize,
                                             int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
   if (isDerivative()) {
+    // Parent will handle the name with the derivation order
     ContinuousFunction parent(parentRecord());
     return parent.nameWithArgument(buffer, bufferSize,
                                    recordData()->derivationOrder());

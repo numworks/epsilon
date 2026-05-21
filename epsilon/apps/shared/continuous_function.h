@@ -91,7 +91,7 @@ class ContinuousFunction : public Function {
   bool canComputeTangent() const {
     return !isDerivative() && properties().canDisplayDerivative();
   }
-  // If the ContinuousFunction should be considered active in table
+  // If the ContinuousFunction can be shown in values table
   bool isActiveInTable() const {
     return properties().canBeActiveInTable() && isActive() && !isDerivative();
   }
@@ -258,6 +258,7 @@ class ContinuousFunction : public Function {
   float rangeStep() const override;
 
   /* Function */
+  // Insert ContinuousFunction's name in buffer ("f" or "y")
   size_t nameWithoutArgument(char* buffer, size_t bufferSize,
                              int derivationOrder = 0) const;
   Poincare::UserExpression createDerivativeEquationFromParent() const;

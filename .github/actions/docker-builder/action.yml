@@ -14,7 +14,7 @@ inputs:
     required: false
     default: 'unknown'
   perfmon:
-    description: 'Add CAP_PERFMON to the container so perf_event_open can be used'
+    description: 'Add CAP_PERFMON and a seccomp profile allowing personality (perf_event_open + setarch -R)'
     required: false
     default: 'false'
 
@@ -33,6 +33,10 @@ runs:
         CACHE_FLAGS="--env CCACHE_DIR=/cache --mount type=bind,source=$CACHE_FOLDER,target=/cache"
         EXTRA_FLAGS=""
         if [ "${{ inputs.perfmon }}" = "true" ]; then
-          EXTRA_FLAGS="--cap-add=PERFMON"
+          # Allow "personality" svcall inside docker by patching the seccomp profile
+          PROFILE=/tmp/seccomp-personality.json
+          curl -fsSL https://raw.githubusercontent.com/moby/profiles/836ae4d37ef2ec995c77c99fc55f5b5f3af3a897/seccomp/default.json -o "$PROFILE"
+          patch "$PROFILE" < .github/actions/docker-builder/profile.patch
+          EXTRA_FLAGS="--cap-add=PERFMON --security-opt seccomp=$PROFILE"
         fi
         echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) $CACHE_FLAGS $EXTRA_FLAGS --env MAKEFLAGS --mount type=bind,source=.,target=/monorepo oasis-builder-${{ inputs.platform }}:latest sh -c" >> $GITHUB_ENV

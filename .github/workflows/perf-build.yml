@@ -36,7 +36,7 @@ jobs:
       - name: Build and run base
         run: |
           $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ inputs.project-path }}_test.perf_counter.bin"
-          $DOCKER_RUN "${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > base.log
+          $DOCKER_RUN "setarch \$(uname -m) -R ${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > base.log
 
       - name: Checkout head of PR
         run: git checkout ${{ github.event.pull_request.head.sha }}
@@ -44,7 +44,7 @@ jobs:
       - name: Build and run head
         run: |
           $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ inputs.project-path }}_test.perf_counter.bin"
-          $DOCKER_RUN "${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > head.log
+          $DOCKER_RUN "setarch \$(uname -m) -R ${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > head.log
 
       - name: Compare
         id: compare

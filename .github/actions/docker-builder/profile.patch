@@ -1,0 +1,12 @@
+diff --git a/default.json b/default.json
+index ea5a494..1e029a0 100644
+--- a/default.json
++++ b/default.json
+@@ -256,6 +256,7 @@
+ 				"openat",
+ 				"openat2",
+ 				"pause",
++				"personality",
+ 				"pidfd_open",
+ 				"pidfd_send_signal",
+ 				"pipe",

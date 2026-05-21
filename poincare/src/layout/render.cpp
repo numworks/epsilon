@@ -198,14 +198,13 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
     if (context->rack == context->selection.layout() &&
         context->index >= context->selection.leftPosition() &&
         context->index < context->selection.rightPosition()) {
-#if POINCARE_SCANDIUM_LAYOUTS
       childStyle.textStyle.backgroundColor =
           context->style.backgroundSelectionColor;
       childStyle.textStyle.glyphColor =
+#if POINCARE_SCANDIUM_LAYOUTS
           context->style.textStyle.backgroundColor;
 #else
-      childStyle.textStyle.backgroundColor =
-          context->style.backgroundSelectionColor;
+          context->style.glyphSelectionColor;
 #endif
     }
     if (child) {

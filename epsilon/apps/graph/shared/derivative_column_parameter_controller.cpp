@@ -65,24 +65,14 @@ void ParameterDelegate::hideDerivative(Ion::Storage::Record record,
     OMG::ExpiringPointer<ContinuousFunction> parent =
         Shared::GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
             parentRecord);
-    if (derivationOrder == 1) {
-      parent->setDisplayPlotFirstDerivative(false);
-    } else {
-      assert(derivationOrder == 2);
-      parent->setDisplayPlotSecondDerivative(false);
-    }
+    parent->disablePlotDerivative(derivationOrder);
     GlobalStore::DeleteDerivativeOfRecord(parentRecord, derivationOrder);
   } else {
     // Derivative values column: only update the parent's display settings
     OMG::ExpiringPointer<ContinuousFunction> parent =
         Shared::GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
             record);
-    if (derivationOrder == 1) {
-      parent->setDisplayValueFirstDerivative(false);
-    } else {
-      assert(derivationOrder == 2);
-      parent->setDisplayValueSecondDerivative(false);
-    }
+    parent->disableValueDerivative(derivationOrder);
   }
 }
 

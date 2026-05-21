@@ -189,6 +189,8 @@ class ContinuousFunction : public Function {
   void setDisplayPlotFirstDerivative(bool display);
   void setDisplayValueSecondDerivative(bool display);
   void setDisplayPlotSecondDerivative(bool display);
+  void disableValueDerivative(int derivationOrder);
+  void disablePlotDerivative(int derivationOrder);
 
   // Get derivation order from relative index in values columns
   int derivationOrderFromRelativeIndex(int relativeIndex) const;

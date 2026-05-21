@@ -270,6 +270,24 @@ void ContinuousFunction::setDisplayPlotSecondDerivative(bool display) {
   recordData()->setDisplayValueSecondDerivative(display);
 }
 
+void ContinuousFunction::disableValueDerivative(int derivationOrder) {
+  if (derivationOrder == 1) {
+    setDisplayValueFirstDerivative(false);
+  } else {
+    assert(derivationOrder == 2);
+    setDisplayValueSecondDerivative(false);
+  }
+}
+
+void ContinuousFunction::disablePlotDerivative(int derivationOrder) {
+  if (derivationOrder == 1) {
+    setDisplayPlotFirstDerivative(false);
+  } else {
+    assert(derivationOrder == 2);
+    setDisplayPlotSecondDerivative(false);
+  }
+}
+
 int ContinuousFunction::derivationOrderFromRelativeIndex(
     int relativeIndex) const {
   bool displayFirstDerivative = displayValueFirstDerivative();

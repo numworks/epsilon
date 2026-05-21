@@ -5,11 +5,15 @@ namespace Escher {
 
 Poincare::LayoutStyle ToPoincareLayoutStyle(const LayoutStyle& layoutStyle) {
   return Poincare::LayoutStyle{
-      ToKDGlyphStyle(layoutStyle.textStyle),
-      ColorPicker::Resolve(layoutStyle.backgroundSelectionColor),
-      ColorPicker::Resolve(layoutStyle.requiredPlaceholderColor),
-      ColorPicker::Resolve(layoutStyle.optionalPlaceholderColor),
-      ColorPicker::Resolve(layoutStyle.piecewiseCommaColor)};
+      .textStyle = ToKDGlyphStyle(layoutStyle.textStyle),
+      .backgroundSelectionColor =
+          ColorPicker::Resolve(layoutStyle.backgroundSelectionColor),
+      .requiredPlaceholderColor =
+          ColorPicker::Resolve(layoutStyle.requiredPlaceholderColor),
+      .optionalPlaceholderColor =
+          ColorPicker::Resolve(layoutStyle.optionalPlaceholderColor),
+      .piecewiseCommaColor =
+          ColorPicker::Resolve(layoutStyle.piecewiseCommaColor)};
 }
 
 }  // namespace Escher

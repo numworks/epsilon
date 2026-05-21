@@ -151,7 +151,7 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
         RackLayout::SizeBetweenIndexes(l, 0, selection.leftPosition()).width(),
         baseline - selectedBaseline);
     ctx->fillRect(KDRect(p.translatedBy(start), selectedSize),
-                  style.selectionColor);
+                  style.backgroundSelectionColor);
   }
   KDSize size = Size(l, showEmpty);
   if (size.height() <= 0 || size.width() <= 0 ||
@@ -199,10 +199,10 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
         context->index >= context->selection.leftPosition() &&
         context->index < context->selection.rightPosition()) {
 #if POINCARE_SCANDIUM_LAYOUTS
-      childStyle.backgroundColor = context->style.selectionColor;
+      childStyle.backgroundColor = context->style.backgroundSelectionColor;
       childStyle.glyphColor = context->style.backgroundColor;
 #else
-      childStyle.backgroundColor = context->style.selectionColor;
+      childStyle.backgroundColor = context->style.backgroundSelectionColor;
 #endif
     }
     if (child) {

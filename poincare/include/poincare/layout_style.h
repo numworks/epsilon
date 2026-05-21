@@ -6,7 +6,7 @@
 namespace Poincare {
 
 struct LayoutStyle : KDGlyph::Style {
-  KDColor selectionColor;
+  KDColor backgroundSelectionColor;
   KDColor requiredPlaceholderColor;
   KDColor optionalPlaceholderColor;
   KDColor piecewiseCommaColor;

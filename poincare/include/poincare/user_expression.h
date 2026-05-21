@@ -149,7 +149,8 @@ class UserExpression : public Expression {
 
   // If of the form y-f(x), return f(x). Return uninitialized otherwise.
   UserExpression equivalentCartesianEquation() const;
-  // Build derivative as an equation y = d/dx(expression).
+  /* Build derivative as an equation y = d/dx(expr) from an equation of
+   * the type y = expr or f(x) = expr */
   UserExpression getDerivative(const char* symbolName,
                                int derivationOrder) const;
 

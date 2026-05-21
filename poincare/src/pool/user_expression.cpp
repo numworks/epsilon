@@ -316,6 +316,7 @@ UserExpression UserExpression::getDerivative(const char* symbolName,
   if (isUninitialized()) {
     return UserExpression();
   }
+  assert(isEquality());
   assert(strcmp(symbolName, ordinateName) != 0);
   Tree* equation = SharedTreeStack->pushEqual();
   SharedTreeStack->pushUserVariable(ordinateName);
@@ -325,8 +326,7 @@ UserExpression UserExpression::getDerivative(const char* symbolName,
   // Symbol value (so that the derivative is evaluated at symbolName's value)
   SharedTreeStack->pushUserVariable(symbolName);
   Integer::Push(derivationOrder);
-  assert(!isComparison() || isEquality());
-  (isComparison() ? tree()->child(1) : tree())->cloneTree();
+  tree()->child(1)->cloneTree();
   // Check dimension again as the diff may have changed it.
   if (!Internal::Dimension::DeepCheck(equation)) {
     equation->cloneTreeOverTree(KUndefUnhandledDimension);

@@ -60,28 +60,6 @@ static bool DisplayImperialUnitsInOutput(const Tree* inputUnits) {
   return hasImperialUnits;
 }
 
-static bool IsVolumeAndHasOnlyVolumeUnits(const Tree* e) {
-  if (Dimension::Get(e).unit.vector != Volume::Dimension) {
-    return false;
-  }
-  bool hasOnlyVolumeUnits = false;
-  for (const Tree* child : e->selfAndDescendants()) {
-    if (child->isPhysicalConstant()) {
-      return false;
-    }
-    if (child->isUnit()) {
-      if (Dimension::Get(child)
-              .unit.representative->representativesOfSameDimension() ==
-          &Volume::representatives.liter) {
-        hasOnlyVolumeUnits = true;
-      } else {
-        return false;
-      }
-    }
-  }
-  return hasOnlyVolumeUnits;
-}
-
 static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
                                    Dimension dimension, AngleUnit angleUnit);
 static void ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
@@ -237,6 +215,28 @@ static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
   assert(display == UnitDisplay::AutomaticPrefixFreeMetric ||
          !HasPhysicalConstant(e));
   ApplyAutomaticDisplay(e, inputUnits, dimension, display);
+}
+
+static bool IsVolumeAndHasOnlyVolumeUnits(const Tree* e) {
+  if (Dimension::Get(e).unit.vector != Volume::Dimension) {
+    return false;
+  }
+  bool hasOnlyVolumeUnits = false;
+  for (const Tree* child : e->selfAndDescendants()) {
+    if (child->isPhysicalConstant()) {
+      return false;
+    }
+    if (child->isUnit()) {
+      if (Dimension::Get(child)
+              .unit.representative->representativesOfSameDimension() ==
+          &Volume::representatives.liter) {
+        hasOnlyVolumeUnits = true;
+      } else {
+        return false;
+      }
+    }
+  }
+  return hasOnlyVolumeUnits;
 }
 
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should

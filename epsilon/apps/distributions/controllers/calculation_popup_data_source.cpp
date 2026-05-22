@@ -1,8 +1,14 @@
 #include "calculation_popup_data_source.h"
 
+#include <apps/global_preferences.h>
+
+#include "calculation1_dark_icon.h"
 #include "calculation1_light_icon.h"
+#include "calculation2_dark_icon.h"
 #include "calculation2_light_icon.h"
+#include "calculation3_dark_icon.h"
 #include "calculation3_light_icon.h"
+#include "calculation4_dark_icon.h"
 #include "calculation4_light_icon.h"
 
 namespace Distributions {
@@ -10,11 +16,20 @@ namespace Distributions {
 CalculationPopupDataSource::CalculationPopupDataSource(
     Distribution* distribution)
     : m_distribution(distribution) {
-  /* We can init the image of all cells because there is a bijection of the
-   * displayable cells and the source cells. */
+  updateIcons();
+}
+
+void CalculationPopupDataSource::updateIcons() {
+  const bool dark = SharedGlobalPrefs().theme() == Escher::Theme::Dark;
   const Escher::Image* images[k_numberOfImages] = {
-      ImageStore::Calculation1LightIcon, ImageStore::Calculation2LightIcon,
-      ImageStore::Calculation3LightIcon, ImageStore::Calculation4LightIcon};
+      dark ? ImageStore::Calculation1DarkIcon
+           : ImageStore::Calculation1LightIcon,
+      dark ? ImageStore::Calculation2DarkIcon
+           : ImageStore::Calculation2LightIcon,
+      dark ? ImageStore::Calculation3DarkIcon
+           : ImageStore::Calculation3LightIcon,
+      dark ? ImageStore::Calculation4DarkIcon
+           : ImageStore::Calculation4LightIcon};
   for (int i = 0; i < k_numberOfImages; i++) {
     m_imageCells[i].setImage(images[i]);
   }

@@ -11,6 +11,7 @@ namespace Distributions {
 class CalculationPopupDataSource : public Escher::ExplicitListViewDataSource {
  public:
   CalculationPopupDataSource(Distribution* distribution);
+  void updateIcons();
   int numberOfRows() const override;
   const Escher::HighlightCell* cell(int row) const override {
     return &m_imageCells[absoluteRow(row)];

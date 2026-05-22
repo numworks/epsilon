@@ -112,6 +112,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationController::viewWillAppear() {
+  m_imagesDataSource.updateIcons();
   m_dropdown.selectRow(static_cast<int>(m_calculation->type()));
   updateCells();
   ViewController::viewWillAppear();

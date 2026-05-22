@@ -42,6 +42,20 @@ SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/,$(addsuff
   distributions/images/light/calculation2_light_icon.png \
   distributions/images/light/calculation3_light_icon.png \
   distributions/images/light/calculation4_light_icon.png \
+  distributions/images/dark/binomial_dark_icon.png \
+  distributions/images/dark/chi_squared_dark_icon.png \
+  distributions/images/dark/exponential_dark_icon.png \
+  distributions/images/dark/fisher_dark_icon.png \
+  distributions/images/dark/geometric_dark_icon.png \
+  distributions/images/dark/hypergeometric_dark_icon.png \
+  distributions/images/dark/normal_dark_icon.png \
+  distributions/images/dark/poisson_dark_icon.png \
+  distributions/images/dark/student_dark_icon.png \
+  distributions/images/dark/uniform_dark_icon.png \
+  distributions/images/dark/calculation1_dark_icon.png \
+  distributions/images/dark/calculation2_dark_icon.png \
+  distributions/images/dark/calculation3_dark_icon.png \
+  distributions/images/dark/calculation4_dark_icon.png \
 )))
 
 $(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/icons/light/distributions_light_icon.png)
@@ -60,6 +74,18 @@ $(addprefix $(PATH_apps)/distributions/images/light/,\
   poisson_light_icon.png \
   student_light_icon.png \
   uniform_light_icon.png \
+) \
+$(addprefix $(PATH_apps)/distributions/images/dark/,\
+  binomial_dark_icon.png \
+  chi_squared_dark_icon.png \
+  exponential_dark_icon.png \
+  fisher_dark_icon.png \
+  geometric_dark_icon.png \
+  hypergeometric_dark_icon.png \
+  normal_dark_icon.png \
+  poisson_dark_icon.png \
+  student_dark_icon.png \
+  uniform_dark_icon.png \
 ))
 
 $(call depends_on_transparent_image, \
@@ -72,6 +98,12 @@ $(addprefix $(PATH_apps)/distributions/images/light/,\
   calculation2_light_icon.png \
   calculation3_light_icon.png \
   calculation4_light_icon.png \
+) \
+$(addprefix $(PATH_apps)/distributions/images/dark/,\
+  calculation1_dark_icon.png \
+  calculation2_dark_icon.png \
+  calculation3_dark_icon.png \
+  calculation4_dark_icon.png \
 ))
 
 $(call i18n_with_universal,distributions/i18n/base)

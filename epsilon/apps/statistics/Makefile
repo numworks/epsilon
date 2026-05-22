@@ -66,6 +66,12 @@ SOURCES_apps += $(call generated_sources_for, \
   statistics/assets/light/histogram_light_icon.png \
   statistics/assets/light/cumulative_light_icon.png \
   statistics/assets/light/statistics_normal_light_icon.png \
+  statistics/assets/dark/bar_dark_icon.png \
+  statistics/assets/dark/pie_dark_icon.png \
+  statistics/assets/dark/box_dark_icon.png \
+  statistics/assets/dark/histogram_dark_icon.png \
+  statistics/assets/dark/cumulative_dark_icon.png \
+  statistics/assets/dark/statistics_normal_dark_icon.png \
 )))
 
 $(call depends_on_transparent_image,apps/statistics/app.cpp,apps/icons/light/stat_light_icon.png)
@@ -78,6 +84,12 @@ $(addprefix apps/statistics/assets/light/, \
   histogram_light_icon.png \
   cumulative_light_icon.png \
   statistics_normal_light_icon.png \
+) \
+$(addprefix apps/statistics/assets/dark/, \
+  box_dark_icon.png \
+  histogram_dark_icon.png \
+  cumulative_dark_icon.png \
+  statistics_normal_dark_icon.png \
 ))
 
 $(call depends_on_transparent_image, \
@@ -85,6 +97,10 @@ apps/statistics/categorical/graph/graph_view_model.cpp, \
 $(addprefix apps/statistics/assets/light/, \
   bar_light_icon.png \
   pie_light_icon.png \
+) \
+$(addprefix apps/statistics/assets/dark/, \
+  bar_dark_icon.png \
+  pie_dark_icon.png \
 ))
 
 $(call i18n_with_universal,statistics/i18n/base)

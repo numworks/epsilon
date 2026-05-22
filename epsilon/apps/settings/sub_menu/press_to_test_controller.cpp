@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <apps/exam_mode_manager.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/stack_view_controller.h>
@@ -9,6 +10,7 @@
 
 #include <cmath>
 
+#include "press_to_test_success_dark.h"
 #include "press_to_test_success_light.h"
 
 using namespace Poincare;
@@ -46,7 +48,9 @@ PressToTestController::PressToTestController(Responder* parentResponder)
   for (int i = 0; i < k_numberOfReusableSwitchCells; i++) {
     m_switchCells[i].accessory()->setDisplayImage(false);
     m_switchCells[i].accessory()->imageView()->setImage(
-        ImageStore::PressToTestSuccessLight);
+        SharedGlobalPrefs().theme() == Theme::Dark
+            ? ImageStore::PressToTestSuccessDark
+            : ImageStore::PressToTestSuccessLight);
     m_switchCells[i].accessory()->imageView()->setBackgroundColor(
         ThemeComponent::BackgroundWhite);
   }
@@ -135,6 +139,12 @@ void PressToTestController::viewWillAppear() {
   // Reset selection and params only if exam mode has been activated.
   if (ExamModeManager::ExamMode().isActive()) {
     resetController();
+  }
+  const Escher::Image* successIcon = SharedGlobalPrefs().theme() == Theme::Dark
+                                         ? ImageStore::PressToTestSuccessDark
+                                         : ImageStore::PressToTestSuccessLight;
+  for (int i = 0; i < k_numberOfReusableSwitchCells; i++) {
+    m_switchCells[i].accessory()->imageView()->setImage(successIcon);
   }
   setMessages();
   ListWithTopAndBottomController::viewWillAppear();

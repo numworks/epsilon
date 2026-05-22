@@ -348,16 +348,16 @@ void GlobalStore::StoreParametricComponentsOfRecord(
 
 void GlobalStore::DeleteDerivativeWithParentName(const char* parentBaseName,
                                                  uint8_t order) {
-  assert(order == 0 || order == 1 || order == 2);
+  assert(order == k_allOrders || order == 1 || order == 2);
   int n = s_continuousFunctionStore->numberOfModels();
   for (int i = 0; i < n; i++) {
     Ion::Storage::Record r = s_continuousFunctionStore->recordAtIndex(i);
     OMG::ExpiringPointer<ContinuousFunction> f =
         s_continuousFunctionStore->modelForRecord(r);
     if (f->isDerivative() && strcmp(f->parentBaseName(), parentBaseName) == 0 &&
-        (order == 0 || f->derivationOrder() == order)) {
+        (order == k_allOrders || f->derivationOrder() == order)) {
       r.destroy();
-      if (order > 0) {
+      if (order != k_allOrders) {
         return;
       }
     }

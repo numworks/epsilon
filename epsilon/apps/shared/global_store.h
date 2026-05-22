@@ -30,6 +30,8 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
       Ion::Storage::parametricComponentExtension};
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
 
+  constexpr static int k_allOrders = 0;
+
   static void Init();
 
   // Storage information
@@ -52,9 +54,9 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
   // Delete derivative of specified order, or all derivatives if order is 0
   static void DeleteDerivativeWithParentName(const char* parentBaseName,
-                                             uint8_t order = 0);
+                                             uint8_t order = k_allOrders);
   static void DeleteDerivativeOfRecord(Ion::Storage::Record record,
-                                       uint8_t order = 0);
+                                       uint8_t order = k_allOrders);
 
   bool setExpressionForUserSymbol(
       const Poincare::Internal::Tree* expression,

@@ -34,9 +34,11 @@ jobs:
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
 
       - name: Build and run base
+        # We disable address randomization because some std functions are optimized
+        # when the addresses are aligned so randomization introduces jitter.
         run: |
           $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ inputs.project-path }}_test.perf_counter.bin"
-          $DOCKER_RUN "setarch \$(uname -m) -R ${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > base.log
+          $DOCKER_RUN "setarch \$(uname -m) --addr-no-randomize ${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > base.log
 
       - name: Checkout head of PR
         run: git checkout ${{ github.event.pull_request.head.sha }}
@@ -44,7 +46,7 @@ jobs:
       - name: Build and run head
         run: |
           $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ inputs.project-path }}_test.perf_counter.bin"
-          $DOCKER_RUN "setarch \$(uname -m) -R ${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > head.log
+          $DOCKER_RUN "setarch \$(uname -m) --addr-no-randomize ${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > head.log
 
       - name: Compare
         id: compare

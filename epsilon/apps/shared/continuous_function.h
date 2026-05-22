@@ -438,6 +438,9 @@ class ContinuousFunction : public Function {
     // Rename record to a hidden record name
     static Ion::Storage::Record::ErrorStatus RenameRecordToHidden(
         Ion::Storage::Record* record);
+    // Rename derivative records after a parent name change
+    static void UpdateDerivativeRecordsWithNewParentName(const char* oldName,
+                                                         const char* newName);
 
     // Return address of the record's expression
     void* expressionAddress(const Ion::Storage::Record* record) const override;

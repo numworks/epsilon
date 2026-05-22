@@ -880,6 +880,26 @@ ContinuousFunction::Model::RenameRecordToHidden(Ion::Storage::Record* record) {
       record, name, Ion::Storage::functionExtension);
 }
 
+void ContinuousFunction::Model::UpdateDerivativeRecordsWithNewParentName(
+    const char* oldParentName, const char* newParentName) {
+  ContinuousFunctionStore& store =
+      GlobalContextAccessor::ContinuousFunctionStore();
+  int n = store.numberOfModels();
+  for (int i = 0; i < n; i++) {
+    /* ContinuousFunction constructor calls updateNameIfNeeded, which may
+     * trigger cache invalidation of the current record being renamed. We access
+     * RecordDataBuffer directly to avoid that. */
+    Ion::Storage::Record r = store.recordAtIndex(i);
+    RecordDataBuffer* data = reinterpret_cast<RecordDataBuffer*>(
+        const_cast<void*>(r.value().buffer));
+    assert(data);
+    if (data->derivationOrder() > 0 &&
+        strcmp(data->parentBaseName(), oldParentName) == 0) {
+      data->setParentBaseName(newParentName);
+    }
+  }
+}
+
 Ion::Storage::Record::ErrorStatus
 ContinuousFunction::Model::renameRecordIfNeeded(
     Ion::Storage::Record* record, const char* oldName,
@@ -911,23 +931,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(
             strcmp(oldName, newName) != 0) {
           /* Rename succeeded and name changed: update m_parentBaseName on all
            * derivative records that reference this parent. */
-          ContinuousFunctionStore& store =
-              GlobalContextAccessor::ContinuousFunctionStore();
-          int n = store.numberOfModels();
-          for (int i = 0; i < n; i++) {
-            /* ContinuousFunction constructor calls updateNameIfNeeded, which
-             * may trigger cache invalidation of the current record being
-             * renamed. We access RecordDataBuffer directly to avoid that.
-             */
-            Ion::Storage::Record r = store.recordAtIndex(i);
-            RecordDataBuffer* data = reinterpret_cast<RecordDataBuffer*>(
-                const_cast<void*>(r.value().buffer));
-            assert(data);
-            if (data->derivationOrder() > 0 &&
-                strcmp(data->parentBaseName(), oldName) == 0) {
-              data->setParentBaseName(newName);
-            }
-          }
+          UpdateDerivativeRecordsWithNewParentName(oldName, newName);
         }
         return error;
       }

@@ -125,7 +125,7 @@ void ElementsView::layoutSubviews(bool force) {
   m_nameView.setBackgroundColor(
       Escher::ColorPicker::Resolve(k_backgroundColor));
   m_nameView.setMessage(ElementsDataBase::Name(z));
-  m_nameView.setTextColor(Escher::ColorPicker::ResolveCustomColorForHighlight(
+  m_nameView.setTextColor(Escher::ColorPicker::ResolveCustomColorForText(
       dataSource->field()->getColors(z).fg()));
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   setChildFrame(&m_nameView,

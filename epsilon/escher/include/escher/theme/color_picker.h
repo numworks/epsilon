@@ -21,6 +21,7 @@ class ColorPicker {
    * TODO: Use ThemeComponent instead */
   static KDColor ResolveCustomColor(KDColor color);
   static KDColor ResolveCustomColorForHighlight(KDColor color);
+  static KDColor ResolveCustomColorForText(KDColor color);
 
   // Depending on the theme, blending should be more or less intense
   enum class BlendLevel : bool { High, Low };

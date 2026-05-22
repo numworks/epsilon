@@ -29,6 +29,17 @@ KDColor ColorPicker::ResolveCustomColorForHighlight(KDColor color) {
   }
 }
 
+KDColor ColorPicker::ResolveCustomColorForText(KDColor color) {
+  switch (GetCurrentTheme()) {
+    case Theme::Light:
+      return color;
+    case Theme::Dark:
+      return Palette::DARK_VioletPale;
+    default:
+      OMG_UNREACHABLE
+  }
+}
+
 Theme ColorPicker::GetCurrentTheme() { return SharedPreferences->theme(); }
 
 KDColor ColorPicker::Get(Theme theme, ThemeComponent component) {

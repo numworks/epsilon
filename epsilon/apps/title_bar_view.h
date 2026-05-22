@@ -5,6 +5,7 @@
 #include <escher/image_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/text_format.h>
+#include <escher/themed_image_view.h>
 
 #include "battery_view.h"
 #include "shift_alpha_lock_view.h"
@@ -56,7 +57,7 @@ class TitleBarView : public Escher::View {
   BatteryView m_batteryView;
   ShiftAlphaLockView m_shiftAlphaLockView;
   Escher::BufferTextView<k_preferenceTextSize> m_preferenceView;
-  Escher::ImageView m_examModeIconView;
+  Escher::ThemedImageView m_examModeIconView;
   Escher::MessageTextView m_examModeTextView;
   Escher::SolidColorView m_separatorView{
       Escher::ThemeComponent::SeparatorTitleBar};

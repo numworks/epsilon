@@ -22,11 +22,10 @@ TitleBarView::TitleBarView()
     : View(),
       m_titleView(I18n::Message::Default, k_glyphsFormat),
       m_preferenceView(k_glyphsFormat),
+      m_examModeIconView(
+          ThemedImage(ImageStore::ExamLightIcon, ImageStore::ExamDarkIcon)),
       m_examModeTextView(I18n::Message::Default, k_glyphsFormat) {
   m_preferenceView.setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-  m_examModeIconView.setImage(SharedGlobalPrefs().theme() == Theme::Dark
-                                  ? ImageStore::ExamDarkIcon
-                                  : ImageStore::ExamLightIcon);
 }
 
 void TitleBarView::drawRect(KDContext* ctx, KDRect rect) const {
@@ -188,9 +187,6 @@ void TitleBarView::refreshPreferences() {
 }
 
 void TitleBarView::reload() {
-  m_examModeIconView.setImage(SharedGlobalPrefs().theme() == Theme::Dark
-                                  ? ImageStore::ExamDarkIcon
-                                  : ImageStore::ExamLightIcon);
   refreshPreferences();
   markWholeFrameAsDirty();
 }

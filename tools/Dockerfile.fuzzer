@@ -1,0 +1,29 @@
+# This is mostly a copy of linux, we could merge it or use multi-stage builds
+
+FROM debian:trixie-slim
+
+WORKDIR /runner
+
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/assume-yes && \
+    apt-get update && \
+    apt-get upgrade && \
+    apt-get install --no-install-recommends sudo
+
+COPY tools/setup.sh tools/setup.sh
+
+RUN tools/setup.sh --ci --only-simulator
+
+RUN apt-get install clang-19 libc++-19-dev libc++abi-19-dev lld-19 elfutils && \
+    ln -s /usr/bin/clang-19 /usr/local/bin/clang && \
+    ln -s /usr/bin/clang++-19 /usr/local/bin/clang++
+
+ENV PYTHON=/runner/.venv/bin/python
+
+RUN apt-get install --no-install-recommends afl++
+
+RUN pip3 install --break-system-packages --no-cache-dir tqdm google-auth requests
+
+ENV AFL_QUIET=1
+ENV AFL_SKIP_CPUFREQ=1
+
+WORKDIR /monorepo

@@ -39,6 +39,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   highlight_image_cell.cpp \
   horizontal_or_vertical_layout.cpp \
   image_view.cpp \
+  themed_image_view.cpp \
   init.cpp \
   editable_field.cpp \
   invocation.cpp \

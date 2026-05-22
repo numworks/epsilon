@@ -62,9 +62,12 @@ class ContinuousFunction : public Function {
                             char* buffer, size_t bufferSize,
                             int precision) const override;
   bool isDefined() const override {
-    assert(!(isDerivative() && parentFunction()->isNull()));
-    return ExpressionModelHandle::isDefined() ||
-           (isDerivative() && parentFunction()->isDefined());
+    if (!isDerivative()) {
+      return ExpressionModelHandle::isDefined();
+    }
+    OMG::ExpiringPointer<ContinuousFunction> parent = parentFunction();
+    assert(!parent->isNull());
+    return parent->isDefined();
   }
   // Return true if the ContinuousFunction is active
   bool isActive() const override {

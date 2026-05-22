@@ -228,6 +228,12 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
   tidyCache();
   m_model.resetProperties();  // Reset model's properties.
   properties();               // update properties.
+  if (isDerivative()) {
+    // Early exit, derivatives are always cartesian and do not have derivatives
+    assert(wasCartesian && properties().isCartesian());
+    assert(!canDisplayDerivative());
+    return;
+  }
   if (wasCartesian != properties().isCartesian() ||
       !properties().canHaveCustomDomain()) {
     // The definition's domain must be reset.
@@ -237,6 +243,25 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
     // No need to setDisplayValues, it is already included in setDisplayPlot
     setDisplayPlotFirstDerivative(false);
     setDisplayPlotSecondDerivative(false);
+  } else {
+    // Derivatives are depend on their parent's, update them
+    updateDerivativeModels();
+  }
+}
+
+void ContinuousFunction::updateDerivativeModels() {
+  assert(canDisplayDerivative());
+  ContinuousFunctionStore& store =
+      GlobalContextAccessor::ContinuousFunctionStore();
+  for (int i = 0; i < store.numberOfModels(); i++) {
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        store.modelForRecord(store.recordAtIndex(i));
+    if (f->isDerivative() && f->parentRecord() == *this) {
+      // Remove memoized expressions dependent on the parent
+      f->model()->tidyDownstreamPoolFrom(nullptr);
+      // Update cache and properties
+      f->updateModel(f->properties().isCartesian());
+    }
   }
 }
 

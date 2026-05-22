@@ -138,6 +138,7 @@ class ContinuousFunction : public Function {
   }
   // Update plotType as well as tMin and tMax values.
   void updateModel(bool wasCartesian);
+  void updateDerivativeModels();
   const Poincare::PreparedFunction& expressionApproximated(
       int derivationOrder = 0) const {
     return m_model.expressionApproximated(this, derivationOrder);

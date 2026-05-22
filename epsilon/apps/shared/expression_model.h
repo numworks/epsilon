@@ -23,8 +23,8 @@ class ExpressionModel {
   virtual const Poincare::Internal::Tree* expressionTree(
       const Ion::Storage::Record* record) const;
 
-  Poincare::Layout layout(const Ion::Storage::Record* record,
-                          CodePoint symbol = 0) const;
+  virtual Poincare::Layout layout(const Ion::Storage::Record* record,
+                                  CodePoint symbol = 0) const;
 
   // Setters
   virtual Ion::Storage::Record::ErrorStatus setContent(

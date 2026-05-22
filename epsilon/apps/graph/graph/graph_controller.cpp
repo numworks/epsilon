@@ -117,12 +117,6 @@ const Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
       graphController->functionOrSequenceContext();
   OMG::ExpiringPointer<const ContinuousFunction> function =
       functionContext.modelForRecord(functionContext.activeRecordAtIndex(j));
-  if (function->isDerivative()) {
-    constexpr size_t bufferSize = Shared::Function::k_maxNameWithArgumentSize;
-    char buffer[bufferSize];
-    size_t length = function->nameWithArgument(buffer, bufferSize);
-    return Layout::String(buffer, length);
-  }
   return function->layout();
 }
 

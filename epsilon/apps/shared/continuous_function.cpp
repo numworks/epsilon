@@ -1074,6 +1074,18 @@ SystemExpression ContinuousFunction::Model::parametricForm(
   return e;
 }
 
+Layout ContinuousFunction::Model::layout(const Ion::Storage::Record* record,
+                                         CodePoint symbol) const {
+  ContinuousFunction f(*record);
+  if (f.isDerivative()) {
+    constexpr size_t bufferSize = Shared::Function::k_maxNameWithArgumentSize;
+    char buffer[bufferSize];
+    size_t length = f.nameWithArgument(buffer, bufferSize);
+    return Layout::String(buffer, length);
+  }
+  return ExpressionModel::layout(record, symbol);
+}
+
 void* ContinuousFunction::Model::expressionAddress(
     const Ion::Storage::Record* record) const {
   return (char*)record->value().buffer + sizeof(RecordDataBuffer);

@@ -279,30 +279,16 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
         modelStore()->modelForRecord(recordAtRow(row));
     assert(!f->isNull());
     if (type == k_expressionCellType) {
+      bool isDerivative = f->isDerivative();
       FunctionCell* functionCell = static_cast<FunctionCell*>(cell);
-      Layout layout;
-      I18n::Message caption = I18n::Message::Default;
-      bool hideMessage;
-      if (f->isDerivative()) {
-        constexpr static size_t bufferSize =
-            Shared::Function::k_maxNameWithArgumentSize;
-        char buffer[bufferSize];
-        size_t length = f->nameWithArgument(buffer, bufferSize);
-        layout = Layout::String(buffer, length);
-        hideMessage = true;
-      } else {
-        layout = f->layout();
-        caption = f->properties().caption();
-        hideMessage = false;
-      }
-      functionCell->expressionCell()->setLayout(layout);
-      functionCell->setMessage(caption);
-      functionCell->setHideMessage(hideMessage);
+      functionCell->expressionCell()->setLayout(f->layout());
+      functionCell->setMessage(isDerivative ? I18n::Message::Default
+                                            : f->properties().caption());
+      functionCell->setHideMessage(isDerivative);
       ThemeComponent textColor = f->isActive() ? ThemeComponent::TextDefault
                                                : ThemeComponent::TextGrayDark;
       functionCell->expressionCell()->setTextColor(textColor);
-      static_cast<FunctionCell*>(functionCell)
-          ->setParameterSelected(m_parameterColumnSelected);
+      functionCell->setParameterSelected(m_parameterColumnSelected);
     }
     // f can be null if the entry was just created and is still empty.
     ThemeComponent functionColor =

@@ -426,6 +426,9 @@ class ContinuousFunction : public Function {
     void resetProperties() const { m_properties.reset(); }
     Poincare::SystemExpression parametricForm(
         const Ion::Storage::Record* record) const;
+    // Layout
+    Poincare::Layout layout(const Ion::Storage::Record* record,
+                            CodePoint symbol) const override;
 
    private:
     static CodePoint CodePointForSymbol(const Poincare::UserExpression& symbol);

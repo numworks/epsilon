@@ -23,7 +23,7 @@ KDColor ColorPicker::ResolveCustomColorForHighlight(KDColor color) {
     case Theme::Light:
       return color;
     case Theme::Dark:
-      return Palette::DARK_VioletPale;
+      return Palette::DARK_VioletDeep;
     default:
       OMG_UNREACHABLE
   }

@@ -1,9 +1,9 @@
 #include "graph_view_model.h"
 
-#include <apps/statistics/assets/box_light_icon.h>
-#include <apps/statistics/assets/cumulative_light_icon.h>
-#include <apps/statistics/assets/histogram_light_icon.h>
-#include <apps/statistics/assets/statistics_normal_light_icon.h>
+#include <apps/statistics/assets/light/box_light_icon.h>
+#include <apps/statistics/assets/light/cumulative_light_icon.h>
+#include <apps/statistics/assets/light/histogram_light_icon.h>
+#include <apps/statistics/assets/light/statistics_normal_light_icon.h>
 
 #include "assert.h"
 

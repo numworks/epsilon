@@ -60,12 +60,12 @@ SOURCES_apps += $(call generated_sources_for, \
   $(addprefix $(PATH_apps)/,$(addsuffix :-test, \
   icons/light/stat_light_icon.png \
   icons/dark/stat_dark_icon.png \
-  statistics/assets/bar_light_icon.png \
-  statistics/assets/pie_light_icon.png \
-  statistics/assets/box_light_icon.png \
-  statistics/assets/histogram_light_icon.png \
-  statistics/assets/cumulative_light_icon.png \
-  statistics/assets/statistics_normal_light_icon.png \
+  statistics/assets/light/bar_light_icon.png \
+  statistics/assets/light/pie_light_icon.png \
+  statistics/assets/light/box_light_icon.png \
+  statistics/assets/light/histogram_light_icon.png \
+  statistics/assets/light/cumulative_light_icon.png \
+  statistics/assets/light/statistics_normal_light_icon.png \
 )))
 
 $(call depends_on_transparent_image,apps/statistics/app.cpp,apps/icons/light/stat_light_icon.png)
@@ -73,7 +73,7 @@ $(call depends_on_transparent_image,apps/statistics/app.cpp,apps/icons/dark/stat
 
 $(call depends_on_transparent_image, \
 apps/statistics/quantitative/graph/graph_view_model.cpp, \
-$(addprefix apps/statistics/assets/, \
+$(addprefix apps/statistics/assets/light/, \
   box_light_icon.png \
   histogram_light_icon.png \
   cumulative_light_icon.png \
@@ -82,7 +82,7 @@ $(addprefix apps/statistics/assets/, \
 
 $(call depends_on_transparent_image, \
 apps/statistics/categorical/graph/graph_view_model.cpp, \
-$(addprefix apps/statistics/assets/, \
+$(addprefix apps/statistics/assets/light/, \
   bar_light_icon.png \
   pie_light_icon.png \
 ))

@@ -1,9 +1,9 @@
 #include "calculation_popup_data_source.h"
 
-#include "../images/calculation1_light_icon.h"
-#include "../images/calculation2_light_icon.h"
-#include "../images/calculation3_light_icon.h"
-#include "../images/calculation4_light_icon.h"
+#include "calculation1_light_icon.h"
+#include "calculation2_light_icon.h"
+#include "calculation3_light_icon.h"
+#include "calculation4_light_icon.h"
 
 namespace Distributions {
 

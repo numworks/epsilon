@@ -5,16 +5,16 @@
 #include <new>
 
 #include "../app.h"
-#include "../images/binomial_light_icon.h"
-#include "../images/chi_squared_light_icon.h"
-#include "../images/exponential_light_icon.h"
-#include "../images/fisher_light_icon.h"
-#include "../images/geometric_light_icon.h"
-#include "../images/hypergeometric_light_icon.h"
-#include "../images/normal_light_icon.h"
-#include "../images/poisson_light_icon.h"
-#include "../images/student_light_icon.h"
-#include "../images/uniform_light_icon.h"
+#include "binomial_light_icon.h"
+#include "chi_squared_light_icon.h"
+#include "exponential_light_icon.h"
+#include "fisher_light_icon.h"
+#include "geometric_light_icon.h"
+#include "hypergeometric_light_icon.h"
+#include "normal_light_icon.h"
+#include "poisson_light_icon.h"
+#include "student_light_icon.h"
+#include "uniform_light_icon.h"
 
 using namespace Escher;
 

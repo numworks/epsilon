@@ -102,12 +102,13 @@ class ContinuousFunction : public Function {
   void setDerivationOrder(uint8_t order) {
     recordData()->setDerivationOrder(order);
   }
-  const char* parentBaseName() const { return recordData()->parentBaseName(); }
-  void setParentBaseName(const char* name) {
-    recordData()->setParentBaseName(name);
-  }
   // Return the parent record for a derivative record
-  Ion::Storage::Record parentRecord() const;
+  Ion::Storage::Record parentRecord() const {
+    return recordData()->parentRecord();
+  }
+  void setParentRecord(Ion::Storage::Record record) {
+    recordData()->setParentRecord(record);
+  }
   OMG::ExpiringPointer<ContinuousFunction> parentFunction() const;
   Poincare::UserExpression equationClone() const {
     return static_cast<const Model*>(model())->equationClone(this);
@@ -337,9 +338,11 @@ class ContinuousFunction : public Function {
 
     uint8_t derivationOrder() const { return m_derivationOrder; }
     void setDerivationOrder(uint8_t order) { m_derivationOrder = order; }
-    const char* parentBaseName() const { return m_parentBaseName; }
-    void setParentBaseName(const char* name) {
-      strlcpy(m_parentBaseName, name, sizeof(m_parentBaseName));
+    Ion::Storage::Record parentRecord() const {
+      return Ion::Storage::Record(m_parentRecordCRC);
+    }
+    void setParentRecord(Ion::Storage::Record record) {
+      m_parentRecordCRC = static_cast<uint32_t>(record);
     }
 
    private:
@@ -353,7 +356,7 @@ class ContinuousFunction : public Function {
     DerivativesOptions m_derivativesOptions;
     bool m_tAuto;
     uint8_t m_derivationOrder;
-    char m_parentBaseName[Poincare::SymbolHelper::k_maxNameSize];
+    uint32_t m_parentRecordCRC;
     /* In the record at the end, there is the expression of the function,
      * directly copied from the pool. */
     // char m_expression[0];
@@ -408,8 +411,7 @@ class ContinuousFunction : public Function {
         const Ion::Storage::Record* record) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
-        Ion::Storage::Record* record, const char* oldName,
-        bool isNewRecordCreation) const;
+        Ion::Storage::Record* record, bool isNewRecordCreation) const;
     // Set the record content using BuildFunctionFromLayout
     Ion::Storage::Record::ErrorStatus setContent(
         Ion::Storage::Record* record, const Poincare::Layout& l,
@@ -441,9 +443,10 @@ class ContinuousFunction : public Function {
     // Rename record to a hidden record name
     static Ion::Storage::Record::ErrorStatus RenameRecordToHidden(
         Ion::Storage::Record* record);
-    // Rename derivative records after a parent name change
-    static void UpdateDerivativeRecordsWithNewParentName(const char* oldName,
-                                                         const char* newName);
+    // Update parent record on derivative records after a rename
+    static void UpdateDerivativeRecordsWithNewParent(
+        Ion::Storage::Record oldParentRecord,
+        Ion::Storage::Record newParentRecord);
 
     // Return address of the record's expression
     void* expressionAddress(const Ion::Storage::Record* record) const override;

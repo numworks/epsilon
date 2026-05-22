@@ -346,15 +346,15 @@ void GlobalStore::StoreParametricComponentsOfRecord(
   storeParametricComponent(buffer, length, bufferSize, e, false);
 }
 
-void GlobalStore::DeleteDerivativeWithParentName(const char* parentBaseName,
-                                                 uint8_t order) {
+void GlobalStore::DeleteDerivativeOfRecord(Ion::Storage::Record record,
+                                           uint8_t order) {
   assert(order == k_allOrders || order == 1 || order == 2);
   int n = s_continuousFunctionStore->numberOfModels();
   for (int i = 0; i < n; i++) {
     Ion::Storage::Record r = s_continuousFunctionStore->recordAtIndex(i);
     OMG::ExpiringPointer<ContinuousFunction> f =
         s_continuousFunctionStore->modelForRecord(r);
-    if (f->isDerivative() && strcmp(f->parentBaseName(), parentBaseName) == 0 &&
+    if (f->isDerivative() && f->parentRecord() == record &&
         (order == k_allOrders || f->derivationOrder() == order)) {
       r.destroy();
       if (order != k_allOrders) {
@@ -362,16 +362,6 @@ void GlobalStore::DeleteDerivativeWithParentName(const char* parentBaseName,
       }
     }
   }
-}
-
-void GlobalStore::DeleteDerivativeOfRecord(Ion::Storage::Record record,
-                                           uint8_t order) {
-  constexpr size_t bufferSize = SymbolHelper::k_maxNameSize;
-  char buffer[bufferSize];
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      s_continuousFunctionStore->modelForRecord(record);
-  f->name(buffer, bufferSize);
-  DeleteDerivativeWithParentName(buffer, order);
 }
 
 }  // namespace Shared

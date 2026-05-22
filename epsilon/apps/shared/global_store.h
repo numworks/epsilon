@@ -53,8 +53,6 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
   // Delete derivative of specified order, or all derivatives if order is 0
-  static void DeleteDerivativeWithParentName(const char* parentBaseName,
-                                             uint8_t order = k_allOrders);
   static void DeleteDerivativeOfRecord(Ion::Storage::Record record,
                                        uint8_t order = k_allOrders);
 

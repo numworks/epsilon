@@ -110,11 +110,8 @@ Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addDerivativeModel(
   if (error != ErrorStatus::None) {
     return error;
   }
-  constexpr size_t nameBufferSize = Poincare::SymbolHelper::k_maxNameSize;
-  char parentName[nameBufferSize];
-  modelForRecord(parentRecord)->name(parentName, nameBufferSize);
   f.setDerivationOrder(order);
-  f.setParentBaseName(parentName);
+  f.setParentRecord(parentRecord);
   return ErrorStatus::None;
 }
 

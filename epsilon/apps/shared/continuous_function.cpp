@@ -77,10 +77,7 @@ ContinuousFunction::ContinuousFunction(Ion::Storage::Record record)
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
     bool isNewRecordCreation) {
-  constexpr size_t nameBufferSize = Poincare::SymbolHelper::k_maxNameSize;
-  char baseName[nameBufferSize];
-  name(baseName, nameBufferSize);
-  return m_model.renameRecordIfNeeded(this, baseName, isNewRecordCreation);
+  return m_model.renameRecordIfNeeded(this, isNewRecordCreation);
 }
 
 size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
@@ -180,13 +177,6 @@ bool ContinuousFunction::isNamed() const {
   const char* recordFullName = fullName();
   return recordFullName != nullptr &&
          recordFullName[0] != k_unnamedRecordFirstChar;
-}
-
-Ion::Storage::Record ContinuousFunction::parentRecord() const {
-  assert(isDerivative());
-  return Ion::Storage::FileSystem::sharedFileSystem
-      ->recordBaseNamedWithExtension(recordData()->parentBaseName(),
-                                     Ion::Storage::functionExtension);
 }
 
 OMG::ExpiringPointer<ContinuousFunction> ContinuousFunction::parentFunction()
@@ -490,9 +480,8 @@ ContinuousFunction::RecordDataBuffer::RecordDataBuffer(
       m_domain(-INFINITY, INFINITY),
       m_derivativesOptions{},
       m_tAuto(true),
-      m_derivationOrder(0) {
-  m_parentBaseName[0] = '\0';
-}
+      m_derivationOrder(0),
+      m_parentRecordCRC(0) {}
 
 /* ContinuousFunction::Model */
 
@@ -876,12 +865,19 @@ ContinuousFunction::Model::RenameRecordToHidden(Ion::Storage::Record* record) {
                                              k_unnamedRecordFirstChar);
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
       name, length, k_maxDefaultNameSize, Ion::Storage::functionExtension);
-  return Ion::Storage::Record::SetBaseNameWithExtension(
-      record, name, Ion::Storage::functionExtension);
+  Ion::Storage::Record oldRecord = *record;
+  Ion::Storage::Record::ErrorStatus error =
+      Ion::Storage::Record::SetBaseNameWithExtension(
+          record, name, Ion::Storage::functionExtension);
+  if (error == Ion::Storage::Record::ErrorStatus::None) {
+    UpdateDerivativeRecordsWithNewParent(oldRecord, *record);
+  }
+  return error;
 }
 
-void ContinuousFunction::Model::UpdateDerivativeRecordsWithNewParentName(
-    const char* oldParentName, const char* newParentName) {
+void ContinuousFunction::Model::UpdateDerivativeRecordsWithNewParent(
+    Ion::Storage::Record oldParentRecord,
+    Ion::Storage::Record newParentRecord) {
   ContinuousFunctionStore& store =
       GlobalContextAccessor::ContinuousFunctionStore();
   int n = store.numberOfModels();
@@ -894,16 +890,15 @@ void ContinuousFunction::Model::UpdateDerivativeRecordsWithNewParentName(
         const_cast<void*>(r.value().buffer));
     assert(data);
     if (data->derivationOrder() > 0 &&
-        strcmp(data->parentBaseName(), oldParentName) == 0) {
-      data->setParentBaseName(newParentName);
+        data->parentRecord() == oldParentRecord) {
+      data->setParentRecord(newParentRecord);
     }
   }
 }
 
 Ion::Storage::Record::ErrorStatus
 ContinuousFunction::Model::renameRecordIfNeeded(
-    Ion::Storage::Record* record, const char* oldName,
-    bool isNewRecordCreation) const {
+    Ion::Storage::Record* record, bool isNewRecordCreation) const {
   /* Use equationClone because it preserves the left-hand side of "f(x)=" and
    * "f(t)=", which allows the name of the function to be found. */
   UserExpression newExpression = equationClone(record);
@@ -924,14 +919,15 @@ ContinuousFunction::Model::renameRecordIfNeeded(
     if (IsFunctionAssignment(newExpression)) {
       const UserExpression function = newExpression.cloneChildAtIndex(0);
       const char* newName = SymbolHelper::GetName(function);
+      Ion::Storage::Record oldRecord = *record;
       error = Ion::Storage::Record::SetBaseNameWithExtension(
           record, newName, Ion::Storage::functionExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         if (error == Ion::Storage::Record::ErrorStatus::None &&
-            strcmp(oldName, newName) != 0) {
-          /* Rename succeeded and name changed: update m_parentBaseName on all
+            oldRecord != *record) {
+          /* Rename succeeded and record changed: update m_parentRecord on all
            * derivative records that reference this parent. */
-          UpdateDerivativeRecordsWithNewParentName(oldName, newName);
+          UpdateDerivativeRecordsWithNewParent(oldRecord, *record);
         }
         return error;
       }

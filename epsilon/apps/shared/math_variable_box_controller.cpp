@@ -495,7 +495,7 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
                                                           bufferSize);
     }
     if (isFunction) {
-      GlobalStore::DeleteDerivativeWithParentName(buffer);
+      GlobalStore::DeleteDerivativeOfRecord(record);
     }
   }
   // Shift the memoization if needed

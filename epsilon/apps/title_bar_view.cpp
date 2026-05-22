@@ -1,13 +1,13 @@
 #include "title_bar_view.h"
 
+#include <apps/icons/dark/exam_dark_icon.h>
+#include <apps/icons/light/exam_light_icon.h>
 #include <escher/theme/color_picker.h>
 #include <omg/unreachable.h>
 #include <poincare/print.h>
 
 #include <array>
 
-#include "exam_dark_icon.h"
-#include "exam_light_icon.h"
 #include "exam_mode_manager.h"
 #include "global_preferences.h"
 

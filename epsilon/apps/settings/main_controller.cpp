@@ -124,7 +124,6 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     GlobalPreferences::SharedGlobalPreferences()->setTheme(newTheme);
     m_contrastModeCell.accessory()->setState(SharedGlobalPrefs().theme() ==
                                              Escher::Theme::Dark);
-    AppsContainer::sharedAppsContainer()->reloadTitleBarView();
     AppsContainer::sharedAppsContainer()->redrawWindow(true);
   } else if (type == k_brightnessCellType) {
     int delta = Ion::Backlight::MaxBrightness /

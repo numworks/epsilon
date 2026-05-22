@@ -120,7 +120,7 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
     appSnapshotAtIndex(i)->reset();
   }
 
-  reloadTitleBarView();
+  refreshPreferences();
 }
 
 void AppsContainer::didSuspend() {

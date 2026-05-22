@@ -1,5 +1,10 @@
 #include "graph_view_model.h"
 
+#include <apps/global_preferences.h>
+#include <apps/statistics/assets/dark/box_dark_icon.h>
+#include <apps/statistics/assets/dark/cumulative_dark_icon.h>
+#include <apps/statistics/assets/dark/histogram_dark_icon.h>
+#include <apps/statistics/assets/dark/statistics_normal_dark_icon.h>
 #include <apps/statistics/assets/light/box_light_icon.h>
 #include <apps/statistics/assets/light/cumulative_light_icon.h>
 #include <apps/statistics/assets/light/histogram_light_icon.h>
@@ -18,9 +23,13 @@ I18n::Message GraphViewModel::MessageForGraphView(GraphView graphView) {
 
 const Escher::Image* const GraphViewModel::ImageForGraphView(
     GraphView graphView) {
+  const bool dark = SharedGlobalPrefs().theme() == Escher::Theme::Dark;
   const Escher::Image* const k_images[k_numberOfGraphViews] = {
-      ImageStore::HistogramLightIcon, ImageStore::BoxLightIcon,
-      ImageStore::CumulativeLightIcon, ImageStore::StatisticsNormalLightIcon};
+      dark ? ImageStore::HistogramDarkIcon : ImageStore::HistogramLightIcon,
+      dark ? ImageStore::BoxDarkIcon : ImageStore::BoxLightIcon,
+      dark ? ImageStore::CumulativeDarkIcon : ImageStore::CumulativeLightIcon,
+      dark ? ImageStore::StatisticsNormalDarkIcon
+           : ImageStore::StatisticsNormalLightIcon};
   return k_images[IndexOfGraphView(graphView)];
 }
 

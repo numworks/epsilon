@@ -50,8 +50,10 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
   if (ElementsDataBase::IsElement(selection)) {
     KDColor borderColor = Escher::ColorPicker::ResolveCustomColorForHighlight(
         dataSource->filteredColors(selection).fg());
-    KDColor innerColor = Escher::ColorPicker::ResolveCustomColor(
-        dataSource->filteredColors(selection).bg());
+    KDColor innerColor = Escher::ColorPicker::GetSelectionThickness() ==
+                                 Escher::ColorPicker::SelectionThickness::Double
+                             ? borderColor
+                             : dataSource->filteredColors(selection).bg();
     drawElementBorder(selection, borderColor, ctx, innerColor);
   }
 }

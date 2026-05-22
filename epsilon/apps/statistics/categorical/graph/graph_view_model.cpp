@@ -1,8 +1,8 @@
 #include "graph_view_model.h"
 
 #include "assert.h"
-#include "bar_icon.h"
-#include "pie_icon.h"
+#include "bar_light_icon.h"
+#include "pie_light_icon.h"
 
 namespace Statistics::Categorical {
 
@@ -15,7 +15,7 @@ I18n::Message GraphViewModel::MessageForGraphView(GraphView graphView) {
 const Escher::Image* const GraphViewModel::ImageForGraphView(
     GraphView graphView) {
   const Escher::Image* const k_images[k_numberOfGraphViews] = {
-      ImageStore::BarIcon, ImageStore::PieIcon};
+      ImageStore::BarLightIcon, ImageStore::PieLightIcon};
   return k_images[IndexOfGraphView(graphView)];
 }
 

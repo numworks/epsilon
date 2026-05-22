@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-#include "press_to_test_success.h"
+#include "press_to_test_success_light.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -46,7 +46,7 @@ PressToTestController::PressToTestController(Responder* parentResponder)
   for (int i = 0; i < k_numberOfReusableSwitchCells; i++) {
     m_switchCells[i].accessory()->setDisplayImage(false);
     m_switchCells[i].accessory()->imageView()->setImage(
-        ImageStore::PressToTestSuccess);
+        ImageStore::PressToTestSuccessLight);
     m_switchCells[i].accessory()->imageView()->setBackgroundColor(
         ThemeComponent::BackgroundWhite);
   }

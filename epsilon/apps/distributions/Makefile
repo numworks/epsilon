@@ -28,20 +28,20 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
 SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/,$(addsuffix :-test, \
   icons/light/distributions_light_icon.png \
   icons/dark/distributions_dark_icon.png \
-  distributions/images/binomial_icon.png \
-  distributions/images/chi_squared_icon.png \
-  distributions/images/exponential_icon.png \
-  distributions/images/fisher_icon.png \
-  distributions/images/geometric_icon.png \
-  distributions/images/hypergeometric_icon.png \
-  distributions/images/normal_icon.png \
-  distributions/images/poisson_icon.png \
-  distributions/images/student_icon.png \
-  distributions/images/uniform_icon.png \
-  distributions/images/calculation1_icon.png \
-  distributions/images/calculation2_icon.png \
-  distributions/images/calculation3_icon.png \
-  distributions/images/calculation4_icon.png \
+  distributions/images/binomial_light_icon.png \
+  distributions/images/chi_squared_light_icon.png \
+  distributions/images/exponential_light_icon.png \
+  distributions/images/fisher_light_icon.png \
+  distributions/images/geometric_light_icon.png \
+  distributions/images/hypergeometric_light_icon.png \
+  distributions/images/normal_light_icon.png \
+  distributions/images/poisson_light_icon.png \
+  distributions/images/student_light_icon.png \
+  distributions/images/uniform_light_icon.png \
+  distributions/images/calculation1_light_icon.png \
+  distributions/images/calculation2_light_icon.png \
+  distributions/images/calculation3_light_icon.png \
+  distributions/images/calculation4_light_icon.png \
 )))
 
 $(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/icons/light/distributions_light_icon.png)
@@ -50,16 +50,16 @@ $(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_ap
 $(call depends_on_transparent_image, \
 $(PATH_apps)/distributions/controllers/distribution_controller.cpp, \
 $(addprefix $(PATH_apps)/distributions/images/,\
-  binomial_icon.png \
-  chi_squared_icon.png \
-  exponential_icon.png \
-  fisher_icon.png \
-  geometric_icon.png \
-  hypergeometric_icon.png \
-  normal_icon.png \
-  poisson_icon.png \
-  student_icon.png \
-  uniform_icon.png \
+  binomial_light_icon.png \
+  chi_squared_light_icon.png \
+  exponential_light_icon.png \
+  fisher_light_icon.png \
+  geometric_light_icon.png \
+  hypergeometric_light_icon.png \
+  normal_light_icon.png \
+  poisson_light_icon.png \
+  student_light_icon.png \
+  uniform_light_icon.png \
 ))
 
 $(call depends_on_transparent_image, \
@@ -68,10 +68,10 @@ $(addprefix $(PATH_apps)/distributions/controllers/, \
   calculation_popup_data_source.cpp \
 ), \
 $(addprefix $(PATH_apps)/distributions/images/,\
-  calculation1_icon.png \
-  calculation2_icon.png \
-  calculation3_icon.png \
-  calculation4_icon.png \
+  calculation1_light_icon.png \
+  calculation2_light_icon.png \
+  calculation3_light_icon.png \
+  calculation4_light_icon.png \
 ))
 
 $(call i18n_with_universal,distributions/i18n/base)

@@ -1,9 +1,9 @@
 #include "graph_view_model.h"
 
-#include <apps/statistics/assets/box_icon.h>
-#include <apps/statistics/assets/cumulative_icon.h>
-#include <apps/statistics/assets/histogram_icon.h>
-#include <apps/statistics/assets/statistics_normal_icon.h>
+#include <apps/statistics/assets/box_light_icon.h>
+#include <apps/statistics/assets/cumulative_light_icon.h>
+#include <apps/statistics/assets/histogram_light_icon.h>
+#include <apps/statistics/assets/statistics_normal_light_icon.h>
 
 #include "assert.h"
 
@@ -19,8 +19,8 @@ I18n::Message GraphViewModel::MessageForGraphView(GraphView graphView) {
 const Escher::Image* const GraphViewModel::ImageForGraphView(
     GraphView graphView) {
   const Escher::Image* const k_images[k_numberOfGraphViews] = {
-      ImageStore::HistogramIcon, ImageStore::BoxIcon,
-      ImageStore::CumulativeIcon, ImageStore::StatisticsNormalIcon};
+      ImageStore::HistogramLightIcon, ImageStore::BoxLightIcon,
+      ImageStore::CumulativeLightIcon, ImageStore::StatisticsNormalLightIcon};
   return k_images[IndexOfGraphView(graphView)];
 }
 

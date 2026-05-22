@@ -26,11 +26,11 @@ $(call create_module,apps,1, \
   init_tests.cpp:+test \
 )
 
-SOURCES_apps += $(call generated_sources_for, $(PATH_apps)/exam_icon.png:-test)
+SOURCES_apps += $(call generated_sources_for, $(PATH_apps)/exam_light_icon.png:-test)
 
 PRIVATE_SFLAGS_apps += -I$(PATH_apps)
 
-$(call depends_on_image,$(PATH_apps)/title_bar_view.cpp,$(PATH_apps)/exam_icon.png)
+$(call depends_on_image,$(PATH_apps)/title_bar_view.cpp,$(PATH_apps)/exam_light_icon.png)
 
 # Include the specific apps
 # FIXME Use flavors instead of EPSILON_APPS?

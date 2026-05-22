@@ -5,16 +5,16 @@
 #include <new>
 
 #include "../app.h"
-#include "../images/binomial_icon.h"
-#include "../images/chi_squared_icon.h"
-#include "../images/exponential_icon.h"
-#include "../images/fisher_icon.h"
-#include "../images/geometric_icon.h"
-#include "../images/hypergeometric_icon.h"
-#include "../images/normal_icon.h"
-#include "../images/poisson_icon.h"
-#include "../images/student_icon.h"
-#include "../images/uniform_icon.h"
+#include "../images/binomial_light_icon.h"
+#include "../images/chi_squared_light_icon.h"
+#include "../images/exponential_light_icon.h"
+#include "../images/fisher_light_icon.h"
+#include "../images/geometric_light_icon.h"
+#include "../images/hypergeometric_light_icon.h"
+#include "../images/normal_light_icon.h"
+#include "../images/poisson_light_icon.h"
+#include "../images/student_light_icon.h"
+#include "../images/uniform_light_icon.h"
 
 using namespace Escher;
 
@@ -71,11 +71,11 @@ void DistributionController::fillCellForRow(HighlightCell* cell, int row) {
   DistributionCell* myCell = static_cast<DistributionCell*>(cell);
   myCell->subLabel()->setMessage(sMessages[row]);
   const Image* images[k_totalNumberOfModels] = {
-      ImageStore::BinomialIcon,    ImageStore::UniformIcon,
-      ImageStore::ExponentialIcon, ImageStore::NormalIcon,
-      ImageStore::ChiSquaredIcon,  ImageStore::StudentIcon,
-      ImageStore::GeometricIcon,   ImageStore::HypergeometricIcon,
-      ImageStore::PoissonIcon,     ImageStore::FisherIcon,
+      ImageStore::BinomialLightIcon,    ImageStore::UniformLightIcon,
+      ImageStore::ExponentialLightIcon, ImageStore::NormalLightIcon,
+      ImageStore::ChiSquaredLightIcon,  ImageStore::StudentLightIcon,
+      ImageStore::GeometricLightIcon,   ImageStore::HypergeometricLightIcon,
+      ImageStore::PoissonLightIcon,     ImageStore::FisherLightIcon,
   };
   myCell->label()->setImage(images[row]);
   myCell->reloadCell();

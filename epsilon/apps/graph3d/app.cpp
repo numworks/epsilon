@@ -101,11 +101,10 @@ void App::openMainView() {
 }
 
 void App::recalculateGrid() {
-  int gridSize = 15;
   float xMin = -5.0f, xMax = 5.0f;
   float yMin = -5.0f, yMax = 5.0f;
-  float dx = (xMax - xMin) / gridSize;
-  float dy = (yMax - yMin) / gridSize;
+  float dx = (xMax - xMin) / k_gridSize;
+  float dy = (yMax - yMin) / k_gridSize;
 
   const Poincare::SymbolContext & globalContext = Shared::GlobalContextAccessor::Context();
   Poincare::UserExpression e = Poincare::UserExpression::Parse(snapshot()->m_surfaceExpression, globalContext);
@@ -114,8 +113,8 @@ void App::recalculateGrid() {
   Poincare::ComplexFormat complexFormat = GlobalPreferences::SharedGlobalPreferences()->complexFormat();
 
   if (!e.isUninitialized()) {
-    for (int i = 0; i <= gridSize; ++i) {
-      for (int j = 0; j <= gridSize; ++j) {
+    for (int i = 0; i <= k_gridSize; ++i) {
+      for (int j = 0; j <= k_gridSize; ++j) {
         float x = xMin + i * dx;
         float y = yMin + j * dy;
 
@@ -135,8 +134,8 @@ void App::recalculateGrid() {
       }
     }
   } else {
-    for (int i = 0; i <= gridSize; ++i) {
-      for (int j = 0; j <= gridSize; ++j) {
+    for (int i = 0; i <= k_gridSize; ++i) {
+      for (int j = 0; j <= k_gridSize; ++j) {
         snapshot()->m_zGrid[i][j] = NAN;
       }
     }
@@ -191,11 +190,10 @@ void drawLine(KDContext * ctx, float x0, float y0, float x1, float y1, KDColor c
 void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorBlack);
 
-  int gridSize = 15;
   float xMin = -5.0f, xMax = 5.0f;
   float yMin = -5.0f, yMax = 5.0f;
-  float dx = (xMax - xMin) / gridSize;
-  float dy = (yMax - yMin) / gridSize;
+  float dx = (xMax - xMin) / k_gridSize;
+  float dy = (yMax - yMin) / k_gridSize;
 
   // Rotation matrices setup
   float cosT = std::cos(m_theta);
@@ -216,19 +214,19 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
   };
 
   // Draw wireframe grid
-  for (int i = 0; i <= gridSize; ++i) {
-    for (int j = 0; j <= gridSize; ++j) {
+  for (int i = 0; i <= k_gridSize; ++i) {
+    for (int j = 0; j <= k_gridSize; ++j) {
       if (std::isnan(m_app->snapshot()->m_zGrid[i][j])) continue;
 
       float px, py;
       project(xMin + i*dx, yMin + j*dy, m_app->snapshot()->m_zGrid[i][j], px, py);
 
-      if (i < gridSize && !std::isnan(m_app->snapshot()->m_zGrid[i+1][j])) {
+      if (i < k_gridSize && !std::isnan(m_app->snapshot()->m_zGrid[i+1][j])) {
         float px_next, py_next;
         project(xMin + (i+1)*dx, yMin + j*dy, m_app->snapshot()->m_zGrid[i+1][j], px_next, py_next);
         drawLine(ctx, px, py, px_next, py_next, KDColorWhite);
       }
-      if (j < gridSize && !std::isnan(m_app->snapshot()->m_zGrid[i][j+1])) {
+      if (j < k_gridSize && !std::isnan(m_app->snapshot()->m_zGrid[i][j+1])) {
         float px_next, py_next;
         project(xMin + i*dx, yMin + (j+1)*dy, m_app->snapshot()->m_zGrid[i][j+1], px_next, py_next);
         drawLine(ctx, px, py, px_next, py_next, KDColorWhite);

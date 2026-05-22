@@ -12,6 +12,8 @@
 
 namespace Graph3d {
 
+constexpr int k_gridSize = 30; // Increased resolution
+
 class App : public Shared::SharedApp {
 public:
   class Descriptor : public Escher::App::Descriptor {
@@ -30,7 +32,7 @@ public:
     void tidy() override;
 
     char m_surfaceExpression[256];
-    float m_zGrid[20][20];
+    float m_zGrid[k_gridSize+1][k_gridSize+1];
     bool m_gridNeedsUpdate;
   };
 

@@ -100,13 +100,13 @@ Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addDerivativeModel(
     const Ion::Storage::Record parentRecord, uint8_t order) {
   assert(order == 1 || order == 2);
   constexpr size_t bufferSize = ContinuousFunction::k_maxDefaultNameSize;
-  char name[bufferSize];
+  char modelName[bufferSize];
   size_t length = UTF8Helper::WriteCodePoint(
-      name, bufferSize, ContinuousFunction::k_unnamedRecordFirstChar);
+      modelName, bufferSize, ContinuousFunction::k_unnamedRecordFirstChar);
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
-      name, length, bufferSize, modelExtension());
+      modelName, length, bufferSize, modelExtension());
   ErrorStatus error;
-  ContinuousFunction f = newModel(name, &error);
+  ContinuousFunction f = newModel(modelName, &error);
   if (error != ErrorStatus::None) {
     return error;
   }

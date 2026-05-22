@@ -53,4 +53,16 @@ ColorPicker::BlendLevel ColorPicker::ThemeBlendLevel(Theme theme) {
   }
 }
 
+ColorPicker::SelectionThickness ColorPicker::ThemeSelectionThickness(
+    Theme theme) {
+  switch (theme) {
+    case Theme::Light:
+      return SelectionThickness::Simple;
+    case Theme::Dark:
+      return SelectionThickness::Double;
+    default:
+      OMG_UNREACHABLE
+  }
+}
+
 }  // namespace Escher

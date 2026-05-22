@@ -28,6 +28,13 @@ class ColorPicker {
     return ThemeBlendLevel(GetCurrentTheme());
   }
 
+  /* The thickness of some selection borders (for example in Elements) depends
+   * on the theme */
+  enum class SelectionThickness : bool { Simple, Double };
+  static SelectionThickness GetSelectionThickness() {
+    return ThemeSelectionThickness(GetCurrentTheme());
+  }
+
  private:
   /* GetCurrentTheme is defined in the .cpp so that the details of how the
    * theme is accessed are hidden. Currently for Epsilon (the only project which
@@ -40,6 +47,8 @@ class ColorPicker {
   static KDColor Get(Theme theme, ThemeComponent component);
 
   static BlendLevel ThemeBlendLevel(Theme theme);
+
+  static SelectionThickness ThemeSelectionThickness(Theme theme);
 };
 
 }  // namespace Escher

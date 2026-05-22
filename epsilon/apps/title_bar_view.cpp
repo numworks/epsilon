@@ -6,6 +6,7 @@
 
 #include <array>
 
+#include "exam_dark_icon.h"
 #include "exam_light_icon.h"
 #include "exam_mode_manager.h"
 #include "global_preferences.h"
@@ -23,7 +24,9 @@ TitleBarView::TitleBarView()
       m_preferenceView(k_glyphsFormat),
       m_examModeTextView(I18n::Message::Default, k_glyphsFormat) {
   m_preferenceView.setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-  m_examModeIconView.setImage(ImageStore::ExamLightIcon);
+  m_examModeIconView.setImage(SharedGlobalPrefs().theme() == Theme::Dark
+                                  ? ImageStore::ExamDarkIcon
+                                  : ImageStore::ExamLightIcon);
 }
 
 void TitleBarView::drawRect(KDContext* ctx, KDRect rect) const {
@@ -185,6 +188,9 @@ void TitleBarView::refreshPreferences() {
 }
 
 void TitleBarView::reload() {
+  m_examModeIconView.setImage(SharedGlobalPrefs().theme() == Theme::Dark
+                                  ? ImageStore::ExamDarkIcon
+                                  : ImageStore::ExamLightIcon);
   refreshPreferences();
   markWholeFrameAsDirty();
 }

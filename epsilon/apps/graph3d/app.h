@@ -12,7 +12,7 @@
 
 namespace Graph3d {
 
-constexpr int k_gridSize = 30; // Increased resolution
+constexpr int k_gridSize = 60; // Maximize resolution to 60x60
 
 class App : public Shared::SharedApp {
 public:

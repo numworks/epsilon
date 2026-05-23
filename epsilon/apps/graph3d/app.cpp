@@ -165,25 +165,26 @@ bool App::MainViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void drawLine(KDContext * ctx, float x0, float y0, float x1, float y1, KDColor c) {
-  int dx = std::round(x1 - x0);
-  int dy = std::round(y1 - y0);
-  int adx = dx < 0 ? -dx : dx;
-  int ady = dy < 0 ? -dy : dy;
-  int steps = adx > ady ? adx : ady;
-  if (steps == 0) {
-    return;
-  }
-  float xInc = dx / (float)steps;
-  float yInc = dy / (float)steps;
-  float x = x0;
-  float y = y0;
-  for (int i = 0; i <= steps; i++) {
-    if (x >= 0 && x < 320 && y >= 0 && y < 240) {
-      ctx->setPixel(KDPoint((int)x, (int)y), c);
+// Fills a triangle utilizing standard barycentric rasterization technique to mimic solid surfaces
+void fillTriangle(KDContext * ctx, float x1, float y1, float x2, float y2, float x3, float y3, KDColor color) {
+  int minX = std::max(0, (int)std::min({x1, x2, x3}));
+  int maxX = std::min(319, (int)std::max({x1, x2, x3}));
+  int minY = std::max(0, (int)std::min({y1, y2, y3}));
+  int maxY = std::min(239, (int)std::max({y1, y2, y3}));
+
+  float denominator = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
+  if (std::abs(denominator) < 0.1f) return;
+
+  for (int y = minY; y <= maxY; ++y) {
+    for (int x = minX; x <= maxX; ++x) {
+      float lambda1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / denominator;
+      float lambda2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / denominator;
+      float lambda3 = 1.0f - lambda1 - lambda2;
+
+      if (lambda1 >= 0 && lambda2 >= 0 && lambda3 >= 0) {
+        ctx->setPixel(KDPoint(x, y), color);
+      }
     }
-    x += xInc;
-    y += yInc;
   }
 }
 
@@ -213,37 +214,60 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
     py = 120.0f - y2 * scale; // Y goes down on screen
   };
 
-  // Draw wireframe grid
-  for (int i = 0; i <= k_gridSize; ++i) {
-    for (int j = 0; j <= k_gridSize; ++j) {
-      if (std::isnan(m_app->snapshot()->m_zGrid[i][j])) continue;
+  // Draw filled surface (instead of basic wireframe points)
+  for (int i = 0; i < k_gridSize; ++i) {
+    for (int j = 0; j < k_gridSize; ++j) {
+      float z1 = m_app->snapshot()->m_zGrid[i][j];
+      float z2 = m_app->snapshot()->m_zGrid[i+1][j];
+      float z3 = m_app->snapshot()->m_zGrid[i][j+1];
+      float z4 = m_app->snapshot()->m_zGrid[i+1][j+1];
 
-      float px, py;
-      project(xMin + i*dx, yMin + j*dy, m_app->snapshot()->m_zGrid[i][j], px, py);
+      if (std::isnan(z1) || std::isnan(z2) || std::isnan(z3) || std::isnan(z4)) continue;
 
-      if (i < k_gridSize && !std::isnan(m_app->snapshot()->m_zGrid[i+1][j])) {
-        float px_next, py_next;
-        project(xMin + (i+1)*dx, yMin + j*dy, m_app->snapshot()->m_zGrid[i+1][j], px_next, py_next);
-        drawLine(ctx, px, py, px_next, py_next, KDColorWhite);
-      }
-      if (j < k_gridSize && !std::isnan(m_app->snapshot()->m_zGrid[i][j+1])) {
-        float px_next, py_next;
-        project(xMin + i*dx, yMin + (j+1)*dy, m_app->snapshot()->m_zGrid[i][j+1], px_next, py_next);
-        drawLine(ctx, px, py, px_next, py_next, KDColorWhite);
-      }
+      float px1, py1, px2, py2, px3, py3, px4, py4;
+      project(xMin + i*dx, yMin + j*dy, z1, px1, py1);
+      project(xMin + (i+1)*dx, yMin + j*dy, z2, px2, py2);
+      project(xMin + i*dx, yMin + (j+1)*dy, z3, px3, py3);
+      project(xMin + (i+1)*dx, yMin + (j+1)*dy, z4, px4, py4);
+
+      // Create a gradient-like pseudo shading based on Z-height to make the shape continuous and distinguishable like GeoGebra
+      uint8_t cIntensity = std::max(50.0f, std::min(255.0f, 150.0f + z1 * 20.0f));
+      KDColor color = KDColor::RGB24(0, cIntensity, cIntensity);
+
+      fillTriangle(ctx, px1, py1, px2, py2, px3, py3, color);
+      fillTriangle(ctx, px2, py2, px3, py3, px4, py4, color);
     }
   }
 
   // Draw axes
-  float ax_x, ax_y;
+  float ax_x, ax_y, ax_x2, ax_y2;
+  auto drawLine = [&](float x0, float y0, float x1, float y1, KDColor c) {
+    int dx = std::round(x1 - x0);
+    int dy = std::round(y1 - y0);
+    int adx = dx < 0 ? -dx : dx;
+    int ady = dy < 0 ? -dy : dy;
+    int steps = adx > ady ? adx : ady;
+    if (steps == 0) return;
+    float xInc = dx / (float)steps;
+    float yInc = dy / (float)steps;
+    float x = x0;
+    float y = y0;
+    for (int i = 0; i <= steps; i++) {
+      if (x >= 0 && x < 320 && y >= 0 && y < 240) {
+        ctx->setPixel(KDPoint((int)x, (int)y), c);
+      }
+      x += xInc;
+      y += yInc;
+    }
+  };
+
   project(0, 0, 0, ax_x, ax_y);
-  float ax_x2, ax_y2;
   project(5, 0, 0, ax_x2, ax_y2);
-  drawLine(ctx, ax_x, ax_y, ax_x2, ax_y2, KDColorRed); // X
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorRed); // X
   project(0, 5, 0, ax_x2, ax_y2);
-  drawLine(ctx, ax_x, ax_y, ax_x2, ax_y2, KDColorGreen); // Y
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorGreen); // Y
   project(0, 0, 5, ax_x2, ax_y2);
-  drawLine(ctx, ax_x, ax_y, ax_x2, ax_y2, KDColorBlue); // Z
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorBlue); // Z
 
   ctx->drawString(m_app->snapshot()->m_surfaceExpression, KDPoint(5, 5), {.glyphColor = KDColorWhite, .backgroundColor = KDColorBlack, .font = KDFont::Size::Large});
 }

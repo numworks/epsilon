@@ -147,16 +147,16 @@ void App::recalculateGrid() {
 
 bool App::MainViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    m_view.setRotation(0, 0.1f);
+    m_view.setRotation(0, 0.2f);
     return true;
   } else if (event == Ion::Events::Down) {
-    m_view.setRotation(0, -0.1f);
+    m_view.setRotation(0, -0.2f);
     return true;
   } else if (event == Ion::Events::Left) {
-    m_view.setRotation(-0.1f, 0);
+    m_view.setRotation(-0.2f, 0);
     return true;
   } else if (event == Ion::Events::Right) {
-    m_view.setRotation(0.1f, 0);
+    m_view.setRotation(0.2f, 0);
     return true;
   } else if (event == Ion::Events::Back || event == Ion::Events::Home) {
     App::app()->modalViewController()->dismissModal();
@@ -165,25 +165,51 @@ bool App::MainViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-// Fills a triangle utilizing standard barycentric rasterization technique to mimic solid surfaces
+// Optimized flat-bottom/flat-top triangle filling logic to speed up rendering loops
 void fillTriangle(KDContext * ctx, float x1, float y1, float x2, float y2, float x3, float y3, KDColor color) {
+  // Sort vertices by y
+  if (y1 > y2) { std::swap(x1, x2); std::swap(y1, y2); }
+  if (y1 > y3) { std::swap(x1, x3); std::swap(y1, y3); }
+  if (y2 > y3) { std::swap(x2, x3); std::swap(y2, y3); }
+
   int minX = std::max(0, (int)std::min({x1, x2, x3}));
   int maxX = std::min(319, (int)std::max({x1, x2, x3}));
-  int minY = std::max(0, (int)std::min({y1, y2, y3}));
-  int maxY = std::min(239, (int)std::max({y1, y2, y3}));
+  int minY = std::max(0, (int)y1);
+  int maxY = std::min(239, (int)y3);
 
-  float denominator = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
-  if (std::abs(denominator) < 0.1f) return;
+  if (minX > maxX || minY > maxY) return;
+
+  float denom = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
+  if (std::abs(denom) < 0.1f) return;
+
+  float invDenom = 1.0f / denom;
 
   for (int y = minY; y <= maxY; ++y) {
-    for (int x = minX; x <= maxX; ++x) {
-      float lambda1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / denominator;
-      float lambda2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / denominator;
-      float lambda3 = 1.0f - lambda1 - lambda2;
+    bool drawing = false;
+    int startX = minX;
 
-      if (lambda1 >= 0 && lambda2 >= 0 && lambda3 >= 0) {
-        ctx->setPixel(KDPoint(x, y), color);
+    // Scanline from left to right finding extents rather than evaluating everything
+    for (int x = minX; x <= maxX; ++x) {
+      float l1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) * invDenom;
+      float l2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) * invDenom;
+      float l3 = 1.0f - l1 - l2;
+
+      bool inside = (l1 >= 0 && l2 >= 0 && l3 >= 0);
+
+      if (inside && !drawing) {
+        drawing = true;
+        startX = x;
+      } else if (!inside && drawing) {
+        // We exited the triangle, we can draw a fast horizontal line
+        ctx->fillRect(KDRect(startX, y, x - startX, 1), color);
+        drawing = false;
+        break; // Convex shape, we can skip the rest of the scanline
       }
+    }
+
+    // In case the triangle touched the right edge
+    if (drawing) {
+      ctx->fillRect(KDRect(startX, y, maxX - startX + 1, 1), color);
     }
   }
 }
@@ -214,7 +240,18 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
     py = 120.0f - y2 * scale; // Y goes down on screen
   };
 
-  // Draw filled surface (instead of basic wireframe points)
+  // We map colors statically now depending on absolute Z value, avoiding dynamic intensity problems
+  auto colorForZ = [](float z) {
+    if (std::isnan(z)) return KDColorBlack;
+    // Map z from roughly [-5, 5] into hue bins
+    if (z > 3.0f) return KDColorRed;
+    if (z > 1.0f) return KDColorOrange;
+    if (z > -1.0f) return KDColorYellow;
+    if (z > -3.0f) return KDColorGreen;
+    return KDColorBlue;
+  };
+
+  // Draw filled surface
   for (int i = 0; i < k_gridSize; ++i) {
     for (int j = 0; j < k_gridSize; ++j) {
       float z1 = m_app->snapshot()->m_zGrid[i][j];
@@ -230,12 +267,14 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
       project(xMin + i*dx, yMin + (j+1)*dy, z3, px3, py3);
       project(xMin + (i+1)*dx, yMin + (j+1)*dy, z4, px4, py4);
 
-      // Create a gradient-like pseudo shading based on Z-height to make the shape continuous and distinguishable like GeoGebra
-      uint8_t cIntensity = std::max(50.0f, std::min(255.0f, 150.0f + z1 * 20.0f));
-      KDColor color = KDColor::RGB888(0, cIntensity, cIntensity);
+      KDColor color = colorForZ((z1+z2+z3+z4)/4.0f);
 
       fillTriangle(ctx, px1, py1, px2, py2, px3, py3, color);
       fillTriangle(ctx, px2, py2, px3, py3, px4, py4, color);
+
+      // Keep wireframe lines to help outline the surface patches visually over the solid blocks
+      ctx->drawLine(KDPoint(px1, py1), KDPoint(px2, py2), KDColorBlack);
+      ctx->drawLine(KDPoint(px1, py1), KDPoint(px3, py3), KDColorBlack);
     }
   }
 
@@ -263,11 +302,11 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
 
   project(0, 0, 0, ax_x, ax_y);
   project(5, 0, 0, ax_x2, ax_y2);
-  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorRed); // X
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite); // X
   project(0, 5, 0, ax_x2, ax_y2);
-  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorGreen); // Y
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite); // Y
   project(0, 0, 5, ax_x2, ax_y2);
-  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorBlue); // Z
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite); // Z
 
   ctx->drawString(m_app->snapshot()->m_surfaceExpression, KDPoint(5, 5), {.glyphColor = KDColorWhite, .backgroundColor = KDColorBlack, .font = KDFont::Size::Large});
 }

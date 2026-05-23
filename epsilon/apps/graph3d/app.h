@@ -12,7 +12,8 @@
 
 namespace Graph3d {
 
-constexpr int k_gridSize = 60; // Maximize resolution to 60x60
+// Returning to 25 to balance definition and responsiveness based on manual rasterizer limits
+constexpr int k_gridSize = 25;
 
 class App : public Shared::SharedApp {
 public:

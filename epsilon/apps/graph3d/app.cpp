@@ -232,7 +232,7 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
 
       // Create a gradient-like pseudo shading based on Z-height to make the shape continuous and distinguishable like GeoGebra
       uint8_t cIntensity = std::max(50.0f, std::min(255.0f, 150.0f + z1 * 20.0f));
-      KDColor color = KDColor::RGB24(0, cIntensity, cIntensity);
+      KDColor color = KDColor::RGB888(0, cIntensity, cIntensity);
 
       fillTriangle(ctx, px1, py1, px2, py2, px3, py3, color);
       fillTriangle(ctx, px2, py2, px3, py3, px4, py4, color);

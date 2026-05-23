@@ -300,7 +300,7 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
     if (i == 0) continue; // Skip origin overlapping
 
     char buf[8];
-    snprintf(buf, sizeof(buf), "%d", i);
+    Poincare::Print::CustomPrintf(buf, sizeof(buf), "%i", i);
 
     // X ticks
     float px, py;

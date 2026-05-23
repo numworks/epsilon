@@ -184,6 +184,7 @@ void fillTriangle(KDContext * ctx, float x1, float y1, float x2, float y2, float
 
   float invDenom = 1.0f / denom;
 
+  // Render scanlines utilizing a checkered mask to simulate transparency natively
   for (int y = minY; y <= maxY; ++y) {
     bool drawing = false;
     int startX = minX;
@@ -200,8 +201,12 @@ void fillTriangle(KDContext * ctx, float x1, float y1, float x2, float y2, float
         drawing = true;
         startX = x;
       } else if (!inside && drawing) {
-        // We exited the triangle, we can draw a fast horizontal line
-        ctx->fillRect(KDRect(startX, y, x - startX, 1), color);
+        // We exited the triangle, we can draw a fast horizontal line with checkerboard transparency
+        for (int px = startX; px < x; ++px) {
+          if ((px + y) % 2 == 0) {
+            ctx->setPixel(KDPoint(px, y), color);
+          }
+        }
         drawing = false;
         break; // Convex shape, we can skip the rest of the scanline
       }
@@ -209,7 +214,11 @@ void fillTriangle(KDContext * ctx, float x1, float y1, float x2, float y2, float
 
     // In case the triangle touched the right edge
     if (drawing) {
-      ctx->fillRect(KDRect(startX, y, maxX - startX + 1, 1), color);
+      for (int px = startX; px <= maxX; ++px) {
+        if ((px + y) % 2 == 0) {
+          ctx->setPixel(KDPoint(px, y), color);
+        }
+      }
     }
   }
 }
@@ -320,7 +329,7 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 
 
-  // Draw filled surface
+  // Draw filled surface on top
   for (int i = 0; i < k_gridSize; ++i) {
     for (int j = 0; j < k_gridSize; ++j) {
       float z1 = m_app->snapshot()->m_zGrid[i][j];
@@ -342,8 +351,9 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
       fillTriangle(ctx, px2, py2, px3, py3, px4, py4, color);
 
       // Keep wireframe lines to help outline the surface patches visually over the solid blocks
-      ctx->drawLine(KDPoint(px1, py1), KDPoint(px2, py2), KDColorBlack);
-      ctx->drawLine(KDPoint(px1, py1), KDPoint(px3, py3), KDColorBlack);
+      // But we use a darker gray instead of full black to make the transparency effect smoother
+      ctx->drawLine(KDPoint(px1, py1), KDPoint(px2, py2), KDColor::RGB24(0x333333));
+      ctx->drawLine(KDPoint(px1, py1), KDPoint(px3, py3), KDColor::RGB24(0x333333));
     }
   }
 

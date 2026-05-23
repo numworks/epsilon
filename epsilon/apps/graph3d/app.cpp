@@ -251,6 +251,75 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
     return KDColorBlue;
   };
 
+  // Draw axes underneath
+  auto drawLine = [&](float x0, float y0, float x1, float y1, KDColor c) {
+    int _dx = std::round(x1 - x0);
+    int _dy = std::round(y1 - y0);
+    int adx = _dx < 0 ? -_dx : _dx;
+    int ady = _dy < 0 ? -_dy : _dy;
+    int steps = adx > ady ? adx : ady;
+    if (steps == 0) return;
+    float xInc = _dx / (float)steps;
+    float yInc = _dy / (float)steps;
+    float x = x0;
+    float y = y0;
+    for (int i = 0; i <= steps; i++) {
+      if (x >= 0 && x < 320 && y >= 0 && y < 240) {
+        ctx->setPixel(KDPoint((int)x, (int)y), c);
+      }
+      x += xInc;
+      y += yInc;
+    }
+  };
+
+  float ax_x, ax_y, ax_x2, ax_y2;
+
+  // X Axis
+  project(-6, 0, 0, ax_x, ax_y);
+  project(6, 0, 0, ax_x2, ax_y2);
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite);
+  project(6.5, 0, 0, ax_x2, ax_y2);
+  ctx->drawString("X", KDPoint(ax_x2, ax_y2), {.glyphColor = KDColorRed, .backgroundColor = KDColorBlack, .font = KDFont::Size::Small});
+
+  // Y Axis
+  project(0, -6, 0, ax_x, ax_y);
+  project(0, 6, 0, ax_x2, ax_y2);
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite);
+  project(0, 6.5, 0, ax_x2, ax_y2);
+  ctx->drawString("Y", KDPoint(ax_x2, ax_y2), {.glyphColor = KDColorGreen, .backgroundColor = KDColorBlack, .font = KDFont::Size::Small});
+
+  // Z Axis
+  project(0, 0, -6, ax_x, ax_y);
+  project(0, 0, 6, ax_x2, ax_y2);
+  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite);
+  project(0, 0, 6.5, ax_x2, ax_y2);
+  ctx->drawString("Z", KDPoint(ax_x2, ax_y2), {.glyphColor = KDColorBlue, .backgroundColor = KDColorBlack, .font = KDFont::Size::Small});
+
+  // Draw tick marks and numbers for X, Y, Z axes
+  for (int i = -5; i <= 5; i++) {
+    if (i == 0) continue; // Skip origin overlapping
+
+    char buf[8];
+    snprintf(buf, sizeof(buf), "%d", i);
+
+    // X ticks
+    float px, py;
+    project(i, 0, 0, px, py);
+    ctx->drawLine(KDPoint(px, py - 2), KDPoint(px, py + 2), KDColorWhite);
+    ctx->drawString(buf, KDPoint(px - 3, py + 3), {.glyphColor = KDColorRed, .backgroundColor = KDColorBlack, .font = KDFont::Size::Small});
+
+    // Y ticks
+    project(0, i, 0, px, py);
+    ctx->drawLine(KDPoint(px - 2, py), KDPoint(px + 2, py), KDColorWhite);
+    ctx->drawString(buf, KDPoint(px + 3, py - 3), {.glyphColor = KDColorGreen, .backgroundColor = KDColorBlack, .font = KDFont::Size::Small});
+
+    // Z ticks
+    project(0, 0, i, px, py);
+    ctx->drawLine(KDPoint(px - 2, py), KDPoint(px + 2, py), KDColorWhite);
+    ctx->drawString(buf, KDPoint(px + 3, py - 3), {.glyphColor = KDColorBlue, .backgroundColor = KDColorBlack, .font = KDFont::Size::Small});
+  }
+
+
   // Draw filled surface
   for (int i = 0; i < k_gridSize; ++i) {
     for (int j = 0; j < k_gridSize; ++j) {
@@ -277,36 +346,6 @@ void App::MainView::drawRect(KDContext * ctx, KDRect rect) const {
       ctx->drawLine(KDPoint(px1, py1), KDPoint(px3, py3), KDColorBlack);
     }
   }
-
-  // Draw axes
-  float ax_x, ax_y, ax_x2, ax_y2;
-  auto drawLine = [&](float x0, float y0, float x1, float y1, KDColor c) {
-    int dx = std::round(x1 - x0);
-    int dy = std::round(y1 - y0);
-    int adx = dx < 0 ? -dx : dx;
-    int ady = dy < 0 ? -dy : dy;
-    int steps = adx > ady ? adx : ady;
-    if (steps == 0) return;
-    float xInc = dx / (float)steps;
-    float yInc = dy / (float)steps;
-    float x = x0;
-    float y = y0;
-    for (int i = 0; i <= steps; i++) {
-      if (x >= 0 && x < 320 && y >= 0 && y < 240) {
-        ctx->setPixel(KDPoint((int)x, (int)y), c);
-      }
-      x += xInc;
-      y += yInc;
-    }
-  };
-
-  project(0, 0, 0, ax_x, ax_y);
-  project(5, 0, 0, ax_x2, ax_y2);
-  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite); // X
-  project(0, 5, 0, ax_x2, ax_y2);
-  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite); // Y
-  project(0, 0, 5, ax_x2, ax_y2);
-  drawLine(ax_x, ax_y, ax_x2, ax_y2, KDColorWhite); // Z
 
   ctx->drawString(m_app->snapshot()->m_surfaceExpression, KDPoint(5, 5), {.glyphColor = KDColorWhite, .backgroundColor = KDColorBlack, .font = KDFont::Size::Large});
 }

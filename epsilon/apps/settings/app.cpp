@@ -1,9 +1,8 @@
 #include "app.h"
 
-#include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/icons/dark/settings_dark_icon.h>
-#include <apps/icons/light/settings_light_icon.h>
+#include <apps/icons/settings_icon.h>
+#include <escher/transparent_themed_image_view.h>
 
 using namespace Escher;
 
@@ -18,9 +17,8 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Theme::Dark
-             ? ImageStore::SettingsDarkIcon
-             : ImageStore::SettingsLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::SettingsIcon)
+      .currentImage();
 }
 
 App* App::Snapshot::unpack(Container* container) {

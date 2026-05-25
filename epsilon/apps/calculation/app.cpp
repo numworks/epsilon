@@ -1,9 +1,8 @@
 #include "app.h"
 
-#include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/icons/dark/calculation_dark_icon.h>
-#include <apps/icons/light/calculation_light_icon.h>
+#include <apps/icons/calculation_icon.h>
+#include <escher/transparent_themed_image_view.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -18,9 +17,8 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Theme::Dark
-             ? ImageStore::CalculationDarkIcon
-             : ImageStore::CalculationLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::CalculationIcon)
+      .currentImage();
 }
 
 App* App::Snapshot::unpack(Container* container) {

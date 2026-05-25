@@ -1,19 +1,17 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/icons/dark/finance_dark_icon.h>
-#include <apps/icons/light/finance_light_icon.h>
+#include <apps/icons/finance_icon.h>
+#include <escher/transparent_themed_image_view.h>
 
 namespace Finance {
 
 // App::Descriptor
 
 const Escher::Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Escher::Theme::Dark
-             ? ImageStore::FinanceDarkIcon
-             : ImageStore::FinanceLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::FinanceIcon)
+      .currentImage();
 }
 
 // App::Snapshot

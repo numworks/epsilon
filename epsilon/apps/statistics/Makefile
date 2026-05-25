@@ -58,8 +58,6 @@ quantitative/test/store.cpp:+test \
 
 SOURCES_apps += $(call generated_sources_for, \
   $(addprefix $(PATH_apps)/,$(addsuffix :-test, \
-  icons/light/stat_light_icon.png \
-  icons/dark/stat_dark_icon.png \
   statistics/assets/light/bar_light_icon.png \
   statistics/assets/light/pie_light_icon.png \
   statistics/assets/light/box_light_icon.png \
@@ -74,8 +72,7 @@ SOURCES_apps += $(call generated_sources_for, \
   statistics/assets/dark/statistics_normal_dark_icon.png \
 )))
 
-$(call depends_on_transparent_image,apps/statistics/app.cpp,apps/icons/light/stat_light_icon.png)
-$(call depends_on_transparent_image,apps/statistics/app.cpp,apps/icons/dark/stat_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/statistics/app.cpp,$(PATH_apps)/icons/light/stat_light_icon.png,$(PATH_apps)/icons/dark/stat_dark_icon.png)
 
 $(call depends_on_transparent_image, \
 apps/statistics/quantitative/graph/graph_view_model.cpp, \

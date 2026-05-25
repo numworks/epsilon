@@ -26,8 +26,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
 )
 
 SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/,$(addsuffix :-test, \
-  icons/light/distributions_light_icon.png \
-  icons/dark/distributions_dark_icon.png \
   distributions/images/light/binomial_light_icon.png \
   distributions/images/light/chi_squared_light_icon.png \
   distributions/images/light/exponential_light_icon.png \
@@ -58,8 +56,7 @@ SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/,$(addsuff
   distributions/images/dark/calculation4_dark_icon.png \
 )))
 
-$(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/icons/light/distributions_light_icon.png)
-$(call depends_on_transparent_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/icons/dark/distributions_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/icons/light/distributions_light_icon.png,$(PATH_apps)/icons/dark/distributions_dark_icon.png)
 
 $(call depends_on_transparent_image, \
 $(PATH_apps)/distributions/controllers/distribution_controller.cpp, \

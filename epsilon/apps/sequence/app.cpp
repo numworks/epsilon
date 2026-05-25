@@ -2,9 +2,9 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
-#include <apps/icons/dark/sequence_dark_icon.h>
-#include <apps/icons/light/sequence_light_icon.h>
+#include <apps/icons/sequence_icon.h>
 #include <apps/shared/global_store.h>
+#include <escher/transparent_themed_image_view.h>
 #include <poincare/helpers/sequence.h>
 
 #include <array>
@@ -23,9 +23,8 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Theme::Dark
-             ? ImageStore::SequenceDarkIcon
-             : ImageStore::SequenceLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::SequenceIcon)
+      .currentImage();
 }
 
 App::Snapshot::Snapshot()

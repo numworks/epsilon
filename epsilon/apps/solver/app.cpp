@@ -1,10 +1,9 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/icons/dark/solver_dark_icon.h>
-#include <apps/icons/light/solver_light_icon.h>
+#include <apps/icons/solver_icon.h>
+#include <escher/transparent_themed_image_view.h>
 #include <poincare/preferences.h>
 
 using namespace Shared;
@@ -13,9 +12,8 @@ using namespace Escher;
 namespace Solver {
 
 const Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Theme::Dark
-             ? ImageStore::SolverDarkIcon
-             : ImageStore::SolverLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::SolverIcon)
+      .currentImage();
 }
 
 constexpr static App::Descriptor sDescriptor;

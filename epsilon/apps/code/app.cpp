@@ -1,9 +1,8 @@
 #include "app.h"
 
-#include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/icons/dark/code_dark_icon.h>
-#include <apps/icons/light/code_light_icon.h>
+#include <apps/icons/code_icon.h>
+#include <escher/transparent_themed_image_view.h>
 #include <omg/utf8_helper.h>
 #include <poincare/pool.h>
 
@@ -21,8 +20,8 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Theme::Dark ? ImageStore::CodeDarkIcon
-                                                    : ImageStore::CodeLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::CodeIcon)
+      .currentImage();
 }
 
 App::Snapshot::Snapshot()

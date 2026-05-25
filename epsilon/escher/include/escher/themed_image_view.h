@@ -22,7 +22,6 @@ class ThemedImageView : public View {
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
- protected:
   const Image* currentImage() const;
 
  private:

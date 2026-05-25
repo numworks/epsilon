@@ -1,10 +1,9 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/icons/dark/graph_dark_icon.h>
-#include <apps/icons/light/graph_light_icon.h>
+#include <apps/icons/graph_icon.h>
+#include <escher/transparent_themed_image_view.h>
 
 #include "shared/global_store.h"
 
@@ -23,9 +22,8 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Theme::Dark
-             ? ImageStore::GraphDarkIcon
-             : ImageStore::GraphLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::GraphIcon)
+      .currentImage();
 }
 
 App* App::Snapshot::unpack(Container* container) {

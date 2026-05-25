@@ -1,9 +1,8 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/global_preferences.h>
-#include <apps/icons/dark/distributions_dark_icon.h>
-#include <apps/icons/light/distributions_light_icon.h>
+#include <apps/icons/distributions_icon.h>
+#include <escher/transparent_themed_image_view.h>
 
 #include "shared/global_store.h"
 
@@ -12,9 +11,8 @@ using namespace Escher;
 namespace Distributions {
 
 const Escher::Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Theme::Dark
-             ? ImageStore::DistributionsDarkIcon
-             : ImageStore::DistributionsLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::DistributionsIcon)
+      .currentImage();
 }
 
 App* App::Snapshot::unpack(Container* container) {

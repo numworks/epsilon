@@ -2,10 +2,9 @@
 
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
-#include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/icons/dark/stat_dark_icon.h>
-#include <apps/icons/light/stat_light_icon.h>
+#include <apps/icons/stat_icon.h>
+#include <escher/transparent_themed_image_view.h>
 #include <ion/storage/record.h>
 
 #include <array>
@@ -24,8 +23,8 @@ I18n::Message App::Descriptor::upperName() const {
 }
 
 const Image* App::Descriptor::icon() const {
-  return SharedGlobalPrefs().theme() == Theme::Dark ? ImageStore::StatDarkIcon
-                                                    : ImageStore::StatLightIcon;
+  return Escher::TransparentThemedImageView(*ImageStore::StatIcon)
+      .currentImage();
 }
 
 App::Snapshot::Snapshot()

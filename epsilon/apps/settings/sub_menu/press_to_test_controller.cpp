@@ -10,8 +10,8 @@
 
 #include <cmath>
 
-#include "press_to_test_success_dark.h"
-#include "press_to_test_success_light.h"
+#include "press_to_test_success_dark_icon.h"
+#include "press_to_test_success_light_icon.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -49,8 +49,8 @@ PressToTestController::PressToTestController(Responder* parentResponder)
     m_switchCells[i].accessory()->setDisplayImage(false);
     m_switchCells[i].accessory()->imageView()->setImage(
         SharedGlobalPrefs().theme() == Theme::Dark
-            ? ImageStore::PressToTestSuccessDark
-            : ImageStore::PressToTestSuccessLight);
+            ? ImageStore::PressToTestSuccessDarkIcon
+            : ImageStore::PressToTestSuccessLightIcon);
     m_switchCells[i].accessory()->imageView()->setBackgroundColor(
         ThemeComponent::BackgroundWhite);
   }
@@ -140,9 +140,10 @@ void PressToTestController::viewWillAppear() {
   if (ExamModeManager::ExamMode().isActive()) {
     resetController();
   }
-  const Escher::Image* successIcon = SharedGlobalPrefs().theme() == Theme::Dark
-                                         ? ImageStore::PressToTestSuccessDark
-                                         : ImageStore::PressToTestSuccessLight;
+  const Escher::Image* successIcon =
+      SharedGlobalPrefs().theme() == Theme::Dark
+          ? ImageStore::PressToTestSuccessDarkIcon
+          : ImageStore::PressToTestSuccessLightIcon;
   for (int i = 0; i < k_numberOfReusableSwitchCells; i++) {
     m_switchCells[i].accessory()->imageView()->setImage(successIcon);
   }

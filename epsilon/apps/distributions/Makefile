@@ -25,82 +25,22 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
   test/distributions_parameters.cpp:+test \
 )
 
-SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/,$(addsuffix :-test, \
-  distributions/images/light/binomial_light_icon.png \
-  distributions/images/light/chi_squared_light_icon.png \
-  distributions/images/light/exponential_light_icon.png \
-  distributions/images/light/fisher_light_icon.png \
-  distributions/images/light/geometric_light_icon.png \
-  distributions/images/light/hypergeometric_light_icon.png \
-  distributions/images/light/normal_light_icon.png \
-  distributions/images/light/poisson_light_icon.png \
-  distributions/images/light/student_light_icon.png \
-  distributions/images/light/uniform_light_icon.png \
-  distributions/images/light/calculation1_light_icon.png \
-  distributions/images/light/calculation2_light_icon.png \
-  distributions/images/light/calculation3_light_icon.png \
-  distributions/images/light/calculation4_light_icon.png \
-  distributions/images/dark/binomial_dark_icon.png \
-  distributions/images/dark/chi_squared_dark_icon.png \
-  distributions/images/dark/exponential_dark_icon.png \
-  distributions/images/dark/fisher_dark_icon.png \
-  distributions/images/dark/geometric_dark_icon.png \
-  distributions/images/dark/hypergeometric_dark_icon.png \
-  distributions/images/dark/normal_dark_icon.png \
-  distributions/images/dark/poisson_dark_icon.png \
-  distributions/images/dark/student_dark_icon.png \
-  distributions/images/dark/uniform_dark_icon.png \
-  distributions/images/dark/calculation1_dark_icon.png \
-  distributions/images/dark/calculation2_dark_icon.png \
-  distributions/images/dark/calculation3_dark_icon.png \
-  distributions/images/dark/calculation4_dark_icon.png \
-)))
-
 $(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/icons/light/distributions_light_icon.png,$(PATH_apps)/icons/dark/distributions_dark_icon.png)
 
-$(call depends_on_transparent_image, \
-$(PATH_apps)/distributions/controllers/distribution_controller.cpp, \
-$(addprefix $(PATH_apps)/distributions/images/light/,\
-  binomial_light_icon.png \
-  chi_squared_light_icon.png \
-  exponential_light_icon.png \
-  fisher_light_icon.png \
-  geometric_light_icon.png \
-  hypergeometric_light_icon.png \
-  normal_light_icon.png \
-  poisson_light_icon.png \
-  student_light_icon.png \
-  uniform_light_icon.png \
-) \
-$(addprefix $(PATH_apps)/distributions/images/dark/,\
-  binomial_dark_icon.png \
-  chi_squared_dark_icon.png \
-  exponential_dark_icon.png \
-  fisher_dark_icon.png \
-  geometric_dark_icon.png \
-  hypergeometric_dark_icon.png \
-  normal_dark_icon.png \
-  poisson_dark_icon.png \
-  student_dark_icon.png \
-  uniform_dark_icon.png \
-))
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/binomial_light_icon.png,$(PATH_apps)/distributions/images/dark/binomial_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/chi_squared_light_icon.png,$(PATH_apps)/distributions/images/dark/chi_squared_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/exponential_light_icon.png,$(PATH_apps)/distributions/images/dark/exponential_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/fisher_light_icon.png,$(PATH_apps)/distributions/images/dark/fisher_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/geometric_light_icon.png,$(PATH_apps)/distributions/images/dark/geometric_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/hypergeometric_light_icon.png,$(PATH_apps)/distributions/images/dark/hypergeometric_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/normal_light_icon.png,$(PATH_apps)/distributions/images/dark/normal_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/poisson_light_icon.png,$(PATH_apps)/distributions/images/dark/poisson_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/student_light_icon.png,$(PATH_apps)/distributions/images/dark/student_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/distribution_controller.cpp,$(PATH_apps)/distributions/images/light/uniform_light_icon.png,$(PATH_apps)/distributions/images/dark/uniform_dark_icon.png)
 
-$(call depends_on_transparent_image, \
-$(addprefix $(PATH_apps)/distributions/controllers/, \
-  calculation_controller.cpp \
-  calculation_popup_data_source.cpp \
-), \
-$(addprefix $(PATH_apps)/distributions/images/light/,\
-  calculation1_light_icon.png \
-  calculation2_light_icon.png \
-  calculation3_light_icon.png \
-  calculation4_light_icon.png \
-) \
-$(addprefix $(PATH_apps)/distributions/images/dark/,\
-  calculation1_dark_icon.png \
-  calculation2_dark_icon.png \
-  calculation3_dark_icon.png \
-  calculation4_dark_icon.png \
-))
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/calculation_popup_data_source.cpp,$(PATH_apps)/distributions/images/light/calculation1_light_icon.png,$(PATH_apps)/distributions/images/dark/calculation1_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/calculation_popup_data_source.cpp,$(PATH_apps)/distributions/images/light/calculation2_light_icon.png,$(PATH_apps)/distributions/images/dark/calculation2_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/calculation_popup_data_source.cpp,$(PATH_apps)/distributions/images/light/calculation3_light_icon.png,$(PATH_apps)/distributions/images/dark/calculation3_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/distributions/controllers/calculation_popup_data_source.cpp,$(PATH_apps)/distributions/images/light/calculation4_light_icon.png,$(PATH_apps)/distributions/images/dark/calculation4_dark_icon.png)
 
 $(call i18n_with_universal,distributions/i18n/base)

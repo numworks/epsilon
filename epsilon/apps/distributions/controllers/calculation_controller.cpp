@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "calculation1_light_icon.h"
 #include "distributions/app.h"
 #include "distributions/constants.h"
 

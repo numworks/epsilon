@@ -1,31 +1,21 @@
 #include "distribution_controller.h"
 
-#include <apps/global_preferences.h>
 #include <assert.h>
+#include <escher/transparent_themed_image_view.h>
 
 #include <new>
 
 #include "../app.h"
-#include "binomial_dark_icon.h"
-#include "binomial_light_icon.h"
-#include "chi_squared_dark_icon.h"
-#include "chi_squared_light_icon.h"
-#include "exponential_dark_icon.h"
-#include "exponential_light_icon.h"
-#include "fisher_dark_icon.h"
-#include "fisher_light_icon.h"
-#include "geometric_dark_icon.h"
-#include "geometric_light_icon.h"
-#include "hypergeometric_dark_icon.h"
-#include "hypergeometric_light_icon.h"
-#include "normal_dark_icon.h"
-#include "normal_light_icon.h"
-#include "poisson_dark_icon.h"
-#include "poisson_light_icon.h"
-#include "student_dark_icon.h"
-#include "student_light_icon.h"
-#include "uniform_dark_icon.h"
-#include "uniform_light_icon.h"
+#include "binomial_icon.h"
+#include "chi_squared_icon.h"
+#include "exponential_icon.h"
+#include "fisher_icon.h"
+#include "geometric_icon.h"
+#include "hypergeometric_icon.h"
+#include "normal_icon.h"
+#include "poisson_icon.h"
+#include "student_icon.h"
+#include "uniform_icon.h"
 
 using namespace Escher;
 
@@ -81,21 +71,14 @@ constexpr I18n::Message sMessages[] = {
 void DistributionController::fillCellForRow(HighlightCell* cell, int row) {
   DistributionCell* myCell = static_cast<DistributionCell*>(cell);
   myCell->subLabel()->setMessage(sMessages[row]);
-  const bool dark = SharedGlobalPrefs().theme() == Escher::Theme::Dark;
-  const Image* images[k_totalNumberOfModels] = {
-      dark ? ImageStore::BinomialDarkIcon : ImageStore::BinomialLightIcon,
-      dark ? ImageStore::UniformDarkIcon : ImageStore::UniformLightIcon,
-      dark ? ImageStore::ExponentialDarkIcon : ImageStore::ExponentialLightIcon,
-      dark ? ImageStore::NormalDarkIcon : ImageStore::NormalLightIcon,
-      dark ? ImageStore::ChiSquaredDarkIcon : ImageStore::ChiSquaredLightIcon,
-      dark ? ImageStore::StudentDarkIcon : ImageStore::StudentLightIcon,
-      dark ? ImageStore::GeometricDarkIcon : ImageStore::GeometricLightIcon,
-      dark ? ImageStore::HypergeometricDarkIcon
-           : ImageStore::HypergeometricLightIcon,
-      dark ? ImageStore::PoissonDarkIcon : ImageStore::PoissonLightIcon,
-      dark ? ImageStore::FisherDarkIcon : ImageStore::FisherLightIcon,
-  };
-  myCell->label()->setImage(images[row]);
+  const ThemedImage* images[k_totalNumberOfModels] = {
+      ImageStore::BinomialIcon,    ImageStore::UniformIcon,
+      ImageStore::ExponentialIcon, ImageStore::NormalIcon,
+      ImageStore::ChiSquaredIcon,  ImageStore::StudentIcon,
+      ImageStore::GeometricIcon,   ImageStore::HypergeometricIcon,
+      ImageStore::PoissonIcon,     ImageStore::FisherIcon};
+  myCell->label()->setImage(
+      Escher::TransparentThemedImageView(*images[row]).currentImage());
   myCell->reloadCell();
 }
 

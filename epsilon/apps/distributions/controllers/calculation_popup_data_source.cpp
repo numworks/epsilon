@@ -1,15 +1,10 @@
 #include "calculation_popup_data_source.h"
 
-#include <apps/global_preferences.h>
-
-#include "calculation1_dark_icon.h"
-#include "calculation1_light_icon.h"
-#include "calculation2_dark_icon.h"
-#include "calculation2_light_icon.h"
-#include "calculation3_dark_icon.h"
-#include "calculation3_light_icon.h"
-#include "calculation4_dark_icon.h"
-#include "calculation4_light_icon.h"
+#include <apps/distributions/images/calculation1_icon.h>
+#include <apps/distributions/images/calculation2_icon.h>
+#include <apps/distributions/images/calculation3_icon.h>
+#include <apps/distributions/images/calculation4_icon.h>
+#include <escher/transparent_themed_image_view.h>
 
 namespace Distributions {
 
@@ -20,18 +15,12 @@ CalculationPopupDataSource::CalculationPopupDataSource(
 }
 
 void CalculationPopupDataSource::updateIcons() {
-  const bool dark = SharedGlobalPrefs().theme() == Escher::Theme::Dark;
-  const Escher::Image* images[k_numberOfImages] = {
-      dark ? ImageStore::Calculation1DarkIcon
-           : ImageStore::Calculation1LightIcon,
-      dark ? ImageStore::Calculation2DarkIcon
-           : ImageStore::Calculation2LightIcon,
-      dark ? ImageStore::Calculation3DarkIcon
-           : ImageStore::Calculation3LightIcon,
-      dark ? ImageStore::Calculation4DarkIcon
-           : ImageStore::Calculation4LightIcon};
+  const Escher::ThemedImage* images[k_numberOfImages] = {
+      ImageStore::Calculation1Icon, ImageStore::Calculation2Icon,
+      ImageStore::Calculation3Icon, ImageStore::Calculation4Icon};
   for (int i = 0; i < k_numberOfImages; i++) {
-    m_imageCells[i].setImage(images[i]);
+    m_imageCells[i].setImage(
+        Escher::TransparentThemedImageView(*images[i]).currentImage());
   }
 }
 

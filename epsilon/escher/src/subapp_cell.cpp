@@ -86,7 +86,9 @@ void SubappCell::layoutSubviews(bool force) {
       force);
 }
 
-void SubappCell::setImage(const Image* image) { m_icon.setImage(image); }
+void SubappCell::setThemedImage(const ThemedImage* image) {
+  m_icon.setThemedImage(*image);
+}
 
 void SubappCell::setMessages(I18n::Message title, I18n::Message subTitle) {
   m_title.setMessage(title);

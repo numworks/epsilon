@@ -16,7 +16,7 @@ MenuController::MenuController(
     Escher::StackViewController* parentResponder,
     std::initializer_list<Escher::ViewController*> controllers,
     std::initializer_list<std::initializer_list<I18n::Message>> messages,
-    std::initializer_list<const Escher::Image*> images,
+    std::initializer_list<const Escher::ThemedImage*> images,
     MenuControllerDelegate* delegate)
     : Escher::UniformSelectableListController<Escher::SubappCell,
                                               k_numberOfCells>(parentResponder),
@@ -33,8 +33,8 @@ MenuController::MenuController(
     cell(i++)->setMessages(*mess.begin(), *(mess.begin() + 1));
   }
   i = 0;
-  for (const Escher::Image* img : images) {
-    cell(i++)->setImage(img);
+  for (const Escher::ThemedImage* img : images) {
+    cell(i++)->setThemedImage(img);
   }
 
   centerTable(Escher::Metric::DisplayHeightWithoutTitleBar);

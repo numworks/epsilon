@@ -3,6 +3,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/subapp_cell.h>
+#include <escher/themed_image.h>
 #include <escher/view_controller.h>
 
 namespace Shared {
@@ -21,7 +22,7 @@ class MenuController
       Escher::StackViewController* parentResponder,
       std::initializer_list<Escher::ViewController*> controllers,
       std::initializer_list<std::initializer_list<I18n::Message>> messages,
-      std::initializer_list<const Escher::Image*> images,
+      std::initializer_list<const Escher::ThemedImage*> themedImages,
       MenuControllerDelegate* delegate);
   void stackOpenPage(Escher::ViewController* nextPage) override;
   bool handleEvent(Ion::Events::Event event) override;

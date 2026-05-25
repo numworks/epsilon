@@ -5,7 +5,8 @@
 #include <escher/highlight_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/theme/components.h>
-#include <escher/transparent_image_view.h>
+#include <escher/transparent_themed_image_view.h>
+
 namespace Escher {
 
 /* Cell made of an icon, a title, a chevron and a subtitle below. */
@@ -19,7 +20,7 @@ class SubappCell : public HighlightCell, public Bordered {
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
 
-  void setImage(const Image* image);
+  void setThemedImage(const ThemedImage* image);
   void setMessages(I18n::Message title, I18n::Message subTitle);
 
  private:
@@ -30,7 +31,7 @@ class SubappCell : public HighlightCell, public Bordered {
   constexpr static ThemeComponent k_background =
       ThemeComponent::BackgroundWhite;
 
-  TransparentImageView m_icon;
+  TransparentThemedImageView m_icon;
   MessageTextView m_title;
   MessageTextView m_subTitle;
   ChevronView m_chevron;

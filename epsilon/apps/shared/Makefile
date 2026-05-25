@@ -96,15 +96,8 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   test/interval.cpp:+test \
 )
 
-SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/shared/, \
-  images/polar_grid_icon.png:-test \
-  images/cartesian_grid_icon.png:-test \
-))
-
-# TODO: add dark theme versions and call depends_on_transparent_themed_image
-$(call depends_on_transparent_image, \
-$(PATH_apps)/shared/grid_type_controller.cpp, \
-$(addprefix apps/shared/images/,polar_grid_icon.png cartesian_grid_icon.png))
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/shared/grid_type_controller.cpp,$(PATH_apps)/shared/images/cartesian_grid_light_icon.png,$(PATH_apps)/shared/images/cartesian_grid_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/shared/grid_type_controller.cpp,$(PATH_apps)/shared/images/polar_grid_light_icon.png,$(PATH_apps)/shared/images/polar_grid_dark_icon.png)
 
 $(call i18n_with_universal,shared/i18n/colors)
 $(call i18n_with_universal,shared/i18n/errors)

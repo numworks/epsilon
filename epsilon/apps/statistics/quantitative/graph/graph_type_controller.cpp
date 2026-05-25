@@ -24,7 +24,8 @@ GraphTypeController::GraphTypeController(
         Escher::CellWidget::Type::Label));
     cell(i)->subLabel()->setMessage(
         GraphViewModel::MessageForGraphView(graphView));
-    cell(i)->label()->setImage(GraphViewModel::ImageForGraphView(graphView));
+    cell(i)->label()->setThemedImage(
+        GraphViewModel::ImageForGraphView(graphView));
   }
 }
 

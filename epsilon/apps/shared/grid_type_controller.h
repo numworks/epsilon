@@ -3,7 +3,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_list_view_delegate.h>
 #include <escher/stack_view_controller.h>
-#include <escher/transparent_image_view.h>
+#include <escher/transparent_themed_image_view.h>
 namespace Shared {
 
 class InteractiveCurveViewRange;
@@ -11,7 +11,7 @@ class InteractiveCurveViewRange;
 class GridTypeController
     : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                           Escher::TransparentImageView>,
+                           Escher::TransparentThemedImageView>,
           2> {
  public:
   enum class GridType { Cartesian, Polar };

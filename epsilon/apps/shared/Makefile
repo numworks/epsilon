@@ -101,6 +101,7 @@ SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/shared/, \
   images/cartesian_grid_icon.png:-test \
 ))
 
+# TODO: add dark theme versions and call depends_on_transparent_themed_image
 $(call depends_on_transparent_image, \
 $(PATH_apps)/shared/grid_type_controller.cpp, \
 $(addprefix apps/shared/images/,polar_grid_icon.png cartesian_grid_icon.png))

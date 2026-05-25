@@ -68,6 +68,7 @@ SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/,$(addsuff
   inference/images/significance_test.png \
 )))
 
+# TODO: add dark theme versions and call depends_on_transparent_themed_image
 $(call depends_on_transparent_image,$(PATH_apps)/inference/app.cpp,$(addprefix $(PATH_apps)/inference/images/,\
   confidence_interval.png \
   significance_test.png \

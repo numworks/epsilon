@@ -191,4 +191,13 @@ $(if $(filter-out $(call _themed_image_stem,$(strip $3),light),$(call _themed_im
 $(eval $(call _depends_on_themed_image_body,$1,$2,$(call _themed_image_stem,$(strip $3),light),$3,$4))
 endef
 
+# depends_on_transparent_themed_image, <module>, <list of cpp>, <light png>, <dark png>
+# Like depends_on_themed_image but passes --transparent to the inliner.
+define depends_on_transparent_themed_image
+$(eval \
+$(OUTPUT_DIRECTORY)/$(call _themed_image_stem,$(strip $3),light).cpp: INLINER_ARGS += --transparent
+)
+$(call depends_on_themed_image,$1,$2,$3,$4)
+endef
+
 $(call depends_on_transparent_image,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/caret.png)

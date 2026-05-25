@@ -19,6 +19,10 @@ class ThemedImageView : public View {
     }
   }
 
+  void setSingleImage(const Image* simpleImage) {
+    m_themedImage = ThemedImage(simpleImage, simpleImage);
+  }
+
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 

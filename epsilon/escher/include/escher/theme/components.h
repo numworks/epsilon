@@ -22,7 +22,6 @@ namespace Escher {
   X(CellOdd)                   \
   X(CellTableEven)             \
   X(CellTableOdd)              \
-  X(ActiveTabSelected)         \
   X(InactiveTabSelected)       \
   X(SurfaceSelect)             \
   X(SurfaceSelectApps)         \

@@ -21,7 +21,6 @@ constexpr static ThemeContainer k_lightTheme =
                    .CellOdd = Palette::WallScreen,
                    .CellTableEven = Palette::White,
                    .CellTableOdd = Palette::WallScreen,
-                   .ActiveTabSelected = Palette::Select,
                    .InactiveTabSelected = Palette::SelectDark,
                    .SurfaceSelect = Palette::Select,
                    .SurfaceSelectApps = Palette::YellowDark,

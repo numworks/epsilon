@@ -8,6 +8,7 @@
 
 namespace Escher {
 
+// TODO: all TransparentImageView will be replaced by ThemedTransparentImageView
 class TransparentImageView : public ImageView, public CellWidget {
  public:
   const View* view() const override { return this; }

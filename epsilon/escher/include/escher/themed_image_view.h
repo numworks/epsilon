@@ -22,12 +22,13 @@ class ThemedImageView : public View {
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
+ protected:
+  const Image* currentImage() const;
+
  private:
   // TODO: do not duplicate with ImageView
   // Boot logo image is 188 x 21 = 3948
   constexpr static int k_maxImageSize = 188 * 21;
-
-  const Image* currentImage() const;
 
   ThemedImage m_themedImage;
 };

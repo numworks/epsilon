@@ -4,7 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/pointer_text_view.h>
 #include <escher/text_format.h>
-#include <escher/transparent_image_view.h>
+#include <escher/transparent_themed_image_view.h>
 #include <ion/external_apps.h>
 
 namespace Home {
@@ -33,7 +33,7 @@ class AppCell : public Escher::HighlightCell {
       .style = {.font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
   const Escher::TextView* textView() const;
-  Escher::TransparentImageView m_iconView;
+  Escher::TransparentThemedImageView m_iconView;
   Escher::MessageTextView m_messageNameView;
   Escher::Image m_image;
   Escher::PointerTextView m_pointerNameView;

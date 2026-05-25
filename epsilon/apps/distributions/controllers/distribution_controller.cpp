@@ -77,8 +77,7 @@ void DistributionController::fillCellForRow(HighlightCell* cell, int row) {
       ImageStore::ChiSquaredIcon,  ImageStore::StudentIcon,
       ImageStore::GeometricIcon,   ImageStore::HypergeometricIcon,
       ImageStore::PoissonIcon,     ImageStore::FisherIcon};
-  myCell->label()->setImage(
-      Escher::TransparentThemedImageView(*images[row]).currentImage());
+  myCell->label()->setThemedImage(*images[row]);
   myCell->reloadCell();
 }
 

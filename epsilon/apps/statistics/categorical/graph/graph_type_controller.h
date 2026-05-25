@@ -6,14 +6,14 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
-#include <escher/transparent_image_view.h>
+#include <escher/transparent_themed_image_view.h>
 
 #include "graph_view_model.h"
 
 namespace Statistics::Categorical {
 
-using GraphTypeCell =
-    Escher::MenuCell<Escher::TransparentImageView, Escher::MessageTextView>;
+using GraphTypeCell = Escher::MenuCell<Escher::TransparentThemedImageView,
+                                       Escher::MessageTextView>;
 
 class GraphTypeController
     : public Escher::AlternateViewDelegate,
@@ -37,7 +37,8 @@ class GraphTypeController
               Escher::CellWidget::Type::Label));
       cell(i)->subLabel()->setMessage(
           GraphViewModel::MessageForGraphView(graphView));
-      cell(i)->label()->setImage(GraphViewModel::ImageForGraphView(graphView));
+      cell(i)->label()->setThemedImage(
+          GraphViewModel::ImageForGraphView(graphView));
     }
   };
 

@@ -14,13 +14,10 @@ I18n::Message GraphViewModel::MessageForGraphView(GraphView graphView) {
   return k_messages[IndexOfGraphView(graphView)];
 }
 
-const Escher::Image* const GraphViewModel::ImageForGraphView(
-    GraphView graphView) {
+Escher::ThemedImage GraphViewModel::ImageForGraphView(GraphView graphView) {
   const Escher::ThemedImage* const k_themedImages[k_numberOfGraphViews] = {
       ImageStore::BarIcon, ImageStore::PieIcon};
-  return Escher::TransparentThemedImageView(
-             *k_themedImages[IndexOfGraphView(graphView)])
-      .currentImage();
+  return *k_themedImages[IndexOfGraphView(graphView)];
 }
 
 GraphViewModel::GraphView GraphViewModel::GraphViewAtIndex(uint8_t index) {

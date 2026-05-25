@@ -10,7 +10,7 @@ namespace Escher {
 
 PopupItemView::PopupItemView(HighlightCell* cell)
     : m_isPoppingUp(false), m_cell(cell) {
-  m_caret.setImage(ImageStore::Caret);
+  m_caret.setSingleImage(ImageStore::Caret);
   m_caret.setBackgroundColor(ThemeComponent::BackgroundWhite);
 }
 

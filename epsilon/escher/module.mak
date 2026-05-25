@@ -38,7 +38,6 @@ $(call create_module,escher,1,$(addprefix src/, \
   highlight_cell.cpp \
   highlight_image_cell.cpp \
   horizontal_or_vertical_layout.cpp \
-  image_view.cpp \
   themed_image_view.cpp \
   init.cpp \
   editable_field.cpp \
@@ -100,7 +99,6 @@ $(call create_module,escher,1,$(addprefix src/, \
   toggleable_dot_view.cpp \
   toggleable_view.cpp \
   toolbox.cpp \
-  transparent_image_view.cpp \
   transparent_themed_image_view.cpp \
   unequal_view.cpp \
   view.cpp \

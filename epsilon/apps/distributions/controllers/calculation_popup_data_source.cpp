@@ -19,8 +19,7 @@ void CalculationPopupDataSource::updateIcons() {
       ImageStore::Calculation1Icon, ImageStore::Calculation2Icon,
       ImageStore::Calculation3Icon, ImageStore::Calculation4Icon};
   for (int i = 0; i < k_numberOfImages; i++) {
-    m_imageCells[i].setImage(
-        Escher::TransparentThemedImageView(*images[i]).currentImage());
+    m_imageCells[i].setThemedImage(*images[i]);
   }
 }
 

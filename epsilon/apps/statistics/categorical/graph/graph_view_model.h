@@ -1,7 +1,7 @@
 #pragma once
 
 #include <apps/i18n.h>
-#include <escher/image.h>
+#include <escher/themed_image.h>
 #include <stdint.h>
 
 namespace Statistics::Categorical {
@@ -17,7 +17,7 @@ class GraphViewModel {
       static_cast<uint8_t>(GraphView::NumberOfGraphView);
 
   static I18n::Message MessageForGraphView(GraphView graphView);
-  static const Escher::Image* const ImageForGraphView(GraphView graphView);
+  static Escher::ThemedImage ImageForGraphView(GraphView graphView);
   static GraphView GraphViewAtIndex(uint8_t index);
   static uint8_t IndexOfGraphView(GraphView graphView);
 

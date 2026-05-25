@@ -2,12 +2,11 @@
 
 #include <escher/bordered.h>
 #include <escher/bordering_view.h>
-#include <escher/image_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
-#include <escher/transparent_image_view.h>
+#include <escher/transparent_themed_image_view.h>
 #include <escher/view.h>
 #include <ion/events.h>
 
@@ -35,7 +34,7 @@ class PopupItemView : public HighlightCell, public Bordered {
   constexpr static int k_marginImageVertical = 2;
   bool m_isPoppingUp;
   HighlightCell* m_cell;
-  TransparentImageView m_caret;
+  TransparentThemedImageView m_caret;
 };
 
 class DropdownCallback {

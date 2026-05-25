@@ -45,8 +45,7 @@ void AppCell::layoutSubviews(bool force) {
 }
 
 void AppCell::setBuiltinAppDescriptor(const ::App::Descriptor* descriptor) {
-  m_iconView.setImage(
-      Escher::TransparentThemedImageView(descriptor->icon()).currentImage());
+  m_iconView.setThemedImage(descriptor->icon());
   m_messageNameView.setMessage(descriptor->name());
   m_pointerNameView.setText(nullptr);
   layoutSubviews();
@@ -56,7 +55,7 @@ void AppCell::setExternalApp(Ion::ExternalApps::App app) {
   m_pointerNameView.setText(app.name());
   m_messageNameView.setMessage((I18n::Message)0);
   m_image = Image(k_iconWidth, k_iconHeight, app.iconData(), app.iconSize());
-  m_iconView.setImage(&m_image);
+  m_iconView.setSingleImage(&m_image);
   layoutSubviews();
 }
 

@@ -5,7 +5,6 @@
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/transparent_image_view.h>
 #include <escher/unequal_view.h>
 
 #include "grid_type_controller.h"

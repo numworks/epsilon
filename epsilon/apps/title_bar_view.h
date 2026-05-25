@@ -2,7 +2,6 @@
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
-#include <escher/image_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/text_format.h>
 #include <escher/themed_image_view.h>

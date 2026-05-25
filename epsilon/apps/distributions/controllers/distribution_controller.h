@@ -5,7 +5,7 @@
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/table_view_with_frozen_header.h>
-#include <escher/transparent_image_view.h>
+#include <escher/transparent_themed_image_view.h>
 
 #include <new>
 
@@ -40,8 +40,8 @@ class DistributionController : public Escher::SelectableListViewController<
   void setDistributionAccordingToIndex(int index);
 
   using DistributionCell =
-      Escher::MenuCell<Escher::TransparentImageView, Escher::MessageTextView,
-                       Escher::ChevronView>;
+      Escher::MenuCell<Escher::TransparentThemedImageView,
+                       Escher::MessageTextView, Escher::ChevronView>;
 
   Escher::TableViewWithFrozenHeader m_contentView;
   DistributionCell m_cells[k_numberOfCells];

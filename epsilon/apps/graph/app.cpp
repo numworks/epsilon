@@ -3,7 +3,6 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <apps/icons/graph_icon.h>
-#include <escher/transparent_themed_image_view.h>
 
 #include "shared/global_store.h"
 
@@ -21,10 +20,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::FunctionAppCapital;
 }
 
-const Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::GraphIcon)
-      .currentImage();
-}
+ThemedImage App::Descriptor::icon() const { return *ImageStore::GraphIcon; }
 
 App* App::Snapshot::unpack(Container* container) {
   return new (container->currentAppBuffer()) App(this);

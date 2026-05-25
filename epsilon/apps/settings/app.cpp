@@ -2,7 +2,6 @@
 
 #include <apps/i18n.h>
 #include <apps/icons/settings_icon.h>
-#include <escher/transparent_themed_image_view.h>
 
 using namespace Escher;
 
@@ -16,10 +15,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::SettingsAppCapital;
 }
 
-const Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::SettingsIcon)
-      .currentImage();
-}
+ThemedImage App::Descriptor::icon() const { return *ImageStore::SettingsIcon; }
 
 App* App::Snapshot::unpack(Container* container) {
   return new (container->currentAppBuffer()) App(this);

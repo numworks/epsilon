@@ -20,7 +20,7 @@ class App : public Shared::FunctionApp {
    public:
     I18n::Message name() const override;
     I18n::Message upperName() const override;
-    const Escher::Image* icon() const override;
+    Escher::ThemedImage icon() const override;
   };
   class Snapshot : public Shared::FunctionApp::Snapshot {
    public:

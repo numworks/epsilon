@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <escher/theme/color_picker.h>
+#include <escher/transparent_themed_image_view.h>
 
 using namespace Escher;
 
@@ -44,7 +45,8 @@ void AppCell::layoutSubviews(bool force) {
 }
 
 void AppCell::setBuiltinAppDescriptor(const ::App::Descriptor* descriptor) {
-  m_iconView.setImage(descriptor->icon());
+  m_iconView.setImage(
+      Escher::TransparentThemedImageView(descriptor->icon()).currentImage());
   m_messageNameView.setMessage(descriptor->name());
   m_pointerNameView.setText(nullptr);
   layoutSubviews();

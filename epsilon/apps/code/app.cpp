@@ -2,7 +2,6 @@
 
 #include <apps/i18n.h>
 #include <apps/icons/code_icon.h>
-#include <escher/transparent_themed_image_view.h>
 #include <omg/utf8_helper.h>
 #include <poincare/pool.h>
 
@@ -19,10 +18,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::CodeAppCapital;
 }
 
-const Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::CodeIcon)
-      .currentImage();
-}
+ThemedImage App::Descriptor::icon() const { return *ImageStore::CodeIcon; }
 
 App::Snapshot::Snapshot()
 #if EPSILON_GETOPT

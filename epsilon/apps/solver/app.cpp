@@ -3,7 +3,6 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <apps/icons/solver_icon.h>
-#include <escher/transparent_themed_image_view.h>
 #include <poincare/preferences.h>
 
 using namespace Shared;
@@ -11,10 +10,7 @@ using namespace Escher;
 
 namespace Solver {
 
-const Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::SolverIcon)
-      .currentImage();
-}
+ThemedImage App::Descriptor::icon() const { return *ImageStore::SolverIcon; }
 
 constexpr static App::Descriptor sDescriptor;
 

@@ -21,7 +21,7 @@ class App : public Shared::MathApp {
     I18n::Message upperName() const override {
       return I18n::Message::DistributionsAppCapital;
     };
-    const Escher::Image* icon() const override;
+    Escher::ThemedImage icon() const override;
   };
 
   // Snapshot

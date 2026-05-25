@@ -2,7 +2,6 @@
 
 #include <apps/apps_container.h>
 #include <apps/icons/distributions_icon.h>
-#include <escher/transparent_themed_image_view.h>
 
 #include "shared/global_store.h"
 
@@ -10,9 +9,8 @@ using namespace Escher;
 
 namespace Distributions {
 
-const Escher::Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::DistributionsIcon)
-      .currentImage();
+Escher::ThemedImage App::Descriptor::icon() const {
+  return *ImageStore::DistributionsIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

@@ -4,7 +4,6 @@
 #include <apps/global_preferences.h>
 #include <apps/icons/sequence_icon.h>
 #include <apps/shared/global_store.h>
-#include <escher/transparent_themed_image_view.h>
 #include <poincare/helpers/sequence.h>
 
 #include <array>
@@ -22,10 +21,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::SequenceAppCapital;
 }
 
-const Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::SequenceIcon)
-      .currentImage();
-}
+ThemedImage App::Descriptor::icon() const { return *ImageStore::SequenceIcon; }
 
 App::Snapshot::Snapshot()
     : Shared::FunctionApp::Snapshot::Snapshot(),

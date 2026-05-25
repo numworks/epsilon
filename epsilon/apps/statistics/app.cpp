@@ -4,7 +4,6 @@
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <apps/icons/stat_icon.h>
-#include <escher/transparent_themed_image_view.h>
 #include <ion/storage/record.h>
 
 #include <array>
@@ -22,10 +21,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::StatsAppCapital;
 }
 
-const Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::StatIcon)
-      .currentImage();
-}
+ThemedImage App::Descriptor::icon() const { return *ImageStore::StatIcon; }
 
 App::Snapshot::Snapshot()
     : m_storeVersion(0),

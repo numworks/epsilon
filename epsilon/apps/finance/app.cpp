@@ -3,15 +3,13 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <apps/icons/finance_icon.h>
-#include <escher/transparent_themed_image_view.h>
 
 namespace Finance {
 
 // App::Descriptor
 
-const Escher::Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::FinanceIcon)
-      .currentImage();
+Escher::ThemedImage App::Descriptor::icon() const {
+  return *ImageStore::FinanceIcon;
 }
 
 // App::Snapshot

@@ -14,7 +14,7 @@ class App : public Shared::MathApp {
    public:
     I18n::Message name() const override;
     I18n::Message upperName() const override;
-    const Escher::Image* icon() const override;
+    Escher::ThemedImage icon() const override;
   };
 
   constexpr static bool k_useTenPower = true;

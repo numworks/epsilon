@@ -2,7 +2,6 @@
 
 #include <apps/i18n.h>
 #include <apps/icons/calculation_icon.h>
-#include <escher/transparent_themed_image_view.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -16,9 +15,8 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::CalculAppCapital;
 }
 
-const Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::CalculationIcon)
-      .currentImage();
+ThemedImage App::Descriptor::icon() const {
+  return *ImageStore::CalculationIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

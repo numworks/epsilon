@@ -2,9 +2,9 @@
 
 #include <escher/editable_field_help_box.h>
 #include <escher/i18n.h>
-#include <escher/image.h>
 #include <escher/modal_view_controller.h>
 #include <escher/responder.h>
+#include <escher/themed_image.h>
 #include <escher/timer.h>
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>
@@ -35,7 +35,7 @@ class App : public Responder {
     virtual I18n::Message upperName() const {
       return static_cast<I18n::Message>(0);
     }
-    virtual const Image* icon() const { return nullptr; }
+    virtual ThemedImage icon() const { return ThemedImage{}; }
   };
 
   /* The Snapshot is the part of the App that is never destroyed, even when the

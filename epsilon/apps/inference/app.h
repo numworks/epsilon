@@ -27,7 +27,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     I18n::Message upperName() const override {
       return I18n::Message::InferenceAppCapital;
     };
-    const Escher::Image* icon() const override;
+    Escher::ThemedImage icon() const override;
   };
 
   // Snapshot

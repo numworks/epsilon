@@ -3,9 +3,8 @@
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
 #include <apps/icons/inference_icon.h>
-#include <apps/inference/images/confidence_interval.h>
-#include <apps/inference/images/significance_test.h>
-#include <escher/transparent_themed_image_view.h>
+#include <apps/inference/images/confidence_interval_icon.h>
+#include <apps/inference/images/significance_test_icon.h>
 
 #include "models/homogeneity_test.h"
 #include "shared/global_store.h"
@@ -14,9 +13,8 @@ using namespace Escher;
 
 namespace Inference {
 
-const Escher::Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::InferenceIcon)
-      .currentImage();
+Escher::ThemedImage App::Descriptor::icon() const {
+  return *ImageStore::InferenceIcon;
 }
 
 App* App::Snapshot::unpack(Container* container) {

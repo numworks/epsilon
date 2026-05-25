@@ -4,7 +4,6 @@
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <apps/icons/regression_icon.h>
-#include <escher/transparent_themed_image_view.h>
 #include <ion/storage/record.h>
 
 #include <array>
@@ -24,9 +23,8 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::RegressionAppCapital;
 }
 
-const Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::RegressionIcon)
-      .currentImage();
+ThemedImage App::Descriptor::icon() const {
+  return *ImageStore::RegressionIcon;
 }
 
 App::Snapshot::Snapshot()

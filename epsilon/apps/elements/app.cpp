@@ -3,7 +3,6 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <apps/icons/elements_icon.h>
-#include <escher/transparent_themed_image_view.h>
 
 #include "elements_data_base.h"
 
@@ -19,9 +18,8 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::ElementsAppCapital;
 }
 
-const Escher::Image* App::Descriptor::icon() const {
-  return Escher::TransparentThemedImageView(*ImageStore::ElementsIcon)
-      .currentImage();
+Escher::ThemedImage App::Descriptor::icon() const {
+  return *ImageStore::ElementsIcon;
 }
 
 // App::Snapshot

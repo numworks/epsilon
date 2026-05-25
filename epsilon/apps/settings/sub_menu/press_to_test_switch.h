@@ -3,7 +3,7 @@
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/switch_view.h>
-#include <escher/transparent_image_view.h>
+#include <escher/transparent_themed_image_view.h>
 
 namespace Settings {
 
@@ -14,7 +14,7 @@ class AlternateSwitchAndImage : public Escher::CellWidget {
   void setDisplayImage(bool state) { m_displayImage = state; }
 
   Escher::SwitchView* switchView() { return &m_switch; }
-  Escher::TransparentImageView* imageView() { return &m_image; }
+  Escher::TransparentThemedImageView* imageView() { return &m_image; }
 
   // CellWidget
   const Escher::View* view() const override {
@@ -36,7 +36,7 @@ class AlternateSwitchAndImage : public Escher::CellWidget {
 
  private:
   Escher::SwitchView m_switch;
-  Escher::TransparentImageView m_image;
+  Escher::TransparentThemedImageView m_image;
   bool m_displayImage;
 };
 

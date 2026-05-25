@@ -2,16 +2,13 @@
 
 #include <apps/apps_container.h>
 #include <apps/exam_mode_manager.h>
-#include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/settings/sub_menu/press_to_test_success_icon.h>
 #include <assert.h>
 #include <escher/stack_view_controller.h>
 #include <escher/theme/color_picker.h>
 
 #include <cmath>
-
-#include "press_to_test_success_dark_icon.h"
-#include "press_to_test_success_light_icon.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -47,10 +44,8 @@ PressToTestController::PressToTestController(Responder* parentResponder)
           this)) {
   for (int i = 0; i < k_numberOfReusableSwitchCells; i++) {
     m_switchCells[i].accessory()->setDisplayImage(false);
-    m_switchCells[i].accessory()->imageView()->setImage(
-        SharedGlobalPrefs().theme() == Theme::Dark
-            ? ImageStore::PressToTestSuccessDarkIcon
-            : ImageStore::PressToTestSuccessLightIcon);
+    m_switchCells[i].accessory()->imageView()->setThemedImage(
+        *ImageStore::PressToTestSuccessIcon);
     m_switchCells[i].accessory()->imageView()->setBackgroundColor(
         ThemeComponent::BackgroundWhite);
   }
@@ -140,12 +135,10 @@ void PressToTestController::viewWillAppear() {
   if (ExamModeManager::ExamMode().isActive()) {
     resetController();
   }
-  const Escher::Image* successIcon =
-      SharedGlobalPrefs().theme() == Theme::Dark
-          ? ImageStore::PressToTestSuccessDarkIcon
-          : ImageStore::PressToTestSuccessLightIcon;
+
   for (int i = 0; i < k_numberOfReusableSwitchCells; i++) {
-    m_switchCells[i].accessory()->imageView()->setImage(successIcon);
+    m_switchCells[i].accessory()->imageView()->setThemedImage(
+        *ImageStore::PressToTestSuccessIcon);
   }
   setMessages();
   ListWithTopAndBottomController::viewWillAppear();

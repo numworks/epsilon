@@ -9,8 +9,7 @@ HighlightImageCell::HighlightImageCell() : HighlightCell() {
 }
 
 void HighlightImageCell::setHighlighted(bool highlighted) {
-  m_contentView.setBackgroundColor(
-      Highlight(k_unselectedBackgroundColor, highlighted));
+  m_contentView.setHighlighted(highlighted);
   HighlightCell::setHighlighted(highlighted);
 }
 

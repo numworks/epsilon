@@ -26,8 +26,8 @@ QUIZ_CASE(pcj_simplification_factorial) {
 
 QUIZ_CASE(pcj_simplification_arithmetic) {
   // Factor
-  simplifies_to("factor(0)", "0");
-  simplifies_to("factor(1)", "1");
+  simplifies_to("factor(0)", "undef");
+  simplifies_to("factor(1)", "undef");
   simplifies_to("factor(23)", "23");
   simplifies_to("factor(42*3)", "2×3^2×7");
   simplifies_to("factor(-12)", "-2^2×3");
@@ -43,9 +43,9 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(10007)", "10007");
   simplifies_to("factor(10007^2)", "undef");
   simplifies_to("factor(i)", "undef", k_cartesianSimplification);
-  // Behavior of factor(-1) in a dependency
-  simplifies_to("asin(factor(i*i)b)",
-                "dep(arcsin(b×(-1)),{realPos(1-abs(b×-1))})");
+  // Behavior of factor in a dependency
+  simplifies_to("asin(factor(-2)b)",
+                "dep(arcsin(b×(-2)),{realPos(1-abs(b×(-2)))})");
 
   // Euclidean division
   simplifies_to("quo(23,5)", "4");

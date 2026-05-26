@@ -213,8 +213,7 @@ bool Arithmetic::BeautifyFactor(
   }
   assert(child->isInteger());
   if (child->isZero() || child->isOne() || child->isMinusOne()) {
-    // Factor is an extended prime factorization
-    e->moveTreeOverTree(child);
+    e->cloneTreeOverTree(KUndef);
     return true;
   }
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());

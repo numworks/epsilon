@@ -181,4 +181,25 @@ $(OUTPUT_DIRECTORY)/$(call _themed_image_stem,$(strip $3),light).cpp: INLINER_AR
 $(call depends_on_themed_image,$1,$2,$3,$4,$5)
 endef
 
+# Body of depends_on_selectable_themed_image: like _depends_on_themed_image_body
+# but feeds an extra selected_dark PNG to the inliner via --selectable.
+define _depends_on_selectable_themed_image_body
+$(call all_objects_for,$(strip $2)): $(OUTPUT_DIRECTORY)/$3.cpp
+$(call all_objects_for,$(strip $2)): SFLAGS += -I$(OUTPUT_DIRECTORY)/$(dir $3)
+$(OUTPUT_DIRECTORY)/$3.h: $(OUTPUT_DIRECTORY)/$3.cpp ;
+$(OUTPUT_DIRECTORY)/$3.cpp: $(strip $4) $(strip $5) $(strip $6) $(_escher_inliner) | $(OUTPUT_DIRECTORY)/$(dir $3).
+	$$(call rule_label,INLINE)
+	$(_escher_inliner) --themed --selectable $(strip $4) $(strip $5) $(strip $6) $(OUTPUT_DIRECTORY)/$3.h $(OUTPUT_DIRECTORY)/$3.cpp $$(INLINER_ARGS)
+SOURCES_$(strip $1) += $$(call generated_sources_for,$3.cpp$7)
+endef
+
+# depends_on_selectable_themed_image, <module>, <list of cpp>, <light png>, <dark png>, <selectable dark png>, [tastes]
+# Like depends_on_themed_image but takes a third PNG for the selected variant
+# of the dark theme. The generated ThemedImage embeds it as selectableDark.
+define depends_on_selectable_themed_image
+$(if $(filter-out $(call _themed_image_stem,$(strip $3),light),$(call _themed_image_stem,$(strip $4),dark)),$(error depends_on_selectable_themed_image: light "$(strip $3)" and dark "$(strip $4)" yield different stems))
+$(if $(filter-out $(call _themed_image_stem,$(strip $3),light),$(call _themed_image_stem,$(strip $5),selected_dark)),$(error depends_on_selectable_themed_image: light "$(strip $3)" and selected_dark "$(strip $5)" yield different stems))
+$(eval $(call _depends_on_selectable_themed_image_body,$1,$2,$(call _themed_image_stem,$(strip $3),light),$3,$4,$5,$6))
+endef
+
 $(call depends_on_transparent_themed_image,escher,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/light/caret_light_icon.png,$(PATH_escher)/image/dark/caret_dark_icon.png)

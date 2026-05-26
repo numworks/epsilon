@@ -3,6 +3,8 @@
  * Usage:
  *   inliner snake_case_image.png output.h output.cpp [--transparent]
  *   inliner --themed light.png dark.png output.h output.cpp [--transparent]
+ *   inliner --themed --selectable light.png dark.png selected_dark.png
+ *       output.h output.cpp [--transparent]
  *
  * In the regular mode, the inliner creates a .h and a .cpp file declaring an
  * Image in the ImageStore namespace. The header exposes a pointer to this
@@ -10,8 +12,11 @@
  *
  * In the --themed mode, the inliner reads two PNGs (light and dark) and emits
  * a single .h/.cpp pair declaring a ThemedImage in the ImageStore namespace.
- * The output stem is taken from the .h path. Both PNGs must have matching
- * dimensions in practice (not enforced here). */
+ * With the additional --selectable flag, a third PNG (the selected variant of
+ * the dark theme) is read and embedded as the ThemedImage's selectedDark
+ * image. Without --selectable, the ThemedImage's selectedDark pointer stays
+ * at nullptr. Both PNGs must have matching dimensions in practice (not
+ * enforced here). */
 
 #include <assert.h>
 #include <ctype.h>
@@ -62,6 +67,7 @@ void generateImplementationFromThemedImage(FILE* file, const char* header,
                                            const char* variable,
                                            const CompressedImage* light,
                                            const CompressedImage* dark,
+                                           const CompressedImage* selectedDark,
                                            bool transparent);
 
 void fileNameToSnakeCaseName(const char* fileName, char* snakeCaseName,
@@ -79,12 +85,19 @@ void deriveNamesFromPath(const char* path, char* lowerSnakeCaseName,
 
 int main(int argc, char* argv[]) {
   bool themed = FALSE;
+  bool selectable = FALSE;
   bool transparent = FALSE;
 
   // Detect --themed flag (must be first if present).
   int argi = 1;
   if (argi < argc && strcmp(argv[argi], "--themed") == 0) {
     themed = TRUE;
+    argi++;
+  }
+
+  // Detect --selectable flag (only valid with --themed, must follow it).
+  if (themed && argi < argc && strcmp(argv[argi], "--selectable") == 0) {
+    selectable = TRUE;
     argi++;
   }
 
@@ -95,20 +108,29 @@ int main(int argc, char* argv[]) {
   }
 
   if (themed) {
-    ERROR_IF(argc - argi != 4,
-             "Usage: inliner --themed light.png dark.png output.h output.cpp "
-             "[--transparent]");
+    int expectedArgs = selectable ? 5 : 4;
+    ERROR_IF(argc - argi != expectedArgs,
+             "Usage: inliner --themed [--selectable] light.png dark.png "
+             "[selected_dark.png] output.h output.cpp [--transparent]");
     const char* lightPath = argv[argi];
     const char* darkPath = argv[argi + 1];
-    const char* headerPath = argv[argi + 2];
-    const char* implementationPath = argv[argi + 3];
+    const char* selectedDarkPath = selectable ? argv[argi + 2] : NULL;
+    int pathOffset = selectable ? 3 : 2;
+    const char* headerPath = argv[argi + pathOffset];
+    const char* implementationPath = argv[argi + pathOffset + 1];
 
     CompressedImage light = {0};
     CompressedImage dark = {0};
+    CompressedImage selectedDark = {0};
     ERROR_IF(readAndCompressPng(lightPath, transparent, &light) != 0,
              "Error: could not read light PNG");
     ERROR_IF(readAndCompressPng(darkPath, transparent, &dark) != 0,
              "Error: could not read dark PNG");
+    if (selectable) {
+      ERROR_IF(
+          readAndCompressPng(selectedDarkPath, transparent, &selectedDark) != 0,
+          "Error: could not read selected dark PNG");
+    }
 
     // Derive the symbol names from the output header path.
     char lowerSnakeCaseName[MAX_FILENAME_LENGTH];
@@ -122,13 +144,16 @@ int main(int argc, char* argv[]) {
     fclose(header);
 
     FILE* implementation = fopen(implementationPath, "w");
-    generateImplementationFromThemedImage(implementation, lowerSnakeCaseName,
-                                          camelCaseName, &light, &dark,
-                                          transparent);
+    generateImplementationFromThemedImage(
+        implementation, lowerSnakeCaseName, camelCaseName, &light, &dark,
+        selectable ? &selectedDark : NULL, transparent);
     fclose(implementation);
 
     free(light.compressedPixels);
     free(dark.compressedPixels);
+    if (selectable) {
+      free(selectedDark.compressedPixels);
+    }
     return 0;
   }
 
@@ -330,6 +355,7 @@ void generateImplementationFromThemedImage(FILE* file, const char* header,
                                            const char* variable,
                                            const CompressedImage* light,
                                            const CompressedImage* dark,
+                                           const CompressedImage* selectedDark,
                                            bool transparent) {
   fprintf(file,
           "// This file is auto-generated by Inliner. Do not edit manually.\n");
@@ -340,9 +366,21 @@ void generateImplementationFromThemedImage(FILE* file, const char* header,
                       transparent);
   writeImageConstexpr(file, "imageDark", "compressedPixelDataDark", dark,
                       transparent);
-  fprintf(file,
-          "\nconstexpr Escher::ThemedImage themedImage = "
-          "Escher::ThemedImage(&imageLight, &imageDark);\n\n");
+  if (selectedDark != NULL) {
+    writeCompressedPixelArray(file, "compressedPixelDataselectedDark",
+                              selectedDark);
+    writeImageConstexpr(file, "imageselectedDark",
+                        "compressedPixelDataselectedDark", selectedDark,
+                        transparent);
+    fprintf(file,
+            "\nconstexpr Escher::ThemedImage themedImage = "
+            "Escher::ThemedImage(&imageLight, &imageDark, "
+            "&imageselectedDark);\n\n");
+  } else {
+    fprintf(file,
+            "\nconstexpr Escher::ThemedImage themedImage = "
+            "Escher::ThemedImage(&imageLight, &imageDark);\n\n");
+  }
   fprintf(file,
           "const Escher::ThemedImage * const ImageStore::%s = &themedImage;\n",
           variable);

@@ -25,7 +25,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/code/,$(addsuffix :-test, \
   test/templates.cpp:+test \
 )
 
-$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/code/app.cpp,$(PATH_apps)/icons/light/code_light_icon.png,$(PATH_apps)/icons/dark/code_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/code/app.cpp,$(PATH_apps)/icons/light/code_light_icon.png,$(PATH_apps)/icons/dark/code_dark_icon.png,:-test)
 
 $(call i18n_with_universal,code/i18n/base)
 $(call i18n_with_universal,code/i18n/catalog)

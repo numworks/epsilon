@@ -13,6 +13,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/elements/,$(addsuffix :-test, \
   table_layout.cpp \
 ))
 
-$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/elements/app.cpp,$(PATH_apps)/icons/light/elements_light_icon.png,$(PATH_apps)/icons/dark/elements_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/elements/app.cpp,$(PATH_apps)/icons/light/elements_light_icon.png,$(PATH_apps)/icons/dark/elements_dark_icon.png,:-test)
 
 $(call i18n_with_universal,elements/i18n/base)

@@ -156,12 +156,15 @@ $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): INLINER_ARGS += --trans
 $(call depends_on_image,$1,$2)
 endef
 
-# depends_on_themed_image, <module>, <list of cpp>, <light png>, <dark png>
+# depends_on_themed_image, <module>, <list of cpp>, <light png>, <dark png>, [tastes]
 # Inlines both PNGs directly into a single ThemedImage .h/.cpp pair via the
-# inliner's --themed mode, and appends the generated .cpp to SOURCES_<module>
-# with the :-test suffix so the image data is linked into the main binary but
-# excluded from the test binary. The output stem is deduced from the PNG
-# paths: <dir>/light/<base>_light_<rest>.png and <dir>/dark/<base>_dark_<rest>.png
+# inliner's --themed mode, and appends the generated .cpp to SOURCES_<module>.
+# The optional <tastes> argument is appended to the generated source entry
+# (e.g. ":-test" to exclude from the test binary). Defaults to empty (image
+# linked into every binary). Pass ":-test" when the image is only referenced
+# from code that is itself excluded from the test binary, to keep the test
+# binary smaller. The output stem is deduced from the PNG paths:
+# <dir>/light/<base>_light_<rest>.png and <dir>/dark/<base>_dark_<rest>.png
 # both yield <dir>/<base>_<rest>, so the generated header is included as
 # <base>_<rest>.h. Both PNGs must yield the same stem.
 
@@ -176,22 +179,22 @@ $(OUTPUT_DIRECTORY)/$3.h: $(OUTPUT_DIRECTORY)/$3.cpp ;
 $(OUTPUT_DIRECTORY)/$3.cpp: $(strip $4) $(strip $5) $(_escher_inliner) | $(OUTPUT_DIRECTORY)/$(dir $3).
 	$$(call rule_label,INLINE)
 	$(_escher_inliner) --themed $(strip $4) $(strip $5) $(OUTPUT_DIRECTORY)/$3.h $(OUTPUT_DIRECTORY)/$3.cpp $$(INLINER_ARGS)
-SOURCES_$(strip $1) += $$(call generated_sources_for,$3.cpp:-test)
+SOURCES_$(strip $1) += $$(call generated_sources_for,$3.cpp$6)
 endef
 
 # Deduces the output stem from the light/dark PNG paths and checks they agree.
 define depends_on_themed_image
 $(if $(filter-out $(call _themed_image_stem,$(strip $3),light),$(call _themed_image_stem,$(strip $4),dark)),$(error depends_on_themed_image: light "$(strip $3)" and dark "$(strip $4)" yield different stems))
-$(eval $(call _depends_on_themed_image_body,$1,$2,$(call _themed_image_stem,$(strip $3),light),$3,$4))
+$(eval $(call _depends_on_themed_image_body,$1,$2,$(call _themed_image_stem,$(strip $3),light),$3,$4,$5))
 endef
 
-# depends_on_transparent_themed_image, <module>, <list of cpp>, <light png>, <dark png>
+# depends_on_transparent_themed_image, <module>, <list of cpp>, <light png>, <dark png>, [tastes]
 # Like depends_on_themed_image but passes --transparent to the inliner.
 define depends_on_transparent_themed_image
 $(eval \
 $(OUTPUT_DIRECTORY)/$(call _themed_image_stem,$(strip $3),light).cpp: INLINER_ARGS += --transparent
 )
-$(call depends_on_themed_image,$1,$2,$3,$4)
+$(call depends_on_themed_image,$1,$2,$3,$4,$5)
 endef
 
 $(call depends_on_transparent_themed_image,escher,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/light/caret_light_icon.png,$(PATH_escher)/image/dark/caret_dark_icon.png)

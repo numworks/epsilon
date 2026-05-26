@@ -16,7 +16,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/settings/,$(addsuffix :-test, \
   sub_menu/test_mode_controller.cpp \
 ))
 
-$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/settings/app.cpp,$(PATH_apps)/icons/light/settings_light_icon.png,$(PATH_apps)/icons/dark/settings_dark_icon.png)
-$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/settings/sub_menu/press_to_test_controller.cpp,$(PATH_apps)/settings/sub_menu/press_to_test_success_light_icon.png,$(PATH_apps)/settings/sub_menu/press_to_test_success_dark_icon.png)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/settings/app.cpp,$(PATH_apps)/icons/light/settings_light_icon.png,$(PATH_apps)/icons/dark/settings_dark_icon.png,:-test)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/settings/sub_menu/press_to_test_controller.cpp,$(PATH_apps)/settings/sub_menu/press_to_test_success_light_icon.png,$(PATH_apps)/settings/sub_menu/press_to_test_success_dark_icon.png,:-test)
 
 $(call i18n_with_universal,settings/i18n/base)

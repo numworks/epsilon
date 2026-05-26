@@ -161,4 +161,33 @@ $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): INLINER_ARGS += --trans
 $(call depends_on_image,$1,$2)
 endef
 
+# depends_on_themed_image, <module>, <list of cpp>, <light png>, <dark png>
+# Inlines both PNGs directly into a single ThemedImage .h/.cpp pair via the
+# inliner's --themed mode, and appends the generated .cpp to SOURCES_<module>
+# with the :-test suffix so the image data is linked into the main binary but
+# excluded from the test binary. The output stem is deduced from the PNG
+# paths: <dir>/light/<base>_light_<rest>.png and <dir>/dark/<base>_dark_<rest>.png
+# both yield <dir>/<base>_<rest>, so the generated header is included as
+# <base>_<rest>.h. Both PNGs must yield the same stem.
+
+# _themed_image_stem, <light or dark png>, <light|dark>
+# Strips the light/dark directory segment and the _light/_dark name infix.
+_themed_image_stem = $(patsubst %.png,%,$(subst $2/,,$(subst _$2,,$1)))
+
+define _depends_on_themed_image_body
+$(call all_objects_for,$(strip $2)): $(OUTPUT_DIRECTORY)/$3.cpp
+$(call all_objects_for,$(strip $2)): SFLAGS += -I$(OUTPUT_DIRECTORY)/$(dir $3)
+$(OUTPUT_DIRECTORY)/$3.h: $(OUTPUT_DIRECTORY)/$3.cpp ;
+$(OUTPUT_DIRECTORY)/$3.cpp: $(strip $4) $(strip $5) $(_escher_inliner) | $(OUTPUT_DIRECTORY)/$(dir $3).
+	$$(call rule_label,INLINE)
+	$(_escher_inliner) --themed $(strip $4) $(strip $5) $(OUTPUT_DIRECTORY)/$3.h $(OUTPUT_DIRECTORY)/$3.cpp $$(INLINER_ARGS)
+SOURCES_$(strip $1) += $$(call generated_sources_for,$3.cpp:-test)
+endef
+
+# Deduces the output stem from the light/dark PNG paths and checks they agree.
+define depends_on_themed_image
+$(if $(filter-out $(call _themed_image_stem,$(strip $3),light),$(call _themed_image_stem,$(strip $4),dark)),$(error depends_on_themed_image: light "$(strip $3)" and dark "$(strip $4)" yield different stems))
+$(eval $(call _depends_on_themed_image_body,$1,$2,$(call _themed_image_stem,$(strip $3),light),$3,$4))
+endef
+
 $(call depends_on_transparent_image,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/caret.png)

@@ -359,6 +359,8 @@ PointOfInterest findIntersections(PointSearchContext* ctx) {
        !f->shouldDisplayIntersections())) {
     return PointOfInterest{};
   }
+  // shouldDisplayIntersections might invalidate cache, refetch f
+  f = ctx->model();
   int n = ctx->store->numberOfModels();
   const PreparedFunction& fExpr = f->expressionApproximated();
   bool fAlongY = f->isAlongY();
@@ -377,6 +379,8 @@ PointOfInterest findIntersections(PointSearchContext* ctx) {
     if (!g->shouldDisplayIntersections()) {
       continue;
     }
+    // shouldDisplayIntersections might invalidate cache, refetch g
+    g = ctx->store->modelForRecord(ctx->otherRecord);
     const PreparedFunction& gExpr = g->expressionApproximated();
     int gNumberOfSubCurves = gExpr.isList() ? gExpr.numberOfChildren() : 1;
     assert(!gExpr.isList() || gNumberOfSubCurves > 1);

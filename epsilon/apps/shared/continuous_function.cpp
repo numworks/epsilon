@@ -112,9 +112,9 @@ size_t ContinuousFunction::nameWithArgument(char* buffer, size_t bufferSize,
   assert(0 <= derivationOrder && derivationOrder <= 2);
   if (isDerivative()) {
     // Parent will handle the name with the derivation order
-    ContinuousFunction parent(parentRecord());
-    return parent.nameWithArgument(buffer, bufferSize,
-                                   recordData()->derivationOrder());
+    derivationOrder = this->derivationOrder();
+    return parentFunction()->nameWithArgument(buffer, bufferSize,
+                                              derivationOrder);
   }
   size_t length = nameWithoutArgument(buffer, bufferSize, derivationOrder);
   if (isNamed()) {
@@ -268,8 +268,14 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
   }
   if (!canDisplayDerivative()) {
     // No need to setDisplayValues, it is already included in setDisplayPlot
+    Ion::Storage::Record savedRecord = *this;
     setDisplayPlotDerivative(1, false);
-    setDisplayPlotDerivative(2, false);
+    /* setDisplayPlotDerivative may delete derivative records, triggering a
+     * storage change that resets all memoized models including `this`. Use the
+     * saved record to re-fetch before the next call. */
+    GlobalContextAccessor::ContinuousFunctionStore()
+        .modelForRecord(savedRecord)
+        ->setDisplayPlotDerivative(2, false);
   } else {
     // Derivatives are depend on their parent's, update them
     updateDerivativeModels();
@@ -285,6 +291,8 @@ void ContinuousFunction::updateDerivativeModels() {
         store.modelForRecord(store.recordAtIndex(i));
     if (f->isDerivative() && f->parentRecord() == *this) {
       bool wasCartesian = f->properties().isCartesian();
+      // properties() might have triggered a cache reset, re-fetch model
+      f = store.modelForRecord(store.recordAtIndex(i));
       // Remove memoized expressions dependent on the parent
       f->tidyDownstreamPoolFrom(nullptr);
       // Update cache and properties
@@ -743,8 +751,8 @@ const Internal::Tree* ContinuousFunction::Model::expressionTree(
 
 UserExpression ContinuousFunction::createDerivativeEquationFromParent() const {
   assert(isDerivative());
-  ContinuousFunction parent(parentRecord());
-  return parent.equationClone().getDerivative(k_unknownName, derivationOrder());
+  int order = derivationOrder();
+  return parentFunction()->equationClone().getDerivative(k_unknownName, order);
 }
 
 UserExpression ContinuousFunction::Model::originalEquation(

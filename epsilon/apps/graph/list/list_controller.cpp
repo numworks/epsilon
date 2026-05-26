@@ -241,7 +241,6 @@ void ListController::removeModelRow(Ion::Storage::Record record) {
   OMG::ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(record);
   if (f->isDerivative()) {
-    assert(f->numberOfSubCurves() == 1);
     int derivationOrder = f->derivationOrder();
     f->parentFunction()->setDisplayPlotDerivative(derivationOrder, false);
     return;
@@ -274,24 +273,35 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
         ThemeComponent::TextGrayDark);
   } else if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
+    Ion::Storage::Record record = recordAtRow(row);
     OMG::ExpiringPointer<ContinuousFunction> f =
-        modelStore()->modelForRecord(recordAtRow(row));
+        modelStore()->modelForRecord(record);
     assert(!f->isNull());
+    bool isDerivative = f->isDerivative();
+    ContinuousFunctionProperties properties = f->properties();
+    if (isDerivative) {
+      /* Computing f properties might have used the parent and triggered a cache
+       * reset. Re-fetch the model. */
+      f = modelStore()->modelForRecord(record);
+    }
+    bool active = f->isActive();
     if (type == k_expressionCellType) {
-      bool isDerivative = f->isDerivative();
       FunctionCell* functionCell = static_cast<FunctionCell*>(cell);
       functionCell->expressionCell()->setLayout(f->layout());
+      if (isDerivative) {
+        /* Computing f layout used the parent and triggered a cache reset.
+         * Re-fetch the model. */
+        f = modelStore()->modelForRecord(record);
+      }
       functionCell->setMessage(isDerivative ? I18n::Message::Default
-                                            : f->properties().caption());
+                                            : properties.caption());
       functionCell->setHideMessage(isDerivative);
-      ThemeComponent textColor = f->isActive() ? ThemeComponent::TextDefault
-                                               : ThemeComponent::TextGrayDark;
-      functionCell->expressionCell()->setTextColor(textColor);
+      functionCell->expressionCell()->setTextColor(
+          active ? ThemeComponent::TextDefault : ThemeComponent::TextGrayDark);
       functionCell->setParameterSelected(m_parameterColumnSelected);
     }
-    // f can be null if the entry was just created and is still empty.
     ThemeComponent functionColor =
-        f->isActive() ? f->color() : ThemeComponent::AxisGrayDark;
+        active ? f->color() : ThemeComponent::AxisGrayDark;
     static_cast<AbstractFunctionCell*>(cell)->setColor(functionColor);
   }
   FunctionListController::fillCellForRow(cell, row);

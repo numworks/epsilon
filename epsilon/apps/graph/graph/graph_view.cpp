@@ -69,6 +69,8 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
 
   assert(context());
   PreparedFunction e = f->expressionApproximated();
+  // expressionApproximated might invalidate cache, refetch f
+  f = functionStore()->modelForRecord(record);
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   assert(f->numberOfSubCurves() <= 2);
   if (area == ContinuousFunctionProperties::AreaType::None) {

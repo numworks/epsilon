@@ -284,10 +284,11 @@ void ContinuousFunction::updateDerivativeModels() {
     OMG::ExpiringPointer<ContinuousFunction> f =
         store.modelForRecord(store.recordAtIndex(i));
     if (f->isDerivative() && f->parentRecord() == *this) {
+      bool wasCartesian = f->properties().isCartesian();
       // Remove memoized expressions dependent on the parent
       f->tidyDownstreamPoolFrom(nullptr);
       // Update cache and properties
-      f->updateModel(f->properties().isCartesian());
+      f->updateModel(wasCartesian);
     }
   }
 }

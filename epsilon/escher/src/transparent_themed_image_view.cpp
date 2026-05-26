@@ -63,6 +63,7 @@ void TransparentThemedImageView::blendInPlace(KDColor* colorBuffer,
 
 void TransparentThemedImageView::setHighlighted(bool highlighted) {
   setBackgroundColor(Highlight(k_defaultBackground, highlighted));
+  ThemedImageView::setHighlighted(highlighted);
 }
 
 }  // namespace Escher

@@ -2,16 +2,13 @@
 
 #include <escher/theme/components.h>
 
-#include "cell_widget.h"
-#include "menu_cell.h"
 #include "themed_image_view.h"
 
 namespace Escher {
 
-class TransparentThemedImageView : public ThemedImageView, public CellWidget {
+class TransparentThemedImageView : public ThemedImageView {
  public:
   using ThemedImageView::ThemedImageView;
-  const View* view() const override { return this; }
   ThemeComponent backgroundColor() const { return m_backgroundColor; }
   void setBackgroundColor(ThemeComponent backgroundColor) {
     m_backgroundColor = backgroundColor;

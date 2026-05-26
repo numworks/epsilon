@@ -1,8 +1,7 @@
 #include "title_bar_view.h"
 
-#include <apps/icons/dark/exam_dark_icon.h>
-#include <apps/icons/light/exam_light_icon.h>
 #include <escher/theme/color_picker.h>
+#include <exam_icon.h>
 #include <omg/unreachable.h>
 #include <poincare/print.h>
 
@@ -22,8 +21,7 @@ TitleBarView::TitleBarView()
     : View(),
       m_titleView(I18n::Message::Default, k_glyphsFormat),
       m_preferenceView(k_glyphsFormat),
-      m_examModeIconView(
-          ThemedImage(ImageStore::ExamLightIcon, ImageStore::ExamDarkIcon)),
+      m_examModeIconView(*ImageStore::ExamIcon),
       m_examModeTextView(I18n::Message::Default, k_glyphsFormat) {
   m_preferenceView.setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
 }

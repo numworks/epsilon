@@ -298,10 +298,9 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
   FunctionListController::fillCellForRow(cell, row);
 }
 
-void ListController::hideDerivative(Ion::Storage::Record record,
-                                    int derivationOrder) {
+void ListController::hideDerivative(Ion::Storage::Record record) {
   selectableListView()->selectCell(selectableListView()->selectedRow() - 1);
-  ParameterDelegate::hideDerivative(record, derivationOrder);
+  ParameterDelegate::hideDerivative(record);
   stackController()->pop();
 }
 

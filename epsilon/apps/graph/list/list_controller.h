@@ -49,13 +49,8 @@ class ListController : public Shared::FunctionListController,
   Poincare::Layout extraCellLayoutAtRow(int row) override;
 
   // ParameterDelegate
-  bool usePersonalizedTitle() const override { return false; }
-  bool showColorCell() const override { return true; }
-  I18n::Message hideDerivativeMessage() const override {
-    return I18n::Message::HideDerivative;
-  }
-  void hideDerivative(Ion::Storage::Record record,
-                      int derivationOrder) override;
+  DerivativeType type() const override { return DerivativeType::Plot; }
+  void hideDerivative(Ion::Storage::Record record) override;
 
  private:
   // 6 rows of undefined empty functions

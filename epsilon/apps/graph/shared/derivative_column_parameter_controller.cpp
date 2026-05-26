@@ -13,22 +13,25 @@ DerivativeColumnParameterController::DerivativeColumnParameterController(
     Responder* parentResponder)
     : ColumnParameterController(parentResponder),
       m_colorParameterController(nullptr),
-      m_derivationOrder(ParameterDelegate::k_isStandaloneDerivative),
       m_parameterDelegate(nullptr) {
   m_colorCell.label()->setMessage(I18n::Message::Color);
 }
 
 const char* DerivativeColumnParameterController::title() const {
   assert(m_parameterDelegate);
-  return m_parameterDelegate->usePersonalizedTitle()
+  return m_parameterDelegate->type() == ParameterDelegate::Values
              ? m_titleBuffer
              : I18n::translate(I18n::Message::Options);
 }
 
 void DerivativeColumnParameterController::viewWillAppear() {
   assert(m_parameterDelegate);
-  m_hideCell.label()->setMessage(m_parameterDelegate->hideDerivativeMessage());
-  m_colorCell.setVisible(m_parameterDelegate->showColorCell());
+  m_hideCell.label()->setMessage(m_parameterDelegate->type() ==
+                                         ParameterDelegate::DerivativeType::Plot
+                                     ? I18n::Message::HideDerivative
+                                     : I18n::Message::HideDerivativeColumn);
+  m_colorCell.setVisible(m_parameterDelegate->type() ==
+                         ParameterDelegate::DerivativeType::Plot);
   m_colorCell.subLabel()->setMessage(
       ColorNames::NameForColor(function()->color()));
   ColumnParameterController::viewWillAppear();
@@ -46,35 +49,29 @@ bool DerivativeColumnParameterController::handleEvent(
   }
   if (cell == &m_hideCell && m_hideCell.canBeActivatedByEvent(event)) {
     assert(m_parameterDelegate);
-    m_parameterDelegate->hideDerivative(m_record, m_derivationOrder);
+    m_parameterDelegate->hideDerivative(m_record);
     return true;
   }
   return false;
 }
 
-void ParameterDelegate::hideDerivative(Ion::Storage::Record record,
-                                       int derivationOrder) {
-  if (derivationOrder == k_isStandaloneDerivative) {
-    /* Standalone derivative record: update the parent's display settings and
-     * delete the derivative record */
-    OMG::ExpiringPointer<ContinuousFunction> f =
-        Shared::GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
-            record);
-    derivationOrder = f->derivationOrder();
-    Ion::Storage::Record parentRecord = f->parentRecord();
-    OMG::ExpiringPointer<ContinuousFunction> parent =
-        Shared::GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
-            parentRecord);
-    parent->disablePlotDerivative(derivationOrder);
+void ParameterDelegate::hideDerivative(Ion::Storage::Record record) {
+  OMG::ExpiringPointer<ContinuousFunction> f =
+      Shared::GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
+          record);
+  assert(f->isDerivative());
+  int derivationOrder = f->derivationOrder();
+  Ion::Storage::Record parentRecord = f->parentRecord();
+  if (type() == DerivativeType::Plot) {
+    ContinuousFunction(parentRecord).disablePlotDerivative(derivationOrder);
+    // Disabling plot also disables values, delete the record
     GlobalStore::DeleteDerivativeOfRecord(parentRecord, derivationOrder);
   } else {
+    assert(type() == DerivativeType::Values);
     // Derivative values column: toggle value flag, delete record if plot is off
-    OMG::ExpiringPointer<ContinuousFunction> parent =
-        Shared::GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
-            record);
-    parent->disableValueDerivative(derivationOrder);
-    if ((derivationOrder == 1 && !parent->displayPlotFirstDerivative()) ||
-        (derivationOrder == 2 && !parent->displayPlotSecondDerivative())) {
+    bool isActiveInPlot = f->isActiveInPlot();
+    ContinuousFunction(parentRecord).disableValueDerivative(derivationOrder);
+    if (!isActiveInPlot) {
       GlobalStore::DeleteDerivativeOfRecord(record, derivationOrder);
     }
   }
@@ -88,12 +85,9 @@ const HighlightCell* DerivativeColumnParameterController::cell(int row) const {
   return &m_hideCell;
 }
 
-void DerivativeColumnParameterController::setRecord(Ion::Storage::Record record,
-                                                    int derivationOrder) {
-  assert(derivationOrder == ParameterDelegate::k_isStandaloneDerivative ||
-         derivationOrder == 1 || derivationOrder == 2);
+void DerivativeColumnParameterController::setRecord(
+    Ion::Storage::Record record) {
   m_record = record;
-  m_derivationOrder = derivationOrder;
   selectRow(0);
 }
 

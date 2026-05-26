@@ -32,7 +32,7 @@ FunctionParameterController::FunctionParameterController(
 
 const char* FunctionParameterController::title() const {
   assert(m_parameterDelegate);
-  return m_parameterDelegate->usePersonalizedTitle()
+  return m_parameterDelegate->type() == ParameterDelegate::Values
              ? m_titleBuffer
              : I18n::translate(I18n::Message::Options);
 }

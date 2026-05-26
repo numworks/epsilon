@@ -322,9 +322,8 @@ void CurveParameterController::setRecord(Ion::Storage::Record record,
   m_preimageGraphController.setRecord(record);
 }
 
-void CurveParameterController::hideDerivative(Ion::Storage::Record record,
-                                              int derivationOrder) {
-  ParameterDelegate::hideDerivative(record, derivationOrder);
+void CurveParameterController::hideDerivative(Ion::Storage::Record record) {
+  ParameterDelegate::hideDerivative(record);
   stackController()->popUntilDepth(
       Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
       true);

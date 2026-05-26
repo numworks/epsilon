@@ -156,10 +156,9 @@ int ValuesController::columnToFreeze() {
 
 // ParameterDelegate
 
-void ValuesController::hideDerivative(Ion::Storage::Record record,
-                                      int derivationOrder) {
+void ValuesController::hideDerivative(Ion::Storage::Record record) {
   selectCellAtLocation(selectedColumn() - 1, selectedRow());
-  ParameterDelegate::hideDerivative(record, derivationOrder);
+  ParameterDelegate::hideDerivative(record);
   stackController()->pop();
 }
 

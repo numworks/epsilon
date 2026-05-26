@@ -68,13 +68,8 @@ class ValuesController : public Shared::ValuesController,
   int columnToFreeze() override;
 
   // ParameterDelegate
-  bool usePersonalizedTitle() const override { return true; }
-  bool showColorCell() const override { return false; }
-  I18n::Message hideDerivativeMessage() const override {
-    return I18n::Message::HideDerivativeColumn;
-  }
-  void hideDerivative(Ion::Storage::Record record,
-                      int derivationOrder) override;
+  DerivativeType type() const override { return DerivativeType::Values; }
+  void hideDerivative(Ion::Storage::Record record) override;
 
  private:
   constexpr static size_t k_maxNumberOfSymbolTypes =

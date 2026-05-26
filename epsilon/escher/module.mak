@@ -140,22 +140,6 @@ $(OUTPUT_DIRECTORY)/%.cpp: %.png $(_escher_inliner) | $$(@D)/.
 
 # Helpers for sources using images
 
-# depends_on_image, <list of cpp>, <list of png>
-define depends_on_image
-$(eval \
-$(call all_objects_for,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2))
-$(call all_objects_for,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY)/,$(sort $(dir $(strip $2)))),-I$d)
-)
-endef
-
-# depends_on_transparent_image, <list of cpp>, <list of png>
-define depends_on_transparent_image
-$(eval \
-$(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): INLINER_ARGS += --transparent
-)
-$(call depends_on_image,$1,$2)
-endef
-
 # depends_on_themed_image, <module>, <list of cpp>, <light png>, <dark png>, [tastes]
 # Inlines both PNGs directly into a single ThemedImage .h/.cpp pair via the
 # inliner's --themed mode, and appends the generated .cpp to SOURCES_<module>.

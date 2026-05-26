@@ -196,13 +196,11 @@ class ContinuousFunction : public Function {
     return order == 1 ? displayValueFirstDerivative()
                       : displayValueSecondDerivative();
   }
-  // Set derivative display status
-  void setDisplayValueFirstDerivative(bool display);
-  void setDisplayPlotFirstDerivative(bool display);
-  void setDisplayValueSecondDerivative(bool display);
-  void setDisplayPlotSecondDerivative(bool display);
-  void disableValueDerivative(int derivationOrder);
-  void disablePlotDerivative(int derivationOrder);
+  // Set derivative display status (high-level: also creates/destroys record)
+  Ion::Storage::Record::ErrorStatus setDisplayPlotDerivative(int order,
+                                                             bool display);
+  Ion::Storage::Record::ErrorStatus setDisplayValueDerivative(int order,
+                                                              bool display);
 
   void valuesToDisplayOnCurve(bool* image, bool* firstDerivative,
                               bool* secondDerivative) const;
@@ -258,6 +256,9 @@ class ContinuousFunction : public Function {
   }
 
  private:
+  Ion::Storage::Record::ErrorStatus createOrDeleteDerivativeRecord(
+      int order, bool oldPlot, bool oldValue, bool newPlot, bool newValue);
+
   constexpr static float k_polarParamRangeSearchNumberOfPoints =
       100.0f;  // This is ad hoc, no special justification
 

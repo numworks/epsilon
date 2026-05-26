@@ -1,7 +1,5 @@
 #include "derivative_column_parameter_controller.h"
 
-#include <apps/shared/global_store.h>
-
 #include "../app.h"
 
 using namespace Escher;
@@ -61,19 +59,11 @@ void ParameterDelegate::hideDerivative(Ion::Storage::Record record) {
           record);
   assert(f->isDerivative());
   int derivationOrder = f->derivationOrder();
-  Ion::Storage::Record parentRecord = f->parentRecord();
   if (type() == DerivativeType::Plot) {
-    ContinuousFunction(parentRecord).disablePlotDerivative(derivationOrder);
-    // Disabling plot also disables values, delete the record
-    GlobalStore::DeleteDerivativeOfRecord(parentRecord, derivationOrder);
+    f->parentFunction()->setDisplayPlotDerivative(derivationOrder, false);
   } else {
     assert(type() == DerivativeType::Values);
-    // Derivative values column: toggle value flag, delete record if plot is off
-    bool isActiveInPlot = f->isActiveInPlot();
-    ContinuousFunction(parentRecord).disableValueDerivative(derivationOrder);
-    if (!isActiveInPlot) {
-      GlobalStore::DeleteDerivativeOfRecord(record, derivationOrder);
-    }
+    f->parentFunction()->setDisplayValueDerivative(derivationOrder, false);
   }
 }
 

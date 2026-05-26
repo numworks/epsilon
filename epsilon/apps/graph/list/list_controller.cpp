@@ -242,10 +242,9 @@ void ListController::removeModelRow(Ion::Storage::Record record) {
       modelStore()->modelForRecord(record);
   if (f->isDerivative()) {
     assert(f->numberOfSubCurves() == 1);
-    // Update the parent's derivative toggle before removing model
     int derivationOrder = f->derivationOrder();
-    f->parentFunction()->disablePlotDerivative(derivationOrder);
-    return FunctionListController::removeModelRow(record);
+    f->parentFunction()->setDisplayPlotDerivative(derivationOrder, false);
+    return;
   }
   GlobalStore::DeleteParametricComponentsOfRecord(record);
   GlobalStore::DeleteDerivativeOfRecord(record);

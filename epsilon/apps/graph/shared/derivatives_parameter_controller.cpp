@@ -1,7 +1,5 @@
 #include "derivatives_parameter_controller.h"
 
-#include <apps/shared/global_store.h>
-
 #include "../app.h"
 
 using namespace Escher;
@@ -72,58 +70,12 @@ void DerivativesParameterController::updateSwitchs() {
 
 void DerivativesParameterController::toggleDerivativePlot(uint8_t order) {
   bool hasPlot = function()->displayPlotDerivative(order);
-  if (hasPlot) {
-    if (order == 1) {
-      function()->setDisplayPlotFirstDerivative(false);
-    } else {
-      function()->setDisplayPlotSecondDerivative(false);
-    }
-    // setDisplayPlot(false) coupling also clears value, delete record
-    GlobalStore::DeleteDerivativeOfRecord(m_record, order);
-  } else {
-    // Create record only if neither flag was set
-    if (!function()->displayValueDerivative(order)) {
-      Ion::Storage::Record::ErrorStatus error =
-          App::app()->functionStore().addDerivativeModel(m_record, order);
-      if (error != Ion::Storage::Record::ErrorStatus::None) {
-        return;
-      }
-    }
-    if (order == 1) {
-      function()->setDisplayPlotFirstDerivative(true);
-    } else {
-      function()->setDisplayPlotSecondDerivative(true);
-    }
-  }
+  function()->setDisplayPlotDerivative(order, !hasPlot);
 }
 
 void DerivativesParameterController::toggleDerivativeValue(uint8_t order) {
   bool hasValue = function()->displayValueDerivative(order);
-  if (hasValue) {
-    if (order == 1) {
-      function()->setDisplayValueFirstDerivative(false);
-    } else {
-      function()->setDisplayValueSecondDerivative(false);
-    }
-    // If plot is also off, delete record
-    if (!function()->displayPlotDerivative(order)) {
-      GlobalStore::DeleteDerivativeOfRecord(m_record, order);
-    }
-  } else {
-    // Create record only if plot is also off
-    if (!function()->displayPlotDerivative(order)) {
-      Ion::Storage::Record::ErrorStatus error =
-          App::app()->functionStore().addDerivativeModel(m_record, order);
-      if (error != Ion::Storage::Record::ErrorStatus::None) {
-        return;
-      }
-    }
-    if (order == 1) {
-      function()->setDisplayValueFirstDerivative(true);
-    } else {
-      function()->setDisplayValueSecondDerivative(true);
-    }
-  }
+  function()->setDisplayValueDerivative(order, !hasValue);
 }
 
 void DerivativesParameterController::toggleSwitch(int row) {

@@ -268,9 +268,8 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
   }
   if (!canDisplayDerivative()) {
     // No need to setDisplayValues, it is already included in setDisplayPlot
-    setDisplayPlotFirstDerivative(false);
-    setDisplayPlotSecondDerivative(false);
-    GlobalStore::DeleteDerivativeOfRecord(*this);
+    setDisplayPlotDerivative(1, false);
+    setDisplayPlotDerivative(2, false);
   } else {
     // Derivatives are depend on their parent's, update them
     updateDerivativeModels();
@@ -293,44 +292,74 @@ void ContinuousFunction::updateDerivativeModels() {
   }
 }
 
-void ContinuousFunction::setDisplayValueFirstDerivative(bool display) {
-  recordData()->setDisplayValueFirstDerivative(display);
-}
-
-void ContinuousFunction::setDisplayPlotFirstDerivative(bool display) {
-  /* Call recordData()->displayPlotFirstDerivative() instead of
-   * displayPlotFirstDerivative() to avoid the assert. */
-  recordData()->setDisplayPlotFirstDerivative(display);
-  recordData()->setDisplayValueFirstDerivative(display);
-}
-
-void ContinuousFunction::setDisplayValueSecondDerivative(bool display) {
-  recordData()->setDisplayValueSecondDerivative(display);
-}
-
-void ContinuousFunction::setDisplayPlotSecondDerivative(bool display) {
-  /* Call recordData()->displayPlotSecondDerivative() instead of
-   * displayPlotSecondDerivative() to avoid the assert. */
-  recordData()->setDisplayPlotSecondDerivative(display);
-  recordData()->setDisplayValueSecondDerivative(display);
-}
-
-void ContinuousFunction::disableValueDerivative(int derivationOrder) {
-  if (derivationOrder == 1) {
-    setDisplayValueFirstDerivative(false);
-  } else {
-    assert(derivationOrder == 2);
-    setDisplayValueSecondDerivative(false);
+Ion::Storage::Record::ErrorStatus
+ContinuousFunction::createOrDeleteDerivativeRecord(int order, bool oldPlot,
+                                                   bool oldValue, bool newPlot,
+                                                   bool newValue) {
+  assert(order == 1 || order == 2);
+  if ((newPlot || newValue) && !oldPlot && !oldValue) {
+    Ion::Storage::Record::ErrorStatus error =
+        GlobalContextAccessor::ContinuousFunctionStore().addDerivativeModel(
+            *this, order);
+    return error;
+  } else if (!newPlot && !newValue && (oldPlot || oldValue)) {
+    GlobalStore::DeleteDerivativeOfRecord(*this, order);
   }
+  return Ion::Storage::Record::ErrorStatus::None;
 }
 
-void ContinuousFunction::disablePlotDerivative(int derivationOrder) {
-  if (derivationOrder == 1) {
-    setDisplayPlotFirstDerivative(false);
-  } else {
-    assert(derivationOrder == 2);
-    setDisplayPlotSecondDerivative(false);
+Ion::Storage::Record::ErrorStatus ContinuousFunction::setDisplayPlotDerivative(
+    int order, bool display) {
+  // Values flag is coupled with the plot flag, set it to the same value.
+  bool hasPlot = order == 1 ? recordData()->displayPlotFirstDerivative()
+                            : recordData()->displayPlotSecondDerivative();
+  bool hasValue = order == 1 ? recordData()->displayValueFirstDerivative()
+                             : recordData()->displayValueSecondDerivative();
+  /* createOrDeleteDerivativeRecord might trigger a memoization reset which
+   * invalidates `this`. Save the record to restore the model later. */
+  Ion::Storage::Record savedRecord = *this;
+  Ion::Storage::Record::ErrorStatus error = createOrDeleteDerivativeRecord(
+      order, hasPlot, hasValue, display, display);
+  if (error != Ion::Storage::Record::ErrorStatus::None) {
+    return error;
   }
+  OMG::ExpiringPointer<ContinuousFunction> function =
+      GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
+          savedRecord);
+  if (order == 1) {
+    function->recordData()->setDisplayPlotFirstDerivative(display);
+    function->recordData()->setDisplayValueFirstDerivative(display);
+  } else {
+    function->recordData()->setDisplayPlotSecondDerivative(display);
+    function->recordData()->setDisplayValueSecondDerivative(display);
+  }
+  return Ion::Storage::Record::ErrorStatus::None;
+}
+
+Ion::Storage::Record::ErrorStatus ContinuousFunction::setDisplayValueDerivative(
+    int order, bool display) {
+  bool hasPlot = order == 1 ? recordData()->displayPlotFirstDerivative()
+                            : recordData()->displayPlotSecondDerivative();
+  bool hasValue = order == 1 ? recordData()->displayValueFirstDerivative()
+                             : recordData()->displayValueSecondDerivative();
+  /* createOrDeleteDerivativeRecord might trigger a memoization reset which
+   * invalidates `this` (which points into the cache). Re-fetch via
+   * modelForRecord afterward. */
+  Ion::Storage::Record savedRecord = *this;
+  Ion::Storage::Record::ErrorStatus error = createOrDeleteDerivativeRecord(
+      order, hasPlot, hasValue, hasPlot, display);
+  if (error != Ion::Storage::Record::ErrorStatus::None) {
+    return error;
+  }
+  OMG::ExpiringPointer<ContinuousFunction> function =
+      GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
+          savedRecord);
+  if (order == 1) {
+    function->recordData()->setDisplayValueFirstDerivative(display);
+  } else {
+    function->recordData()->setDisplayValueSecondDerivative(display);
+  }
+  return Ion::Storage::Record::ErrorStatus::None;
 }
 
 void ContinuousFunction::valuesToDisplayOnCurve(bool* image,

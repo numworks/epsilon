@@ -63,7 +63,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
 
 $(call depends_on_transparent_themed_image,apps,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/icons/light/inference_light_icon.png,$(PATH_apps)/icons/dark/inference_dark_icon.png,:-test)
 
-$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/images/confidence_interval_light_icon.png,$(PATH_apps)/inference/images/confidence_interval_dark_icon.png,:-test)
-$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/images/significance_test_light_icon.png,$(PATH_apps)/inference/images/significance_test_dark_icon.png,:-test)
+$(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/images/confidence_interval_light_icon.png,$(PATH_apps)/inference/images/confidence_interval_dark_icon.png,$(PATH_apps)/inference/images/confidence_interval_selected_dark_icon.png,:-test)
+$(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/images/significance_test_light_icon.png,$(PATH_apps)/inference/images/significance_test_dark_icon.png,$(PATH_apps)/inference/images/significance_test_selected_dark_icon.png,:-test)
 
 $(call i18n_with_universal,inference/i18n/base)

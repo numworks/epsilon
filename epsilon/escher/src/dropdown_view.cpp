@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <escher/container.h>
 #include <escher/dropdown_view.h>
-#include <escher/image/caret.h>
+#include <escher/image/caret_icon.h>
 #include <escher/menu_cell.h>
 
 #include <algorithm>
@@ -10,7 +10,7 @@ namespace Escher {
 
 PopupItemView::PopupItemView(HighlightCell* cell)
     : m_isPoppingUp(false), m_cell(cell) {
-  m_caret.setSingleImage(ImageStore::Caret);
+  m_caret.setThemedImage(*ImageStore::CaretIcon);
   m_caret.setBackgroundColor(ThemeComponent::BackgroundWhite);
 }
 

@@ -109,10 +109,6 @@ $(call create_module,escher,1,$(addprefix src/, \
   test/layout_field.cpp:+test \
 )
 
-SOURCES_escher += $(call generated_sources_for,$(addprefix $(PATH_escher)/, \
-  image/caret.cpp \
-))
-
 ESCHER_VIEW_LOGGING ?= 0
 
 ifneq ($(ESCHER_VIEW_LOGGING),0)
@@ -198,4 +194,4 @@ $(OUTPUT_DIRECTORY)/$(call _themed_image_stem,$(strip $3),light).cpp: INLINER_AR
 $(call depends_on_themed_image,$1,$2,$3,$4)
 endef
 
-$(call depends_on_transparent_image,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/caret.png)
+$(call depends_on_transparent_themed_image,escher,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/light/caret_light_icon.png,$(PATH_escher)/image/dark/caret_dark_icon.png)

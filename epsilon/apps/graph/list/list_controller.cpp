@@ -237,19 +237,6 @@ Shared::ListParameterController* ListController::parameterController() {
   return m_functionParameterController;
 }
 
-void ListController::removeModelRow(Ion::Storage::Record record) {
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(record);
-  if (f->isDerivative()) {
-    int derivationOrder = f->derivationOrder();
-    f->parentFunction()->setDisplayPlotDerivative(derivationOrder, false);
-    return;
-  }
-  GlobalStore::DeleteParametricComponentsOfRecord(record);
-  GlobalStore::DeleteDerivativeOfRecord(record);
-  FunctionListController::removeModelRow(record);
-}
-
 int ListController::maxNumberOfDisplayableRows() const {
   return k_maxNumberOfDisplayableRows;
 }

@@ -4,9 +4,23 @@
 #include <ion.h>
 #include <omg/utf8_helper.h>
 
+#include "global_store.h"
+
 using namespace Escher;
 
 namespace Shared {
+
+void ContinuousFunctionStore::removeModel(Ion::Storage::Record record) {
+  OMG::ExpiringPointer<ContinuousFunction> f = modelForRecord(record);
+  if (f->isDerivative()) {
+    int order = f->derivationOrder();
+    f->parentFunction()->setDisplayPlotDerivative(order, false);
+    return;
+  }
+  GlobalStore::DeleteParametricComponentsOfRecord(record);
+  GlobalStore::DeleteDerivativeOfRecord(record);
+  ExpressionModelStore::removeModel(record);
+}
 
 void ContinuousFunctionStore::removeAll() {
   FunctionStore::removeAll();

@@ -29,6 +29,7 @@ class ContinuousFunctionStore : public FunctionStore {
   int numberOfActiveFunctionsInTable() const {
     return numberOfModelsSatisfyingTest(&IsFunctionActiveInTable, nullptr);
   }
+  void removeModel(Ion::Storage::Record record) override;
   // Remove all functions and memoized functions.
   void removeAll() override;
   bool displaysOnlyCartesianFunctions(int* nbActiveFunctions = nullptr) const;

@@ -59,6 +59,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .ButtonLightShadow2 = Palette::GrayMiddle,
                    .ButtonGrayBorder = Palette::GrayMiddle,
                    .ButtonGrayShadow = Palette::GrayDark,
+                   .ButtonBackground = Palette::White,
                    .SwitchButtonActive = Palette::YellowDark,
                    .SwitchButtonInactive = Palette::GrayDark,
                    .AxisBlack = Palette::Black,

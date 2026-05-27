@@ -30,7 +30,7 @@ class ButtonCell : public HighlightCell, public Responder {
   }
   ThemeComponent backgroundColor() const {
     return isHighlighted() ? highlightedBackgroundColor()
-                           : ThemeComponent::BackgroundWhite;
+                           : ThemeComponent::ButtonBackground;
   }
   void setMessage(I18n::Message message) {
     m_messageTextView.setMessage(message);

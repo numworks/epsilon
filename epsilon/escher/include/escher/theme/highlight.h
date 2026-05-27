@@ -32,6 +32,7 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
       /* TODO: BackgroundWhite should be split into several sub-components and
        * should not be an highlightable component */
     case ThemeComponent::BackgroundWhite:
+    case ThemeComponent::ButtonBackground:
     case ThemeComponent::CellEven:
     case ThemeComponent::CellOdd:
     case ThemeComponent::CellTableEven:

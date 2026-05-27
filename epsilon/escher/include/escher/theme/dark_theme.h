@@ -61,6 +61,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .ButtonLightShadow2 = Palette::Black,
     .ButtonGrayBorder = Palette::DARK_VioletDeep,
     .ButtonGrayShadow = Palette::Black,
+    .ButtonBackground = Palette::Black,
     .SwitchButtonActive = Palette::DARK_VioletDeep,
     .SwitchButtonInactive = Palette::GrayDark,
     .AxisBlack = Palette::DARK_AxisMain,

@@ -80,9 +80,6 @@ void camelCaseNameFromSnakeCaseNames(const char* snakeCaseName,
 void deriveNamesFromPath(const char* path, char* lowerSnakeCaseName,
                          char* upperSnakeCaseName, char* camelCaseName);
 
-// TODO: fix inliner to handle any png file
-// TODO: truncate the app image dimensions to 55x56 pixels
-
 int main(int argc, char* argv[]) {
   bool themed = FALSE;
   bool selectable = FALSE;

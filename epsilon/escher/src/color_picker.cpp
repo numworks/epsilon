@@ -40,21 +40,8 @@ KDColor ColorPicker::ResolveCustomColorForText(KDColor color) {
   }
 }
 
-Theme ColorPicker::GetCurrentTheme() { return SharedPreferences->theme(); }
-
-KDColor ColorPicker::Get(Theme theme, ThemeComponent component) {
-  switch (theme) {
-    case Theme::Light:
-      return k_lightTheme.get(component);
-    case Theme::Dark:
-      return k_darkTheme.get(component);
-    default:
-      OMG_UNREACHABLE
-  }
-}
-
-ColorPicker::BlendLevel ColorPicker::ThemeBlendLevel(Theme theme) {
-  switch (theme) {
+ColorPicker::BlendLevel ColorPicker::GetBlendLevel() {
+  switch (GetCurrentTheme()) {
     case Theme::Light:
       return BlendLevel::High;
     case Theme::Dark:
@@ -64,13 +51,25 @@ ColorPicker::BlendLevel ColorPicker::ThemeBlendLevel(Theme theme) {
   }
 }
 
-ColorPicker::SelectionThickness ColorPicker::ThemeSelectionThickness(
-    Theme theme) {
-  switch (theme) {
+ColorPicker::SelectionThickness ColorPicker::GetSelectionThickness() {
+  switch (GetCurrentTheme()) {
     case Theme::Light:
       return SelectionThickness::Simple;
     case Theme::Dark:
       return SelectionThickness::Double;
+    default:
+      OMG_UNREACHABLE
+  }
+}
+
+Theme ColorPicker::GetCurrentTheme() { return SharedPreferences->theme(); }
+
+KDColor ColorPicker::Get(Theme theme, ThemeComponent component) {
+  switch (theme) {
+    case Theme::Light:
+      return k_lightTheme.get(component);
+    case Theme::Dark:
+      return k_darkTheme.get(component);
     default:
       OMG_UNREACHABLE
   }

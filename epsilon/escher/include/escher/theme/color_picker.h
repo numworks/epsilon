@@ -25,16 +25,12 @@ class ColorPicker {
 
   // Depending on the theme, blending should be more or less intense
   enum class BlendLevel : bool { High, Low };
-  static BlendLevel GetBlendLevel() {
-    return ThemeBlendLevel(GetCurrentTheme());
-  }
+  static BlendLevel GetBlendLevel();
 
   /* The thickness of some selection borders (for example in Elements) depends
    * on the theme */
   enum class SelectionThickness : bool { Simple, Double };
-  static SelectionThickness GetSelectionThickness() {
-    return ThemeSelectionThickness(GetCurrentTheme());
-  }
+  static SelectionThickness GetSelectionThickness();
 
  private:
   /* GetCurrentTheme is defined in the .cpp so that the details of how the
@@ -46,10 +42,6 @@ class ColorPicker {
   static Theme GetCurrentTheme();
 
   static KDColor Get(Theme theme, ThemeComponent component);
-
-  static BlendLevel ThemeBlendLevel(Theme theme);
-
-  static SelectionThickness ThemeSelectionThickness(Theme theme);
 };
 
 }  // namespace Escher

@@ -25,12 +25,6 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
       Escher::ColorPicker::ResolveCustomColorForHighlight(colors.fg());
   Escher::Bordered::DrawOuterBorderOfRect(ctx, bgRect, k_borderSize,
                                           borderColor);
-  // Redraw over half of the previously drawn border
-  static_assert(k_borderSize % 2 == 0, "An odd k_borderSize isn't handled");
-  constexpr KDCoordinate k_halfBorderSize = k_borderSize / 2;
-  Escher::Bordered::DrawOuterBorderOfRect(ctx, bgRect, k_halfBorderSize,
-                                          borderColor);
-
   const char* symbol = ElementsDataBase::Symbol(z);
   KDCoordinate symbolXOffset = k_symbolZAMargin;
   KDSize symbolSize = KDFont::Font(k_symbolFont)->stringSize(symbol);

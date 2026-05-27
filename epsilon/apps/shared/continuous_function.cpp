@@ -258,7 +258,7 @@ void ContinuousFunction::updateDerivativeModels() {
         store.modelForRecord(store.recordAtIndex(i));
     if (f->isDerivative() && f->parentRecord() == *this) {
       // Remove memoized expressions dependent on the parent
-      f->model()->tidyDownstreamPoolFrom(nullptr);
+      f->tidyDownstreamPoolFrom(nullptr);
       // Update cache and properties
       f->updateModel(f->properties().isCartesian());
     }

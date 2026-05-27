@@ -8,14 +8,9 @@ namespace Escher {
 
 void TransparentThemedImageView::drawRect(KDContext* ctx, KDRect rect) const {
   const Image* image = currentImage();
-  if (image == nullptr) {
-    return;
-  }
-  if (!image->hasTransparency()) {
-    ThemedImageView::drawRect(ctx, rect);
-    return;
-  }
 
+  assert(image != nullptr);
+  assert(image->hasTransparency());
   assert(bounds().width() == image->width());
   assert(bounds().height() == image->height());
 
@@ -51,6 +46,7 @@ void TransparentThemedImageView::drawRect(KDContext* ctx, KDRect rect) const {
 void TransparentThemedImageView::blendInPlace(KDColor* colorBuffer,
                                               uint8_t* alphaBuffer) const {
   const Image* image = currentImage();
+  assert(image);
   KDColor backgroundColor = ColorPicker::Resolve(m_backgroundColor);
   for (int row = 0; row < image->height(); row++) {
     for (int col = 0; col < image->width(); col++) {

@@ -11,11 +11,9 @@ extern "C" {
 namespace Escher {
 
 void ThemedImageView::drawRect(KDContext* ctx, KDRect rect) const {
-  // TODO: do not duplicate with ImageView
   const Image* image = currentImage();
-  if (image == nullptr) {
-    return;
-  }
+
+  assert(image != nullptr);
   assert(bounds().width() == image->width());
   assert(bounds().height() == image->height());
 

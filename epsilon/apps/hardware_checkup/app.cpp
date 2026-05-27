@@ -26,12 +26,13 @@ App::WizardViewController::WizardViewController(Responder* parentResponder)
     : BankViewController(parentResponder),
       m_standbyController(this),
       m_storageViewerController(this),
-      m_clearanceViewerController(this) {}
+      m_clearanceViewerController(this),
+      m_batteryViewerController(this) {}
 
 ViewController* App::WizardViewController::childAtIndex(int i) {
-  ViewController* children[] = {&m_storageViewerController,
-                                &m_clearanceViewerController,
-                                &m_standbyController};
+  ViewController* children[] = {
+      &m_storageViewerController, &m_clearanceViewerController,
+      &m_standbyController, &m_batteryViewerController};
   return children[i];
 }
 

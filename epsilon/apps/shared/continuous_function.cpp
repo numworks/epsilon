@@ -675,22 +675,10 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
     return m_expressionForAnalysis;
   }
   EquationData equationData = expressionEquation(record);
-  ComplexFormat complexFormat = this->complexFormat(record);
-  AngleUnit angleUnit = SharedGlobalPrefs().angleUnit();
-  /* TODO_PCJ: equation and result used to be a same Expression at this step.
-   * Ensure this pool usage regression of still having equation in the pool is
-   * acceptable. */
-  AnalysisExpression result = ComputeExpressionForAnalysis(
-      equationData.equation, complexFormat, angleUnit);
-  if (!m_properties.isInitialized()) {
-    // Use the computed equation to update the plot type.
-    m_properties = ContinuousFunctionProperties::Compute(
-        result, originalEquation(record, UCodePointUnknown),
-        GlobalContextAccessor::Context(), complexFormat,
-        equationData.equationType, equationData.functionSymbol,
-        equationData.isCartesianEquation);
-  }
-  m_expressionForAnalysis = result;
+  m_expressionForAnalysis = ComputeExpressionForAnalysis(
+      equationData.equation, this->complexFormat(record),
+      SharedGlobalPrefs().angleUnit());
+  assert(!m_expressionForAnalysis.isUninitialized());
   return m_expressionForAnalysis;
 }
 
@@ -1052,8 +1040,13 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
 ContinuousFunctionProperties ContinuousFunction::Model::properties(
     const Ion::Storage::Record* record) const {
   if (!m_properties.isInitialized()) {
-    // Computing the expression equation will update the function properties
-    expressionReducedForAnalysis(record);
+    EquationData equationData = expressionEquation(record);
+    m_properties = ContinuousFunctionProperties::Compute(
+        expressionReducedForAnalysis(record),
+        originalEquation(record, UCodePointUnknown),
+        GlobalContextAccessor::Context(), this->complexFormat(record),
+        equationData.equationType, equationData.functionSymbol,
+        equationData.isCartesianEquation);
   }
   assert(m_properties.isInitialized());
   return m_properties;

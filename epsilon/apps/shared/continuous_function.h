@@ -399,14 +399,15 @@ class ContinuousFunction : public Function {
     // Return the entire expression that the user input. Replace symbols.
     Poincare::UserExpression originalEquation(
         const Ion::Storage::Record* record, CodePoint symbol) const;
+    struct EquationData {
+      Poincare::UserExpression equation;
+      Poincare::Comparison::Operator equationType;
+      ContinuousFunctionProperties::SymbolType functionSymbol;
+      bool isCartesianEquation;
+    };
     /* Return the expression representing the equation
      * (turns "f(x)=xy" into "xy" and "xy=a" into "xy-a") */
-    Poincare::UserExpression expressionEquation(
-        const Ion::Storage::Record* record,
-        Poincare::Comparison::Operator* computedEquationType = nullptr,
-        ContinuousFunctionProperties::SymbolType* computedFunctionSymbol =
-            nullptr,
-        bool* isCartesianEquation = nullptr) const;
+    EquationData expressionEquation(const Ion::Storage::Record* record) const;
     // Return the slope (dy/dx)
     Poincare::PreparedFunctionScalar expressionSlopeReduced(
         const Ion::Storage::Record* record) const;

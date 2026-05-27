@@ -516,7 +516,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
   if (!m_expression.isUninitialized()) {
     return m_expression;
   }
-  if (expressionEquation(record).isUninitialized()) {
+  if (expressionEquation(record).equation.isUninitialized()) {
     assert(m_expression.isUninitialized());
     return m_expression;
   }
@@ -532,8 +532,8 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
       .reductionPolicy = {.target = ReductionTarget::System}};
   if (thisProperties.isScatterPlot()) {
     // Clone and reduce equation
-    m_expression =
-        expressionEquation(record).cloneAndReduce(simplificationParameters);
+    m_expression = expressionEquation(record).equation.cloneAndReduce(
+        simplificationParameters);
     /* Scatter plots do not depend on any variable, so they can be approximated
      * in advance. In addition, they are sorted to be traveled from left to
      * right (i.e. in order of ascending x). */
@@ -572,7 +572,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
        * target to match f(x)= behavior.
        * TODO : implement a more general solution for any implicit curves. */
       UserExpression cartesianEquation =
-          expressionEquation(record).equivalentCartesianEquation();
+          expressionEquation(record).equation.equivalentCartesianEquation();
       if (!cartesianEquation.isUninitialized()) {
         m_expression =
             cartesianEquation.cloneAndReduce(simplificationParameters);
@@ -608,8 +608,8 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
       m_expression = SystemExpression::Undefined();
     }
   } else {
-    m_expression =
-        expressionEquation(record).cloneAndReduce(simplificationParameters);
+    m_expression = expressionEquation(record).equation.cloneAndReduce(
+        simplificationParameters);
     assert(!m_expression.isUninitialized() &&
            !m_expression.isUndefinedFailedSimplification());
   }
@@ -674,27 +674,21 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   if (!m_expressionForAnalysis.isUninitialized()) {
     return m_expressionForAnalysis;
   }
-  ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
-      ContinuousFunctionProperties::k_defaultSymbolType;
-  Comparison::Operator computedEquationType =
-      ContinuousFunctionProperties::k_defaultEquationType;
-  bool isCartesianEquation = false;
-  UserExpression equation =
-      expressionEquation(record, &computedEquationType, &computedFunctionSymbol,
-                         &isCartesianEquation);
+  EquationData equationData = expressionEquation(record);
   ComplexFormat complexFormat = this->complexFormat(record);
   AngleUnit angleUnit = SharedGlobalPrefs().angleUnit();
   /* TODO_PCJ: equation and result used to be a same Expression at this step.
    * Ensure this pool usage regression of still having equation in the pool is
    * acceptable. */
-  AnalysisExpression result =
-      ComputeExpressionForAnalysis(equation, complexFormat, angleUnit);
+  AnalysisExpression result = ComputeExpressionForAnalysis(
+      equationData.equation, complexFormat, angleUnit);
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
     m_properties = ContinuousFunctionProperties::Compute(
         result, originalEquation(record, UCodePointUnknown),
-        GlobalContextAccessor::Context(), complexFormat, computedEquationType,
-        computedFunctionSymbol, isCartesianEquation);
+        GlobalContextAccessor::Context(), complexFormat,
+        equationData.equationType, equationData.functionSymbol,
+        equationData.isCartesianEquation);
   }
   m_expressionForAnalysis = result;
   return m_expressionForAnalysis;
@@ -751,47 +745,48 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression& e) {
          SymbolHelper::IsUserVariable(functionSymbol, k_polarSymbol);
 }
 
-UserExpression ContinuousFunction::Model::expressionEquation(
-    const Ion::Storage::Record* record,
-    Comparison::Operator* computedEquationType,
-    ContinuousFunctionProperties::SymbolType* computedFunctionSymbol,
-    bool* isCartesianEquation) const {
+ContinuousFunction::Model::EquationData
+ContinuousFunction::Model::expressionEquation(
+    const Ion::Storage::Record* record) const {
+  EquationData data = {
+      .equation = UserExpression(),
+      .equationType = ContinuousFunctionProperties::k_defaultEquationType,
+      .functionSymbol = ContinuousFunctionProperties::k_defaultSymbolType,
+      .isCartesianEquation = false,
+  };
   ContinuousFunction f(*record);
   UserExpression result = f.isDerivative()
                               ? f.createDerivativeEquationFromParent()
                               : equationClone(record);
   if (result.isUninitialized()) {
-    return UserExpression::Undefined();
+    data.equation = UserExpression::Undefined();
+    return data;
   }
-  ContinuousFunctionProperties::SymbolType tempFunctionSymbol =
-      ContinuousFunctionProperties::k_defaultSymbolType;
   if (!result.isComparison()) {
     if (result.dimension(GlobalContextAccessor::Context())
             .isPointOrListOfPoints()) {
-      if (computedFunctionSymbol) {
-        *computedFunctionSymbol =
-            ContinuousFunctionProperties::SymbolType::NoSymbol;
-      }
+      data.functionSymbol = ContinuousFunctionProperties::SymbolType::NoSymbol;
       result = result.cloneAndReplaceSymbols(GlobalContextAccessor::Context());
       if (!result.isUninitialized()) {
         // Result is not circularly defined.
-        return result;
+        data.equation = result;
+        return data;
       }
     }
     /* Happens when:
      * - The input text is too long and "f(x)=" can't be inserted.
      * - When inputting ambiguous equations like "x+y>2>y".
      * - When result is uninitialized because of circular definition.  */
-    return UserExpression::Undefined();
+    data.equation = UserExpression::Undefined();
+    return data;
   }
 
   Comparison::Operator equationType = result.comparisonOperator();
   if (equationType == Comparison::Operator::NotEqual) {
-    return UserExpression::Undefined();
+    data.equation = UserExpression::Undefined();
+    return data;
   }
-  if (computedEquationType) {
-    *computedEquationType = equationType;
-  }
+  data.equationType = equationType;
   bool isUnnamedFunction = true;
   /* TODO_PCJ: leftExpression is later changed and should not be a clone of
    * result's child. */
@@ -808,7 +803,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     if (Shared::GlobalStore::UserNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
       // Set the model's plot type.
-      tempFunctionSymbol =
+      data.functionSymbol =
           ContinuousFunctionProperties::SymbolTypeForCodePoint(codePointSymbol);
       result = result.cloneChildAtIndex(1);
       isUnnamedFunction = false;
@@ -821,18 +816,13 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   } else if (SymbolHelper::IsUserVariable(leftExpression, k_radiusSymbol) ||
              SymbolHelper::IsUserVariable(leftExpression, k_polarSymbol)) {
     result = result.cloneChildAtIndex(1);
-    tempFunctionSymbol =
+    data.functionSymbol =
         SymbolHelper::IsUserVariable(leftExpression, k_polarSymbol)
             ? ContinuousFunctionProperties::SymbolType::Radius
             : ContinuousFunctionProperties::SymbolType::Theta;
     isUnnamedFunction = false;
   }
-  if (computedFunctionSymbol) {
-    *computedFunctionSymbol = tempFunctionSymbol;
-  }
-  if (isCartesianEquation) {
-    *isCartesianEquation = isUnnamedFunction;
-  }
+  data.isCartesianEquation = isUnnamedFunction;
   if (isUnnamedFunction) {
     result = UserExpression::Create(
         KSub(KA, KB),
@@ -851,7 +841,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
 
   if (result.isUninitialized()) {
     // result was Circularly defined
-    return UserExpression::Undefined();
+    data.equation = UserExpression::Undefined();
+    return data;
   }
   if (isUnnamedFunction) {
     result = result.cloneAndReplaceSymbolWithExpression(
@@ -859,7 +850,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
         SymbolHelper::BuildUserVariable(k_ordinateSymbol));
   }
   assert(!result.isUninitialized());
-  return result;
+  data.equation = result;
+  return data;
 }
 
 PreparedFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(

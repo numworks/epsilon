@@ -7,7 +7,6 @@
 namespace Escher {
 
 // ThemedImage is a lightweight object holding three Image pointers
-// TODO: assert that all images have the same dimensions
 class ThemedImage {
  public:
   constexpr ThemedImage() = default;

@@ -15,8 +15,7 @@
  * With the additional --selectable flag, a third PNG (the selected variant of
  * the dark theme) is read and embedded as the ThemedImage's selectedDark
  * image. Without --selectable, the ThemedImage's selectedDark pointer stays
- * at nullptr. Both PNGs must have matching dimensions in practice (not
- * enforced here). */
+ * at nullptr. */
 
 #include <assert.h>
 #include <ctype.h>
@@ -123,10 +122,17 @@ int main(int argc, char* argv[]) {
              "Error: could not read light PNG");
     ERROR_IF(readAndCompressPng(darkPath, transparent, &dark) != 0,
              "Error: could not read dark PNG");
+    ERROR_IF(light.width != dark.width || light.height != dark.height,
+             "Error: light and dark images must have the same dimensions");
     if (selectable) {
       ERROR_IF(
           readAndCompressPng(selectedDarkPath, transparent, &selectedDark) != 0,
           "Error: could not read selected dark PNG");
+      ERROR_IF(
+          light.width != selectedDark.width ||
+              light.height != selectedDark.height,
+          "Error: selected dark image must have the same dimensions as light "
+          "and dark images");
     }
 
     // Derive the symbol names from the output header path.

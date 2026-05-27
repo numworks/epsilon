@@ -7,7 +7,9 @@ namespace Simulator {
 namespace Platform {
 
 static const char * getPath(NSSavePanel * panel, const char * extension) {
-  [panel setAllowedContentTypes:[NSArray arrayWithObject:[UTType typeWithFilenameExtension:[NSString stringWithUTF8String:extension]]]];
+  NSString * ext = [NSString stringWithUTF8String:extension];
+  [panel setAllowedContentTypes:[NSArray arrayWithObject:[UTType typeWithFilenameExtension:ext]]];
+  [panel setAllowsOtherFileTypes:NO];
   static NSString * path = nil;
   [path release]; path = nil; // Discard previous path if any
   NSWindow * mainWindow = [[NSApplication sharedApplication] keyWindow];
@@ -25,6 +27,8 @@ const char * filePathForReading(const char * extension) {
 
 const char * filePathForWriting(const char * extension) {
   NSSavePanel * panel = [NSSavePanel savePanel];
+  NSString * ext = [NSString stringWithUTF8String:extension];
+  [panel setNameFieldStringValue:[@"scenario." stringByAppendingString:ext]];
   return getPath(panel, extension);
 }
 

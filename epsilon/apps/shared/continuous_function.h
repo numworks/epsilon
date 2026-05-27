@@ -434,6 +434,9 @@ class ContinuousFunction : public Function {
                             CodePoint symbol) const override;
 
    private:
+    static Poincare::AnalysisExpression ComputeExpressionForAnalysis(
+        const Poincare::UserExpression& equation,
+        Poincare::ComplexFormat complexFormat, Poincare::AngleUnit angleUnit);
     static CodePoint CodePointForSymbol(const Poincare::UserExpression& symbol);
     // Build the expression from layout, handling f(x)=... cartesian equations
     static Poincare::UserExpression BuildFunctionFromLayout(

@@ -650,6 +650,24 @@ ContinuousFunction::Model::expressionApproximated(
   return *approximated;
 }
 
+Poincare::AnalysisExpression
+ContinuousFunction::Model::ComputeExpressionForAnalysis(
+    const UserExpression& equation, ComplexFormat complexFormat,
+    AngleUnit angleUnit) {
+  AnalysisExpression result =
+      equation
+          .cloneAndReduce(SimplificationParameters{
+              .user = {.complexFormat = complexFormat,
+                       .angleUnit = angleUnit,
+                       .context = GlobalContextAccessor::Context()},
+              .projectionPolicy = {.symbolic =
+                                       SymbolicComputation::KeepAllSymbols},
+              .reductionPolicy = {.target = ReductionTarget::System}})
+          .cloneAndExpand();
+  assert(!result.isUninitialized());
+  return result;
+}
+
 const Poincare::AnalysisExpression&
 ContinuousFunction::Model::expressionReducedForAnalysis(
     const Ion::Storage::Record* record) const {
@@ -666,20 +684,11 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
                          &isCartesianEquation);
   ComplexFormat complexFormat = this->complexFormat(record);
   AngleUnit angleUnit = SharedGlobalPrefs().angleUnit();
-  AnalysisExpression result =
-      equation
-          .cloneAndReduce(SimplificationParameters{
-              .user = {.complexFormat = complexFormat,
-                       .angleUnit = angleUnit,
-                       .context = GlobalContextAccessor::Context()},
-              .projectionPolicy = {.symbolic =
-                                       SymbolicComputation::KeepAllSymbols},
-              .reductionPolicy = {.target = ReductionTarget::System}})
-          .cloneAndExpand();
-  assert(!result.isUninitialized());
   /* TODO_PCJ: equation and result used to be a same Expression at this step.
    * Ensure this pool usage regression of still having equation in the pool is
    * acceptable. */
+  AnalysisExpression result =
+      ComputeExpressionForAnalysis(equation, complexFormat, angleUnit);
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
     m_properties = ContinuousFunctionProperties::Compute(

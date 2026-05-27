@@ -29,7 +29,6 @@ class ThemedImageView : public View {
   const Image* currentImage() const;
 
  private:
-  // TODO: do not duplicate with ImageView
   // Boot logo image is 188 x 21 = 3948
   constexpr static int k_maxImageSize = 188 * 21;
 

@@ -123,12 +123,13 @@ class ContinuousFunctionProperties {
 
   // Update
   void reset();
-  void update(const Poincare::AnalysisExpression& analyzedEquation,
-              const Poincare::UserExpression& inputEquation,
-              const Poincare::SymbolContext& symbolContext,
-              Poincare::ComplexFormat complexFormat,
-              Poincare::Comparison::Operator precomputedOperatorType,
-              SymbolType precomputedFunctionSymbol, bool isCartesianEquation);
+  static ContinuousFunctionProperties Compute(
+      const Poincare::AnalysisExpression& analyzedEquation,
+      const Poincare::UserExpression& inputEquation,
+      const Poincare::SymbolContext& symbolContext,
+      Poincare::ComplexFormat complexFormat,
+      Poincare::Comparison::Operator precomputedOperatorType,
+      SymbolType precomputedFunctionSymbol, bool isCartesianEquation);
 
   // Properties
   bool isEnabled() const { return status() == Status::Enabled; }

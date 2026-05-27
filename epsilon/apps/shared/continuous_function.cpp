@@ -682,10 +682,10 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
    * acceptable. */
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
-    m_properties.update(result, originalEquation(record, UCodePointUnknown),
-                        GlobalContextAccessor::Context(), complexFormat,
-                        computedEquationType, computedFunctionSymbol,
-                        isCartesianEquation);
+    m_properties = ContinuousFunctionProperties::Compute(
+        result, originalEquation(record, UCodePointUnknown),
+        GlobalContextAccessor::Context(), complexFormat, computedEquationType,
+        computedFunctionSymbol, isCartesianEquation);
   }
   m_expressionForAnalysis = result;
   return m_expressionForAnalysis;

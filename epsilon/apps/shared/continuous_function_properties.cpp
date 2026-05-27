@@ -135,22 +135,22 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
   }
 }
 
-void ContinuousFunctionProperties::update(
+ContinuousFunctionProperties ContinuousFunctionProperties::Compute(
     const Poincare::AnalysisExpression& analyzedEquation,
     const Poincare::UserExpression& inputEquation,
     const SymbolContext& symbolContext, ComplexFormat complexFormat,
     Comparison::Operator precomputedOperatorType,
     SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
-  reset();
-  m_isInitialized = true;
+  ContinuousFunctionProperties result;
+  result.m_isInitialized = true;
 
-  setSymbolType(precomputedFunctionSymbol);
-  setEquationType(precomputedOperatorType);
+  result.setSymbolType(precomputedFunctionSymbol);
+  result.setEquationType(precomputedOperatorType);
 
   if (ExamModeManager::ExamMode().forbidInequalityGraphing() &&
       precomputedOperatorType != Comparison::Operator::Equal) {
-    setErrorStatusAndUpdateCaption(Status::Banned);
-    return;
+    result.setErrorStatusAndUpdateCaption(Status::Banned);
+    return result;
   }
 
   /* We do not care about reduced expression since it is never shown to the
@@ -159,14 +159,14 @@ void ContinuousFunctionProperties::update(
   bool genericCaptionOnly = CAS::ShouldOnlyDisplayApproximation(
       inputEquation, UserExpression(), UserExpression(), symbolContext);
 
-  setHideDetails(genericCaptionOnly);
+  result.setHideDetails(genericCaptionOnly);
 
   assert(!analyzedEquation.isUninitialized());
   if (analyzedEquation.isUndefined()) {
-    setErrorStatusAndUpdateCaption(
+    result.setErrorStatusAndUpdateCaption(
         analyzedEquation.isUndefinedFailedSimplification() ? Status::Unhandled
                                                            : Status::Undefined);
-    return;
+    return result;
   }
 
   // Do not handle dependencies for now.
@@ -175,8 +175,8 @@ void ContinuousFunctionProperties::update(
                                  : analyzedEquation;
   if (analyzedEquation.isDep() && analyzedExpression.isDep()) {
     // If there is still a dependency, it means that the reduction failed.
-    setErrorStatusAndUpdateCaption(Status::Unhandled);
-    return;
+    result.setErrorStatusAndUpdateCaption(Status::Unhandled);
+    return result;
   }
 
   // Compute equation's degree regarding y.
@@ -185,8 +185,8 @@ void ContinuousFunctionProperties::update(
     // There should be no y symbol. Inequations are handled on cartesians only
     if (yDeg > 0 || (precomputedOperatorType != Comparison::Operator::Equal &&
                      precomputedFunctionSymbol != SymbolType::X)) {
-      setErrorStatusAndUpdateCaption(Status::Unhandled);
-      return;
+      result.setErrorStatusAndUpdateCaption(Status::Unhandled);
+      return result;
     }
 
     // Check dimension
@@ -198,51 +198,54 @@ void ContinuousFunctionProperties::update(
         (precomputedFunctionSymbol == SymbolType::T && !dimension.isPoint()) ||
         (precomputedFunctionSymbol == SymbolType::NoSymbol &&
          !dimension.isPointOrListOfPoints())) {
-      setErrorStatusAndUpdateCaption(Status::Undefined);
-      return;
+      result.setErrorStatusAndUpdateCaption(Status::Undefined);
+      return result;
     }
 
     switch (precomputedFunctionSymbol) {
       case SymbolType::X: {
         assert(dimension.isScalar());
-        setCurveParameterType(CurveParameterType::CartesianFunction);
-        setCaption(captionForCartesianFunction(analyzedExpression));
+        result.setCurveParameterType(CurveParameterType::CartesianFunction);
+        result.setCaption(
+            result.captionForCartesianFunction(analyzedExpression));
         if (genericCaptionOnly) {
-          setCaption(I18n::Message::Function);
+          result.setCaption(I18n::Message::Function);
         }
-        return;
+        return result;
       }
       case SymbolType::Theta: {
         assert(dimension.isScalar());
-        setCurveParameterType(CurveParameterType::Polar);
-        setCaption(captionForPolarFunction(analyzedExpression));
+        result.setCurveParameterType(CurveParameterType::Polar);
+        result.setCaption(result.captionForPolarFunction(analyzedExpression));
         if (genericCaptionOnly) {
-          setCaption(I18n::Message::PolarEquationType);
+          result.setCaption(I18n::Message::PolarEquationType);
         }
-        return;
+        return result;
       }
       case SymbolType::Radius: {
         assert(dimension.isScalar());
         // TODO: Inverse polar could also be analyzed
-        setCurveParameterType(CurveParameterType::InversePolar);
-        setCaption(I18n::Message::PolarEquationType);
-        return;
+        result.setCurveParameterType(CurveParameterType::InversePolar);
+        result.setCaption(I18n::Message::PolarEquationType);
+        return result;
       }
       case SymbolType::T: {
         assert(dimension.isPoint());
-        setCurveParameterType(CurveParameterType::Parametric);
-        setCaption(captionForParametricFunction(analyzedExpression));
+        result.setCurveParameterType(CurveParameterType::Parametric);
+        result.setCaption(
+            result.captionForParametricFunction(analyzedExpression));
         if (genericCaptionOnly) {
-          setCaption(I18n::Message::ParametricEquationType);
+          result.setCaption(I18n::Message::ParametricEquationType);
         }
-        return;
+        return result;
       }
       case SymbolType::NoSymbol: {
         assert(dimension.isPointOrListOfPoints());
-        setCaption(dimension.isPoint() ? I18n::Message::PointType
-                                       : I18n::Message::ListOfPointsType);
-        setCurveParameterType(CurveParameterType::ScatterPlot);
-        return;
+        result.setCaption(dimension.isPoint()
+                              ? I18n::Message::PointType
+                              : I18n::Message::ListOfPointsType);
+        result.setCurveParameterType(CurveParameterType::ScatterPlot);
+        return result;
       }
       default:
         OMG_UNREACHABLE;
@@ -256,8 +259,8 @@ void ContinuousFunctionProperties::update(
   bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2));
   if (!willBeAlongX && !willBeAlongY) {
     // Any equation with such a y and x degree won't be handled anyway.
-    setErrorStatusAndUpdateCaption(Status::Unhandled);
-    return;
+    result.setErrorStatusAndUpdateCaption(Status::Unhandled);
+    return result;
   }
 
   const char* symbolName =
@@ -266,8 +269,8 @@ void ContinuousFunctionProperties::update(
   if (!Poincare::PolynomialHelpers::HasNonNullCoefficients(
           analyzedExpression, symbolName, &highestCoefficientIsPositive)) {
     // The equation must have at least one nonNull coefficient.
-    setErrorStatusAndUpdateCaption(Status::Unhandled);
-    return;
+    result.setErrorStatusAndUpdateCaption(Status::Unhandled);
+    return result;
   }
 
   if (precomputedOperatorType != Comparison::Operator::Equal) {
@@ -278,14 +281,14 @@ void ContinuousFunctionProperties::update(
        * - A non polynomial coefficient in a quadratic equation.
        * (example: y^2 > ln(x) -> it's not easy to know where the area is
        * defined and where it is not) */
-      setErrorStatusAndUpdateCaption(Status::Unhandled);
-      return;
+      result.setErrorStatusAndUpdateCaption(Status::Unhandled);
+      return result;
     }
     if (highestCoefficientIsPositive == OMG::Troolean::False) {
       // Oppose the comparison operator
       precomputedOperatorType =
           Comparison::OperatorReverseInferiorSuperior(precomputedOperatorType);
-      setEquationType(precomputedOperatorType);
+      result.setEquationType(precomputedOperatorType);
     }
   }
 
@@ -293,16 +296,17 @@ void ContinuousFunctionProperties::update(
       !(IsExplicitEquation(inputEquation, k_ordinateSymbol) ||
         IsExplicitEquation(inputEquation, UCodePointUnknown))) {
     // Only equations of the form y = f(x) or x = f(y) are allowed
-    setErrorStatusAndUpdateCaption(Status::Banned);
-    return;
+    result.setErrorStatusAndUpdateCaption(Status::Banned);
+    return result;
   }
 
   assert(analyzedExpression.dimension(symbolContext).isScalar());
-  setCartesianEquationProperties(analyzedExpression, xDeg, yDeg,
-                                 highestCoefficientIsPositive);
+  result.setCartesianEquationProperties(analyzedExpression, xDeg, yDeg,
+                                        highestCoefficientIsPositive);
   if (genericCaptionOnly) {
-    setCaption(I18n::Message::Equation);
+    result.setCaption(I18n::Message::Equation);
   }
+  return result;
 }
 
 I18n::Message ContinuousFunctionProperties::captionForCartesianFunction(

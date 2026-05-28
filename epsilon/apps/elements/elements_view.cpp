@@ -17,10 +17,10 @@ ElementsView::ElementsView()
       m_redrawBackground(true) {}
 
 void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
-  /* Only draw the whole background when the view appears. This prevents
-   * blinking when moving the cursor around. */
   KDColor backgroundColor = Escher::ColorPicker::Resolve(k_backgroundColor);
-  if (m_redrawBackground) {
+  if (m_redrawBackground || rect == bounds()) {
+    /* Only draw the whole background when m_redrawBackground or the entire view
+     * is to be drawn. This prevents blinking when moving the cursor around. */
     ctx->fillRect(rect, backgroundColor);
     drawLigatures(ctx);
     m_redrawBackground = false;

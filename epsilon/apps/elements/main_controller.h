@@ -18,7 +18,6 @@ class MainController : public Escher::ViewController,
 
   // Escher::ViewController
   Escher::View* view() override { return &m_view; }
-  void viewWillAppear() override { m_view.elementsView()->dirtyBackground(); }
 
   // Escher::Responder
   bool handleEvent(Ion::Events::Event e) override;

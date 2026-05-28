@@ -3,13 +3,52 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <escher/metric.h>
+#include <escher/theme/color_picker.h>
+
+#include <algorithm>
 
 using namespace Escher;
 
 namespace Settings {
 
+AccessibilityController::ContentView::ContentView(SelectableListView* listView)
+    : m_listView(listView), m_hintMessage(I18n::Message::MagnifyHint) {
+  m_hintMessage.setBackgroundColor(ThemeComponent::WallScreen);
+  m_hintMessage.setFont(KDFont::Size::Small);
+  m_hintMessage.setTextColor(ThemeComponent::TextGrayDark);
+  m_hintMessage.setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+}
+
+void AccessibilityController::ContentView::drawRect(KDContext* ctx,
+                                                    KDRect rect) const {
+  ctx->fillRect(bounds(), ColorPicker::Resolve(ThemeComponent::WallScreen));
+}
+
+View* AccessibilityController::ContentView::subviewAtIndex(int i) {
+  if (i == 0) {
+    return m_listView;
+  }
+  return &m_hintMessage;
+}
+
+void AccessibilityController::ContentView::layoutSubviews(bool force) {
+  KDCoordinate hintHeight =
+      KDFont::GlyphHeight(KDFont::Size::Small) + Metric::CommonMargins.top();
+  m_listView->setSize(bounds().size());
+  KDCoordinate listHeight = std::min<KDCoordinate>(
+      bounds().height() - hintHeight,
+      m_listView->minimalSizeForOptimalDisplay().height());
+  setChildFrame(m_listView, KDRect(0, 0, bounds().width(), listHeight), force);
+  setChildFrame(
+      &m_hintMessage,
+      KDRect(0, bounds().height() - hintHeight, bounds().width(), hintHeight),
+      force);
+}
+
 AccessibilityController::AccessibilityController(Responder* parentResponder)
-    : GenericSubController(parentResponder) {}
+    : GenericSubController(parentResponder),
+      m_contentView(selectableListView()) {}
 
 bool AccessibilityController::handleEvent(Ion::Events::Event event) {
   int index = selectedRow();

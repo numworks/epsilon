@@ -6,8 +6,6 @@
 #include <escher/metric.h>
 #include <escher/theme/color_picker.h>
 
-#include <algorithm>
-
 using namespace Escher;
 
 namespace Settings {
@@ -35,11 +33,11 @@ View* AccessibilityController::ContentView::subviewAtIndex(int i) {
 void AccessibilityController::ContentView::layoutSubviews(bool force) {
   KDCoordinate hintHeight =
       KDFont::GlyphHeight(KDFont::Size::Small) + Metric::CommonMargins.top();
-  m_listView->setSize(bounds().size());
-  KDCoordinate listHeight = std::min<KDCoordinate>(
-      bounds().height() - hintHeight,
-      m_listView->minimalSizeForOptimalDisplay().height());
-  setChildFrame(m_listView, KDRect(0, 0, bounds().width(), listHeight), force);
+  setChildFrame(m_listView, bounds(), force);
+  // Ensure hint message isn't drawn over m_listView
+  assert(bounds().height() -
+             m_listView->minimalSizeForOptimalDisplay().height() >=
+         hintHeight);
   setChildFrame(
       &m_hintMessage,
       KDRect(0, bounds().height() - hintHeight, bounds().width(), hintHeight),

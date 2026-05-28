@@ -146,7 +146,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   if (m_step) {
     plotView->drawDashedStraightSegment(
         &measuringContext, rect, OMG::Axis::Vertical, x, y, 0.f,
-        Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisGrayDark));
+        Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisSecondary));
     m_verticalLineCache[m_step].save(ctx, measuringContext.writtenRect());
   }
   measuringContext.reset();
@@ -166,7 +166,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   if (m_step) {
     plotView->drawDashedStraightSegment(
         ctx, rect, OMG::Axis::Vertical, x, y, 0.f,
-        Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisGrayDark));
+        Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisSecondary));
   }
   plotView->drawDot(
       ctx, rect, Dots::Size::Medium, {x, y},

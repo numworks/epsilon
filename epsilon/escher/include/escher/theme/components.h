@@ -66,7 +66,7 @@ namespace Escher {
   X(AxisMain)                  \
   X(AxisLight)                 \
   X(AxisMedium)                \
-  X(AxisGrayDark)              \
+  X(AxisSecondary)             \
   X(AxisGrayVeryDark)          \
   X(AxisRed)                   \
   X(Curve)                     \
@@ -105,10 +105,6 @@ namespace Escher {
   X(PythonText)                \
   X(PythonGutterBackground)    \
   X(MagnifyIndicator)
-
-/* TODO: check the following colors which are not in the specs but used anyway:
- * - AxisGrayDark (additional result complex graph)
- */
 
 /* Fixed components: color is the same in all themes.
  * If a color component is declared as fixed, it avoids declaring it with the

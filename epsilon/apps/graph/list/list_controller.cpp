@@ -288,7 +288,7 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
       functionCell->setParameterSelected(m_parameterColumnSelected);
     }
     ThemeComponent functionColor =
-        active ? f->color() : ThemeComponent::AxisGrayDark;
+        active ? f->color() : ThemeComponent::AxisSecondary;
     static_cast<AbstractFunctionCell*>(cell)->setColor(functionColor);
   }
   FunctionListController::fillCellForRow(cell, row);

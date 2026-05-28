@@ -77,7 +77,7 @@ void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,
   PlotPolicy::WithPolarGrid::DrawGrid(plotView, ctx, rect,
                                       SharedGlobalPrefs().angleUnit());
   plotView->drawCircle(ctx, rect, {0.f, 0.f}, 1.f,
-                       ColorPicker::Resolve(ThemeComponent::AxisBlack));
+                       ColorPicker::Resolve(ThemeComponent::AxisMain));
   // Labels should be as close to the axes as possible so we place them manually
   KDRect labelRect = plotView->labelRect(
       "-1", {-1, 0}, AbstractPlotView::RelativePosition::Before,

@@ -39,11 +39,10 @@ void BarGraphView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, Escher::ColorPicker::Resolve(
                           Escher::ThemeComponent::BackgroundWhite));
   // Draw axis
-  ctx->drawLine(
-      KDPoint(0, bounds().height() - k_legendHeight - k_axisHeight),
-      KDPoint(bounds().width(),
-              bounds().height() - k_legendHeight - k_axisHeight),
-      Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisBlack));
+  ctx->drawLine(KDPoint(0, bounds().height() - k_legendHeight - k_axisHeight),
+                KDPoint(bounds().width(),
+                        bounds().height() - k_legendHeight - k_axisHeight),
+                Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisMain));
   // Draw categories
   float maxBarValue = m_store->getMaxActiveTableValue();
   for (int category = 0; category < m_store->currentDimension().row;

@@ -63,7 +63,7 @@ namespace Escher {
   X(ButtonBackground)          \
   X(SwitchButtonActive)        \
   X(SwitchButtonInactive)      \
-  X(AxisBlack)                 \
+  X(AxisMain)                  \
   X(AxisLight)                 \
   X(AxisMedium)                \
   X(AxisGrayBright)            \

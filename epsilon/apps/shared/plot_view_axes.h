@@ -125,7 +125,7 @@ class PlainAxis {
 
  protected:
   constexpr static Escher::ThemeComponent k_color =
-      Escher::ThemeComponent::AxisBlack;
+      Escher::ThemeComponent::AxisMain;
 };
 
 class SimpleAxis : public PlainAxis {

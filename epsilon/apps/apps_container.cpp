@@ -170,6 +170,10 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     Ion::Backlight::setBrightness(SharedGlobalPrefs().brightnessLevel());
     shouldForceRedraw = m_focusManager.dispatchEvent(
         event, sharedAppsContainer()->m_blinkTimer);
+  } else {
+    // It is asserted here that focus manager never handles non key press
+    assert(!m_focusManager.dispatchEvent(event,
+                                         sharedAppsContainer()->m_blinkTimer));
   }
   if (shouldRedraw || shouldForceRedraw) {
     window()->redraw(shouldForceRedraw);

@@ -5,6 +5,8 @@
 #include <escher/bordered.h>
 #include <escher/theme/color_picker.h>
 
+#include <algorithm>
+
 bool FocusManager::dispatchEvent(Ion::Events::Event event,
                                  const Escher::BlinkTimer& blinkTimer) {
   if (!m_isActive) {

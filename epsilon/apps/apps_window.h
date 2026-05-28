@@ -22,9 +22,14 @@ class AppsWindow : public Escher::Window {
 #if ESCHER_VIEW_LOGGING
   const char* className() const override;
 #endif
-  int numberOfSubviews() const override;
+  int numberOfSubviews() const override {
+    return 1 + hasContentView() + hasFocusedView();
+  }
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
+  bool hasContentView() const { return m_contentView != nullptr; }
+  bool hasFocusedView() const { return m_focusManager->isActive(); }
+
   TitleBarView m_titleBarView;
   FocusManager* m_focusManager;
   bool m_hideTitleBarView;

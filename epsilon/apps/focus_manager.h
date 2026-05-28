@@ -19,6 +19,8 @@ class FocusManager : public Escher::View {
   // Display an indicator representing the screen and the focused screen.
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
+  bool isActive() const { return m_isActive; }
+
  private:
   // Events that will always reset focus
   constexpr static Ion::Events::Event k_eventsThatResetFocus[] = {

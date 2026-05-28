@@ -51,18 +51,14 @@ void AppsWindow::hideTitleBarView(bool hide) {
   }
 }
 
-int AppsWindow::numberOfSubviews() const {
-  return 2 + (m_contentView != nullptr);
-}
-
 View* AppsWindow::subviewAtIndex(int index) {
   assert(index < numberOfSubviews());
   if (index == 0) {
     return &m_titleBarView;
-  } else if (index == 1) {
-    return m_contentView ? m_contentView : m_focusManager;
+  } else if (index == 1 && hasContentView()) {
+    return m_contentView;
   }
-  assert(index == 2);
+  assert(hasFocusedView());
   return m_focusManager;
 }
 
@@ -70,12 +66,14 @@ void AppsWindow::layoutSubviews(bool force) {
   KDCoordinate titleHeight = m_hideTitleBarView ? 0 : Metric::TitleBarHeight;
   setChildFrame(&m_titleBarView, KDRect(0, 0, bounds().width(), titleHeight),
                 force);
-  if (m_contentView != nullptr) {
+  if (hasContentView()) {
     setChildFrame(m_contentView,
                   KDRect(0, titleHeight, bounds().width(),
                          bounds().height() - titleHeight),
                   force);
   }
+  /* Always give m_focusManager the entire rect as frame to prevent having to
+   * layoutSubviews at every moves. */
   setChildFrame(m_focusManager, Ion::Display::Rect, force);
 }
 

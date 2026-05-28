@@ -29,7 +29,7 @@ class PieGraphViewDataSource {
 
  protected:
   constexpr static Escher::ThemeComponent k_outsideColor =
-      Escher::ThemeComponent::BackgroundWhite;
+      Escher::ThemeComponent::DefaultBackground;
   float m_cumulatedAngles[Store::k_maxNumberOfCategory];
   uint8_t m_toGlobalCategories[Store::k_maxNumberOfCategory];
   /* Note: Now that colors do not change depending on selection, having

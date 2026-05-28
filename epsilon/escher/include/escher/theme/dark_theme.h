@@ -9,7 +9,7 @@ namespace Escher {
 constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .WallScreen = Palette::Black,
     .WallScreenDark = Palette::Black,
-    .BackgroundWhite = Palette::Black,
+    .DefaultBackground = Palette::Black,
     .DefaultCellBackground = Palette::Black,
     // TODO: check color of popups (black in light theme)
     .BackgroundPopup = Palette::DARK_VioletPale,

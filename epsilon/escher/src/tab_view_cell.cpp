@@ -41,7 +41,7 @@ void TabViewCell::drawRect(KDContext* ctx, KDRect rect) const {
       m_active ? ThemeComponent::TextPurple : ThemeComponent::TextWhite;
   ThemeComponent inactiveBackground = m_controller->tabBackgroundColor();
   ThemeComponent background =
-      m_active ? ThemeComponent::BackgroundWhite : inactiveBackground;
+      m_active ? ThemeComponent::DefaultBackground : inactiveBackground;
   ThemeComponent selection = m_active ? ThemeComponent::SurfaceSelect
                                       : ThemeComponent::InactiveTabSelected;
   background = m_selected ? selection : background;

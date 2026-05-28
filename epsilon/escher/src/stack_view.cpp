@@ -33,7 +33,7 @@ void StackView::setupHeadersBorderOverlaping(
 
 void StackView::pushStack(const ViewController* vc) {
   ThemeComponent textColor = ThemeComponent::TextGrayDarkMiddle;
-  ThemeComponent backgroundColor = ThemeComponent::BackgroundWhite;
+  ThemeComponent backgroundColor = ThemeComponent::DefaultBackground;
   ThemeComponent separatorColor = ThemeComponent::BorderGrayBright;
   ThemeComponent borderColor = ThemeComponent::BorderGrayBright;
 

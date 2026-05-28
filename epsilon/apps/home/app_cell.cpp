@@ -19,7 +19,7 @@ void AppCell::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(
       KDRect(0, bounds().height() - nameSize.height() - 2 * k_nameHeightMargin,
              bounds().width(), nameSize.height() + 2 * k_nameHeightMargin),
-      ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
+      ColorPicker::Resolve(ThemeComponent::DefaultBackground));
 }
 
 int AppCell::numberOfSubviews() const { return isVisible() ? 2 : 0; }

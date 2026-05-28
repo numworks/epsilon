@@ -28,7 +28,7 @@ class ElementsView : public Escher::View {
   constexpr static KDCoordinate k_zoomedViewMargin = 11;
   constexpr static KDCoordinate k_lanthanideTopMargin = 5;
   constexpr static Escher::ThemeComponent k_backgroundColor =
-      Escher::ThemeComponent::BackgroundWhite;
+      Escher::ThemeComponent::DefaultBackground;
   constexpr static Escher::ThemeComponent k_ligatureColor =
       Escher::ThemeComponent::TokenGrayMiddle;
 

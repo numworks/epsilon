@@ -10,7 +10,7 @@ namespace Escher {
 #define THEMED_COMPONENTS(X)   \
   X(WallScreen)                \
   X(WallScreenDark)            \
-  X(BackgroundWhite)           \
+  X(DefaultBackground)         \
   X(DefaultCellBackground)     \
   X(BackgroundPopup)           \
   X(BackgroundBoxTitle)        \

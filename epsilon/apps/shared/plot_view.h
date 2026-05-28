@@ -27,7 +27,7 @@ class AbstractPlotView : public Escher::View {
   };
 
   constexpr static Escher::ThemeComponent k_backgroundColor =
-      Escher::ThemeComponent::BackgroundWhite;
+      Escher::ThemeComponent::DefaultBackground;
   constexpr static KDCoordinate k_labelMargin = 4;
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static KDCoordinate k_defaultDashThickness = 1;

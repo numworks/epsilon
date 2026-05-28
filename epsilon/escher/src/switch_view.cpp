@@ -67,7 +67,7 @@ void SwitchView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect onOffFrame(onOffX, heightCenter - halfHeight, k_onOffSize,
                     k_onOffSize);
   ctx->blendRectWithMask(
-      onOffFrame, ColorPicker::Resolve(ThemeComponent::BackgroundWhite),
+      onOffFrame, ColorPicker::Resolve(ThemeComponent::DefaultBackground),
       reinterpret_cast<const uint8_t*>(onOffMask), workingBuffer);
 }
 

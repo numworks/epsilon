@@ -20,7 +20,7 @@ const uint8_t gaugeIndicatorMask
 };
 
 GaugeView::GaugeView()
-    : m_level(1), m_backgroundColor(ThemeComponent::BackgroundWhite) {}
+    : m_level(1), m_backgroundColor(ThemeComponent::DefaultBackground) {}
 
 float GaugeView::level() { return m_level; }
 

@@ -37,7 +37,7 @@ int MultipleDataView::numberOfSubviews() const {
 void MultipleDataView::drawRect(KDContext* ctx, KDRect rect) const {
   if (!m_displayBanner) {
     ctx->fillRect(bannerFrame(),
-                  ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
+                  ColorPicker::Resolve(ThemeComponent::DefaultBackground));
   }
 }
 

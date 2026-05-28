@@ -98,7 +98,7 @@ void MultipleBoxesView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(
       KDRect(0, 0, bounds().width(),
              bounds().height() - bannerHeight - k_axisViewHeight),
-      Escher::ColorPicker::Resolve(Escher::ThemeComponent::BackgroundWhite));
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::DefaultBackground));
   MultipleDataView::drawRect(ctx, rect);
 }
 

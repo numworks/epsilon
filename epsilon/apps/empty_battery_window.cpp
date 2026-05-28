@@ -11,7 +11,7 @@ EmptyBatteryWindow::EmptyBatteryWindow() : Window() {}
 
 void EmptyBatteryWindow::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Escher::ColorPicker::Resolve(
-                              Escher::ThemeComponent::BackgroundWhite));
+                              Escher::ThemeComponent::DefaultBackground));
   const char* warningMessage = I18n::translate(I18n::Message::LowBattery);
   ctx->alignAndDrawString(warningMessage, KDPointZero,
                           KDSize(Ion::Display::Width, Ion::Display::Height),

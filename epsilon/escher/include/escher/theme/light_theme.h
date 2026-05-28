@@ -9,7 +9,7 @@ namespace Escher {
 constexpr static ThemeContainer k_lightTheme =
     ThemeContainer{.WallScreen = Palette::WallScreen,
                    .WallScreenDark = Palette::WallScreenDark,
-                   .BackgroundWhite = Palette::White,
+                   .DefaultBackground = Palette::White,
                    .DefaultCellBackground = Palette::White,
                    .BackgroundPopup = Palette::Black,
                    .BackgroundBoxTitle = Palette::BoxTitleBackground,

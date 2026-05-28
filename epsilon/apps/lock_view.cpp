@@ -21,7 +21,7 @@ void LockView::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor lockWorkingBuffer[LockView::k_lockHeight * LockView::k_lockWidth];
   ctx->blendRectWithMask(
       frame,
-      Escher::ColorPicker::Resolve(Escher::ThemeComponent::BackgroundWhite),
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::DefaultBackground),
       (const uint8_t*)lockMask, lockWorkingBuffer);
 }
 

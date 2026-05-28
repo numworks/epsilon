@@ -24,7 +24,7 @@ class TransparentThemedImageView : public ThemedImageView {
   constexpr static int k_maxTransparentImageSize = 55 * 56;
 
   void blendInPlace(KDColor* colorBuffer, uint8_t* alphaBuffer) const;
-  ThemeComponent m_backgroundColor = ThemeComponent::BackgroundWhite;
+  ThemeComponent m_backgroundColor = ThemeComponent::DefaultBackground;
 };
 
 }  // namespace Escher

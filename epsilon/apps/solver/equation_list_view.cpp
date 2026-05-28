@@ -20,7 +20,7 @@ EquationListView::EquationListView(ListController* listController)
   m_listView.setVerticalCellOverlap(0);
   listController->setScrollViewDataSourceDelegate(this);
   m_scrollBraceView.setMargins(k_margins);
-  m_scrollBraceView.setBackgroundColor(ThemeComponent::BackgroundWhite);
+  m_scrollBraceView.setBackgroundColor(ThemeComponent::DefaultBackground);
 }
 
 void EquationListView::setBraceStyle(BraceStyle style) {
@@ -115,7 +115,7 @@ const uint8_t bottomBrace[braceExtremumHeight][braceExtremumWidth] = {
 
 void EquationListView::BraceView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(),
-                ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
+                ColorPicker::Resolve(ThemeComponent::DefaultBackground));
   KDCoordinate height = bounds().height();
   KDCoordinate margin = 3;
   KDColor braceWorkingBuffer[60];

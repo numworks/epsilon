@@ -37,7 +37,7 @@ void BarGraphView::scrollToSelectedBar() {
 void BarGraphView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw background
   ctx->fillRect(rect, Escher::ColorPicker::Resolve(
-                          Escher::ThemeComponent::BackgroundWhite));
+                          Escher::ThemeComponent::DefaultBackground));
   // Draw axis
   ctx->drawLine(KDPoint(0, bounds().height() - k_legendHeight - k_axisHeight),
                 KDPoint(bounds().width(),

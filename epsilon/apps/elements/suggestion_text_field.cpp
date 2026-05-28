@@ -43,7 +43,7 @@ void SuggestionTextField::ContentView::setSuggestion(const char* suggestion) {
 SuggestionTextField::SuggestionTextField(Responder* parentResponder,
                                          TextFieldDelegate* delegate)
     : AbstractTextField(parentResponder, &m_contentView, delegate) {
-  setBackgroundColor(ThemeComponent::BackgroundWhite);
+  setBackgroundColor(ThemeComponent::DefaultBackground);
 }
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {

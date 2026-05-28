@@ -48,7 +48,7 @@ ConsoleController::ConsoleController(Responder* parentResponder,
 {
   m_selectableListView.setMargins({Metric::TitleBarExternHorizontalMargin,
                                    Metric::CommonMargins.right(), 0, 0});
-  m_selectableListView.setBackgroundColor(ThemeComponent::BackgroundWhite);
+  m_selectableListView.setBackgroundColor(ThemeComponent::DefaultBackground);
   m_editCell.setPrompt(sStandardPromptText);
   for (int i = 0; i < k_numberOfLineCells; i++) {
     m_cells[i].setParentResponder(&m_selectableListView);

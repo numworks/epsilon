@@ -23,7 +23,7 @@ Controller::ContentView::ContentView(
                             controller) {
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setMargins(k_margins);
-  m_selectableTableView.setBackgroundColor(ThemeComponent::BackgroundWhite);
+  m_selectableTableView.setBackgroundColor(ThemeComponent::DefaultBackground);
   m_selectableTableView.decorator()->setVerticalMargins(
       {k_indicatorMargin, k_indicatorMargin - k_bottomMargin});
 }

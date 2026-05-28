@@ -26,7 +26,7 @@ class BatteryView : public Escher::View {
   void drawInsideBatteryLevel(
       KDContext* ctx, KDCoordinate width,
       Escher::ThemeComponent component =
-          Escher::ThemeComponent::BackgroundWhite) const;
+          Escher::ThemeComponent::DefaultBackground) const;
   constexpr static KDCoordinate k_batteryHeight = 8;
   constexpr static KDCoordinate k_batteryWidth = 15;
   constexpr static KDCoordinate k_elementWidth = 1;

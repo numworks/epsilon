@@ -57,7 +57,7 @@ class PieGraphController : public Escher::ViewController,
        * avoid weird screen after Off/On. */
       ctx->fillRect(relativeChildFrame(&m_pieGraphView),
                     Escher::ColorPicker::Resolve(
-                        Escher::ThemeComponent::BackgroundWhite));
+                        Escher::ThemeComponent::DefaultBackground));
     }
     int numberOfSubviews() const override { return 3; }
     void layoutSubviews(bool force) override;

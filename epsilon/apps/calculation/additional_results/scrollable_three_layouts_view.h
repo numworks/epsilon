@@ -18,7 +18,7 @@ class ScrollableThreeLayoutsView
       : Escher::AbstractScrollableMultipleLayoutsView(parentResponder,
                                                       &m_contentCell) {
     resetMargins();  // margins are already added by MenuCell
-    setBackgroundColor(Escher::ThemeComponent::BackgroundWhite);
+    setBackgroundColor(Escher::ThemeComponent::DefaultBackground);
   }
   void subviewFrames(KDRect* leftFrame, KDRect* centerFrame,
                      KDRect* comparisonSignFrame, KDRect* rightFrame) {

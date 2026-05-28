@@ -245,7 +245,7 @@ void AbstractPlotView::drawRing(KDContext* ctx, KDRect rect, Dots::Size size,
   if (!transparent) {
     drawDotOrRing(
         ctx, rect, size, xy,
-        Escher::ColorPicker::Resolve(Escher::ThemeComponent::BackgroundWhite),
+        Escher::ColorPicker::Resolve(Escher::ThemeComponent::DefaultBackground),
         false);
   }
   drawDotOrRing(ctx, rect, size, xy, color, true);

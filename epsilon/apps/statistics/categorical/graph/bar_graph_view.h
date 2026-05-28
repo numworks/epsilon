@@ -15,7 +15,7 @@ class BarGraphView : public Escher::ScrollView,
  public:
   BarGraphView(Store* store)
       : ScrollView(&m_contentView, this), m_contentView(store) {
-    setBackgroundColor(Escher::ThemeComponent::BackgroundWhite);
+    setBackgroundColor(Escher::ThemeComponent::DefaultBackground);
     m_decorator.setVisibility(true);
   }
 

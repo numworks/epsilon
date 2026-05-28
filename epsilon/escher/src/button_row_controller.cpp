@@ -143,7 +143,7 @@ void ButtonRowController::ContentView::drawRect(KDContext* ctx,
   }
   KDCoordinate rowHeight = buttonRowHeight();
   if (m_style == Style::PlainWhite) {
-    drawRowFrame(ctx, rowHeight, ThemeComponent::BackgroundWhite,
+    drawRowFrame(ctx, rowHeight, ThemeComponent::DefaultBackground,
                  ThemeComponent::BorderGrayWhite);
     return;
   }

@@ -57,8 +57,13 @@ int AppsWindow::numberOfSubviews() const {
 
 View* AppsWindow::subviewAtIndex(int index) {
   assert(index < numberOfSubviews());
-  View* subviews[] = {&m_titleBarView, m_contentView, m_focusManager};
-  return subviews[index];
+  if (index == 0) {
+    return &m_titleBarView;
+  } else if (index == 1) {
+    return m_contentView ? m_contentView : m_focusManager;
+  }
+  assert(index == 2);
+  return m_focusManager;
 }
 
 void AppsWindow::layoutSubviews(bool force) {

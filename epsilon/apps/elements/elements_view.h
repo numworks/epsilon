@@ -52,7 +52,7 @@ class ElementsView : public Escher::View {
                        KDRect rect) const;
   // Draw borders outside and inside of element cell
   void drawElementBorder(AtomicNumber z, KDColor color, KDContext* ctx,
-                         KDColor innerColor) const;
+                         bool doubleBorder) const;
   void drawLigatures(KDContext* ctx) const;
   void dirtyElement(AtomicNumber z);
 

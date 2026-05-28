@@ -44,17 +44,15 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
    * draw currently only happens with pop-ups like Store menu. */
   if (ElementsDataBase::IsElement(previousSelection) &&
       previousSelection != selection) {
-    drawElementBorder(previousSelection, backgroundColor, ctx,
-                      dataSource->filteredColors(previousSelection).bg());
+    drawElementBorder(previousSelection, backgroundColor, ctx, false);
   }
   if (ElementsDataBase::IsElement(selection)) {
-    KDColor borderColor = Escher::ColorPicker::ResolveCustomColorForHighlight(
-        dataSource->filteredColors(selection).fg());
-    KDColor innerColor = Escher::ColorPicker::GetSelectionThickness() ==
-                                 Escher::ColorPicker::SelectionThickness::Double
-                             ? borderColor
-                             : dataSource->filteredColors(selection).bg();
-    drawElementBorder(selection, borderColor, ctx, innerColor);
+    drawElementBorder(selection,
+                      Escher::ColorPicker::ResolveCustomColorForHighlight(
+                          dataSource->filteredColors(selection).fg()),
+                      ctx,
+                      Escher::ColorPicker::GetSelectionThickness() ==
+                          Escher::ColorPicker::SelectionThickness::Double);
   }
 }
 
@@ -159,11 +157,13 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,
 }
 
 void ElementsView::drawElementBorder(AtomicNumber z, KDColor color,
-                                     KDContext* ctx, KDColor innerColor) const {
+                                     KDContext* ctx, bool doubleBorder) const {
   assert(ElementsDataBase::IsElement(z));
   KDRect cell = RectForCell(TableLayout::CellForElement(z));
   Escher::Bordered::DrawOuterBorderOfRect(ctx, cell, k_cellMargin, color);
-  Escher::Bordered::DrawInnerBorderOfRect(ctx, cell, k_cellMargin, innerColor);
+  if (doubleBorder) {
+    Escher::Bordered::DrawInnerBorderOfRect(ctx, cell, k_cellMargin, color);
+  }
 }
 
 void ElementsView::drawLigatures(KDContext* ctx) const {

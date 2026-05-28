@@ -11,7 +11,7 @@ enum class AngleUnit : uint8_t {
   Gradian,
 #endif
   None,
-  NUnits = None
+  LastUnit = None
 };
 
 }  // namespace Poincare

@@ -7,6 +7,8 @@
 #include <poincare/exam_mode.h>
 #include <stdint.h>
 
+#include <utility>
+
 #if __EMSCRIPTEN__
 #include <type_traits>
 #endif
@@ -45,21 +47,10 @@ class Preferences {
   };
   constexpr static ComplexFormat k_defaultComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
-// TODO: C++23: use std::to_underlying instead of static_cast
-#if !POINCARE_UNIT_ONLY_ANGLES
+  // TODO: C++23: use std::to_underlying instead of static_cast
   constexpr static size_t k_numberOfBitsForAngleUnit =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<uint8_t>(AngleUnit::NUnits));
-#else
-  /* We removed gradians in UNIT_ONLY_ANGLES but it creates a warning
-   * since NUnits=4 and cannot be stored in the bitfield. Adding 1 to
-   * the number of bits fixes it and keeps the layout compatible with
-   * epsilon for free. */
-  constexpr static size_t k_numberOfBitsForAngleUnit =
-      OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<uint8_t>(AngleUnit::NUnits)) +
-      1;
-#endif
+          static_cast<uint8_t>(AngleUnit::LastUnit) + 1);
   constexpr static size_t k_numberOfBitsForPrintFloatMode =
       OMG::BitHelper::numberOfBitsToCountUpTo(
           static_cast<uint8_t>(PrintFloatMode::NModes));

@@ -49,6 +49,7 @@ class FocusManager : public Escher::View {
       Escher::ThemeComponent::TokenEllipsis;
   constexpr static Escher::ThemeComponent k_indicatorBackgroundColor =
       Escher::ThemeComponent::BackgroundWhite;
+  constexpr static uint8_t k_blendMask = UINT8_MAX / 2;
 
   void focusOn(KDPoint point);
 

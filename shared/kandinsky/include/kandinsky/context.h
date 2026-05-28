@@ -51,7 +51,13 @@ class KDContext {
                         const uint8_t* mask, KDColor* workingBuffer,
                         bool horizontalFlip = false, bool verticalFlip = false);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t* mask,
-                         KDColor* workingBuffer);
+                         KDColor* workingBuffer) {
+    return privateblendRectWithMask(rect, color, mask, workingBuffer, false);
+  }
+  void blendRectWithUniformMask(KDRect rect, KDColor color, uint8_t mask,
+                                KDColor* workingBuffer) {
+    return privateblendRectWithMask(rect, color, &mask, workingBuffer, true);
+  }
   void strokeRect(KDRect rect, KDColor color);
 
   // Circle
@@ -75,6 +81,8 @@ class KDContext {
   void privateDrawAntialiasedLine(float x1, float y1, float x2, float y2,
                                   KDColor lineColor, bool autoBackground,
                                   KDColor background = KDWhite);
+  void privateblendRectWithMask(KDRect rect, KDColor color, const uint8_t* mask,
+                                KDColor* workingBuffer, bool maskIsUniform);
   KDPoint alignAndDrawSingleLineString(const char* text, KDPoint p,
                                        KDSize frame, float horizontalAlignment,
                                        KDGlyph::Style style, int maxLength);

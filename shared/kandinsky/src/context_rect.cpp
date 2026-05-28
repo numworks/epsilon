@@ -118,10 +118,13 @@ void KDContext::fillRectWithMask(KDRect rect, KDColor color, KDColor background,
   pushRect(absoluteRect, workingBuffer);
 }
 
-/* Mask's size must be rect.size. Same for WorkingBuffer.
+/* [workingBuffer] must be at least rect.size. Same for [mask] size, unless
+ * maskIsUniform is true. In that case only *mask will be used.
  * TODO: should we avoid pullRect by giving a 'memory' working buffer? */
-void KDContext::blendRectWithMask(KDRect rect, KDColor color,
-                                  const uint8_t* mask, KDColor* workingBuffer) {
+void KDContext::privateblendRectWithMask(KDRect rect, KDColor color,
+                                         const uint8_t* mask,
+                                         KDColor* workingBuffer,
+                                         bool maskIsUniform) {
   KDRect absoluteRect = absoluteFillRect(rect);
 
   /* Caution:
@@ -139,11 +142,10 @@ void KDContext::blendRectWithMask(KDRect rect, KDColor color,
       KDColor* currentPixelAddress =
           workingBuffer + i + absoluteRect.width() * j;
       const uint8_t* currentMaskAddress =
-          mask + i + startingI + rect.width() * (j + startingJ);
+          mask +
+          (maskIsUniform ? 0 : i + startingI + rect.width() * (j + startingJ));
       *currentPixelAddress =
           KDColor::Blend(*currentPixelAddress, color, *currentMaskAddress);
-      /* *currentPixelAddress = KDColorBlend(*currentPixelAddress, color,
-       * *currentMaskAddress); */
     }
   }
   pushRect(absoluteRect, workingBuffer);

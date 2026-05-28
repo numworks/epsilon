@@ -480,7 +480,7 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
     }
     // Second dot in window found
     drawSegment(ctx, rect, firstVisibleDot, currentDot,
-                ColorPicker::Resolve(ThemeComponent::AxisGrayVeryDark), false);
+                ColorPicker::Resolve(ThemeComponent::InterestPoint), false);
     break;
   }
 }

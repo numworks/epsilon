@@ -67,7 +67,7 @@ namespace Escher {
   X(AxisLight)                 \
   X(AxisMedium)                \
   X(AxisSecondary)             \
-  X(AxisGrayVeryDark)          \
+  X(InterestPoint)             \
   X(AxisRed)                   \
   X(Curve)                     \
   X(CurveHatchedArea)          \

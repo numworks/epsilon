@@ -58,12 +58,12 @@ quantitative/test/store.cpp:+test \
 
 $(call depends_on_transparent_themed_image,apps,$(PATH_apps)/statistics/app.cpp,$(PATH_apps)/icons/light/stat_light_icon.png,$(PATH_apps)/icons/dark/stat_dark_icon.png,:-test)
 
-$(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/statistics/quantitative/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/box_light_icon.png,$(PATH_apps)/statistics/assets/dark/box_dark_icon.png,$(PATH_apps)/statistics/assets/selected_dark/box_selected_dark_icon.png,:-test)
-$(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/statistics/quantitative/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/histogram_light_icon.png,$(PATH_apps)/statistics/assets/dark/histogram_dark_icon.png,$(PATH_apps)/statistics/assets/selected_dark/histogram_selected_dark_icon.png,:-test)
-$(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/statistics/quantitative/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/cumulative_light_icon.png,$(PATH_apps)/statistics/assets/dark/cumulative_dark_icon.png,$(PATH_apps)/statistics/assets/selected_dark/cumulative_selected_dark_icon.png,:-test)
-$(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/statistics/quantitative/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/statistics_normal_light_icon.png,$(PATH_apps)/statistics/assets/dark/statistics_normal_dark_icon.png,$(PATH_apps)/statistics/assets/selected_dark/statistics_normal_selected_dark_icon.png,:-test)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/statistics/quantitative/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/box_light_icon.png,$(PATH_apps)/statistics/assets/dark/box_dark_icon.png,:-test)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/statistics/quantitative/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/histogram_light_icon.png,$(PATH_apps)/statistics/assets/dark/histogram_dark_icon.png,:-test)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/statistics/quantitative/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/cumulative_light_icon.png,$(PATH_apps)/statistics/assets/dark/cumulative_dark_icon.png,:-test)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/statistics/quantitative/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/statistics_normal_light_icon.png,$(PATH_apps)/statistics/assets/dark/statistics_normal_dark_icon.png,:-test)
 
-$(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/statistics/categorical/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/bar_light_icon.png,$(PATH_apps)/statistics/assets/dark/bar_dark_icon.png,$(PATH_apps)/statistics/assets/selected_dark/bar_selected_dark_icon.png,:-test)
-$(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/statistics/categorical/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/pie_light_icon.png,$(PATH_apps)/statistics/assets/dark/pie_dark_icon.png,$(PATH_apps)/statistics/assets/selected_dark/pie_selected_dark_icon.png,:-test)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/statistics/categorical/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/bar_light_icon.png,$(PATH_apps)/statistics/assets/dark/bar_dark_icon.png,:-test)
+$(call depends_on_transparent_themed_image,apps,$(PATH_apps)/statistics/categorical/graph/graph_view_model.cpp,$(PATH_apps)/statistics/assets/light/pie_light_icon.png,$(PATH_apps)/statistics/assets/dark/pie_dark_icon.png,:-test)
 
 $(call i18n_with_universal,statistics/i18n/base)

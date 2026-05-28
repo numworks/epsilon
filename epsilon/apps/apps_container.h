@@ -84,6 +84,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   static const int k_promptNumberOfMessages;
   bool m_firstUSBEnumeration;
   bool m_dfuBetweenEvents;
+  FocusManager m_focusManager;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   ExamPopUpController m_examPopUpController;
@@ -92,7 +93,6 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
   Escher::BlinkTimer m_blinkTimer;
-  FocusManager m_focusManager;
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;

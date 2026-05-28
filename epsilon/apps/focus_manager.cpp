@@ -1,6 +1,8 @@
 #include "focus_manager.h"
 
 #include <assert.h>
+#include <escher/bordered.h>
+#include <escher/theme/color_picker.h>
 
 bool FocusManager::dispatchEvent(Ion::Events::Event event,
                                  const Escher::BlinkTimer& blinkTimer) {
@@ -50,4 +52,26 @@ void FocusManager::focusOn(KDPoint point) {
   assert(KDRect(m_horizontalOffset * k_step, m_verticalOffset * k_step, k_width,
                 k_height)
              .contains(point));
+}
+
+void FocusManager::drawRect(KDContext* ctx, KDRect rect) const {
+  if (m_isActive) {
+    // Screen
+    KDPoint screenOrigin(k_indicatorOffset + m_horizontalOffset * k_step,
+                         k_indicatorOffset + m_verticalOffset * k_step);
+    KDSize screenSize((Ion::Display::Width / k_step) * k_pixelsPerStep,
+                      (Ion::Display::Height / k_step) * k_pixelsPerStep);
+    Escher::Bordered::DrawInnerBorderOfRect(
+        ctx, KDRect(screenOrigin, screenSize), k_indicatorWidth,
+        Escher::ColorPicker::Resolve(k_indicatorColor));
+    // Focused screen
+    KDPoint focusedScreenOrigin = KDPoint(m_horizontalOffset * k_pixelsPerStep,
+                                          m_verticalOffset * k_pixelsPerStep)
+                                      .translatedBy(screenOrigin);
+    KDSize focusedScreenSize((k_width / k_step) * k_pixelsPerStep,
+                             (k_height / k_step) * k_pixelsPerStep);
+    Escher::Bordered::DrawInnerBorderOfRect(
+        ctx, KDRect(focusedScreenOrigin, focusedScreenSize), k_indicatorWidth,
+        Escher::ColorPicker::Resolve(k_indicatorColor));
+  }
 }

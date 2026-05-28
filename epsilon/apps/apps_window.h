@@ -2,11 +2,12 @@
 
 #include <escher/window.h>
 
+#include "focus_manager.h"
 #include "title_bar_view.h"
 
 class AppsWindow : public Escher::Window {
  public:
-  AppsWindow();
+  AppsWindow(FocusManager* focusManager);
   void setTitle(I18n::Message title);
   bool updateBatteryLevel();
   bool updateIsChargingState();
@@ -25,5 +26,6 @@ class AppsWindow : public Escher::Window {
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
   TitleBarView m_titleBarView;
+  FocusManager* m_focusManager;
   bool m_hideTitleBarView;
 };

@@ -30,6 +30,7 @@ AppsContainer::AppsContainer()
     : Container(),
       m_firstUSBEnumeration(true),
       m_dfuBetweenEvents(false),
+      m_window(&m_focusManager),
       m_examPopUpController(),
       m_promptController(k_promptMessages, k_promptColors,
                          k_promptNumberOfMessages,

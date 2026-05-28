@@ -7,8 +7,13 @@ extern "C" {
 
 using namespace Escher;
 
-AppsWindow::AppsWindow()
-    : Window(), m_titleBarView(), m_hideTitleBarView(false) {}
+AppsWindow::AppsWindow(FocusManager* focusManager)
+    : Window(),
+      m_titleBarView(),
+      m_focusManager(focusManager),
+      m_hideTitleBarView(false) {
+  assert(focusManager);
+}
 
 void AppsWindow::setTitle(I18n::Message title) {
   m_titleBarView.setTitle(title);
@@ -47,15 +52,13 @@ void AppsWindow::hideTitleBarView(bool hide) {
 }
 
 int AppsWindow::numberOfSubviews() const {
-  return (m_contentView == nullptr ? 1 : 2);
+  return 2 + (m_contentView != nullptr);
 }
 
 View* AppsWindow::subviewAtIndex(int index) {
-  if (index == 0) {
-    return &m_titleBarView;
-  }
-  assert(m_contentView != nullptr && index == 1);
-  return m_contentView;
+  assert(index < numberOfSubviews());
+  View* subviews[] = {&m_titleBarView, m_contentView, m_focusManager};
+  return subviews[index];
 }
 
 void AppsWindow::layoutSubviews(bool force) {
@@ -68,6 +71,7 @@ void AppsWindow::layoutSubviews(bool force) {
                          bounds().height() - titleHeight),
                   force);
   }
+  setChildFrame(m_focusManager, Ion::Display::Rect, force);
 }
 
 #if ESCHER_VIEW_LOGGING

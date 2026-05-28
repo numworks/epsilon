@@ -1,5 +1,6 @@
 #include "focus_manager.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/bordered.h>
 #include <escher/theme/color_picker.h>
@@ -7,7 +8,7 @@
 bool FocusManager::dispatchEvent(Ion::Events::Event event,
                                  const Escher::BlinkTimer& blinkTimer) {
   if (!m_isActive) {
-    if (event != Ion::Events::ShiftPlus) {
+    if (event != Ion::Events::ShiftPlus || !SharedGlobalPrefs().allowFocus()) {
       return false;
     }
     if (blinkTimer.isActive()) {

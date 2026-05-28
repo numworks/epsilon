@@ -38,6 +38,9 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   Escher::Theme theme() const override { return s_data->m_theme; }
   void setTheme(Escher::Theme theme) { s_data->m_theme = theme; }
 
+  bool allowFocus() const { return s_data->m_allowFocus; }
+  void setAllowFocus(bool m_allowFocus) { s_data->m_allowFocus = m_allowFocus; }
+
   I18n::Language language() const { return s_data->m_language; }
   void setLanguage(I18n::Language language) { s_data->m_language = language; }
   I18n::Country country() const { return s_data->m_country; }
@@ -253,7 +256,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
    * But the vtables of [GlobalPreferences] due to inheritance causes an
    * unwanted offset in the stored version number location */
   CODE_GUARD(
-      global_preferences_data, 2677381465,  //
+      global_preferences_data, 3867250907,  //
       struct __attribute__((packed)) GlobalPreferencesData {
         friend OMG::GlobalBox<GlobalPreferences>;
         friend Ion::Storage::FileSystem;
@@ -269,15 +272,16 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
             Poincare::Preferences::k_defaultCalculationPreferences;
         DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
         Escher::Theme m_theme = Escher::k_defaultTheme;
+        bool m_allowFocus = false;
         bool operator==(const GlobalPreferencesData&) const = default;
       };)
 
 #if PLATFORM_DEVICE
   CODE_GUARD(
-      global_preferences_size, 3960416075,  //
+      global_preferences_size, 1889251624,  //
       static_assert(sizeof(Poincare::Preferences::CalculationPreferences) == 2);
       static_assert(sizeof(CombinedPreferences) == 1); static_assert(
-          sizeof(GlobalPreferencesData) == 15,
+          sizeof(GlobalPreferencesData) == 16,
           "Class GlobalPreferencesData changed size, might affect website");  //
   )
 #endif

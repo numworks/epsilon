@@ -11,6 +11,7 @@
 
 #include "message_tree.h"
 #include "sub_menu/about_controller.h"
+#include "sub_menu/accessibility_controller.h"
 #include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/localization_controller.h"
@@ -27,6 +28,7 @@ extern const MessageTree s_modelFloatDisplayModeChildren[4];
 extern const MessageTree s_modelComplexFormatChildren[3];
 extern const MessageTree
     s_modelScreenTimeoutChildren[ScreenTimeoutController::k_totalNumberOfCell];
+extern const MessageTree s_modelAccessibilityChildren[2];
 extern const MessageTree s_modelFontChildren[2];
 extern const MessageTree s_modelTestModeMenu[2];
 extern const MessageTree
@@ -64,7 +66,6 @@ class MainController : public Escher::SelectableListViewController<
   constexpr static int k_brightnessCellType = 1;
   constexpr static int k_popUpCellType = 2;
   constexpr static int k_resetCellType = 3;
-  constexpr static int k_contrastModeCellType = 4;
   // Model index
   constexpr static int k_indexOfExamModeCell = 10;
   // Max number of visible cells
@@ -83,12 +84,10 @@ class MainController : public Escher::SelectableListViewController<
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::SwitchView>
       m_popUpCell;
-  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                   Escher::SwitchView>
-      m_contrastModeCell;
   Escher::ButtonCell m_resetButton;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
+  AccessibilityController m_accessibilityController;
   ScreenTimeoutController m_screenTimeoutController;
   LocalizationController m_localizationController;
   ExamModeController m_examModeController;

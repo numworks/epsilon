@@ -32,6 +32,9 @@ constexpr MessageTree
          MessageTree(I18n::Message::OneMinute),
          MessageTree(I18n::Message::TwoMinutes),
          MessageTree(I18n::Message::FiveMinutes)};
+constexpr MessageTree s_modelAccessibilityChildren[2] = {
+    MessageTree(I18n::Message::ContrastMode),
+    MessageTree(I18n::Message::Magnify)};
 constexpr MessageTree s_modelFontChildren[2] = {
     MessageTree(I18n::Message::LargeFont),
     MessageTree(I18n::Message::SmallFont)};
@@ -68,6 +71,7 @@ MainController::MainController(Responder* parentResponder)
                     ButtonCell::Style::EmbossedLight),
       m_preferencesController(this),
       m_displayModeController(this),
+      m_accessibilityController(this),
       m_screenTimeoutController(this),
       m_localizationController(this, LocalizationController::Mode::Language),
       m_examModeController(this),
@@ -117,14 +121,6 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     GlobalPreferences::SharedGlobalPreferences()->setShowPopUp(
         !SharedGlobalPrefs().showPopUp());
     m_selectableListView.reloadSelectedCell();
-  } else if (type == k_contrastModeCellType) {
-    Escher::Theme newTheme = SharedGlobalPrefs().theme() == Escher::Theme::Dark
-                                 ? Escher::Theme::Light
-                                 : Escher::Theme::Dark;
-    GlobalPreferences::SharedGlobalPreferences()->setTheme(newTheme);
-    m_contrastModeCell.accessory()->setState(SharedGlobalPrefs().theme() ==
-                                             Escher::Theme::Dark);
-    AppsContainer::sharedAppsContainer()->redrawWindow(true);
   } else if (type == k_brightnessCellType) {
     int delta = Ion::Backlight::MaxBrightness /
                 GlobalPreferences::NumberOfBrightnessStates;
@@ -175,8 +171,6 @@ KDCoordinate MainController::nonMemoizedRowHeight(int row) {
       return protectedNonMemoizedRowHeight(&m_brightnessCell, row);
     case k_popUpCellType:
       return protectedNonMemoizedRowHeight(&m_popUpCell, row);
-    case k_contrastModeCellType:
-      return protectedNonMemoizedRowHeight(&m_contrastModeCell, row);
     case k_resetCellType:
       return protectedNonMemoizedRowHeight(&m_resetButton, row);
     default:
@@ -194,9 +188,6 @@ HighlightCell* MainController::reusableCell(int index, int type) {
   assert(index == 0);
   if (type == k_popUpCellType) {
     return &m_popUpCell;
-  }
-  if (type == k_contrastModeCellType) {
-    return &m_contrastModeCell;
   }
   if (type == k_resetCellType) {
     return &m_resetButton;
@@ -219,8 +210,6 @@ int MainController::typeAtRow(int row) const {
     case I18n::Message::UpdatePopUp:
     case I18n::Message::BetaPopUp:
       return k_popUpCellType;
-    case I18n::Message::ContrastMode:
-      return k_contrastModeCellType;
     case I18n::Message::ResetCalculator:
       return k_resetCellType;
     default:
@@ -254,12 +243,6 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
   if (type == k_popUpCellType) {
     assert(cell == &m_popUpCell);
     m_popUpCell.accessory()->setState(SharedGlobalPrefs().showPopUp());
-    return;
-  }
-  if (type == k_contrastModeCellType) {
-    assert(cell == &m_contrastModeCell);
-    m_contrastModeCell.accessory()->setState(SharedGlobalPrefs().theme() ==
-                                             Escher::Theme::Dark);
     return;
   }
   assert(type == k_defaultCellType);
@@ -344,6 +327,8 @@ ViewController* MainController::subControllerForCell(
       return &m_preferencesController;
     case I18n::Message::DisplayMode:
       return &m_displayModeController;
+    case I18n::Message::Accessibility:
+      return &m_accessibilityController;
     case I18n::Message::ScreenTimeout:
       return &m_screenTimeoutController;
     case I18n::Message::Language:

@@ -5,6 +5,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/settings/,$(addsuffix :-test, \
   main_controller_prompt_none.cpp:-beta:-update \
   main_controller_prompt_update.cpp:+update \
   sub_menu/about_controller.cpp \
+  sub_menu/accessibility_controller.cpp \
   sub_menu/display_mode_controller.cpp \
   sub_menu/exam_mode_controller.cpp \
   sub_menu/generic_sub_controller.cpp \

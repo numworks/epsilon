@@ -61,7 +61,7 @@ class FocusManager : public Escher::View {
   constexpr static Escher::ThemeComponent k_indicatorColor =
       Escher::ThemeComponent::MagnifyIndicator;
   constexpr static Escher::ThemeComponent k_indicatorBackgroundColor =
-      Escher::ThemeComponent::BackgroundWhite;
+      Escher::ThemeComponent::TransparencyBase;
   constexpr static uint8_t k_blendLevel = UINT8_MAX / 2;
   /* The indicator is displayed with a k_indicatorFactorNum/k_indicatorFactorDen
    * ratio compared to tha actual screen size. The values here have been

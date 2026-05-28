@@ -16,6 +16,7 @@ namespace Escher {
   X(BackgroundBoxTitle)        \
   X(BackgroundButtonRow)       \
   X(BackgroundPieChartLegend)  \
+  X(TransparencyBase)          \
   X(CalculationBorderEven)     \
   X(CalculationBorderOdd)      \
   X(CalculationBorderSelected) \

@@ -347,7 +347,7 @@ void AbstractPlotView::drawArc(KDContext* ctx, KDRect rect,
     if (rect.contains(from) || rect.contains(to)) {
       ctx->drawAntialiasedLine(previousX, previousY, x, y, color,
                                Escher::ColorPicker::Resolve(
-                                   Escher::ThemeComponent::BackgroundWhite));
+                                   Escher::ThemeComponent::TransparencyBase));
     }
     // straightJoinDots(ctx, rect, x, y, previousX, previousY, color, thick);
   } while (!isLastSegment);

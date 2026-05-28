@@ -29,7 +29,7 @@ class SubappCell : public HighlightCell, public Bordered {
   constexpr static int k_verticalMarginBottom = 7;
   constexpr static int k_horizontalMarginBetweenTextAndIcon = 15;
   constexpr static ThemeComponent k_background =
-      ThemeComponent::BackgroundWhite;
+      ThemeComponent::DefaultCellBackground;
 
   TransparentThemedImageView m_icon;
   MessageTextView m_title;

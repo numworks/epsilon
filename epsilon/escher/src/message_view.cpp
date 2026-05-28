@@ -19,7 +19,7 @@ MessageView::MessageView(const I18n::Message* messages,
 
 void MessageView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(),
-                ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
+                ColorPicker::Resolve(ThemeComponent::DefaultCellBackground));
 }
 
 View* MessageView::subviewAtIndex(int index) {

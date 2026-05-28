@@ -34,7 +34,7 @@ class CellWidget {
   }
 
   constexpr static Escher::ThemeComponent k_defaultBackground =
-      Escher::ThemeComponent::BackgroundWhite;
+      Escher::ThemeComponent::DefaultCellBackground;
 };
 
 class EmptyCellWidget : public CellWidget {

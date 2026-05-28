@@ -43,7 +43,7 @@ ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(
     Responder* parentResponder)
     : ScrollableView(parentResponder, &m_consoleLineView, this) {
   decorator()->setFont(SharedGlobalPrefs().font());
-  setBackgroundColor(ThemeComponent::BackgroundWhite);
+  setBackgroundColor(ThemeComponent::DefaultCellBackground);
 }
 
 ConsoleLineCell::ConsoleLineCell(Responder* parentResponder)

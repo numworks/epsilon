@@ -43,7 +43,7 @@ void AbstractTextField::ContentView::drawRect(KDContext* ctx,
   ThemeComponent backgroundColor = textFormat().style.backgroundColor;
   ThemeComponent textColor = textFormat().style.glyphColor;
   if (m_isEditing) {
-    backgroundColor = ThemeComponent::BackgroundWhite;
+    backgroundColor = ThemeComponent::DefaultCellBackground;
     textColor = ThemeComponent::TextDefault;
   }
   ctx->fillRect(bounds(), ColorPicker::Resolve(backgroundColor));

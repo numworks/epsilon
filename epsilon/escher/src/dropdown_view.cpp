@@ -11,7 +11,7 @@ namespace Escher {
 PopupItemView::PopupItemView(HighlightCell* cell)
     : m_isPoppingUp(false), m_cell(cell) {
   m_caret.setThemedImage(*ImageStore::CaretIcon);
-  m_caret.setBackgroundColor(ThemeComponent::BackgroundWhite);
+  m_caret.setBackgroundColor(ThemeComponent::DefaultCellBackground);
 }
 
 void PopupItemView::setHighlighted(bool highlighted) {

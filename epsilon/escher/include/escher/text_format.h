@@ -9,7 +9,7 @@ namespace Escher {
 // The text style colors are theme-dependent
 struct TextStyle {
   ThemeComponent glyphColor = ThemeComponent::TextDefault;
-  ThemeComponent backgroundColor = ThemeComponent::BackgroundWhite;
+  ThemeComponent backgroundColor = ThemeComponent::DefaultCellBackground;
   KDFont::Size font = KDFont::Size::Large;
 };
 

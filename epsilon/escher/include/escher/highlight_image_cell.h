@@ -21,7 +21,7 @@ class HighlightImageCell : public HighlightCell {
 
  private:
   constexpr static Escher::ThemeComponent k_unselectedBackgroundColor =
-      Escher::ThemeComponent::BackgroundWhite;
+      Escher::ThemeComponent::DefaultCellBackground;
   void layoutSubviews(bool force) override;
   TransparentThemedImageView m_contentView;
 };

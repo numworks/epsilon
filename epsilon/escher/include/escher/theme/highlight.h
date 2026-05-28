@@ -29,9 +29,7 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
       return ThemeComponent::TextSelectGrayVeryDark;
     case ThemeComponent::TextPurple:
       return ThemeComponent::TextSelectPurple;
-      /* TODO: BackgroundWhite should be split into several sub-components and
-       * should not be an highlightable component */
-    case ThemeComponent::BackgroundWhite:
+    case ThemeComponent::DefaultCellBackground:
     case ThemeComponent::ButtonBackground:
     case ThemeComponent::CellEven:
     case ThemeComponent::CellOdd:

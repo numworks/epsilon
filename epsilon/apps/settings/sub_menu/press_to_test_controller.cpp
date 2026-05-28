@@ -47,7 +47,7 @@ PressToTestController::PressToTestController(Responder* parentResponder)
     m_switchCells[i].accessory()->imageView()->setThemedImage(
         *ImageStore::PressToTestSuccessIcon);
     m_switchCells[i].accessory()->imageView()->setBackgroundColor(
-        ThemeComponent::BackgroundWhite);
+        ThemeComponent::DefaultCellBackground);
   }
   resetController();
 }

@@ -10,7 +10,7 @@ namespace Escher {
 
 class SolidColorCell : public HighlightCell {
  public:
-  SolidColorCell(ThemeComponent color = ThemeComponent::BackgroundWhite)
+  SolidColorCell(ThemeComponent color = ThemeComponent::DefaultCellBackground)
       : HighlightCell(), m_color(color) {}
   void drawRect(KDContext* ctx, KDRect rect) const override {
     ctx->fillRect(rect, ColorPicker::Resolve(m_color));

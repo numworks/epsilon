@@ -70,8 +70,9 @@ void AppCell::reloadCell() {
   TextView* t = const_cast<TextView*>(textView());
   t->setTextColor(isHighlighted() ? ThemeComponent::TextWhite
                                   : ThemeComponent::TextDefault);
-  t->setBackgroundColor(isHighlighted() ? ThemeComponent::SurfaceSelectApps
-                                        : ThemeComponent::BackgroundWhite);
+  t->setBackgroundColor(isHighlighted()
+                            ? ThemeComponent::SurfaceSelectApps
+                            : ThemeComponent::DefaultCellBackground);
 }
 
 const Escher::TextView* AppCell::textView() const {

@@ -39,7 +39,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   void setTheme(Escher::Theme theme) { s_data->m_theme = theme; }
 
   bool allowFocus() const { return s_data->m_allowFocus; }
-  void setAllowFocus(bool m_allowFocus) { s_data->m_allowFocus = m_allowFocus; }
+  void setAllowFocus(bool allowFocus) { s_data->m_allowFocus = allowFocus; }
 
   I18n::Language language() const { return s_data->m_language; }
   void setLanguage(I18n::Language language) { s_data->m_language = language; }

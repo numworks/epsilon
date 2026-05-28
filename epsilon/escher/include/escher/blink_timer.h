@@ -16,7 +16,7 @@ class BlinkTimer : public Timer {
 
   void forceCursorVisible();
   bool isActive() const;
-  KDPoint getOrigin() const;
+  KDPoint origin() const;
 
  private:
   static TextCursorView* SharedCursor() {

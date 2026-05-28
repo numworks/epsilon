@@ -15,7 +15,7 @@ bool FocusManager::dispatchEvent(Ion::Events::Event event,
     }
     if (blinkTimer.isActive()) {
       // Set offset to make cursor visible
-      focusOn(blinkTimer.getOrigin());
+      focusOn(blinkTimer.origin());
     }
     m_isActive = true;
   } else if (event == Ion::Events::ShiftLeft && m_horizontalOffset > 0) {

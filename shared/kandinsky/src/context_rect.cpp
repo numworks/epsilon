@@ -121,7 +121,7 @@ void KDContext::fillRectWithMask(KDRect rect, KDColor color, KDColor background,
 /* [workingBuffer] must be at least rect.size. Same for [mask] size, unless
  * maskIsUniform is true. In that case only *mask will be used.
  * TODO: should we avoid pullRect by giving a 'memory' working buffer? */
-void KDContext::privateblendRectWithMask(KDRect rect, KDColor color,
+void KDContext::privateBlendRectWithMask(KDRect rect, KDColor color,
                                          const uint8_t* mask,
                                          KDColor* workingBuffer,
                                          bool maskIsUniform) {

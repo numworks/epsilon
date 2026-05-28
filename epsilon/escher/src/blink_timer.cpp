@@ -4,9 +4,7 @@ namespace Escher {
 
 bool BlinkTimer::isActive() const { return SharedCursor()->shouldBlink(); }
 
-KDPoint BlinkTimer::getOrigin() const {
-  return SharedCursor()->absoluteOrigin();
-}
+KDPoint BlinkTimer::origin() const { return SharedCursor()->absoluteOrigin(); }
 
 void BlinkTimer::forceCursorVisible() {
   if (SharedCursor()->shouldBlink()) {

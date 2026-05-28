@@ -66,7 +66,6 @@ namespace Escher {
   X(AxisMain)                  \
   X(AxisLight)                 \
   X(AxisMedium)                \
-  X(AxisGrayBright)            \
   X(AxisGrayDark)              \
   X(AxisGrayVeryDark)          \
   X(AxisRed)                   \
@@ -109,7 +108,6 @@ namespace Escher {
 
 /* TODO: check the following colors which are not in the specs but used anyway:
  * - AxisGrayDark (additional result complex graph)
- * - AxisGrayBright (polar grid)
  */
 
 /* Fixed components: color is the same in all themes.

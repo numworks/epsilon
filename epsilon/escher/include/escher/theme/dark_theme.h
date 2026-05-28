@@ -67,7 +67,6 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .AxisMain = Palette::DARK_AxisMain,
     .AxisLight = Palette::DARK_AxisSecondary,
     .AxisMedium = Palette::DARK_AxisSecondary,
-    .AxisGrayBright = Palette::DARK_AxisSecondary,
     .AxisGrayDark = Palette::DARK_AxisSecondary,
     .AxisGrayVeryDark = Palette::DARK_AxisSecondary,
     .AxisRed = Palette::Red,

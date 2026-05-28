@@ -42,8 +42,10 @@ const Image* ThemedImageView::currentImage() const {
       assert(m_themedImage.light());
       return m_themedImage.light();
     case Theme::Dark:
-      if (m_isHighlighted) {
-        assert(m_themedImage.selectedDark());
+      /* If the image has a selectedDark variant and the image is highlighted,
+       * it should be displayed. Otherwise the dark variant should be displayed.
+       */
+      if (m_isHighlighted && m_themedImage.selectedDark()) {
         return m_themedImage.selectedDark();
       }
       assert(m_themedImage.dark());

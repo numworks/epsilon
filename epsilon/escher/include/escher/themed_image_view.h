@@ -31,9 +31,6 @@ class ThemedImageView : public View, public CellWidget {
   const Image* currentImage() const;
 
   void setHighlighted(bool highlighted) override {
-    /* It's forbidden to highlight an image which does not have a "selected
-     * dark" variant */
-    assert(m_themedImage.selectedDark() != nullptr);
     m_isHighlighted = highlighted;
   }
 

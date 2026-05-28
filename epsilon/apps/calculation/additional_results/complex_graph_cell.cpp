@@ -38,15 +38,15 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   // - Draw dashed segment to indicate real and imaginary
   plotView->drawDashedStraightSegment(
       ctx, rect, OMG::Axis::Horizontal, imag, 0.f, real,
-      ColorPicker::Resolve(ThemeComponent::AxisRed));
+      ColorPicker::Resolve(ThemeComponent::AxisBold));
   plotView->drawDashedStraightSegment(
       ctx, rect, OMG::Axis::Vertical, real, 0.f, imag,
-      ColorPicker::Resolve(ThemeComponent::AxisRed));
+      ColorPicker::Resolve(ThemeComponent::AxisBold));
 
   // - Draw complex position on the plan
   plotView->drawDot(ctx, rect, Dots::Size::Large,
                     Coordinate2D<float>(real, imag),
-                    ColorPicker::Resolve(ThemeComponent::AxisRed));
+                    ColorPicker::Resolve(ThemeComponent::AxisBold));
 
   // - Draw labels: "re(z)", "im(z)", "|z|" and "arg(z)"
   plotView->drawLabel(ctx, rect, "re(z)", Coordinate2D<float>(real, 0.f),

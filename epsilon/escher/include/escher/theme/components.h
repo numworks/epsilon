@@ -45,8 +45,6 @@ namespace Escher {
   X(TextGrayVeryDark)          \
   X(TextWhite)                 \
   X(TextPurple)                \
-  X(BorderWhite)               \
-  X(BorderWallScreen)          \
   X(BorderGrayMiddle)          \
   X(BorderGrayWhite)           \
   X(BorderGrayBright)          \
@@ -70,7 +68,7 @@ namespace Escher {
   X(AxisMedium)                \
   X(AxisSecondary)             \
   X(InterestPoint)             \
-  X(AxisRed)                   \
+  X(AxisBold)                  \
   X(Curve)                     \
   X(CurveHatchedArea)          \
   X(TokenWhite)                \

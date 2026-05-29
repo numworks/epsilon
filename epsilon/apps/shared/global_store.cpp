@@ -360,6 +360,8 @@ void GlobalStore::DeleteDerivativeOfRecord(Ion::Storage::Record record,
       if (order != k_allOrders) {
         return;
       }
+      n--;
+      i--;
     }
   }
 }

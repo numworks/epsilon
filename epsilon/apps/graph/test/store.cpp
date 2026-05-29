@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <shared/continuous_function_store.h>
+#include <shared/global_store.h>
 
 #include "helper.h"
 

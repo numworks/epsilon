@@ -1,12 +1,10 @@
 #pragma once
 
-#include <apps/shared/continuous_function.h>
-
-#include "../app.h"
+#include <ion/storage/record.h>
 
 namespace Graph {
 
 // Add a function to the global function store
-Shared::ContinuousFunction* AddFunction(const char* definition);
+Ion::Storage::Record AddFunction(const char* definition);
 
 }  // namespace Graph

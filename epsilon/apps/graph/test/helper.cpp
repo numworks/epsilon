@@ -1,12 +1,11 @@
 #include "helper.h"
 
-#include <ion/storage/record.h>
 #include <quiz.h>
 #include <shared/global_store.h>
 
 namespace Graph {
 
-Shared::ContinuousFunction* AddFunction(const char* definition) {
+Ion::Storage::Record AddFunction(const char* definition) {
   Shared::ContinuousFunctionStore& functionStore =
       Shared::GlobalContextAccessor::ContinuousFunctionStore();
   Ion::Storage::Record::ErrorStatus err = functionStore.addEmptyModel();
@@ -22,9 +21,8 @@ Shared::ContinuousFunction* AddFunction(const char* definition) {
   err = f->setContent(Poincare::Layout::Parse(definition),
                       Shared::GlobalContextAccessor::Context());
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
-  (void)err;  // Silence compilation warning.
-
-  return f;
+  (void)err;
+  return *f;
 }
 
 }  // namespace Graph

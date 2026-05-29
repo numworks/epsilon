@@ -77,10 +77,13 @@ QUIZ_CASE(graph_list_default_function_name) {
 }
 
 void assert_will_display_parametric_name_error(const char* definition,
-                                               ContinuousFunction* f,
+                                               Ion::Storage::Record record,
                                                bool expectedHasError) {
   Poincare::UserExpression expression = Poincare::UserExpression::Parse(
       definition, Poincare::EmptySymbolContext{}, {.preserveInput = true});
+  ContinuousFunction* f = GlobalContextAccessor::ContinuousFunctionStore()
+                              .modelForRecord(record)
+                              .pointer();
   bool hasError =
       FunctionNameHelper::ParametricComponentsNameError(expression, f);
   quiz_assert(hasError == expectedHasError);
@@ -91,7 +94,7 @@ QUIZ_CASE(graph_list_valid_function_name) {
 
   // Case A.1: name taken by current record
   // Case A.1.1: parametric components name are free
-  ContinuousFunction* f = AddFunction("f(x)=x");
+  Ion::Storage::Record f = AddFunction("f(x)=x");
   assert_will_display_parametric_name_error("f(x)=x+1", f, false);
   assert_will_display_parametric_name_error("f(t)=t+1", f, false);
   assert_will_display_parametric_name_error("f(t)=(cos(t),sin(t))", f, false);
@@ -106,7 +109,7 @@ QUIZ_CASE(graph_list_valid_function_name) {
   // Case A.2: name taken by another record
   // Case A.2.1: parametric components name are free
   AddFunction("g(x)=x");
-  ContinuousFunction* h = AddFunction("h(x)=x");
+  Ion::Storage::Record h = AddFunction("h(x)=x");
   assert_will_display_parametric_name_error("g(x)=x+1", h, false);
   assert_will_display_parametric_name_error("g(t)=t+1", h, false);
   assert_will_display_parametric_name_error("g(t)=(cos(t),sin(t))", h, false);

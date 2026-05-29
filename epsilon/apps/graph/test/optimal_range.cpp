@@ -26,9 +26,12 @@ void quiz_assert_optimal_range_is(
   assert(intervals.size() == 0 || intervals.size() == equations.size());
   int i = 0;
   for (const char* equation : equations) {
-    ContinuousFunction* function = AddFunction(equation);
+    Ion::Storage::Record record = AddFunction(equation);
     if (intervals.size() > 0) {
       const Range1D<float>& interval = intervals.begin()[i];
+      OMG::ExpiringPointer<ContinuousFunction> function =
+          GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
+              record);
       function->setTAuto(false);
       function->setTMin(interval.min());
       function->setTMax(interval.max());

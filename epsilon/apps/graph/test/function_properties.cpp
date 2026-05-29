@@ -1,3 +1,4 @@
+#include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/global_store.h>
 #include <poincare/function_properties/function_type.h>
@@ -110,7 +111,11 @@ struct FunctionProperties {
 
 void assert_check_function_properties(const char* expression,
                                       FunctionProperties expectedProperties) {
-  const ContinuousFunction* function = AddFunction(expression);
+  Ion::Storage::Record record = AddFunction(expression);
+  ContinuousFunctionStore& store =
+      GlobalContextAccessor::ContinuousFunctionStore();
+  OMG::ExpiringPointer<ContinuousFunction> function =
+      store.modelForRecord(record);
   ContinuousFunctionProperties fProperties = function->properties();
   quiz_assert(fProperties.caption() == expectedProperties.m_caption);
   quiz_assert(fProperties.status() == expectedProperties.m_status);
@@ -129,12 +134,16 @@ void assert_check_function_properties(const char* expression,
                 expectedProperties.m_equationType);
     quiz_assert(fProperties.areaType() == expectedProperties.m_areaType);
   }
-  GlobalContextAccessor::ContinuousFunctionStore().removeModel(*function);
+  store.removeModel(record);
 }
 
 void assert_same_function_properties(const char* expression1,
                                      const char* expression2) {
-  ContinuousFunction* function1 = AddFunction(expression1);
+  Ion::Storage::Record record1 = AddFunction(expression1);
+  ContinuousFunctionStore& store =
+      GlobalContextAccessor::ContinuousFunctionStore();
+  OMG::ExpiringPointer<ContinuousFunction> function1 =
+      store.modelForRecord(record1);
   ContinuousFunctionProperties properties1 = function1->properties();
   assert_check_function_properties(
       expression2,
@@ -150,7 +159,7 @@ void assert_same_function_properties(const char* expression1,
           .m_isAlongY = properties1.isAlongY(),
           .m_areaType = properties1.areaType(),
       });
-  GlobalContextAccessor::ContinuousFunctionStore().removeModel(*function1);
+  store.removeModel(record1);
 }
 
 QUIZ_CASE(graph_function_properties) {

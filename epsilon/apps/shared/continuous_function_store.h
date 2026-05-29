@@ -94,6 +94,11 @@ class ContinuousFunctionStore : public FunctionStore {
    * through GlobalContextAccessor */
   ContinuousFunctionStore() = default;
 
+  static bool IsFunctionActiveInPlot(const ExpressionModelHandle* model,
+                                     const void* context) {
+    return IsFunctionActive(model, context) &&
+           static_cast<const ContinuousFunction*>(model)->isActiveInPlot();
+  }
   static bool IsFunctionActiveInTable(const ExpressionModelHandle* model,
                                       const void* context) {
     // An active function must be defined

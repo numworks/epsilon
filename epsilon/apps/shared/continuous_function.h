@@ -95,6 +95,8 @@ class ContinuousFunction : public Function {
   bool isActiveInTable() const {
     return properties().canBeActiveInTable() && isActive() && !isDerivative();
   }
+  // If the ContinuousFunction can be shown in plot
+  bool isActiveInPlot() const;
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;
   bool isDerivative() const { return recordData()->derivationOrder() > 0; }
@@ -185,6 +187,16 @@ class ContinuousFunction : public Function {
     assert(!recordData()->displayPlotSecondDerivative() ||
            canDisplayDerivative());
     return recordData()->displayPlotSecondDerivative();
+  }
+  bool displayPlotDerivative(int order) const {
+    assert(order == 1 || order == 2);
+    return order == 1 ? displayPlotFirstDerivative()
+                      : displayPlotSecondDerivative();
+  }
+  bool displayValueDerivative(int order) const {
+    assert(order == 1 || order == 2);
+    return order == 1 ? displayValueFirstDerivative()
+                      : displayValueSecondDerivative();
   }
   // Set derivative display status
   void setDisplayValueFirstDerivative(bool display);

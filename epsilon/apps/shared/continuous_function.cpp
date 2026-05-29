@@ -172,6 +172,19 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
   return error;
 }
 
+bool ContinuousFunction::isActiveInPlot() const {
+  if (!isActive()) {
+    return false;
+  }
+  if (!isDerivative()) {
+    return true;
+  }
+  int order = derivationOrder();
+  assert(order == 1 || order == 2);
+  OMG::ExpiringPointer<ContinuousFunction> parent = parentFunction();
+  return !parent->isNull() && parent->displayPlotDerivative(order);
+}
+
 bool ContinuousFunction::isNamed() const {
   // Unnamed functions have a fullname starting with k_unnamedRecordFirstChar
   const char* recordFullName = fullName();

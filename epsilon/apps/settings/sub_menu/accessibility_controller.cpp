@@ -13,7 +13,7 @@ namespace Settings {
 AccessibilityController::ContentView::ContentView(SelectableListView* listView)
     : m_listView(listView), m_hintMessage(I18n::Message::MagnifyHint) {
   m_hintMessage.setBackgroundColor(ThemeComponent::WallScreen);
-  m_hintMessage.setFont(KDFont::Size::Small);
+  m_hintMessage.setFont(KDFont::Size::Large);
   m_hintMessage.setTextColor(ThemeComponent::TextGrayDark);
   m_hintMessage.setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
 }
@@ -32,16 +32,20 @@ View* AccessibilityController::ContentView::subviewAtIndex(int i) {
 
 void AccessibilityController::ContentView::layoutSubviews(bool force) {
   KDCoordinate hintHeight =
-      KDFont::GlyphHeight(KDFont::Size::Small) + Metric::CommonMargins.top();
+      m_hintMessage.minimalSizeForOptimalDisplay().height() +
+      Metric::CommonMargins.top();
+  /* Give m_listView the entire frame and set m_hintMessage frame over it at the
+   * bottom. */
   setChildFrame(m_listView, bounds(), force);
-  // Ensure hint message isn't drawn over m_listView
-  assert(bounds().height() -
-             m_listView->minimalSizeForOptimalDisplay().height() >=
-         hintHeight);
   setChildFrame(
       &m_hintMessage,
       KDRect(0, bounds().height() - hintHeight, bounds().width(), hintHeight),
       force);
+  /* Assert that there are enough space visually for both subviews, to avoid one
+   * being drawn over the other. This  must be done after m_listView has been
+   * given a width. */
+  assert(bounds().height() >=
+         m_listView->minimalSizeForOptimalDisplay().height() + hintHeight);
 }
 
 AccessibilityController::AccessibilityController(Responder* parentResponder)

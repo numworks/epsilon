@@ -100,4 +100,4 @@ $(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/shared/g
 $(call depends_on_transparent_selectable_themed_image,apps,$(PATH_apps)/shared/grid_type_controller.cpp,$(PATH_apps)/shared/images/polar_grid_light_icon.png,$(PATH_apps)/shared/images/polar_grid_dark_icon.png,$(PATH_apps)/shared/images/polar_grid_selected_dark_icon.png,:-test)
 
 $(call i18n_with_universal,shared/i18n/colors)
-$(call i18n_with_universal,shared/i18n/errors)
+$(call i18n_without_universal,shared/i18n/errors)

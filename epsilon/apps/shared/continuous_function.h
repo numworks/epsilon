@@ -117,7 +117,7 @@ class ContinuousFunction : public Function {
   }
 
   bool shouldDisplayIntersections() const {
-    return !properties().isScatterPlot() && isActive() &&
+    return !properties().isScatterPlot() && isActiveInPlot() &&
            properties().canComputeIntersectionsWithFunctionsAlongSameVariable();
   }
   bool isActiveInequality() const {

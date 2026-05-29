@@ -22,7 +22,7 @@ class ContinuousFunctionStore : public FunctionStore {
 
   static bool IsFunctionAreaCompatible(const ExpressionModelHandle* model,
                                        const void* context) {
-    return IsFunctionActive(model, context) &&
+    return IsFunctionActiveInPlot(model, context) &&
            static_cast<const ContinuousFunction*>(model)->canComputeArea();
   }
 
@@ -39,8 +39,11 @@ class ContinuousFunctionStore : public FunctionStore {
   }
   typedef bool (ContinuousFunctionProperties::*HasProperty)() const;
   int numberOfActiveFunctions() const override;
+  Ion::Storage::Record activeRecordAtIndex(int i) const override {
+    return recordSatisfyingTestAtIndex(i, &IsFunctionActiveInPlot, nullptr);
+  }
   int numberOfActiveFunctionsWithProperty(HasProperty propertyFunction) const {
-    return numberOfModelsSatisfyingTest(&IsFunctionActiveAndHasProperty,
+    return numberOfModelsSatisfyingTest(&IsFunctionActiveInPlotAndHasProperty,
                                         &propertyFunction);
   }
   int numberOfIntersectableFunctions() const {
@@ -99,16 +102,19 @@ class ContinuousFunctionStore : public FunctionStore {
     return IsFunctionActive(model, context) &&
            static_cast<const ContinuousFunction*>(model)->isActiveInPlot();
   }
+  int numberOfActiveFunctionsInPlot() const {
+    return numberOfModelsSatisfyingTest(&IsFunctionActiveInPlot, nullptr);
+  }
   static bool IsFunctionActiveInTable(const ExpressionModelHandle* model,
                                       const void* context) {
     // An active function must be defined
     return IsFunctionActive(model, context) &&
            static_cast<const ContinuousFunction*>(model)->isActiveInTable();
   }
-  static bool IsFunctionActiveAndHasProperty(const ExpressionModelHandle* model,
-                                             const void* context) {
+  static bool IsFunctionActiveInPlotAndHasProperty(
+      const ExpressionModelHandle* model, const void* context) {
     HasProperty propertyFunction = *static_cast<const HasProperty*>(context);
-    return IsFunctionActive(model, context) &&
+    return IsFunctionActiveInPlot(model, context) &&
            (static_cast<const ContinuousFunction*>(model)->properties().*
             propertyFunction)();
   }
@@ -143,7 +149,7 @@ class ContinuousFunctionStore : public FunctionStore {
   void fillLastFreeColors(bool* colorIsFree) const;
 
   mutable uint32_t m_storageCheckSum;
-  mutable int m_memoizedNumberOfActiveFunctions;
+  mutable int m_memoizedNumberOfActiveFunctionsInPlot;
   mutable ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
   CachesContainer* m_cachesContainer;
 };

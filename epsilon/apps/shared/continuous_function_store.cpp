@@ -10,7 +10,7 @@ namespace Shared {
 
 void ContinuousFunctionStore::removeAll() {
   FunctionStore::removeAll();
-  m_memoizedNumberOfActiveFunctions = 0;
+  m_memoizedNumberOfActiveFunctionsInPlot = 0;
   for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
     m_functions[i] = ContinuousFunction();
   }
@@ -31,15 +31,15 @@ bool ContinuousFunctionStore::displaysOnlyCartesianFunctions(
 
 int ContinuousFunctionStore::numberOfActiveFunctions() const {
   uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem->checksum();
-  if (m_memoizedNumberOfActiveFunctions < 0 || checksum != m_storageCheckSum) {
+  if (m_memoizedNumberOfActiveFunctionsInPlot < 0 ||
+      checksum != m_storageCheckSum) {
     m_storageCheckSum = checksum;
-    m_memoizedNumberOfActiveFunctions =
-        FunctionStore::numberOfActiveFunctions();
+    m_memoizedNumberOfActiveFunctionsInPlot = numberOfActiveFunctionsInPlot();
   } else {
-    assert(m_memoizedNumberOfActiveFunctions ==
-           FunctionStore::numberOfActiveFunctions());
+    assert(m_memoizedNumberOfActiveFunctionsInPlot ==
+           numberOfActiveFunctionsInPlot());
   }
-  return m_memoizedNumberOfActiveFunctions;
+  return m_memoizedNumberOfActiveFunctionsInPlot;
 }
 
 using ErrorStatus = Ion::Storage::Record::ErrorStatus;

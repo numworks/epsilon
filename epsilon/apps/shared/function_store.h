@@ -15,7 +15,7 @@ class FunctionStore : public ExpressionModelStore {
   virtual int numberOfActiveFunctions() const {
     return numberOfModelsSatisfyingTest(&IsFunctionActive, nullptr);
   }
-  Ion::Storage::Record activeRecordAtIndex(int i) const {
+  virtual Ion::Storage::Record activeRecordAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &IsFunctionActive, nullptr);
   }
   int indexOfRecordAmongActiveRecords(Ion::Storage::Record record) const {

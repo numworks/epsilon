@@ -17,7 +17,10 @@ Ion::Storage::Record ExpressionModelStore::recordAtIndex(int i) const {
 
 ExpressionModelHandle* ExpressionModelStore::privateModelForRecord(
     Ion::Storage::Record record) const {
-  for (int i = 0; i < maxNumberOfMemoizedModels(); i++) {
+  // Search from newer to older models
+  int n = maxNumberOfMemoizedModels();
+  for (int j = 0; j < n; j++) {
+    int i = (m_oldestMemoizedIndex - 1 - j + n) % n;
     if (!memoizedModelAtIndex(i)->isNull() &&
         *memoizedModelAtIndex(i) == record) {
       return memoizedModelAtIndex(i);

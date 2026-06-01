@@ -41,7 +41,7 @@ class FocusManager : public Escher::View {
   constexpr static KDCoordinate k_hiddenWidth = Ion::Display::Width - k_width;
   constexpr static KDCoordinate k_hiddenHeight =
       Ion::Display::Height - k_height;
-  // Find a step that can be used both vertically and horizontally,
+  // Step has been selected to divide both width and height, and to be practical
   constexpr static KDCoordinate k_step = 40;
   static_assert(k_hiddenWidth % k_step == 0);
   static_assert(k_hiddenHeight % k_step == 0);
@@ -53,32 +53,7 @@ class FocusManager : public Escher::View {
                 "k_maxVerticalOffset can't be uint8_t");
   constexpr static uint8_t k_maxVerticalOffset = k_hiddenHeight / k_step;
 
-  /* Visual indicator size */
-  /* The indicator is displayed with a k_indicatorFactorNum/k_indicatorFactorDen
-   * ratio. */
-  constexpr static KDCoordinate k_indicatorRatioNum = 40;
-  constexpr static KDCoordinate k_indicatorRatioDen = 3;
-  static_assert((Ion::Display::Width * k_indicatorRatioDen) %
-                    k_indicatorRatioNum ==
-                0);
-  static_assert((k_width * k_indicatorRatioDen) % k_indicatorRatioNum == 0);
-  static_assert((Ion::Display::Height * k_indicatorRatioDen) %
-                    k_indicatorRatioNum ==
-                0);
-  static_assert((k_height * k_indicatorRatioDen) % k_indicatorRatioNum == 0);
-  static_assert((k_step * k_indicatorRatioDen) % k_indicatorRatioNum == 0);
-  constexpr static KDCoordinate k_indicatorWidth =
-      (Ion::Display::Width * k_indicatorRatioDen) / k_indicatorRatioNum;
-  constexpr static KDCoordinate k_indicatorHeight =
-      (Ion::Display::Height * k_indicatorRatioDen) / k_indicatorRatioNum;
-  constexpr static KDCoordinate k_indicatorFocusedWidth =
-      (k_width * k_indicatorRatioDen) / k_indicatorRatioNum;
-  constexpr static KDCoordinate k_indicatorFocusedHeight =
-      (k_height * k_indicatorRatioDen) / k_indicatorRatioNum;
-  constexpr static KDCoordinate k_indicatorStep =
-      (k_step * k_indicatorRatioDen) / k_indicatorRatioNum;
-
-  /* Visual indicator position and color */
+  /* Visual indicator parameters */
   constexpr static KDCoordinate k_indicatorOffset = 6;
   constexpr static KDCoordinate k_indicatorBorder = 1;
   constexpr static Escher::ThemeComponent k_indicatorColor =
@@ -86,6 +61,30 @@ class FocusManager : public Escher::View {
   constexpr static Escher::ThemeComponent k_indicatorBackgroundColor =
       Escher::ThemeComponent::BackgroundWhite;
   constexpr static uint8_t k_blendLevel = UINT8_MAX / 2;
+  /* The indicator is displayed with a k_indicatorFactorNum/k_indicatorFactorDen
+   * ratio compared to tha actual screen size. The values here have been
+   * selected for round values, and to be practical */
+  constexpr static KDCoordinate k_indicatorRatioDen = 40;
+  constexpr static KDCoordinate k_indicatorRatioNum = 3;
+  constexpr static KDCoordinate k_indicatorWidth =
+      (Ion::Display::Width * k_indicatorRatioNum) / k_indicatorRatioDen;
+  constexpr static KDCoordinate k_indicatorHeight =
+      (Ion::Display::Height * k_indicatorRatioNum) / k_indicatorRatioDen;
+  constexpr static KDCoordinate k_indicatorFocusedWidth =
+      (k_width * k_indicatorRatioNum) / k_indicatorRatioDen;
+  constexpr static KDCoordinate k_indicatorFocusedHeight =
+      (k_height * k_indicatorRatioNum) / k_indicatorRatioDen;
+  constexpr static KDCoordinate k_indicatorStep =
+      (k_step * k_indicatorRatioNum) / k_indicatorRatioDen;
+  static_assert((Ion::Display::Width * k_indicatorRatioNum) %
+                    k_indicatorRatioDen ==
+                0);
+  static_assert((Ion::Display::Height * k_indicatorRatioDen) %
+                    k_indicatorRatioDen ==
+                0);
+  static_assert((k_width * k_indicatorRatioNum) % k_indicatorRatioDen == 0);
+  static_assert((k_height * k_indicatorRatioNum) % k_indicatorRatioDen == 0);
+  static_assert((k_step * k_indicatorRatioNum) % k_indicatorRatioDen == 0);
 
   void focusOn(KDPoint point);
 

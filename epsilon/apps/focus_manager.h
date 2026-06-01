@@ -54,21 +54,29 @@ class FocusManager : public Escher::View {
   constexpr static uint8_t k_maxVerticalOffset = k_hiddenHeight / k_step;
 
   /* Visual indicator size */
-  constexpr static KDCoordinate k_indicatorFactor = 20;
-  static_assert(Ion::Display::Width % k_indicatorFactor == 0);
-  static_assert(k_width % k_indicatorFactor == 0);
-  static_assert(Ion::Display::Height % k_indicatorFactor == 0);
-  static_assert(k_height % k_indicatorFactor == 0);
-  static_assert(k_step % k_indicatorFactor == 0);
+  /* The indicator is displayed with a k_indicatorFactorNum/k_indicatorFactorDen
+   * ratio. */
+  constexpr static KDCoordinate k_indicatorRatioNum = 40;
+  constexpr static KDCoordinate k_indicatorRatioDen = 3;
+  static_assert((Ion::Display::Width * k_indicatorRatioDen) %
+                    k_indicatorRatioNum ==
+                0);
+  static_assert((k_width * k_indicatorRatioDen) % k_indicatorRatioNum == 0);
+  static_assert((Ion::Display::Height * k_indicatorRatioDen) %
+                    k_indicatorRatioNum ==
+                0);
+  static_assert((k_height * k_indicatorRatioDen) % k_indicatorRatioNum == 0);
+  static_assert((k_step * k_indicatorRatioDen) % k_indicatorRatioNum == 0);
   constexpr static KDCoordinate k_indicatorWidth =
-      Ion::Display::Width / k_indicatorFactor;
+      (Ion::Display::Width * k_indicatorRatioDen) / k_indicatorRatioNum;
   constexpr static KDCoordinate k_indicatorHeight =
-      Ion::Display::Height / k_indicatorFactor;
+      (Ion::Display::Height * k_indicatorRatioDen) / k_indicatorRatioNum;
   constexpr static KDCoordinate k_indicatorFocusedWidth =
-      k_width / k_indicatorFactor;
+      (k_width * k_indicatorRatioDen) / k_indicatorRatioNum;
   constexpr static KDCoordinate k_indicatorFocusedHeight =
-      k_height / k_indicatorFactor;
-  constexpr static KDCoordinate k_indicatorStep = k_step / k_indicatorFactor;
+      (k_height * k_indicatorRatioDen) / k_indicatorRatioNum;
+  constexpr static KDCoordinate k_indicatorStep =
+      (k_step * k_indicatorRatioDen) / k_indicatorRatioNum;
 
   /* Visual indicator position and color */
   constexpr static KDCoordinate k_indicatorOffset = 6;

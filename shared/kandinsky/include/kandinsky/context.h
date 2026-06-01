@@ -54,8 +54,8 @@ class KDContext {
                          KDColor* workingBuffer) {
     return privateBlendRectWithMask(rect, color, mask, workingBuffer, false);
   }
-  void blendRectWithUniformMask(KDRect rect, KDColor color, uint8_t mask,
-                                KDColor* workingBuffer) {
+  void blendRectWithUniformLevel(KDRect rect, KDColor color, uint8_t mask,
+                                 KDColor* workingBuffer) {
     return privateBlendRectWithMask(rect, color, &mask, workingBuffer, true);
   }
   void strokeRect(KDRect rect, KDColor color);

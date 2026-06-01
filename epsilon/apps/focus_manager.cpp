@@ -67,9 +67,9 @@ void FocusManager::drawRect(KDContext* ctx, KDRect rect) const {
     // Blend the indicator background with k_indicatorBackgroundColor
     KDColor buffer[(Ion::Display::Width / k_step) * k_pixelsPerStep *
                    (Ion::Display::Height / k_step) * k_pixelsPerStep];
-    ctx->blendRectWithUniformMask(
+    ctx->blendRectWithUniformLevel(
         KDRect(screenOrigin, screenSize),
-        Escher::ColorPicker::Resolve(k_indicatorBackgroundColor), k_blendMask,
+        Escher::ColorPicker::Resolve(k_indicatorBackgroundColor), k_blendLevel,
         buffer);
     Escher::Bordered::DrawInnerBorderOfRect(
         ctx, KDRect(screenOrigin, screenSize), k_indicatorWidth,

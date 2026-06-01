@@ -29,12 +29,11 @@ bool FocusManager::dispatchEvent(Ion::Events::Event event,
              m_verticalOffset < k_maxVerticalOffset) {
     m_verticalOffset++;
   } else {
-    for (Ion::Events::Event e : k_eventsThatResetFocus) {
-      if (event == e) {
-        m_isActive = false;
-        Ion::Display::resetFocus();
-        return true;
-      }
+    if (std::find(k_eventsThatResetFocus.begin(), k_eventsThatResetFocus.end(),
+                  event) != k_eventsThatResetFocus.end()) {
+      m_isActive = false;
+      Ion::Display::resetFocus();
+      return true;
     }
     return false;
   }

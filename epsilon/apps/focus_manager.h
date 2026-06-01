@@ -8,6 +8,8 @@
 #include <kandinsky/coordinate.h>
 #include <stdint.h>
 
+#include <array>
+
 /* FocusManager sets and keep track of the focused view. It also displays an
  * indicator to visualize which part of the screen is being focused on. */
 
@@ -23,7 +25,7 @@ class FocusManager : public Escher::View {
 
  private:
   // Events that will always reset focus
-  constexpr static Ion::Events::Event k_eventsThatResetFocus[] = {
+  constexpr static std::array<Ion::Events::Event, 7> k_eventsThatResetFocus = {
       Ion::Events::Home,    Ion::Events::ShiftMinus, Ion::Events::Back,
       Ion::Events::Toolbox, Ion::Events::Var,        Ion::Events::OK,
       Ion::Events::EXE};

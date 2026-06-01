@@ -26,5 +26,5 @@ TooManyParameters = "Erro de sintaxe:\nForam fornecidos parâmetros em\nexcesso.
 TooFewParameters = "Erro de sintaxe:\nNão foram fornecidos parâmetros\nsuficientes."
 NLLogBaseShouldBeLeftOfLog = "Erro de sintaxe:\nA base do logaritmo deve estar à\nesquerda do log."
 OnlyLogShouldUsePrefixLogBase = "Erro de sintaxe:\nApenas o log pode ter um prefixo\nde base."
-NonAcceptableExpression = "Erro de sintaxe:\nAs sequências devem ser definidas\nexplicitamente. Use um modelo para\numa sequência recursiva."
+NonAcceptableExpression = "Erro de sintaxe:\nO formato da entrada é inválido."
 ExponentCannotExistAlone = "Erro de sintaxe:\nUm expoente não pode existir sem\numa base."

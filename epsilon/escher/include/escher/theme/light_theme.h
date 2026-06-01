@@ -102,6 +102,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .DataVioletLight = Palette::VioletLight,
                    .DataMintLight = Palette::MintLight,
                    .PythonText = Palette::PYTHON_BlueishGray,
-                   .PythonGutterBackground = Palette::PYTHON_GrayLight};
+                   .PythonGutterBackground = Palette::PYTHON_GrayLight,
+                   .MagnifyIndicator = Palette::Black};
 
 }  // namespace Escher

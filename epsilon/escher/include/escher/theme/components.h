@@ -103,7 +103,8 @@ namespace Escher {
   X(DataVioletLight)           \
   X(DataMintLight)             \
   X(PythonText)                \
-  X(PythonGutterBackground)
+  X(PythonGutterBackground)    \
+  X(MagnifyIndicator)
 
 /* TODO: check the following colors which are not in the specs but used anyway:
  * - AxisGrayDark (additional result complex graph)

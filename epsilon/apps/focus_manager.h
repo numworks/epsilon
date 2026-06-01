@@ -48,7 +48,7 @@ class FocusManager : public Escher::View {
   constexpr static KDCoordinate k_indicatorOffset = 6;
   constexpr static KDCoordinate k_indicatorWidth = 1;
   constexpr static Escher::ThemeComponent k_indicatorColor =
-      Escher::ThemeComponent::TokenEllipsis;
+      Escher::ThemeComponent::MagnifyIndicator;
   constexpr static Escher::ThemeComponent k_indicatorBackgroundColor =
       Escher::ThemeComponent::BackgroundWhite;
   constexpr static uint8_t k_blendLevel = UINT8_MAX / 2;

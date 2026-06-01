@@ -13,7 +13,7 @@ namespace Settings {
 AccessibilityController::ContentView::ContentView(SelectableListView* listView)
     : m_listView(listView), m_hintMessage(I18n::Message::MagnifyHint) {
   m_hintMessage.setBackgroundColor(ThemeComponent::WallScreen);
-  m_hintMessage.setFont(KDFont::Size::Large);
+  m_hintMessage.setFont(KDFont::Size::Small);
   m_hintMessage.setTextColor(ThemeComponent::TextGrayDark);
   m_hintMessage.setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
 }

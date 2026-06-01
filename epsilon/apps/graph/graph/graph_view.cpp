@@ -201,7 +201,6 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
   const ContinuousFunction*
       functions[k_maxNumberOfInequalitiesInIntersectionRegion];
   int n = numberOfDrawnRecords();
-  assert(n <= k_maxNumberOfInequalitiesInIntersectionRegion);
   int numberOfInequalities = 0;
   for (int i = 0; i < n; i++) {
     Ion::Storage::Record record = initModelBeforeDrawingPlot(i);
@@ -210,6 +209,8 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
     if (!f->isActiveInequality()) {
       continue;
     }
+    assert(numberOfInequalities <
+           k_maxNumberOfInequalitiesInIntersectionRegion);
     functions[numberOfInequalities++] = f.pointer();
   }
   // offset everything by 1 so it's prettier

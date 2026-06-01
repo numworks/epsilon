@@ -134,10 +134,25 @@ class ContinuousFunctionProperties {
   // Properties
   bool isEnabled() const { return status() == Status::Enabled; }
 
-  bool isCartesian() const { return symbolType() == SymbolType::X; }
-  bool isParametric() const { return symbolType() == SymbolType::T; }
-  bool isPolar() const { return symbolType() == SymbolType::Theta; }
-  bool isInversePolar() const { return symbolType() == SymbolType::Radius; }
+  /* Cartesian curves are cartesian functions and all equations of the type
+   * y=... (which can be default or lines). */
+  bool isCartesian() const {
+    CurveParameterType t = getCurveParameterType();
+    return t == CurveParameterType::CartesianFunction ||
+           t == CurveParameterType::Line ||
+           t == CurveParameterType::HorizontalLine ||
+           t == CurveParameterType::VerticalLine ||
+           t == CurveParameterType::Default;
+  }
+  bool isParametric() const {
+    return getCurveParameterType() == CurveParameterType::Parametric;
+  }
+  bool isPolar() const {
+    return getCurveParameterType() == CurveParameterType::Polar;
+  }
+  bool isInversePolar() const {
+    return getCurveParameterType() == CurveParameterType::InversePolar;
+  }
   bool isEquality() const {
     return equationType() == Poincare::Comparison::Operator::Equal;
   }

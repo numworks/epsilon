@@ -871,6 +871,12 @@ ContinuousFunction::Model::expressionEquation(
     result = result.cloneAndReplaceSymbolWithExpression(
         SymbolHelper::BuildUserVariable(k_ordinateSymbol),
         SymbolHelper::BuildUserVariable(UCodePointTemporaryUnknown));
+
+    if (f.isDerivative()) {
+      /* A derivative's symbol is lost when it is changed to an equation, but it
+       * can be found from its parent's symbol. */
+      data.functionSymbol = f.parentFunction()->properties().symbolType();
+    }
   }
   // Replace all defined symbols and functions to extract symbols
   result = result.cloneAndReplaceSymbols(GlobalContextAccessor::Context());

@@ -34,19 +34,45 @@ class FocusManager : public Escher::View {
   constexpr static KDCoordinate k_height = Ion::Display::Height / k_factor;
 
   /* Navigation parameters */
-  // k_step = GCD(k_width, k_height)
+  /* |          Ion::Display::Width             |
+   * | k_width |         k_hiddenWidth          |
+   * | k_width | k_step * k_maxHorizontalOffset |
+   */
+  constexpr static KDCoordinate k_hiddenWidth = Ion::Display::Width - k_width;
+  constexpr static KDCoordinate k_hiddenHeight =
+      Ion::Display::Height - k_height;
+  // Find a step that can be used both vertically and horizontally,
   constexpr static KDCoordinate k_step = 40;
-  static_assert(k_width % k_step == 0);
-  static_assert(k_height % k_step == 0);
-  static_assert(Ion::Display::Width <= UINT8_MAX * k_step * k_factor);
-  static_assert(Ion::Display::Height <= UINT8_MAX * k_step * k_factor);
-  constexpr static uint8_t k_maxHorizontalOffset = k_width / k_step;
-  constexpr static uint8_t k_maxVerticalOffset = k_height / k_step;
+  static_assert(k_hiddenWidth % k_step == 0);
+  static_assert(k_hiddenHeight % k_step == 0);
 
-  /* Visual indicator parameters */
-  constexpr static KDCoordinate k_pixelsPerStep = 3;
+  static_assert(k_width <= UINT8_MAX * k_step,
+                "k_maxHorizontalOffset can't be uint8_t");
+  constexpr static uint8_t k_maxHorizontalOffset = k_hiddenWidth / k_step;
+  static_assert(k_height <= UINT8_MAX * k_step,
+                "k_maxVerticalOffset can't be uint8_t");
+  constexpr static uint8_t k_maxVerticalOffset = k_hiddenHeight / k_step;
+
+  /* Visual indicator size */
+  constexpr static KDCoordinate k_indicatorFactor = 20;
+  static_assert(Ion::Display::Width % k_indicatorFactor == 0);
+  static_assert(k_width % k_indicatorFactor == 0);
+  static_assert(Ion::Display::Height % k_indicatorFactor == 0);
+  static_assert(k_height % k_indicatorFactor == 0);
+  static_assert(k_step % k_indicatorFactor == 0);
+  constexpr static KDCoordinate k_indicatorWidth =
+      Ion::Display::Width / k_indicatorFactor;
+  constexpr static KDCoordinate k_indicatorHeight =
+      Ion::Display::Height / k_indicatorFactor;
+  constexpr static KDCoordinate k_indicatorFocusedWidth =
+      k_width / k_indicatorFactor;
+  constexpr static KDCoordinate k_indicatorFocusedHeight =
+      k_height / k_indicatorFactor;
+  constexpr static KDCoordinate k_indicatorStep = k_step / k_indicatorFactor;
+
+  /* Visual indicator position and color */
   constexpr static KDCoordinate k_indicatorOffset = 6;
-  constexpr static KDCoordinate k_indicatorWidth = 1;
+  constexpr static KDCoordinate k_indicatorBorder = 1;
   constexpr static Escher::ThemeComponent k_indicatorColor =
       Escher::ThemeComponent::MagnifyIndicator;
   constexpr static Escher::ThemeComponent k_indicatorBackgroundColor =

@@ -62,26 +62,23 @@ void FocusManager::drawRect(KDContext* ctx, KDRect rect) const {
     // Screen
     KDPoint screenOrigin(k_indicatorOffset + m_horizontalOffset * k_step,
                          k_indicatorOffset + m_verticalOffset * k_step);
-    KDSize screenSize((Ion::Display::Width / k_step) * k_pixelsPerStep,
-                      (Ion::Display::Height / k_step) * k_pixelsPerStep);
+    KDSize screenSize(k_indicatorWidth, k_indicatorHeight);
     // Blend the indicator background with k_indicatorBackgroundColor
-    KDColor buffer[(Ion::Display::Width / k_step) * k_pixelsPerStep *
-                   (Ion::Display::Height / k_step) * k_pixelsPerStep];
+    KDColor buffer[k_indicatorWidth * k_indicatorHeight];
     ctx->blendRectWithUniformLevel(
         KDRect(screenOrigin, screenSize),
         Escher::ColorPicker::Resolve(k_indicatorBackgroundColor), k_blendLevel,
         buffer);
     Escher::Bordered::DrawInnerBorderOfRect(
-        ctx, KDRect(screenOrigin, screenSize), k_indicatorWidth,
+        ctx, KDRect(screenOrigin, screenSize), k_indicatorBorder,
         Escher::ColorPicker::Resolve(k_indicatorColor));
     // Focused screen
-    KDPoint focusedScreenOrigin = KDPoint(m_horizontalOffset * k_pixelsPerStep,
-                                          m_verticalOffset * k_pixelsPerStep)
+    KDPoint focusedScreenOrigin = KDPoint(m_horizontalOffset * k_indicatorStep,
+                                          m_verticalOffset * k_indicatorStep)
                                       .translatedBy(screenOrigin);
-    KDSize focusedScreenSize((k_width / k_step) * k_pixelsPerStep,
-                             (k_height / k_step) * k_pixelsPerStep);
+    KDSize focusedScreenSize(k_indicatorFocusedWidth, k_indicatorFocusedHeight);
     Escher::Bordered::DrawInnerBorderOfRect(
-        ctx, KDRect(focusedScreenOrigin, focusedScreenSize), k_indicatorWidth,
+        ctx, KDRect(focusedScreenOrigin, focusedScreenSize), k_indicatorBorder,
         Escher::ColorPicker::Resolve(k_indicatorColor));
   }
 }

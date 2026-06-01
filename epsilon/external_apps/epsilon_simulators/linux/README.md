@@ -6,7 +6,7 @@ Follow next instructions from epsilon's root.
 
 If this is the first time you build an epsilon simulator, you need to run the epsilon's setup script.
 ```bash
-chmod +x build/setup.sh & build/setup.sh
+chmod +x tools/setup.sh && ./tools/setup.sh
 ```
 
 ## Simulator

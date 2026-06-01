@@ -21,7 +21,7 @@ Follow the setup's next steps to set `EMSDK` in your path.
 
 If not already done, you need to run the epsilon's setup script from [Epsilon's root](/).
 ```bash
-chmod +x build/setup.sh & build/setup.sh
+chmod +x tools/setup.sh && ./tools/setup.sh
 ```
 
 ### Second time setup

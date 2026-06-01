@@ -22,7 +22,7 @@ You can swap `sample_cpp` for any other C/C++ based external app (e.g.: `rpn_cpp
 ## Requirements
 
 To build an external app, you will need:
-- A `C` compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS). You can run [Epsilon's setup script](../build/setup.sh) for that
+- A `C` compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS). You can run [Epsilon's setup script](../tools/setup.sh) for that
 - [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install `nwlink` :
 ```shell
 npm install -g nwlink

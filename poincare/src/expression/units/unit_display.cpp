@@ -16,6 +16,7 @@
 #include "../integer.h"
 #include "../systematic_reduction.h"
 #include "best_unit_selection.h"
+#include "helpers.h"
 #include "prefix.h"
 #include "representative.h"
 #include "representatives.h"
@@ -422,59 +423,6 @@ static bool ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   // Multiply e with units
   e->cloneNodeAtNode(KMult.node<2>);
   return true;
-}
-
-/* Round value to max displayed precision :
- * With a value of 10.0000000000001, err is 10^12 and value is rounded to 10 */
-static double roundToMaxPrecision(double value) {
-  if (value == 0.0) {
-    return value;
-  }
-  double err = std::pow(10.0, PrintFloat::k_maxNumberOfSignificantDigits -
-                                  (std::floor(log10(std::fabs(value))) + 1));
-  return std::round(value * err) / err;
-}
-
-// Given a SI value, build decomposition along multiple representatives
-static Tree* BuildDecomposition(double value, const Representative* const* list,
-                                int length) {
-  assert(length > 0);
-  Tree* result = SharedTreeStack->pushAdd(0);
-  double smallestRatio = list[length - 1]->ratio();
-  // Instead of SI, use value at smallest representative
-  value = roundToMaxPrecision(value / smallestRatio);
-
-  for (int i = 0; i < length; i++) {
-    bool lastUnit = i == length - 1;
-    const Representative* representative = list[i];
-    // Compute ratio from smallest representative to this one
-    double ratio = std::round(representative->ratio() / smallestRatio);
-    // Representatives must be ordered and have the same dimension.
-    assert(i == 0 || ((list[i]->ratio() < list[i - 1]->ratio()) &&
-                      list[i]->siVector() == list[i - 1]->siVector()));
-    double representativeValue = value / ratio;
-    double lax = OMG::Float::EpsilonLax<double>() / ratio;
-    if (!lastUnit) {
-      // 1.6 -> 1 and -1.6 -> -1
-      representativeValue = (representativeValue > 0.0)
-                                ? std::floor(representativeValue + lax)
-                                : std::ceil(representativeValue - lax);
-    }
-    assert(!lastUnit || result->numberOfChildren() > 0);
-    if (std::abs(representativeValue) > lax) {
-      // Add decomposed unit
-      SharedTreeStack->pushMult(2);
-      SharedTreeStack->pushFloat(representativeValue);
-      Unit::Push(list[i]);
-      NAry::SetNumberOfChildren(result, result->numberOfChildren() + 1);
-    }
-    // Round at each step to prevent accumulation of floating point errors.
-    value = roundToMaxPrecision(value - ratio * representativeValue);
-  }
-  assert(std::abs(value) <= OMG::Float::EpsilonLax<double>() &&
-         result->numberOfChildren() > 0);
-  NAry::SquashIfUnary(result);
-  return result;
 }
 
 // Decomposition representatives list, ordered from biggest to smallest ratio.

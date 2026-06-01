@@ -6,10 +6,13 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 
+#include <cmath>
+
 #include "../approximation.h"
 #include "../integer.h"
 #include "../simplification.h"
 #include "../systematic_reduction.h"
+#include "helpers.h"
 #include "representatives.h"
 #include "unit.h"
 
@@ -47,6 +50,21 @@ bool ProjectToBestUnits(Tree* e, Dimension dimension,
   extractedUnits->moveTreeOverTree(newExtractedUnits);
   e->moveTreeOverTree(Unit::ExactConvertToUnit(e, extractedUnits));
   extractedUnits->removeTree();
+  return true;
+}
+
+bool ApplyAngleDecomposition(Tree* e) {
+  // Representatives ordered from biggest to smallest ratio.
+  static constexpr const Representative* angleRepresentativesList[] = {
+      &Angle::representatives.degree, &Angle::representatives.arcMinute,
+      &Angle::representatives.arcSecond};
+  double value = Approximation::To<double>(
+      e, Approximation::Parameters{.policy = {.optimize = true}});
+  if (std::isnan(value) || std::isinf(value)) {
+    return false;
+  }
+  e->moveTreeOverTree(BuildDecomposition(value, angleRepresentativesList,
+                                         std::size(angleRepresentativesList)));
   return true;
 }
 

@@ -49,9 +49,11 @@ class FocusedViewController : public Escher::ViewController {
   ContentView m_view;
   bool m_success;
 
+ public:
+  virtual bool runTest() = 0;
+
  private:
   virtual const char* testName() const = 0;
-  virtual bool runTest() = 0;
 };
 
 }  // namespace HardwareTest

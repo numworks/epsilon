@@ -8,11 +8,10 @@ class LCDTimingTestController : public FocusedViewController {
  public:
   using FocusedViewController::FocusedViewController;
   void viewWillAppear() override;
+  bool runTest() override;
 
  private:
   constexpr static int k_errorLimit = 0;
-
-  bool runTest() override;
   const char* testName() const override { return "LCD TIMING:"; }
 
   int m_pixelFailures = 0;

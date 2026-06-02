@@ -7,9 +7,9 @@ namespace HardwareTest {
 class VBlankTestController : public FocusedViewController {
  public:
   using FocusedViewController::FocusedViewController;
+  bool runTest() override;
 
  private:
-  bool runTest() override;
   const char* testName() const override { return "VBLANK:"; }
 };
 

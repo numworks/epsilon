@@ -18,9 +18,11 @@ size_t AddSuffixForParametricComponent(char* baseName, size_t baseNameLength,
       first ? CodePoints::k_cartesianSymbol : CodePoints::k_ordinateSymbol);
 }
 
-size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction* f,
+size_t ParametricComponentNameWithArgument(Ion::Storage::Record record,
                                            char* buffer, size_t bufferSize,
                                            bool first, int derivationOrder) {
+  OMG::ExpiringPointer<ContinuousFunction> f =
+      GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(record);
   size_t length = f->name(buffer, bufferSize);
   length += FunctionNameHelper::AddSuffixForParametricComponent(
       buffer, length, bufferSize, first);
@@ -95,7 +97,7 @@ int DefaultName(char* buffer, size_t bufferSize, CodePoint symbol) {
 }
 
 bool ParametricComponentsNameError(const UserExpression& expression,
-                                   ContinuousFunction* f) {
+                                   Ion::Storage::Record record) {
   /* Check that parametric components name are free if we are defining a
    * parametric function. */
   if (!ContinuousFunction::IsFunctionAssignment(expression)) {
@@ -118,7 +120,10 @@ bool ParametricComponentsNameError(const UserExpression& expression,
   size_t functionNameLength = strlen(functionName);
   bool willDefineNewParametricComponents =
       GlobalStore::UserNameIsFree(functionName);
-  if (f) {
+
+  if (!record.isNull()) {
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(record);
     assert(f->fullName() != nullptr);
     willDefineNewParametricComponents |=
         (strncmp(f->fullName(), functionName, functionNameLength) == 0 &&

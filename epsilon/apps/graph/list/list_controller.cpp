@@ -317,11 +317,9 @@ ContinuousFunctionStore* ListController::modelStore() const {
 }
 
 bool ListController::isValidExpressionModel(const UserExpression& expression) {
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      isAddingNewModel() ? nullptr
-                         : modelStore()->modelForRecord(selectedRecord());
-  if (FunctionNameHelper::ParametricComponentsNameError(expression,
-                                                        f.pointer())) {
+  if (FunctionNameHelper::ParametricComponentsNameError(
+          expression,
+          isAddingNewModel() ? Ion::Storage::Record() : selectedRecord())) {
     App::app()->displayWarning(I18n::Message::ParametricNameError);
     return false;
   }

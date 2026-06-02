@@ -81,11 +81,8 @@ void assert_will_display_parametric_name_error(const char* definition,
                                                bool expectedHasError) {
   Poincare::UserExpression expression = Poincare::UserExpression::Parse(
       definition, Poincare::EmptySymbolContext{}, {.preserveInput = true});
-  ContinuousFunction* f = GlobalContextAccessor::ContinuousFunctionStore()
-                              .modelForRecord(record)
-                              .pointer();
   bool hasError =
-      FunctionNameHelper::ParametricComponentsNameError(expression, f);
+      FunctionNameHelper::ParametricComponentsNameError(expression, record);
   quiz_assert(hasError == expectedHasError);
 }
 

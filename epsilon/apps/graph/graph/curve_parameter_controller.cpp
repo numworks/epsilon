@@ -227,8 +227,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
                                      : Poincare::CodePoints::k_ordinateSymbol);
     } else if (properties.isParametric()) {
       FunctionNameHelper::ParametricComponentNameWithArgument(
-          function().pointer(), buffer, bufferSize, firstComponent,
-          derivationOrder);
+          m_record, buffer, bufferSize, firstComponent, derivationOrder);
     } else {
       assert(firstComponent);
       function()->nameWithArgument(buffer, bufferSize, derivationOrder);

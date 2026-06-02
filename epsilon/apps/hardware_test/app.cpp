@@ -4,6 +4,8 @@
 #include <ion/circuit_breaker.h>
 #include <ion/events.h>
 
+#include <array>
+
 using namespace Escher;
 
 namespace HardwareTest {
@@ -38,17 +40,18 @@ App::WizardViewController::WizardViewController(Responder* parentResponder,
       m_lcdDataTestController(this),
       m_ledTestController(this),
       m_serialNumberController(this),
-      m_vBlankTestController(this) {}
+      m_vBlankTestController(this),
+      m_groupTestController(
+          this, {&m_vBlankTestController, &m_lcdTimingTestController,
+                 &m_colorsLCDTestController, &m_lcdDataTestController}) {}
 
-int App::WizardViewController::numberOfChildren() { return 9; }
+int App::WizardViewController::numberOfChildren() { return k_numberOfTestRuns; }
 
 ViewController* App::WizardViewController::childAtIndex(int i) {
-  ViewController* children[] = {
-      &m_vBlankTestController,     &m_lcdTimingTestController,
-      &m_colorsLCDTestController,  &m_lcdDataTestController,
-      &m_deadPixelsTestController, &m_ledTestController,
-      &m_keyboardTestController,   &m_batteryTestController,
-      &m_serialNumberController};
+  std::array<ViewController*, App::k_numberOfTestRuns> children = {
+      &m_groupTestController,   &m_deadPixelsTestController,
+      &m_ledTestController,     &m_keyboardTestController,
+      &m_batteryTestController, &m_serialNumberController};
   return children[i];
 }
 

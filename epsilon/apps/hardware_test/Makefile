@@ -5,6 +5,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/hardware_test/,$(addsuffix :-test, \
   code_128b_view.cpp \
   colors_lcd_test_controller.cpp \
   dead_pixels_test_controller.cpp \
+  group_test_controller.cpp \
   focused_view_controller.cpp \
   keyboard_test_controller.cpp \
   keyboard_model.cpp \

@@ -6,6 +6,7 @@
 #include "battery_test_controller.h"
 #include "colors_lcd_test_controller.h"
 #include "dead_pixels_test_controller.h"
+#include "group_test_controller.h"
 #include "keyboard_test_controller.h"
 #include "lcd_data_test_controller.h"
 #include "lcd_timing_test_controller.h"
@@ -19,6 +20,16 @@ enum Variant { Default = 0, TestAllKeys = 1 };
 
 class App : public Escher::App {
  public:
+  constexpr static size_t k_numberOfTests = 9;
+
+  /* TODO: add a runtime parameter to switch between grouped mode and
+   * one-by-one mode */
+
+  // Tests that run in the GroupTestController batch
+  constexpr static size_t k_numberOfGroupedTests = 4;
+  constexpr static size_t k_numberOfTestRuns =
+      k_numberOfTests - k_numberOfGroupedTests + 1;
+
   class Snapshot : public Escher::App::Snapshot {
    public:
     App* unpack(Escher::Container* container) override;
@@ -48,6 +59,8 @@ class App : public Escher::App {
     LEDTestController m_ledTestController;
     SerialNumberController m_serialNumberController;
     VBlankTestController m_vBlankTestController;
+
+    GroupTestController<k_numberOfGroupedTests> m_groupTestController;
   };
 
   App(Snapshot* snapshot);

@@ -2,19 +2,22 @@
 
 #include <float.h>
 #include <ion/display.h>
+#include <ion/storage/record.h>
 #include <poincare/coordinate_2D.h>
 
 namespace Shared {
 
 class ContinuousFunction;
+class ContinuousFunctionProperties;
 class CacheTestHelper;
 
 class ContinuousFunctionCache {
   friend CacheTestHelper;
 
  public:
-  static void PrepareForCaching(void* fun, ContinuousFunctionCache* cache,
-                                float tMin, float tStep);
+  static void PrepareForCaching(Ion::Storage::Record record,
+                                ContinuousFunctionCache* cache, float tMin,
+                                float tStep);
 
   ContinuousFunctionCache() : m_tMin(0) { clear(); }
 
@@ -54,11 +57,11 @@ class ContinuousFunctionCache {
 
   void invalidateBetween(int iInf, int iSup);
   void setRange(float tMin, float tStep);
-  int indexForParameter(const ContinuousFunction* function, float t,
+  int indexForParameter(const ContinuousFunctionProperties& properties, float t,
                         int curveIndex) const;
   Poincare::Coordinate2D<float> valuesAtIndex(
       const ContinuousFunction* function, float t, int i, int curveIndex);
-  void pan(ContinuousFunction* function, float newTMin);
+  void pan(const ContinuousFunctionProperties& properties, float newTMin);
 
   float m_tMin, m_tStep;
   float m_cache[k_sizeOfCache];

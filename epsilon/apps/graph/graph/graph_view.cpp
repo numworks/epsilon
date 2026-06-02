@@ -121,7 +121,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     ContinuousFunctionCache::ComputeNonCartesianSteps(&tStep, &tCacheStep, tmax,
                                                       tmin);
   }
-  ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin,
+  ContinuousFunctionCache::PrepareForCaching(record, cch, tCacheMin,
                                              tCacheStep);
 
   /* Check now if e can be discontinuous: In case e does not involves

@@ -20,9 +20,13 @@ namespace Shared {
 // Helper class friend of ContinuousFunctionCache to access its private methods
 class CacheTestHelper {
  public:
-  static bool HasValueInCache(const ContinuousFunction* function,
+  static bool HasValueInCache(Ion::Storage::Record record,
                               const ContinuousFunctionCache* cache, float t) {
-    return cache->indexForParameter(function, t, 0) >= 0;
+    ContinuousFunctionProperties properties =
+        GlobalContextAccessor::ContinuousFunctionStore()
+            .modelForRecord(record)
+            ->properties();
+    return cache->indexForParameter(properties, t, 0) >= 0;
   }
 };
 
@@ -52,7 +56,7 @@ void assert_check_cartesian_cache_against_function(
   float t;
   for (int i = 0; i < Ion::Display::Width; i++) {
     t = tMin + i * cache->step();
-    if (!CacheTestHelper::HasValueInCache(function.pointer(), cache, t)) {
+    if (!CacheTestHelper::HasValueInCache(record, cache, t)) {
       /* TODO: This test actually encounters many values not in cache, it should
        * be reworked. */
       continue;
@@ -91,8 +95,7 @@ void assert_cartesian_cache_stays_valid_while_panning(
         (range->xMax() - range->xMin()) / (Ion::Display::Width - 1));
     tMin = range->xMin();
     tStep = (range->xMax() - range->xMin()) / (Ion::Display::Width - 1);
-    ContinuousFunctionCache::PrepareForCaching(function.pointer(), cache, tMin,
-                                               tStep);
+    ContinuousFunctionCache::PrepareForCaching(record, cache, tMin, tStep);
     assert_check_cartesian_cache_against_function(record, cache, tMin);
   }
 }
@@ -112,8 +115,7 @@ void assert_check_polar_cache_against_function(
   ContinuousFunctionCache::ComputeNonCartesianSteps(&tStep, &tCacheStep, tMax,
                                                     tMin);
 
-  ContinuousFunctionCache::PrepareForCaching(function.pointer(), cache, tMin,
-                                             tCacheStep);
+  ContinuousFunctionCache::PrepareForCaching(record, cache, tMin, tCacheStep);
   assert(cache);
   QUIZ_ASSERT(function->cache() == cache);
   QUIZ_ASSERT(cache->step() != 0);
@@ -129,7 +131,7 @@ void assert_check_polar_cache_against_function(
     t = tMin + i * cache->step();
     /* Otherwise, cache->valueForParameter would fallback on
      * function->evaluateXYAtParameter. */
-    QUIZ_ASSERT(CacheTestHelper::HasValueInCache(function.pointer(), cache, t));
+    QUIZ_ASSERT(CacheTestHelper::HasValueInCache(record, cache, t));
     Coordinate2D<float> cacheValues =
         cache->valueForParameter(function.pointer(), t, 0);
     Coordinate2D<float> functionValues = function->evaluateXYAtParameter(t);

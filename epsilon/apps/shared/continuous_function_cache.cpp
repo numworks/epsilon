@@ -1,5 +1,6 @@
 #include "continuous_function_cache.h"
 
+#include <apps/shared/global_store.h>
 #include <limits.h>
 #include <omg/signaling_nan.h>
 
@@ -8,10 +9,11 @@
 namespace Shared {
 
 // public
-void ContinuousFunctionCache::PrepareForCaching(void* fun,
+void ContinuousFunctionCache::PrepareForCaching(Ion::Storage::Record record,
                                                 ContinuousFunctionCache* cache,
                                                 float tMin, float tStep) {
-  ContinuousFunction* function = static_cast<ContinuousFunction*>(fun);
+  OMG::ExpiringPointer<ContinuousFunction> function =
+      GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(record);
 
   if (!cache) {
     /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
@@ -37,14 +39,18 @@ void ContinuousFunctionCache::PrepareForCaching(void* fun,
     function->tidyCache();
     return;
   }
+
+  ContinuousFunctionProperties properties = function->properties();
+  function =
+      GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(record);
   if (function->cache() != cache) {
     cache->clear();
     function->setCache(cache);
   } else if (tStep != 0.f &&
              std::fabs(tStep - cache->step()) > k_cacheHitTolerance) {
     cache->clear();
-  } else if (function->properties().isCartesian() && tStep != 0) {
-    function->cache()->pan(function, tMin);
+  } else if (properties.isCartesian() && tStep != 0) {
+    function->cache()->pan(properties, tMin);
   }
   function->cache()->setRange(tMin, tStep);
 }
@@ -57,7 +63,7 @@ void ContinuousFunctionCache::clear() {
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(
     const ContinuousFunction* function, float t, int curveIndex) {
-  int resIndex = indexForParameter(function, t, curveIndex);
+  int resIndex = indexForParameter(function->properties(), t, curveIndex);
   if (resIndex < 0) {
     return function->privateEvaluateXYAtParameter(t, curveIndex);
   }
@@ -104,7 +110,8 @@ void ContinuousFunctionCache::setRange(float tMin, float tStep) {
 }
 
 int ContinuousFunctionCache::indexForParameter(
-    const ContinuousFunction* function, float t, int curveIndex) const {
+    const ContinuousFunctionProperties& properties, float t,
+    int curveIndex) const {
   assert(!std::isnan(t));
   /* m_tStep can only be null if Cache is not properly initialized. Either
    * tidyCache (removing cache from functions) or PrepareForCaching (setting a
@@ -125,11 +132,11 @@ int ContinuousFunctionCache::indexForParameter(
   int res = std::round(delta);
   assert(res >= 0);
   if ((res >= k_sizeOfCache) ||
-      (res >= k_sizeOfCache / 2 && !function->properties().isCartesian()) ||
+      (res >= k_sizeOfCache / 2 && !properties.isCartesian()) ||
       std::fabs(res - delta) > k_cacheHitTolerance) {
     return -1;
   }
-  assert(function->properties().isCartesian() || m_startOfCache == 0);
+  assert(properties.isCartesian() || m_startOfCache == 0);
   return (res + m_startOfCache) % k_sizeOfCache;
 }
 
@@ -152,8 +159,9 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(
   return Poincare::Coordinate2D<float>(m_cache[2 * i], m_cache[2 * i + 1]);
 }
 
-void ContinuousFunctionCache::pan(ContinuousFunction* function, float newTMin) {
-  assert(function->properties().isCartesian());
+void ContinuousFunctionCache::pan(
+    const ContinuousFunctionProperties& properties, float newTMin) {
+  assert(properties.isCartesian());
   if (newTMin == m_tMin) {
     return;
   }

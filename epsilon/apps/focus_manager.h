@@ -48,10 +48,10 @@ class FocusManager : public Escher::View {
   static_assert(k_hiddenWidth % k_step == 0);
   static_assert(k_hiddenHeight % k_step == 0);
 
-  static_assert(k_width <= UINT8_MAX * k_step,
+  static_assert(k_hiddenWidth <= UINT8_MAX * k_step,
                 "k_maxHorizontalOffset can't be uint8_t");
   constexpr static uint8_t k_maxHorizontalOffset = k_hiddenWidth / k_step;
-  static_assert(k_height <= UINT8_MAX * k_step,
+  static_assert(k_hiddenHeight <= UINT8_MAX * k_step,
                 "k_maxVerticalOffset can't be uint8_t");
   constexpr static uint8_t k_maxVerticalOffset = k_hiddenHeight / k_step;
 

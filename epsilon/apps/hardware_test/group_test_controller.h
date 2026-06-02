@@ -16,11 +16,10 @@ class GroupTestController : public FocusedViewController {
       : FocusedViewController(parentResponder), m_tests{tests} {}
 
   bool runTest() override;
-
- private:
   // Test name can become more generic if needed
   const char* testName() const override { return "DISPLAY:"; }
 
+ private:
   std::array<FocusedViewController*, NTests> m_tests;
 };
 

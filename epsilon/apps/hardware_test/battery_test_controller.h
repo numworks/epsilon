@@ -10,10 +10,9 @@ class BatteryTestController : public FocusedViewController {
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   bool runTest() override;
-
- private:
   const char* testName() const override { return "BATTERY:"; }
 
+ private:
   void updateBatteryState(float batteryLevel, bool batteryCharging);
 };
 

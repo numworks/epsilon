@@ -18,6 +18,8 @@ class FocusedViewController : public Escher::ViewController {
   Escher::View* view() override { return &m_view; }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
+  virtual bool runTest() = 0;
+  virtual const char* testName() const = 0;
 
  protected:
   class ContentView : public Escher::SolidColorView {
@@ -48,12 +50,6 @@ class FocusedViewController : public Escher::ViewController {
   };
   ContentView m_view;
   bool m_success;
-
- public:
-  virtual bool runTest() = 0;
-
- private:
-  virtual const char* testName() const = 0;
 };
 
 }  // namespace HardwareTest

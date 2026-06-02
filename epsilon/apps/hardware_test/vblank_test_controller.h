@@ -8,8 +8,6 @@ class VBlankTestController : public FocusedViewController {
  public:
   using FocusedViewController::FocusedViewController;
   bool runTest() override;
-
- private:
   const char* testName() const override { return "VBLANK:"; }
 };
 

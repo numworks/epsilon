@@ -375,7 +375,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("1+1+round(1.343,2)", DisplayOutput::ExactHidden,
                       EqualSign::Equal, nullptr, "3.34", &store);
   assertCalculationIs("randint(2,2)+3", DisplayOutput::ExactHidden,
-                      EqualSign::Approximation, nullptr, "5", &store);
+                      EqualSign::Equal, nullptr, "5", &store);
   assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "2√(2)", "2.8284271247462",
                       &store);

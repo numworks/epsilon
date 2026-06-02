@@ -78,10 +78,13 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
   assert(exact && approximate);
   // If projection failed, exact can be not system
   assert(Simplification::CanBeSystem(approximate));
-  if (exact->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isUserSequence(); })) {
+  if (exact->hasDescendantSatisfying([](const Tree* e) {
+        return e->isOfType(
+            {Type::UserSequence, Type::RandInt, Type::RandIntNoRep});
+      })) {
     /* Sequence are always approximated, but we want a strict equality sign for
-     * the approximate result to prevent U_3 ≈ 12. */
+     * the approximate result to prevent U_3 ≈ 12.
+     * Same is true of the randint function. */
     return true;
   }
   return RecursiveIsCalculationOutputStrictEquality(exact, approximate,

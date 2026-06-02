@@ -18,6 +18,7 @@ class AccessibilityController : public GenericSubController {
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
 
  private:
   constexpr static int k_totalNumberOfCell = 2;

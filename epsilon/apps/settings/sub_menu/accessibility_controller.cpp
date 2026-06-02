@@ -87,6 +87,11 @@ int AccessibilityController::reusableCellCount(int type) const {
   return k_totalNumberOfCell;
 }
 
+KDCoordinate AccessibilityController::nonMemoizedRowHeight(int row) {
+  SwitchCell tempCell;
+  return protectedNonMemoizedRowHeight(&tempCell, row);
+}
+
 void AccessibilityController::fillCellForRow(HighlightCell* cell, int row) {
   SwitchCell* switchCell = static_cast<SwitchCell*>(cell);
   switchCell->label()->setMessage(

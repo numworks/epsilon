@@ -349,8 +349,8 @@ void GlobalStore::StoreParametricComponentsOfRecord(
 void GlobalStore::DeleteDerivativeOfRecord(Ion::Storage::Record record,
                                            uint8_t order) {
   assert(order == k_allOrders || order == 1 || order == 2);
-  int n = s_continuousFunctionStore->numberOfModels();
-  for (int i = 0; i < n; i++) {
+  int i = 0;
+  while (i < s_continuousFunctionStore->numberOfModels()) {
     Ion::Storage::Record r = s_continuousFunctionStore->recordAtIndex(i);
     OMG::ExpiringPointer<ContinuousFunction> f =
         s_continuousFunctionStore->modelForRecord(r);
@@ -359,10 +359,11 @@ void GlobalStore::DeleteDerivativeOfRecord(Ion::Storage::Record record,
       r.destroy();
       if (order != k_allOrders) {
         return;
+      } else {
+        continue;
       }
-      n--;
-      i--;
     }
+    i++;
   }
 }
 

@@ -6,11 +6,13 @@ namespace HardwareTest {
 
 template <size_t NTests>
 bool GroupTestController<NTests>::runTest() {
-  for (FocusedViewController* test : m_tests) {
-    if (!test->runTest()) {
+  for (size_t testIndex = 0; testIndex < m_tests.size(); testIndex++) {
+    if (!m_tests[testIndex]->runTest()) {
+      m_failingTestIndex = testIndex;
       return false;
     }
   }
+  m_failingTestIndex = k_noFail;
   return true;
 }
 

@@ -23,6 +23,12 @@ class GroupTestController : public FocusedViewController {
                : m_tests[m_failingTestIndex]->testName();
   }
 
+  int prefixData() const override {
+    return m_failingTestIndex == k_noFail
+               ? FocusedViewController::prefixData()
+               : m_tests[m_failingTestIndex]->prefixData();
+  }
+
  private:
   std::array<FocusedViewController*, NTests> m_tests;
   constexpr static int k_noFail = -1;

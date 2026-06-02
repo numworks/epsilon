@@ -18,6 +18,8 @@ class FocusedViewController : public Escher::ViewController {
   Escher::View* view() override { return &m_view; }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
+  // Used to display the number of broken pixels
+  virtual int prefixData() const { return 0; }
   virtual bool runTest() = 0;
   virtual const char* testName() const = 0;
 

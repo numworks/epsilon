@@ -16,6 +16,12 @@ void FocusedViewController::viewWillAppear() {
                  : Escher::ThemeComponent::BasicRed);
   m_view.setTexts(testName(), m_success ? "OK" : "NG");
   m_view.setBackgroundColor(backgroundColor);
+  if (prefixData() > 0) {
+    constexpr int bufferSize = 20;
+    char buffer[bufferSize] = {0};
+    OMG::Print::IntLeft(prefixData(), buffer, bufferSize);
+    m_view.setPrefix(buffer);
+  }
 }
 
 bool FocusedViewController::handleEvent(Ion::Events::Event event) {

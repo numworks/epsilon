@@ -17,12 +17,4 @@ bool LCDTimingTestController::runTest() {
   return m_pixelFailures <= k_errorLimit;
 }
 
-void LCDTimingTestController::viewWillAppear() {
-  FocusedViewController::viewWillAppear();
-  constexpr int bufferSize = 20;
-  char buffer[bufferSize] = {0};
-  OMG::Print::IntLeft(m_pixelFailures, buffer, bufferSize);
-  m_view.setPrefix(buffer);
-}
-
 }  // namespace HardwareTest

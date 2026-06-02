@@ -7,9 +7,10 @@ namespace HardwareTest {
 class LCDTimingTestController : public FocusedViewController {
  public:
   using FocusedViewController::FocusedViewController;
-  void viewWillAppear() override;
   bool runTest() override;
   const char* testName() const override { return "LCD TIMING:"; }
+
+  int prefixData() const override { return m_pixelFailures; }
 
  private:
   constexpr static int k_errorLimit = 0;

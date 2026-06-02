@@ -24,7 +24,7 @@ enum class Charge : uint8_t {
   FULL = 5  // 100%
 };
 constexpr int numberOfChargeStates = 6;
-Charge level();
+Charge level(bool forceLevelUpdate = false);
 
 float voltage();
 

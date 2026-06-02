@@ -140,6 +140,9 @@ void AppsContainer::didSuspend() {
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
   Ion::Backlight::setBrightness(SharedGlobalPrefs().brightnessLevel());
+  /* Force battery level update since it may have been charged while suspended,
+   * even though calculator isn't charging anymore. */
+  Ion::Battery::level(true);
   m_backlightDimmingTimer.reset();
   m_window.updateBatteryAnimation();
   window()->redraw(true);
@@ -392,6 +395,9 @@ void AppsContainer::shutdownDueToLowBattery() {
     m_emptyBatteryWindow.redraw(true);
     Ion::Timing::msleep(3000);
     Ion::Power::suspend();
+    /* Force battery level update since it may have been charged while
+     * suspended, even though calculator isn't charging anymore. */
+    Ion::Battery::level(true);
   }
 }
 

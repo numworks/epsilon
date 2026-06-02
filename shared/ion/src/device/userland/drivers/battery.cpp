@@ -8,7 +8,7 @@ namespace Battery {
 bool SVC_ATTRIBUTES isCharging(){
     SVC_RETURNING_R0(SVC_BATTERY_IS_CHARGING, bool)}
 
-Charge SVC_ATTRIBUTES level() {
+Charge SVC_ATTRIBUTES level(bool forceLevelUpdate) {
   SVC_RETURNING_R0(SVC_BATTERY_LEVEL, Charge)
 }
 

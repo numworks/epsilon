@@ -8,7 +8,8 @@ namespace Graph {
 Ion::Storage::Record AddFunction(const char* definition) {
   Shared::ContinuousFunctionStore& functionStore =
       Shared::GlobalContextAccessor::ContinuousFunctionStore();
-  Ion::Storage::Record::ErrorStatus err = functionStore.addEmptyModel();
+  [[maybe_unused]] Ion::Storage::Record::ErrorStatus err =
+      functionStore.addEmptyModel();
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
   Shared::ContinuousFunction* f;
   {
@@ -21,7 +22,6 @@ Ion::Storage::Record AddFunction(const char* definition) {
   err = f->setContent(Poincare::Layout::Parse(definition),
                       Shared::GlobalContextAccessor::Context());
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
-  (void)err;
   return *f;
 }
 

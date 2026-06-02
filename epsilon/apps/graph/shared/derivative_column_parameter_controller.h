@@ -11,6 +11,9 @@ namespace Graph {
 
 class ParameterDelegate {
  public:
+  /* Plot is used for parameters menu in the grapher's expression list and
+   * calculate menu.
+   * Values is used for parameters menu in the values table. */
   enum DerivativeType { Plot, Values };
   virtual DerivativeType type() const = 0;
   virtual void hideDerivative(Ion::Storage::Record record) = 0;

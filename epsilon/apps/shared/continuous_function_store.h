@@ -39,6 +39,9 @@ class ContinuousFunctionStore : public FunctionStore {
                                         &symbolType);
   }
   typedef bool (ContinuousFunctionProperties::*HasProperty)() const;
+  /* For ContinuousFunction, we count only active functions in plot because
+   * derivatives can be active and yet not handled in plot. For the table,
+   * numberOfActiveFunctionsInTable should be used. */
   int numberOfActiveFunctions() const override;
   Ion::Storage::Record activeRecordAtIndex(int i) const override {
     return recordSatisfyingTestAtIndex(i, &IsFunctionActiveInPlot, nullptr);

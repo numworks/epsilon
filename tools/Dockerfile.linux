@@ -17,6 +17,9 @@ RUN apt-get install clang-17 libc++-17-dev libc++abi-17-dev elfutils && \
     ln -s /usr/bin/clang-17 /usr/local/bin/clang && \
     ln -s /usr/bin/clang++-17 /usr/local/bin/clang++
 
+# Heavy-duty suites in the release gate: clang static analyzer (scan-build) and valgrind
+RUN apt-get install clang-tools-17 valgrind && ln -s /usr/bin/scan-build-17 /usr/local/bin/scan-build
+
 ENV PYTHON=/runner/.venv/bin/python
 
 WORKDIR /monorepo

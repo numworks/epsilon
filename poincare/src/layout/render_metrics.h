@@ -32,6 +32,17 @@ constexpr KDCoordinate k_numeratorMargin = 2;
 constexpr KDCoordinate k_denominatorMargin = 2;
 #endif
 constexpr KDCoordinate k_lineHeight = 1;
+
+inline KDCoordinate ContentHeight(const Layout* node) {
+  return Height(node->child(k_numeratorIndex)) + k_numeratorMargin +
+         k_lineHeight + k_denominatorMargin +
+         Height(node->child(k_denominatorIndex));
+}
+
+inline KDCoordinate ContentBaseline(const Layout* node) {
+  return Height(node->child(k_numeratorIndex)) + k_numeratorMargin +
+         k_lineHeight;
+}
 }  // namespace Fraction
 
 namespace Conjugate {
@@ -695,6 +706,15 @@ constexpr KDSize SizeGivenChildSize(KDSize childSize) {
                     2 * Parenthesis::VerticalMargin(childSize.height()));
 }
 }  // namespace Point2D
+
+namespace Binomial {
+/* Similar to a fraction with parentheses around it but without
+ * horizontal inner margins. */
+inline KDCoordinate ContentWidth(const Layout* node) {
+  return std::max(Width(TwoRows::UpperLayout(node)),
+                  Width(TwoRows::LowerLayout(node)));
+}
+}  // namespace Binomial
 
 namespace ListSequence {
 constexpr KDCoordinate k_variableHorizontalMargin = 1;

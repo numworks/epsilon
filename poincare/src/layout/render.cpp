@@ -228,12 +228,17 @@ KDSize Render::Size(const Layout* l) {
   KDCoordinate height = 0;
 
   switch (l->layoutType()) {
-    case LayoutType::Point2D:
-    case LayoutType::Binomial: {
+    case LayoutType::Point2D: {
       using namespace TwoRows;
       width = RowsWidth(l, s_font) + 2 * Parenthesis::k_parenthesisWidth;
       height = RowsHeight(l, s_font) + UpperMargin(l, s_font) +
                LowerMargin(l, s_font);
+      break;
+    }
+    case LayoutType::Binomial: {
+      using namespace Binomial;
+      width = ContentWidth(l) + 2 * Parenthesis::k_parenthesisWidth;
+      height = Parenthesis::Height(Fraction::ContentHeight(l));
       break;
     }
     case LayoutType::Conj: {
@@ -342,9 +347,7 @@ KDSize Render::Size(const Layout* l) {
       width =
           std::max(numeratorSize.width(), denominatorSize.width()) +
           2 * (Fraction::k_horizontalOverflow + Fraction::k_horizontalMargin);
-      height = numeratorSize.height() + Fraction::k_numeratorMargin +
-               Fraction::k_lineHeight + Fraction::k_denominatorMargin +
-               denominatorSize.height();
+      height = Fraction::ContentHeight(l);
       break;
     }
     case LayoutType::Parentheses:
@@ -504,8 +507,7 @@ KDPoint Grid::positionOfChildAt(int row, int column, KDFont::Size font) const {
 
 KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
   switch (l->layoutType()) {
-    case LayoutType::Point2D:
-    case LayoutType::Binomial: {
+    case LayoutType::Point2D: {
       using namespace TwoRows;
       KDSize size = Size(l);
       if (childIndex == k_upperIndex) {
@@ -516,6 +518,18 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
       return KDPoint(
           (size.width() - Width(LowerLayout(l))) / 2,
           size.height() - Height(LowerLayout(l)) - LowerMargin(l, s_font));
+    }
+    case LayoutType::Binomial: {
+      using namespace Binomial;
+      KDCoordinate x = Parenthesis::k_parenthesisWidth +
+                       (ContentWidth(l) - Width(l->child(childIndex))) / 2;
+      KDCoordinate topMargin =
+          Parenthesis::VerticalMargin(Fraction::ContentHeight(l));
+      KDCoordinate y = (childIndex == TwoRows::k_lowerIndex)
+                           ? topMargin + Fraction::ContentBaseline(l) +
+                                 Fraction::k_denominatorMargin
+                           : topMargin;
+      return KDPoint(x, y);
     }
     case LayoutType::Conj: {
       return KDPoint(
@@ -650,11 +664,10 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
 
     case LayoutType::Fraction: {
       KDCoordinate x = (Width(l) - Size(l->child(childIndex)).width()) / 2;
-      KDCoordinate y = (childIndex == 1)
-                           ? Height(l->child(0)) + Fraction::k_numeratorMargin +
-                                 Fraction::k_lineHeight +
-                                 Fraction::k_denominatorMargin
-                           : 0;
+      KDCoordinate y =
+          (childIndex == Fraction::k_denominatorIndex)
+              ? Fraction::ContentBaseline(l) + Fraction::k_denominatorMargin
+              : 0;
       return KDPoint(x, y);
     }
     case LayoutType::Parentheses:
@@ -719,8 +732,10 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
 KDCoordinate Render::Baseline(const Layout* l) {
   switch (l->layoutType()) {
     case LayoutType::Point2D:
-    case LayoutType::Binomial:
       return (TwoRows::RowsHeight(l, s_font) + 1) / 2;
+    case LayoutType::Binomial:
+      return Parenthesis::Baseline(Fraction::ContentHeight(l),
+                                   Fraction::ContentBaseline(l));
     case LayoutType::Conj:
       return Baseline(l->child(0)) + Conjugate::k_overlineWidth +
              Conjugate::k_overlineVerticalMargin;
@@ -770,8 +785,7 @@ KDCoordinate Render::Baseline(const Layout* l) {
     }
 
     case LayoutType::Fraction:
-      return Height(l->child(0)) + Fraction::k_numeratorMargin +
-             Fraction::k_lineHeight;
+      return Fraction::ContentBaseline(l);
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces:
     case LayoutType::Abs:
@@ -1061,10 +1075,10 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                         const LayoutStyle& style) {
   switch (l->layoutType()) {
     case LayoutType::Binomial: {
-      using namespace TwoRows;
-      KDCoordinate childHeight = RowsHeight(l, s_font);
+      using namespace Binomial;
+      KDCoordinate childHeight = Fraction::ContentHeight(l);
       KDCoordinate rightParenthesisPointX =
-          RowsWidth(l, s_font) + Parenthesis::k_parenthesisWidth;
+          ContentWidth(l) + Parenthesis::k_parenthesisWidth;
       // Draw left parenthesis
       RenderParenthesisWithChildHeight(true, childHeight, ctx, p, style);
       // Draw right parenthesis

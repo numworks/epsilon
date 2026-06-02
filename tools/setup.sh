@@ -57,6 +57,7 @@ install_python_deps() {
     parse \
     pyelftools \
     pypng \
+    pyyaml \
     rich \
     stringcase
 }

@@ -506,8 +506,8 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   if (typeAtLocation(column, 0) != k_functionTitleCellType) {
     return;
   }
-  Shared::Function* function =
-      functionStore()->modelForRecord(recordAtColumn(column)).pointer();
+  OMG::ExpiringPointer<Function> function =
+      functionStore()->modelForRecord(recordAtColumn(column));
   static_cast<FunctionTitleCell*>(cell)->setColor(function->color());
 }
 

@@ -272,6 +272,7 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
+  assert(i > 0);
   ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtColumn(&i);
   Ion::Storage::Record record =
       functionStore()->activeRecordOfSymbolTypeInTableAtIndex(symbolType,
@@ -397,8 +398,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         CAS::ShouldOnlyDisplayApproximation(function->originalEquation(),
                                             result, approximation,
                                             symbolContext)) {
-      // Do not show exact expressions in certain cases, use approximate
-      // result
+      // Do not show exact expressions in certain cases, use approximate result
       result = approximation;
     }
   }

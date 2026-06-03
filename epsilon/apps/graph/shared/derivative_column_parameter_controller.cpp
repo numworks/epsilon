@@ -26,8 +26,8 @@ void DerivativeColumnParameterController::viewWillAppear() {
   assert(m_parameterDelegate);
   m_hideCell.label()->setMessage(m_parameterDelegate->type() ==
                                          ParameterDelegate::DerivativeType::Plot
-                                     ? I18n::Message::HideDerivative
-                                     : I18n::Message::HideDerivativeColumn);
+                                     ? I18n::Message::DeleteDerivative
+                                     : I18n::Message::HideDerivativeValues);
   m_colorCell.setVisible(m_parameterDelegate->type() ==
                          ParameterDelegate::DerivativeType::Plot);
   m_colorCell.subLabel()->setMessage(

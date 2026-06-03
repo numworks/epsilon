@@ -126,6 +126,9 @@ Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addDerivativeModel(
   }
   f.setDerivationOrder(order);
   f.setParentRecord(parentRecord);
+  OMG::ExpiringPointer<ContinuousFunction> parent =
+      modelForRecord(parentRecord);
+  f.setActive(parent->isActive());
   return ErrorStatus::None;
 }
 

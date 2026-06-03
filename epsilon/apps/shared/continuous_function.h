@@ -73,6 +73,12 @@ class ContinuousFunction : public Function {
   bool isActive() const override {
     return Function::isActive() && properties().isEnabled();
   };
+  void setActive(bool active) override {
+    Function::setActive(active);
+    if (canDisplayDerivative()) {
+      setActiveDerivatives();
+    }
+  }
   // If the ContinuousFunction has y for unknown symbol
   bool isAlongY() const override { return properties().isAlongY(); }
 
@@ -142,6 +148,8 @@ class ContinuousFunction : public Function {
   // Update plotType as well as tMin and tMax values.
   void updateModel(bool wasCartesian);
   void updateDerivativeModels();
+  void setActiveDerivatives();
+
   const Poincare::PreparedFunction& expressionApproximated(
       int derivationOrder = 0) const {
     return m_model.expressionApproximated(this, derivationOrder);

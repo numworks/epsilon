@@ -38,7 +38,7 @@ class Function : public ExpressionModelHandle {
   virtual bool isActive() const { return recordData()->isActive(); }
   Escher::ThemeComponent color() const { return recordData()->color(); }
   void setColor(Escher::ThemeComponent color) { recordData()->setColor(color); }
-  void setActive(bool active);
+  virtual void setActive(bool active);
   virtual int numberOfSubCurves() const { return 1; }
   virtual bool isAlongY() const { return false; }
 

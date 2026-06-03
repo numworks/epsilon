@@ -181,10 +181,10 @@ bool ContinuousFunction::isActiveInTable() const {
   int order = derivationOrder();
   assert(order == 1 || order == 2);
   OMG::ExpiringPointer<ContinuousFunction> parent = parentFunction();
-  assert(!parent->isNull() && parent->properties().canBeActiveInTable());
-  return parent->isActive() && parent->displayValueDerivative(order);
+  assert(!parent->isNull() && parent->isActive() &&
+         parent->properties().canBeActiveInTable());
+  return parent->displayValueDerivative(order);
 }
-
 bool ContinuousFunction::isActiveInPlot() const {
   if (!isActive()) {
     return false;
@@ -195,8 +195,8 @@ bool ContinuousFunction::isActiveInPlot() const {
   int order = derivationOrder();
   assert(order == 1 || order == 2);
   OMG::ExpiringPointer<ContinuousFunction> parent = parentFunction();
-  assert(!parent->isNull());
-  return parent->isActive() && parent->displayPlotDerivative(order);
+  assert(!parent->isNull() && parent->isActive());
+  return parent->displayPlotDerivative(order);
 }
 
 bool ContinuousFunction::isNamed() const {
@@ -279,6 +279,19 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
   } else {
     // Derivatives are depend on their parent's, update them
     updateDerivativeModels();
+  }
+}
+
+void ContinuousFunction::setActiveDerivatives() {
+  assert(canDisplayDerivative());
+  ContinuousFunctionStore& store =
+      GlobalContextAccessor::ContinuousFunctionStore();
+  for (int i = 0; i < store.numberOfModels(); i++) {
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        store.modelForRecord(store.recordAtIndex(i));
+    if (f->isDerivative() && f->parentRecord() == *this) {
+      f->setActive(isActive());
+    }
   }
 }
 

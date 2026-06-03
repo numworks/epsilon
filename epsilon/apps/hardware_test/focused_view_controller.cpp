@@ -16,6 +16,8 @@ void FocusedViewController::viewWillAppear() {
                  : Escher::ThemeComponent::BasicRed);
   m_view.setTexts(testName(), m_success ? "OK" : "NG");
   m_view.setBackgroundColor(backgroundColor);
+  /* Only display the prefix data, which in this context is always a number of
+   * failing pixels, if there are errors */
   if (prefixData() > 0) {
     constexpr int bufferSize = 20;
     char buffer[bufferSize] = {0};

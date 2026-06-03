@@ -67,14 +67,10 @@ class ScrollableThreeLayoutsView
     void setShowEqualSignAfterFormula(bool showEqual) {
       m_leftLayoutView.setShowEqual(showEqual);
     }
-    void setHighlightWholeCell(bool highlightWholeCell) {
-      m_highlightWholeCell = highlightWholeCell;
-    };
 
    private:
     void reloadTextColor() override;
     LayoutWithEqualSignView m_leftLayoutView;
-    bool m_highlightWholeCell;
   };
 
   ContentCell* contentCell() override { return &m_contentCell; };

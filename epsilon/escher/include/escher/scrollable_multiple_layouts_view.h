@@ -127,6 +127,13 @@ class AbstractScrollableMultipleLayoutsView
     void subviewFrames(KDRect* leftFrame, KDRect* centerFrame,
                        KDRect* comparisonSignFrame, KDRect* rightFrame);
 
+   protected:
+    void setHighlightWholeCell(bool highlightWholeCell) {
+      m_highlightWholeCell = highlightWholeCell;
+    };
+
+    bool m_highlightWholeCell;
+
    private:
     void updateSubviewsBackgroundAfterChangingState() override;
     KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;

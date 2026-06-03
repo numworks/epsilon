@@ -135,7 +135,10 @@ class ContinuousFunctionProperties {
   bool isEnabled() const { return status() == Status::Enabled; }
 
   /* Cartesian curves are cartesian functions and all equations of the type
-   * y=... (which can be default or lines). */
+   * y=... (which can be default or lines).
+   * We used to sort cartesian/parametric/polar/inverse polar by symbol type,
+   * but derivatives are now expressions which are cartesian but can have a
+   * different symbol (their parent's). */
   bool isCartesian() const {
     CurveParameterType t = getCurveParameterType();
     return t == CurveParameterType::CartesianFunction ||

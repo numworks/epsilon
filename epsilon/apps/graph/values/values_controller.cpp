@@ -274,6 +274,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   assert(i > 0);
   ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtColumn(&i);
+  // First column is the symbol so indexes start at 1. Shift i for record index.
   Ion::Storage::Record record =
       functionStore()->activeRecordOfSymbolTypeInTableAtIndex(symbolType,
                                                               i - 1);

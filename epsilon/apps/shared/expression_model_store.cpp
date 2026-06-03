@@ -17,7 +17,11 @@ Ion::Storage::Record ExpressionModelStore::recordAtIndex(int i) const {
 
 ExpressionModelHandle* ExpressionModelStore::privateModelForRecord(
     Ion::Storage::Record record) const {
-  // Search from newer to older models
+  /* Search from newest to oldest models to avoid fetching a stale record. This
+   * is only necessary because tests do not instantiate a delegate and thus do
+   * not clean up the cache correctly.
+   * TODO: refactor tests to use a delegate and revert this loop to a forward
+   * search. */
   int n = maxNumberOfMemoizedModels();
   for (int j = 0; j < n; j++) {
     int i = (m_oldestMemoizedIndex - 1 - j + n) % n;

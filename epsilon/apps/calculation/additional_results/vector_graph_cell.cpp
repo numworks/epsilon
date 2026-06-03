@@ -46,10 +46,10 @@ void VectorGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   // - Draw arrow
   plotView->drawSegment(ctx, rect, Coordinate2D<float>(0.f, 0.f),
                         Coordinate2D<float>(x, y),
-                        ColorPicker::Resolve(ThemeComponent::AxisBold));
+                        ColorPicker::Resolve(ThemeComponent::GraphIndicator));
   plotView->drawArrowhead(ctx, rect, Coordinate2D<float>(x, y),
                           Coordinate2D<float>(x, y), k_arrowSizeInPixels,
-                          ColorPicker::Resolve(ThemeComponent::AxisBold));
+                          ColorPicker::Resolve(ThemeComponent::GraphIndicator));
 }
 
 VectorGraphView::VectorGraphView(VectorModel* model) : PlotView(model) {

@@ -68,7 +68,7 @@ namespace Escher {
   X(AxisMedium)                \
   X(AxisSecondary)             \
   X(InterestPoint)             \
-  X(AxisBold)                  \
+  X(GraphIndicator)            \
   X(Curve)                     \
   X(CurveHatchedArea)          \
   X(TokenWhite)                \

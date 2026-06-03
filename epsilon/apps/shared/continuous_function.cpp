@@ -172,7 +172,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
   return error;
 }
 bool ContinuousFunction::isActiveInTable() const {
-  if (!properties().canBeActiveInTable() || !isActive()) {
+  if (!isActive() || !properties().canBeActiveInTable()) {
     return false;
   }
   if (!isDerivative()) {
@@ -185,6 +185,7 @@ bool ContinuousFunction::isActiveInTable() const {
          parent->properties().canBeActiveInTable());
   return parent->displayValueDerivative(order);
 }
+
 bool ContinuousFunction::isActiveInPlot() const {
   if (!isActive()) {
     return false;

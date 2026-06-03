@@ -22,9 +22,6 @@ class App : public Escher::App {
  public:
   constexpr static size_t k_numberOfTests = 9;
 
-  /* TODO: add a runtime parameter to switch between grouped mode and
-   * one-by-one mode */
-
   // Tests that run in the GroupTestController batch
   constexpr static size_t k_numberOfGroupedTests = 4;
   constexpr static size_t k_numberOfTestRuns =

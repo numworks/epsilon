@@ -42,10 +42,12 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(
   /* Do not call HighlightCell::setHighlighted to avoid marking all cell as
    * dirty */
   setHighlightedWithoutReload(highlight);
-  m_centeredLayoutView.setHighlighted(highlight && m_selectedSubviewPosition ==
-                                                       SubviewPosition::Center);
-  m_rightLayoutView.setHighlighted(highlight && m_selectedSubviewPosition ==
-                                                    SubviewPosition::Right);
+  m_centeredLayoutView.setHighlighted(
+      highlight && (m_highlightWholeCell ||
+                    m_selectedSubviewPosition == SubviewPosition::Center));
+  m_rightLayoutView.setHighlighted(
+      highlight && (m_highlightWholeCell ||
+                    m_selectedSubviewPosition == SubviewPosition::Right));
   if (displayLeftLayout()) {
     leftLayoutView()->setHighlighted(highlight && m_selectedSubviewPosition ==
                                                       SubviewPosition::Left);

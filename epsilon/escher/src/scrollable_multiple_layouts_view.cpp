@@ -52,6 +52,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(
     leftLayoutView()->setHighlighted(highlight && m_selectedSubviewPosition ==
                                                       SubviewPosition::Left);
   }
+  m_comparisonSign.setHighlighted(highlight && m_highlightWholeCell);
 }
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::

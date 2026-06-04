@@ -76,6 +76,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .TokenYellow = Palette::DARK_VioletDeep,
     .GraphSpecialLabels = Palette::DARK_VioletDeep,
     .TokenBlack = Palette::DARK_VioletPale,
+    .IntersectionArea = Palette::DARK_VioletPale,
     .TokenGrayMiddle = Palette::DARK_VioletPale,
     .TokenGrayBright = Palette::DARK_VioletMiddle,
     .GraphInterestPoint = Palette::White,

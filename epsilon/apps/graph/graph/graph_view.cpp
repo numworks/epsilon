@@ -252,7 +252,7 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
         continue;
       }
       ctx->setPixel(KDPoint(xCoord, yCoord),
-                    ColorPicker::Resolve(ThemeComponent::TokenBlack));
+                    ColorPicker::Resolve(ThemeComponent::IntersectionArea));
     }
   }
 }

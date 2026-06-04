@@ -45,6 +45,7 @@ namespace Escher {
   X(TextGrayVeryDark)          \
   X(TextWhite)                 \
   X(TextPurple)                \
+  X(ScrollBar)                 \
   X(Cursor)                    \
   X(BorderGrayMiddle)          \
   X(BorderGrayWhite)           \

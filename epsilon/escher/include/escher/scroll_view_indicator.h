@@ -22,8 +22,7 @@ class ScrollViewBar : public ScrollViewIndicator {
  protected:
   constexpr static KDCoordinate k_indicatorThickness =
       Metric::ScrollViewBarThickness;
-  constexpr static ThemeComponent k_trackColor =
-      ThemeComponent::TokenGrayMiddle;
+  constexpr static ThemeComponent k_trackColor = ThemeComponent::ScrollBar;
 #if ESCHER_VIEW_LOGGING
   const char* className() const override;
   void logAttributes(std::ostream& os) const override;

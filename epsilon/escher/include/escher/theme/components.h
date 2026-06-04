@@ -87,7 +87,6 @@ namespace Escher {
   X(ElementsConnector)             \
   X(TokenGrayBright)               \
   X(GraphInterestPoint)            \
-  X(TokenGrayDark)                 \
   X(TokenEllipsis)                 \
   X(TokenBatteryLevel)             \
   X(TokenBatteryBackground)        \

@@ -86,7 +86,6 @@ constexpr static ThemeContainer k_lightTheme =
                    .ElementsConnector = Palette::GrayMiddle,
                    .TokenGrayBright = Palette::GrayBright,
                    .GraphInterestPoint = Palette::GrayDarkest,
-                   .TokenGrayDark = Palette::GrayDark,
                    .TokenEllipsis = Palette::Black,
                    .TokenBatteryLevel = Palette::YellowLightBattery,
                    .TokenBatteryBackground = Palette::GrayDark,

@@ -69,6 +69,7 @@ namespace Escher {
   X(AxisSecondary)             \
   X(TangentGraph)              \
   X(GraphIndicator)            \
+  X(GraphIndicatorSecondary)   \
   X(Curve)                     \
   X(CurveHatchedArea)          \
   X(TokenWhite)                \

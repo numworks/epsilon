@@ -34,10 +34,11 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
             Escher::ColorPicker::Resolve(s->color()));
     if (x >= m_highlightedStart && x <= m_highlightedEnd &&
         record == m_selectedRecord) {
-      KDColor color = m_shouldColorHighlighted
-                          ? Escher::ColorPicker::Resolve(s->color())
-                          : Escher::ColorPicker::Resolve(
-                                Escher::ThemeComponent::TokenBlack);
+      KDColor color =
+          m_shouldColorHighlighted
+              ? Escher::ColorPicker::Resolve(s->color())
+              : Escher::ColorPicker::Resolve(
+                    Escher::ThemeComponent::GraphIndicatorSecondary);
       drawStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y, 0.f, color);
     }
   }

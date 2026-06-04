@@ -70,6 +70,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .AxisSecondary = Palette::DARK_AxisSecondary,
     .TangentGraph = Palette::DARK_AxisSecondary,
     .GraphIndicator = Palette::Red,
+    .GraphIndicatorSecondary = Palette::DARK_VioletPale,
     .Curve = Palette::DARK_VioletDeep,
     .CurveHatchedArea = Palette::White,
     .TokenWhite = Palette::Black,

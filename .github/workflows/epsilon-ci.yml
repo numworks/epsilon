@@ -214,12 +214,6 @@ jobs:
       - name: Run unit tests sequentially (if parallel run failed)
         if: steps.run-tests.outcome == 'failure'
         run: $DOCKER_RUN "rm -f core; epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage || (eu-stack --core core; exit 1)"
-      - uses: ./.github/actions/upload-artifact
-        name: Upload artifact
-        with:
-          name: epsilon-linux.bin
-          path: epsilon/output/debug/optimized/linux/epsilon.bin
-          token: ${{ secrets.ARTEMIS_TOKEN }}
   macos:
     timeout-minutes: 15
     runs-on: macOS-latest

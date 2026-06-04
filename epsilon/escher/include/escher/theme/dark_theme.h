@@ -24,6 +24,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .CellOdd = Palette::Black,
     .CellTableEven = Palette::Black,
     .CellTableOdd = Palette::DARK_AxisSecondary,
+    .ActiveTabSelected = Palette::White,
     .InactiveTabSelected = Palette::White,
     .SurfaceSelect = Palette::DARK_VioletPale,
     .SurfaceSelectApps = Palette::DARK_VioletPale,

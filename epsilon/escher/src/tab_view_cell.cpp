@@ -42,7 +42,7 @@ void TabViewCell::drawRect(KDContext* ctx, KDRect rect) const {
   ThemeComponent inactiveBackground = m_controller->tabBackgroundColor();
   ThemeComponent background =
       m_active ? ThemeComponent::DefaultBackground : inactiveBackground;
-  ThemeComponent selection = m_active ? ThemeComponent::SurfaceSelect
+  ThemeComponent selection = m_active ? ThemeComponent::ActiveTabSelected
                                       : ThemeComponent::InactiveTabSelected;
   background = m_selected ? selection : background;
   text = Highlight(text, m_selected);

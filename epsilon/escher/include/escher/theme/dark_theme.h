@@ -55,6 +55,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .BorderBoxTitleCell = Palette::DARK_VioletMiddle,
     .BorderElementsBanner = Palette::DARK_VioletDeep,
     .SeparatorTitleBar = Palette::Black,
+    .SeparatorTitleHeaders = Palette::DARK_VioletPale,
     .ButtonLightBorderMain = Palette::DARK_VioletMiddle,
     .ButtonLightBorderBottom = Palette::DARK_VioletMiddle,
     .ButtonLightShadow1 = Palette::DARK_VioletDeep,

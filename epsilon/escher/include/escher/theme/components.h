@@ -54,6 +54,7 @@ namespace Escher {
   X(BorderBoxTitleCell)        \
   X(BorderElementsBanner)      \
   X(SeparatorTitleBar)         \
+  X(SeparatorTitleHeaders)     \
   X(ButtonLightBorderMain)     \
   X(ButtonLightBorderBottom)   \
   X(ButtonLightShadow1)        \

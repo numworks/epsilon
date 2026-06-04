@@ -14,8 +14,8 @@ class StackHeaderView : public View, public Bordered {
       const ViewController* controller = nullptr,
       ThemeComponent textColor = ThemeComponent::TextDefault,
       ThemeComponent backgroundColor = ThemeComponent::BackgroundPopup,
-      ThemeComponent separatorColor = ThemeComponent::TokenBlack,
-      ThemeComponent borderColor = ThemeComponent::TokenBlack);
+      ThemeComponent separatorColor = ThemeComponent::SeparatorTitleHeaders,
+      ThemeComponent borderColor = ThemeComponent::SeparatorTitleHeaders);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:

@@ -12,6 +12,11 @@ typename remove_reference<T>::type&& move(T&& a) {
   return (typename remove_reference<T>::type&&)a;
 }
 
+template <class T>
+constexpr underlying_type_t<T> to_underlying(T value) noexcept {
+  return static_cast<underlying_type_t<T>>(value);
+}
+
 using size_t = size_t;
 
 // make_integer_sequence and helpers have been copied from libc++

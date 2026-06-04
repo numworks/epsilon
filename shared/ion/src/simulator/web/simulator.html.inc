@@ -32,7 +32,36 @@
     <script src=EM_MODULE_JS></script>
     <script>
 #include "calculator.js"
-      var ModuleAsync = {};
+      var ModuleAsync = {
+          /* A binary state file (.nws) can be injected with epsilon.html?nws=<base64>.
+           * We strip the NWSF header in JS and only push the event stream through
+           * the pre-existing IonSimulatorEventsPushEventArray export, so this stays
+           * compatible with already-deployed wasm builds. The header's language and
+           * theme fields are ignored (they are consumed at boot only). */
+          onLoaded: function () {
+            var nwsBase64 = new URLSearchParams(window.location.search).get('nws');
+            if (!nwsBase64) {
+              return;
+            }
+            var binary = atob(nwsBase64.replace(/-/g, '+').replace(/_/g, '/'));
+            var bytes = new Uint8Array(binary.length);
+            for (var i = 0; i < binary.length; i++) {
+              bytes[i] = binary.charCodeAt(i);
+            }
+            /* NWSF header: "NWSF"(4) + version(8) + properties(1) + language(2) = 15 */
+            var headerLength = 15;
+            var magic = String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3]);
+            if (magic === 'NWSF' && bytes.length >= headerLength) {
+              var events = bytes.subarray(headerLength);
+              var ptr = this._malloc(events.length);
+              this.HEAPU8.set(events, ptr);
+              this._IonSimulatorEventsPushEventArray(ptr, events.length, 0, -1);
+              this._free(ptr);
+            } else {
+              console.error('Invalid nws parameter: bad magic or too short');
+            }
+          }
+      };
       var Module = {
           UTF8ToString: (x => x),
           _IonSoftwareVersion: (() => SOFTWARE_VERSION),

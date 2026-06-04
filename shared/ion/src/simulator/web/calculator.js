@@ -123,6 +123,13 @@ function Calculator(emModule) {
       span.addEventListener('pointerdown', downHandler);
       span.addEventListener('pointerup', upHandler);
     });
+
+    /* Post-load hook: lets the embedder run code once Epsilon is loaded and the
+     * _IonSimulator* exports are available (e.g. the standalone simulator uses
+     * it to inject a .nws state file). */
+    if (typeof emModule.onLoaded === 'function') {
+      emModule.onLoaded();
+    }
   });
 
   function resizeImgForJpg(img) {

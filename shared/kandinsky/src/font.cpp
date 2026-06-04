@@ -193,5 +193,9 @@ bool KDFont::CanBeWrittenWithGlyphs(const char* text) {
     }
     cp = decoder.nextCodePoint();
   }
-  return true;
+  /* An overlong-encoded NUL (e.g. \xc0\x80 or \xe0\x80\x80) decodes to
+   * UCodePointNull and exits the loop early, leaving unvalidated bytes after
+   * it. Reject such sequences by checking that the decoder consumed a real
+   * NUL terminator byte. */
+  return *(decoder.stringPosition() - 1) == '\0';
 }

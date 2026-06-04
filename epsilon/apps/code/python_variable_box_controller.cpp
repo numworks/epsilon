@@ -724,6 +724,12 @@ void PythonVariableBoxController::loadCurrentVariablesInScript(
         assert(beginningLineIndex == line);
         // tok_column starts at 1, not 0
         const char* tokenInText = beginningLine + lex->tok_column - 1;
+        /* tok_column is tab-expanded (MicroPython TAB_SIZE=8), not a byte
+         * offset, so this is wrong if a tab precedes the token on the same
+         * line. CanBeWrittenWithGlyphs prevents tabs from entering via
+         * ExternalText. If this assertion fires, a new insertion path bypasses
+         * that guard; fix it by scanning from beginningLine with tab-expansion
+         * instead of using tok_column as a byte offset. */
         assert(strncmp(tokenInText, lex->vstr.buf, nameLength) == 0);
 
         ScriptNode::Type nodeType =

@@ -121,26 +121,26 @@ void EquationListView::BraceView::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor braceWorkingBuffer[60];
   ctx->blendRectWithMask(
       KDRect(margin, 0, braceExtremumWidth, braceExtremumHeight),
-      ColorPicker::Resolve(ThemeComponent::TokenBlack),
+      ColorPicker::Resolve(ThemeComponent::TextDefault),
       (const uint8_t*)topBrace, (KDColor*)(braceWorkingBuffer));
   ctx->blendRectWithMask(KDRect(0, height / 2 - braceCenterHeight / 2,
                                 braceCenterWidth, braceCenterHeight),
-                         ColorPicker::Resolve(ThemeComponent::TokenBlack),
+                         ColorPicker::Resolve(ThemeComponent::TextDefault),
                          (const uint8_t*)middleBrace,
                          (KDColor*)(braceWorkingBuffer));
   ctx->blendRectWithMask(KDRect(margin, height - braceExtremumHeight,
                                 braceExtremumWidth, braceExtremumHeight),
-                         ColorPicker::Resolve(ThemeComponent::TokenBlack),
+                         ColorPicker::Resolve(ThemeComponent::TextDefault),
                          (const uint8_t*)bottomBrace,
                          (KDColor*)(braceWorkingBuffer));
   ctx->fillRect(
       KDRect(margin, braceExtremumHeight, 1,
              height / 2 - braceCenterHeight / 2 - braceExtremumHeight),
-      ColorPicker::Resolve(ThemeComponent::TokenBlack));
+      ColorPicker::Resolve(ThemeComponent::TextDefault));
   ctx->fillRect(
       KDRect(margin, height / 2 + braceCenterHeight / 2, 1,
              height / 2 - braceExtremumHeight / 2 - braceExtremumHeight),
-      ColorPicker::Resolve(ThemeComponent::TokenBlack));
+      ColorPicker::Resolve(ThemeComponent::TextDefault));
 }
 
 KDSize EquationListView::BraceView::minimalSizeForOptimalDisplay() const {

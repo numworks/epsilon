@@ -53,8 +53,9 @@ void OkView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect frame((width - k_okSize) / 2, (height - k_okSize) / 2, k_okSize,
                k_okSize);
   KDColor okWorkingBuffer[OkView::k_okSize * OkView::k_okSize];
+  // The "OK" logo is the same color as the text in the prompt view
   ctx->blendRectWithMask(
-      frame, Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenBlack),
+      frame, Escher::ColorPicker::Resolve(Escher::ThemeComponent::TextDefault),
       (const uint8_t*)okMask, okWorkingBuffer);
 }
 

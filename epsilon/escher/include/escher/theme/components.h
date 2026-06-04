@@ -47,7 +47,8 @@ namespace Escher {
   X(TextPurple)                    \
   X(ExpressionRequiredPlaceholder) \
   X(ExpressionOptionalPlaceholder) \
-  X(ScrollBar)                     \
+  X(ScrollBarIndicator)            \
+  X(ScrollBarBackground)           \
   X(Cursor)                        \
   X(BorderGrayMiddle)              \
   X(BorderGrayWhite)               \

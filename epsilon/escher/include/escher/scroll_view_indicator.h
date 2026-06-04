@@ -9,7 +9,7 @@ namespace Escher {
 
 class ScrollViewIndicator : public View {
  protected:
-  constexpr static ThemeComponent k_color = ThemeComponent::TokenGrayDark;
+  constexpr static ThemeComponent k_color = ThemeComponent::ScrollBarIndicator;
 };
 
 class ScrollViewBar : public ScrollViewIndicator {
@@ -22,7 +22,8 @@ class ScrollViewBar : public ScrollViewIndicator {
  protected:
   constexpr static KDCoordinate k_indicatorThickness =
       Metric::ScrollViewBarThickness;
-  constexpr static ThemeComponent k_trackColor = ThemeComponent::ScrollBar;
+  constexpr static ThemeComponent k_trackColor =
+      ThemeComponent::ScrollBarBackground;
 #if ESCHER_VIEW_LOGGING
   const char* className() const override;
   void logAttributes(std::ostream& os) const override;

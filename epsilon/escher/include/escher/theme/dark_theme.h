@@ -74,8 +74,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .CurveHatchedArea = Palette::White,
     .TokenWhite = Palette::Black,
     .TokenYellow = Palette::DARK_VioletDeep,
-    // TODO: confirm TokenRed and TokenPurple
-    .TokenRed = Palette::DARK_VioletDeep,
+    .GraphSpecialLabels = Palette::DARK_VioletDeep,
     .TokenBlack = Palette::DARK_VioletPale,
     .TokenGrayMiddle = Palette::DARK_VioletPale,
     .TokenGrayBright = Palette::DARK_VioletMiddle,

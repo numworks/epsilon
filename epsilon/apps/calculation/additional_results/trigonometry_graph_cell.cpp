@@ -54,7 +54,7 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
       AbstractPlotView::RelativePosition::There,
       labelOnLine ? AbstractPlotView::RelativePosition::Before
                   : AbstractPlotView::RelativePosition::There,
-      ThemeComponent::TokenRed);
+      ThemeComponent::GraphSpecialLabels);
   // Draw the arc
   drawArcOfEllipse(plotView, ctx, rect, {0.f, 0.f}, k_arcRatio, k_arcRatio,
                    0.0f, angle,
@@ -65,12 +65,12 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
                       c >= 0.f ? AbstractPlotView::RelativePosition::Before
                                : AbstractPlotView::RelativePosition::After,
                       AbstractPlotView::RelativePosition::There,
-                      ThemeComponent::TokenRed);
+                      ThemeComponent::GraphSpecialLabels);
   plotView->drawLabel(ctx, rect, "cos(θ)", Coordinate2D<float>(c, 0.f),
                       AbstractPlotView::RelativePosition::There,
                       s >= 0.f ? AbstractPlotView::RelativePosition::After
                                : AbstractPlotView::RelativePosition::Before,
-                      ThemeComponent::TokenRed);
+                      ThemeComponent::GraphSpecialLabels);
 }
 
 void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,

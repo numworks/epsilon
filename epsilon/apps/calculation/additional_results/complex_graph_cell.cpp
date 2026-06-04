@@ -53,12 +53,12 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
                       AbstractPlotView::RelativePosition::There,
                       imag > 0.f ? AbstractPlotView::RelativePosition::After
                                  : AbstractPlotView::RelativePosition::Before,
-                      ThemeComponent::TokenRed);
+                      ThemeComponent::GraphSpecialLabels);
   plotView->drawLabel(ctx, rect, "im(z)", Coordinate2D<float>(0.f, imag),
                       real > 0.f ? AbstractPlotView::RelativePosition::Before
                                  : AbstractPlotView::RelativePosition::After,
                       AbstractPlotView::RelativePosition::There,
-                      ThemeComponent::TokenRed);
+                      ThemeComponent::GraphSpecialLabels);
 
   AbstractPlotView::RelativePosition verticalPosition;
   if (real == 0.f) {
@@ -71,7 +71,7 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   plotView->drawLabel(ctx, rect, "|z|",
                       Coordinate2D<float>(0.5f * real, 0.5f * imag),
                       AbstractPlotView::RelativePosition::There,
-                      verticalPosition, ThemeComponent::TokenRed);
+                      verticalPosition, ThemeComponent::GraphSpecialLabels);
 
   AbstractPlotView::RelativePosition horizontalPosition =
       real >= 0.f ? AbstractPlotView::RelativePosition::After
@@ -87,7 +87,7 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
       ctx, rect, "arg(z)",
       Coordinate2D<float>(a * std::cos(anglePositionRatio * th),
                           b * std::sin(anglePositionRatio * th)),
-      horizontalPosition, verticalPosition, ThemeComponent::TokenRed);
+      horizontalPosition, verticalPosition, ThemeComponent::GraphSpecialLabels);
 }
 
 ComplexGraphView::ComplexGraphView(ComplexModel* complexModel)

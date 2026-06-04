@@ -25,7 +25,7 @@ class FunctionAxis : public Shared::PlotPolicy::LabeledAxis<N> {
   constexpr static int k_labelsPrecision =
       Poincare::Preferences::VeryShortNumberOfSignificantDigits;
   constexpr static Escher::ThemeComponent k_specialLabelsColor =
-      Escher::ThemeComponent::TokenRed;
+      Escher::ThemeComponent::GraphSpecialLabels;
 
   // AbstractLabeledAxis
   bool labelWillBeDisplayed(size_t labelIndex, KDRect labelRect) const override;

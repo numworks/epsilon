@@ -73,7 +73,7 @@ namespace Escher {
   X(CurveHatchedArea)          \
   X(TokenWhite)                \
   X(TokenYellow)               \
-  X(TokenRed)                  \
+  X(GraphSpecialLabels)        \
   X(TokenBlack)                \
   X(TokenGrayMiddle)           \
   X(TokenGrayBright)           \

@@ -771,7 +771,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
     KDColor color =
         isDiscontinuity
             ? ColorPicker::Resolve(f->color())
-            : Escher::ColorPicker::Resolve(ThemeComponent::TokenGrayDarkest);
+            : Escher::ColorPicker::Resolve(ThemeComponent::GraphInterestPoint);
     if (isRing) {
       drawRing(ctx, rect, k_dotSize, dotCoordinates, color, false);
     } else {

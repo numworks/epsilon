@@ -22,7 +22,8 @@ class MemoizedCursorView : public CursorView {
   virtual KDCoordinate size() const = 0;
   virtual KDColor* underneathPixelBuffer() const = 0;
   Escher::ThemeComponent color() const {
-    return isHighlighted() ? Escher::ThemeComponent::TokenGrayDarkest : m_color;
+    return isHighlighted() ? Escher::ThemeComponent::GraphInterestPoint
+                           : m_color;
   }
   mutable bool m_underneathPixelBufferLoaded;
   bool eraseCursorIfPossible(const Escher::View* parent);

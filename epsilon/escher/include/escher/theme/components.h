@@ -67,7 +67,7 @@ namespace Escher {
   X(AxisLight)                 \
   X(AxisMedium)                \
   X(AxisSecondary)             \
-  X(InterestPoint)             \
+  X(TangentGraph)              \
   X(GraphIndicator)            \
   X(Curve)                     \
   X(CurveHatchedArea)          \

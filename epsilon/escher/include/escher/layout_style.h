@@ -12,9 +12,11 @@ struct LayoutStyle {
   TextStyle textStyle = {};
   ThemeComponent backgroundSelectionColor = ThemeComponent::SurfaceSelect;
   ThemeComponent glyphSelectionColor = ThemeComponent::TextSelect;
-  ThemeComponent requiredPlaceholderColor = ThemeComponent::TokenYellow;
-  ThemeComponent optionalPlaceholderColor = ThemeComponent::TokenGrayBright;
-  ThemeComponent piecewiseCommaColor = ThemeComponent::TokenGrayDark;
+  ThemeComponent requiredPlaceholderColor =
+      ThemeComponent::ExpressionRequiredPlaceholder;
+  ThemeComponent optionalPlaceholderColor =
+      ThemeComponent::ExpressionOptionalPlaceholder;
+  ThemeComponent piecewiseCommaColor = ThemeComponent::TextGrayDark;
 };
 
 Poincare::LayoutStyle ToPoincareLayoutStyle(const LayoutStyle& layoutStyle);

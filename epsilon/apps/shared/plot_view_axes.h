@@ -77,7 +77,7 @@ class WithPolarGrid {
   constexpr static Escher::ThemeComponent k_boldColor =
       Escher::ThemeComponent::AxisMedium;
   constexpr static Escher::ThemeComponent k_lightColor =
-      Escher::ThemeComponent::TokenGrayBright;
+      Escher::ThemeComponent::GraphPolarGridLight;
   constexpr static float k_minimumGraduationDistanceToCenter = 60;
   constexpr static int k_numberOfGraduations = 24;
 

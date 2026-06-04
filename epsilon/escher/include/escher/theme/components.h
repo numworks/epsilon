@@ -75,6 +75,7 @@ namespace Escher {
   X(AxisLight)                     \
   X(AxisMedium)                    \
   X(AxisSecondary)                 \
+  X(GraphPolarGridLight)           \
   X(TangentGraph)                  \
   X(GraphIndicator)                \
   X(GraphIndicatorSecondary)       \
@@ -85,7 +86,6 @@ namespace Escher {
   X(GraphSpecialLabels)            \
   X(IntersectionArea)              \
   X(ElementsConnector)             \
-  X(TokenGrayBright)               \
   X(GraphInterestPoint)            \
   X(TokenEllipsis)                 \
   X(TokenBatteryLevel)             \

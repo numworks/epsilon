@@ -23,9 +23,11 @@ static void drawUnequal(KDContext* ctx, KDRect bounds) {
   KDRect frame(bounds.width() - k_size, bounds.height() / 2 - k_size / 2,
                k_size, k_size);
   KDColor buffer[k_size * k_size];
-  ctx->blendRectWithMask(frame,
-                         ColorPicker::Resolve(ThemeComponent::TokenGrayDark),
-                         &unequalMask[0][0], buffer);
+  /* The unequal logo appears next to the auto-zoom toggleable dot, they should
+   * be the same color */
+  ctx->blendRectWithMask(
+      frame, ColorPicker::Resolve(ThemeComponent::ToggleDotInactive),
+      &unequalMask[0][0], buffer);
 }
 
 KDSize UnequalView::minimalSizeForOptimalDisplay() const {

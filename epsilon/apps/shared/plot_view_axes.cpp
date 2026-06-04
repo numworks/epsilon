@@ -169,7 +169,8 @@ void WithPolarGrid::TryDrawLabel(const AbstractPlotView* plotView,
   if (labelRect.intersects(*lastDrawnLabelRect)) {
     return;
   }
-  plotView->drawLabel(ctx, rect, text, labelRect, k_boldColor);
+  plotView->drawLabel(ctx, rect, text, labelRect,
+                      Escher::ThemeComponent::GraphPolarGridLabels);
   *lastDrawnLabelRect = labelRect;
 }
 

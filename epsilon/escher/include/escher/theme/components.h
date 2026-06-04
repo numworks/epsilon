@@ -79,6 +79,7 @@ namespace Escher {
   X(TangentGraph)                  \
   X(GraphIndicator)                \
   X(GraphIndicatorSecondary)       \
+  X(GraphPolarGridLabels)          \
   X(GraphSpecialLabels)            \
   X(GraphInterestPoint)            \
   X(Curve)                         \

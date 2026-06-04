@@ -161,6 +161,14 @@ jobs:
             echo "/commit/$HASH/epsilon.html" \
               | curl -u ${{ secrets.ARTEMIS_TOKEN }} -T - ${{ vars.ARTEMIS_URL }}/branch/master/epsilon.html
           fi
+      - name: Update branch/<pr>/epsilon.html alias
+        if: github.event_name == 'pull_request'
+        run: |
+          HASH=$(echo ${{ github.sha }} | head -c 10)
+          if curl -s -f -I ${{ vars.ARTEMIS_URL }}/commit/$HASH/epsilon.html -o /dev/null; then
+            echo "/commit/$HASH/epsilon.html" \
+              | curl -u ${{ secrets.ARTEMIS_TOKEN }} -T - ${{ vars.ARTEMIS_URL }}/branch/${{ github.head_ref }}/epsilon.html
+          fi
 
   web-tests:
     timeout-minutes: 15

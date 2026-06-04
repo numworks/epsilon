@@ -79,7 +79,7 @@ namespace Escher {
   X(TokenYellow)               \
   X(GraphSpecialLabels)        \
   X(IntersectionArea)          \
-  X(TokenGrayMiddle)           \
+  X(ElementsConnector)         \
   X(TokenGrayBright)           \
   X(GraphInterestPoint)        \
   X(TokenGrayDark)             \

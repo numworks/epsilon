@@ -30,7 +30,7 @@ class ElementsView : public Escher::View {
   constexpr static Escher::ThemeComponent k_backgroundColor =
       Escher::ThemeComponent::DefaultBackground;
   constexpr static Escher::ThemeComponent k_ligatureColor =
-      Escher::ThemeComponent::TokenGrayMiddle;
+      Escher::ThemeComponent::ElementsConnector;
 
   /* rectForCell returns the rect for the colored part of the cell, without
    * its border. This avoid redrawing cells just because their border overlaps

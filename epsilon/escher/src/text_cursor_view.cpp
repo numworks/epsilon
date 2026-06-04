@@ -29,7 +29,7 @@ void TextCursorView::drawRect(KDContext* ctx, KDRect rect) const {
   if (m_visible) {
     KDCoordinate height = bounds().height();
     ctx->fillRect(KDRect(0, 0, k_width, height),
-                  ColorPicker::Resolve(ThemeComponent::TokenBlack));
+                  ColorPicker::Resolve(ThemeComponent::Cursor));
   }
 }
 

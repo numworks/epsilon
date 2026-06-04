@@ -6,9 +6,9 @@ namespace Shared {
 
 void VerticalCursorView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
-  ctx->fillRect(
-      KDRect(0, 0, 1, height),
-      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenBlack));
+  ctx->fillRect(KDRect(0, 0, 1, height),
+                Escher::ColorPicker::Resolve(
+                    Escher::ThemeComponent::GraphIndicatorSecondary));
 }
 
 KDSize VerticalCursorView::minimalSizeForOptimalDisplay() const {

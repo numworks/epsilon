@@ -79,14 +79,13 @@ namespace Escher {
   X(TangentGraph)                  \
   X(GraphIndicator)                \
   X(GraphIndicatorSecondary)       \
+  X(GraphSpecialLabels)            \
+  X(GraphInterestPoint)            \
   X(Curve)                         \
   X(CurveHatchedArea)              \
+  X(IntersectionArea)              \
   X(TokenWhite)                    \
   X(TokenYellow)                   \
-  X(GraphSpecialLabels)            \
-  X(IntersectionArea)              \
-  X(ElementsConnector)             \
-  X(GraphInterestPoint)            \
   X(TokenEllipsis)                 \
   X(TokenBatteryLevel)             \
   X(TokenBatteryBackground)        \
@@ -112,6 +111,7 @@ namespace Escher {
   X(DataOrangeLight)               \
   X(DataVioletLight)               \
   X(DataMintLight)                 \
+  X(ElementsConnector)             \
   X(PythonText)                    \
   X(PythonGutterBackground)        \
   X(MagnifyIndicator)

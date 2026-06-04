@@ -28,8 +28,8 @@ void ToggleableDotView::drawRect(KDContext* ctx, KDRect rect) const {
                k_dotSize);
   ctx->blendRectWithMask(
       frame,
-      m_state ? ColorPicker::Resolve(ThemeComponent::TokenYellow)
-              : ColorPicker::Resolve(ThemeComponent::TokenGrayDark),
+      m_state ? ColorPicker::Resolve(ThemeComponent::ToggleDotActive)
+              : ColorPicker::Resolve(ThemeComponent::ToggleDotInactive),
       m_state ? reinterpret_cast<const uint8_t*>(MediumDotMask)
               : reinterpret_cast<const uint8_t*>(MediumShallowDotMask),
       workingBuffer);

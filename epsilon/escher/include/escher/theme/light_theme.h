@@ -76,7 +76,6 @@ constexpr static ThemeContainer k_lightTheme =
                    .TokenWhite = Palette::White,
                    .TokenYellow = Palette::YellowDark,
                    .GraphSpecialLabels = Palette::Red,
-                   .TokenBlack = Palette::Black,
                    .IntersectionArea = Palette::Black,
                    .TokenGrayMiddle = Palette::GrayMiddle,
                    .TokenGrayBright = Palette::GrayBright,

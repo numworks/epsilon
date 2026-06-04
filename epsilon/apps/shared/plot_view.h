@@ -142,7 +142,7 @@ class AbstractPlotView : public Escher::View {
   void drawTick(KDContext* ctx, KDRect rect, OMG::Axis perpendicular,
                 float position,
                 KDColor color = Escher::ColorPicker::Resolve(
-                    Escher::ThemeComponent::TokenBlack)) const;
+                    Escher::ThemeComponent::AxisMain)) const;
   void drawArrowhead(KDContext* ctx, KDRect rect,
                      Poincare::Coordinate2D<float> xy,
                      Poincare::Coordinate2D<float> dxy, float pixelArrowWidth,

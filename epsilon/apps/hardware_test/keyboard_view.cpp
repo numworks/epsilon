@@ -1,7 +1,7 @@
 #include "keyboard_view.h"
 
 #include <apps/constant.h>
-#include <escher/theme/color_picker.h>
+#include <escher/palette.h>
 #include <kandinsky/basic_color.h>
 
 namespace HardwareTest {
@@ -78,8 +78,7 @@ KDColor KeyboardView::keyColor(Ion::Keyboard::Key key) const {
   }
   int keyIndex = m_keyboardModel.indexInTestedKeys(key);
   if (keyIndex < 0) {
-    return Escher::ColorPicker::Resolve(
-        Escher::ThemeComponent::TokenGrayBright);
+    return Escher::Palette::GrayBright;
   }
   return keyIndex < m_keyboardModel.indexInTestedKeys(testedKey)
              ? BasicColor::Green

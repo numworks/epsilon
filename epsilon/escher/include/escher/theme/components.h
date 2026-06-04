@@ -84,6 +84,7 @@ namespace Escher {
   X(TokenEllipsis)             \
   X(TokenBatteryLevel)         \
   X(TokenLowBattery)           \
+  X(DataDefault)               \
   X(DataRed)                   \
   X(DataBlue)                  \
   X(DataGreen)                 \

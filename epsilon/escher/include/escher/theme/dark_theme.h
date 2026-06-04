@@ -85,6 +85,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .TokenEllipsis = Palette::White,
     .TokenBatteryLevel = Palette::DARK_VioletDeep,
     .TokenLowBattery = Palette::LowBattery,
+    .DataDefault = Palette::DARK_VioletPale,
     .DataRed = Palette::DARK_Red,
     .DataBlue = Palette::DARK_Blue,
     .DataGreen = Palette::DARK_Green,

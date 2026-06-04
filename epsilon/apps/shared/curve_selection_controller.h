@@ -23,12 +23,12 @@ class CurveSelectionCellWithAccessory
   CurveSelectionCellWithAccessory()
       : Escher::MenuCell<Escher::LayoutView, Escher::EmptyCellWidget,
                          Accessory>(),
-        m_color(Escher::ThemeComponent::TokenBlack) {}
+        m_color(Escher::ThemeComponent::DataDefault) {}
   void drawRect(KDContext* ctx, KDRect rect) const override {
     Escher::MenuCell<Escher::LayoutView, Escher::EmptyCellWidget,
                      Accessory>::drawRect(ctx, rect);
     // Draw the color indicator
-    assert(m_color != Escher::ThemeComponent::TokenBlack);
+    assert(m_color != Escher::ThemeComponent::DataDefault);
     // Check that the color was set
     ctx->fillRect(
         KDRect(0, 0, k_colorIndicatorThickness, this->bounds().height()),

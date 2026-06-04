@@ -126,30 +126,27 @@ Tree* AbstractTreeStack::pushAsciiCodePointLayout(CodePoint codePoint) {
 }
 
 Tree* AbstractTreeStack::pushUnicodeCodePointLayout(CodePoint codePoint) {
-  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
+  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 2);
   Tree* result = pushBlock(Type::UnicodeCodePointLayout);
   int first = codePoint;
+  assert(0 <= first && first <= UINT16_MAX);
   pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 0));
   pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 1));
-  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 2));
-  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 3));
   return result;
 }
 
 Tree* AbstractTreeStack::pushCombinedCodePointsLayout(
     CodePoint codePoint, CodePoint combiningCodePoint) {
-  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
+  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 2);
   Tree* result = pushBlock(Type::CombinedCodePointsLayout);
   int first = codePoint;
+  assert(0 <= first && first <= UINT16_MAX);
   int second = combiningCodePoint;
+  assert(0 <= second && second <= UINT16_MAX);
   pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 0));
   pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 1));
-  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 2));
-  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 3));
   pushValueBlock(OMG::BitHelper::getByteAtIndex(second, 0));
   pushValueBlock(OMG::BitHelper::getByteAtIndex(second, 1));
-  pushValueBlock(OMG::BitHelper::getByteAtIndex(second, 2));
-  pushValueBlock(OMG::BitHelper::getByteAtIndex(second, 3));
   return result;
 }
 

@@ -10,11 +10,11 @@ CodePoint CodePointLayout::GetCodePoint(const Tree* l) {
     return CodePoint(l->nodeValueBlock(0)->get<uint8_t>());
   }
   assert(l->isUnicodeCodePointLayout() || l->isCombinedCodePointsLayout());
-  return CodePoint(l->nodeValueBlock(0)->get<uint32_t>());
+  return CodePoint(l->nodeValueBlock(0)->get<uint16_t>());
 }
 
 CodePoint CodePointLayout::GetCombiningCodePoint(const Tree* l) {
-  return CodePoint(l->nodeValueBlock(4)->get<uint32_t>());
+  return CodePoint(l->nodeValueBlock(2)->get<uint16_t>());
 }
 
 Tree* CodePointLayout::Push(CodePoint codePoint) {

@@ -1480,8 +1480,9 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
         return;
       }
       // General case
+      // A combined codepoint layout holds two codepoints (base + combining).
       constexpr int bufferSize =
-          2 * sizeof(::CodePoint) + 1;  // Null-terminating char
+          2 * ::CodePoint::MaxCodePointCharLength + 1;  // Null-terminating char
       char buffer[bufferSize];
       CodePointLayout::CopyName(l, buffer, bufferSize);
       ctx->drawString(buffer, p, style.textStyle);

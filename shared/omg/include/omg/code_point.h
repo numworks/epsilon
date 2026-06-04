@@ -1,12 +1,15 @@
 #pragma once
 
+#include <assert.h>
 #include <stdint.h>
 
 class CodePoint {
  public:
-  constexpr static int MaxCodePointCharLength = sizeof(uint32_t) / sizeof(char);
-  constexpr CodePoint(uint32_t c) : m_code(c) {}
-  constexpr operator uint32_t() const { return m_code; }
+  // Max UTF-8 encoded length of a Basic Multilingual Plane codepoint
+  // (<= 0xFFFF), not the storage size
+  constexpr static int MaxCodePointCharLength = 3;
+  constexpr CodePoint(uint32_t c) : m_code(c) { assert(c <= UINT16_MAX); }
+  constexpr operator uint16_t() const { return m_code; }
   char getChar() const;
 
   bool isBinaryDigit() const { return '0' <= m_code && m_code <= '1'; }
@@ -30,7 +33,7 @@ class CodePoint {
   }
   bool isEquationOperator() const;  // <, =, >, ≤, ≥
  private:
-  uint32_t m_code;
+  uint16_t m_code;
 };
 
 // clang-format off

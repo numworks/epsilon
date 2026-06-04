@@ -118,7 +118,8 @@ QUIZ_CASE(pcj_k_tree_ternary) {
 QUIZ_CASE(pcj_k_codepoints) {
   quiz_assert("a"_cl->type() == Type::AsciiCodePointLayout);
   quiz_assert("π"_cl->type() == Type::UnicodeCodePointLayout);
-  quiz_assert("aπc"_l->treeSize() == 3 + 2 + 5 + 2);
+  // rack + ascii "a" + unicode "π" (2-byte codepoint) + ascii "c"
+  quiz_assert("aπc"_l->treeSize() == 3 + 2 + 3 + 2);
 }
 
 QUIZ_CASE(pcj_k_rack) {

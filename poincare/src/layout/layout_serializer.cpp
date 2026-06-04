@@ -122,7 +122,8 @@ char* LayoutSerializer::SerializeLayout(
         buffer = append("≠", buffer, end);
         break;
       }
-      constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
+      // CombinedCodePoints layouts serialize two codepoints (base + combining).
+      constexpr int bufferSize = 2 * CodePoint::MaxCodePointCharLength + 1;
       char codepointBuffer[bufferSize];
       CodePointLayout::CopyName(layout, codepointBuffer, bufferSize);
       buffer = append(codepointBuffer, buffer, end);

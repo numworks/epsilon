@@ -1078,7 +1078,8 @@ void RackParser::parseCustomIdentifier(TreeRef& leftHandSide,
     RaiseParseFail(SyntaxError::VariableNameTooLong1);
   }
 
-  constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
+  constexpr int bufferSize =
+      CodePoint::MaxCodePointCharLength * Symbol::k_maxNameSize;
   char buffer[bufferSize];
   LayoutSpan span(l, layoutLength);
   const char* name = Builtin::GetCustomIdentifierMainAlias(span);

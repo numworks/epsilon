@@ -100,6 +100,10 @@ CodePoint UTF8Decoder::nextCodePoint() {
     }
     result += (nextChunk & 0x3F);
   }
+  if (result > UINT16_MAX) {
+    // CodePoint storage is 16-bit; supplementary-plane chars are not supported.
+    return UCodePointReplacement;
+  }
   return CodePoint(result);
 }
 
@@ -128,6 +132,10 @@ CodePoint UTF8Decoder::previousCodePoint() {
   assert(stringPosition() >= m_string);
 
   result += last_k_bits(*stringPosition(), 8 - leadingOnes - 1) << (6 * i);
+  if (result > UINT16_MAX) {
+    // CodePoint storage is 16-bit; supplementary-plane chars are not supported.
+    return UCodePointReplacement;
+  }
   return CodePoint(result);
 }
 

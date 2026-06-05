@@ -126,6 +126,12 @@ document.getElementById("action-share").addEventListener("click", function(e) {
     flashActionDone(anchor);
   });
 });
+
+/* A file:// page has no meaningful URL to share, so hide the share
+ * button entirely. */
+if (window.location.protocol === "file:") {
+  document.getElementById("action-share").style.display = "none";
+}
     </script>
     <script async src="https://www.numworks.com/simulator/update.js"></script>
   </body>

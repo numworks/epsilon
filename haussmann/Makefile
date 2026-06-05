@@ -40,6 +40,9 @@ include $(PATH_haussmann)/src/rules.mak
 
 # Miscellaneous rules
 
+%.print_output_directory:
+	@echo $(CURDIR)/$(OUTPUT_DIRECTORY)$(if $(ARCHS),/$(ARCHS))
+
 .PHONY: clean
 clean:
 	$(call assert_relative_descendant,$(OUTPUT_DIRECTORY))

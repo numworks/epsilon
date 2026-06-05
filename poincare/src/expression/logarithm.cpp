@@ -44,6 +44,7 @@ bool Logarithm::ReduceLn(Tree* e) {
     e->removeNode();
     return true;
   }
+#if POINCARE_COMPLEX
   if (child->isComplexI()) {
     // ln(i) -> i*π/2
     e->cloneTreeOverTree(KMult(1_e / 2_e, π_e, i_e));
@@ -54,6 +55,7 @@ bool Logarithm::ReduceLn(Tree* e) {
     e->cloneTreeOverTree(KMult(π_e, i_e));
     return true;
   }
+#endif
   if (child->isOne()) {
     e->cloneTreeOverTree(0_e);
     return true;

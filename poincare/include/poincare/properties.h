@@ -180,10 +180,22 @@ class Properties {
 
 class ComplexProperties {
  public:
+#if POINCARE_COMPLEX
   constexpr ComplexProperties(Properties realProperties,
                               Properties imagProperties)
       : m_realValue(realProperties.getValue()),
         m_imagValue(imagProperties.getValue()) {}
+#else
+  constexpr ComplexProperties(Properties realProperties, Properties)
+      : m_realValue(realProperties.getValue()),
+        m_imagValue(Properties::Zero().getValue()) {}
+
+  constexpr static ComplexProperties NonReal() {
+    ComplexProperties p(Properties::Unknown(), Properties::Unknown());
+    p.m_imagValue = Properties::NonNull().getValue();
+    return p;
+  }
+#endif
   constexpr static ComplexProperties FromValue(uint8_t realValue,
                                                uint8_t imagValue) {
     return ComplexProperties(Properties::FromValue(realValue),
@@ -211,7 +223,11 @@ class ComplexProperties {
   constexpr bool isPure() const { return isReal() || isPureIm(); }
   // Anything is possible
   constexpr bool isUnknown() const {
+#if POINCARE_COMPLEX
     return realProperties().isUnknown() && imagProperties().isUnknown();
+#else
+    return realProperties().isUnknown() && !isNonReal();
+#endif
   }
   constexpr bool canBeNull() const {
     return realSign().canBeNull() && imagSign().canBeNull();

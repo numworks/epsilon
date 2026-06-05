@@ -626,9 +626,14 @@ static bool ReduceSquareRoot(Tree* e) {
     return false;
   }
   if (ctx.getTree(KA)->isNegativeRational()) {
+#if POINCARE_COMPLEX
     // √(-m) = √(m)*i
     e->moveTreeOverTree(PatternMatching::CreateReduce(
         KMult(KExp(KMult(1_e / 2_e, KLn(KMult(-1_e, KA)))), i_e), ctx));
+#else
+    // Real-only build: the square root of a negative is non-real
+    e->cloneTreeOverTree(KNonReal);
+#endif
     return true;
   }
   if (!ctx.getTree(KA)->isPositiveInteger()) {

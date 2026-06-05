@@ -23,8 +23,8 @@ constexpr static Builtin s_specialIdentifiers[] = {
                          "indéfini", "indefinido", "ongedefinieerd"),
 #if POINCARE_COMPLEX_BUILTINS
     {Type::NonReal, "nonreal"},
-#endif
     {Type::ComplexI, "i"},
+#endif
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
 #if POINCARE_BOOLEAN
     BUILTIN_TRANSLATIONS(Type::False, "\01False\00false\00",

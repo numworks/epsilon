@@ -491,6 +491,14 @@ ComplexProperties GetComplexProperties(const Tree* e) {
       return Binomial(GetComplexProperties(e->child(0)));
     case Type::Diff:
       return Parametric::k_continuousVariableProperties;
+#if !POINCARE_COMPLEX
+    case Type::NonReal:
+      /* Real-only build: the NonReal sentinel must report as non-real so that
+       * isReal()/isNonReal() consumers (comparisons, Floor, root solver via
+       * PropertiesOfTreeOrApproximation, ...) handle it correctly. On epsilon
+       * NonReal keeps falling through to the default Unknown() case. */
+      return ComplexProperties::NonReal();
+#endif
 #if 0
     // Activate these cases if necessary
     case Type::ATan:

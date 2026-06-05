@@ -1,4 +1,5 @@
 #include <omg/utf8_helper.h>
+#include <poincare/float_precision.h>
 #include <poincare/print_float.h>
 
 #include <cmath>
@@ -93,7 +94,7 @@ size_t IntegerHandler::serialize(char* buffer, size_t bufferSize,
         OMG::Base::Decimal, d.remainder.isZero() ? 0 : d.remainder.digit(0));
     if (length >= bufferSize - 1) {
       workingBuffer->garbageCollect({}, localStart);
-      return PrintFloat::ConvertFloatToText<float>(
+      return PrintFloat::ConvertFloatToText<SmallerFloat>(
                  NAN, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength,
                  PrintFloat::k_maxNumberOfSignificantDigits,
                  Preferences::PrintFloatMode::Decimal)

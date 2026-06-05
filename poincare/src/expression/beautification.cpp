@@ -49,7 +49,7 @@ bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
 bool ApplyBeautificationSteps(
     Tree* e, const BeautificationParameters& beautificationParameters);
 
-float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
+SmallerFloat DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
   switch (e->type()) {
     case Type::Mult: {
       /* If we consider the symbol degree, the degree of a multiplication is
@@ -64,7 +64,7 @@ float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
        * deg(x*y^3)
        * */
       if (symbolsOnly) {
-        float degree = 0.;
+        SmallerFloat degree = 0.;
         for (const Tree* c : e->children()) {
           degree += DegreeForSortingAddition(c, symbolsOnly);
         }
@@ -84,7 +84,7 @@ float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
       }
       const Tree* index = e->child(1);
       if (index->isNumber()) {
-        return Approximation::To<float>(
+        return Approximation::To<SmallerFloat>(
                    index,
                    Approximation::Parameters{.policy = {.optimize = true}}) *
                baseDegree;

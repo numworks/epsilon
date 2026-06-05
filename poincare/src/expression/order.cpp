@@ -45,9 +45,9 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
   if (order == OrderType::AdditionBeautification) {
     /* Repeat twice, once for symbol degree, once for any degree */
     for (bool sortBySymbolDegree : {true, false}) {
-      float n0Degree =
+      SmallerFloat n0Degree =
           Beautification::DegreeForSortingAddition(e1, sortBySymbolDegree);
-      float n1Degree =
+      SmallerFloat n1Degree =
           Beautification::DegreeForSortingAddition(e2, sortBySymbolDegree);
       if (!std::isnan(n1Degree) &&
           (std::isnan(n0Degree) || n0Degree > n1Degree)) {
@@ -142,7 +142,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
       return 0;
     }
     // Sort units from biggest to smallest ratio.
-    float ratioDiff = repr2->ratio() - repr1->ratio();
+    SmallerFloat ratioDiff = repr2->ratio() - repr1->ratio();
     return ratioDiff < 0.f ? -1 : ratioDiff == 0.f ? 0 : 1;
   }
   if (type1 == Type::Pow && e1->child(0)->type() == Type::Unit &&
@@ -183,10 +183,10 @@ int Order::CompareNumbers(const Tree* e1, const Tree* e2) {
   if (e1->isRational() && e2->isRational()) {
     return Rational::Compare(e1, e2);
   }
-  float approximation =
-      Approximation::To<float>(
+  SmallerFloat approximation =
+      Approximation::To<SmallerFloat>(
           e1, Approximation::Parameters{.policy = {.optimize = true}}) -
-      Approximation::To<float>(
+      Approximation::To<SmallerFloat>(
           e2, Approximation::Parameters{.policy = {.optimize = true}});
   if (approximation == 0.0f || std::isnan(approximation)) {
     // Trees are different but float approximation is not precise enough.

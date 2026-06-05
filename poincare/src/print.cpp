@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <omg/print.h>
 #include <omg/utf8_helper.h>
+#include <poincare/float_precision.h>
 #include <poincare/print.h>
 #include <poincare/print_float.h>
 #include <stdarg.h>
@@ -83,7 +84,7 @@ int Print::PrivateCustomPrintf(char* buffer, size_t bufferSize,
             currentNumberOfSignificantDigits);
         if (*(format + 5) == 'f') {
           buffer += PrintFloat::ConvertFloatToText(
-                        static_cast<float>(value), buffer,
+                        static_cast<SmallerFloat>(value), buffer,
                         bufferSize - (buffer - origin), glyphLength,
                         currentNumberOfSignificantDigits, displayMode)
                         .CharLength;

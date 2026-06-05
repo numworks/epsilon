@@ -52,10 +52,10 @@ Tree* Number::Addition(const Tree* e1, const Tree* e2) {
             e2, Approximation::Parameters{.policy = {.optimize = true}}));
   }
   if (e1->isSingleFloat() || e2->isSingleFloat()) {
-    return SharedTreeStack->pushSingleFloat(
-        Approximation::To<float>(
+    return SharedTreeStack->pushFloat(
+        Approximation::To<SmallerFloat>(
             e1, Approximation::Parameters{.policy = {.optimize = true}}) +
-        Approximation::To<float>(
+        Approximation::To<SmallerFloat>(
             e2, Approximation::Parameters{.policy = {.optimize = true}}));
   }
   assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
@@ -72,10 +72,10 @@ Tree* Number::Multiplication(const Tree* e1, const Tree* e2) {
             e2, Approximation::Parameters{.policy = {.optimize = true}}));
   }
   if (e1->isSingleFloat() || e2->isSingleFloat()) {
-    return SharedTreeStack->pushSingleFloat(
-        Approximation::To<float>(
+    return SharedTreeStack->pushFloat(
+        Approximation::To<SmallerFloat>(
             e1, Approximation::Parameters{.policy = {.optimize = true}}) *
-        Approximation::To<float>(
+        Approximation::To<SmallerFloat>(
             e2, Approximation::Parameters{.policy = {.optimize = true}}));
   }
   assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());

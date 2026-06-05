@@ -28,4 +28,13 @@ struct Precision<double> {
   constexpr static FloatPrecision value = FloatPrecision::Double;
 };
 
+/* Float type used where single precision would normally suffice. When float
+ * approximation is compiled out, it collapses to double so no single-float code
+ * (and no soft-float runtime) is emitted; otherwise it stays float. */
+#if POINCARE_NO_FLOAT_APPROXIMATION
+using SmallerFloat = double;
+#else
+using SmallerFloat = float;
+#endif
+
 }  // namespace Poincare

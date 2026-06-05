@@ -1,5 +1,6 @@
 #pragma once
 
+#include <poincare/float_precision.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include <complex>
@@ -10,7 +11,7 @@
 namespace Poincare::Internal {
 
 namespace Beautification {
-float DegreeForSortingAddition(const Tree* e, bool symbolsOnly);
+SmallerFloat DegreeForSortingAddition(const Tree* e, bool symbolsOnly);
 bool DeepBeautify(Tree* e,
                   const BeautificationParameters& beautificationParameters,
                   const Dimension& dimension = Dimension());

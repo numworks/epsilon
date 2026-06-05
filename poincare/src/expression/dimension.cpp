@@ -450,7 +450,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       if (!(IsIntegerExpression(exponent, true))) {
         return false;
       }
-      float index = Approximation::To<float>(
+      SmallerFloat index = Approximation::To<SmallerFloat>(
           exponent, Approximation::Parameters{.policy = {.optimize = true}});
       assert(!std::isfinite(index) || std::round(index) == index);
       if (!std::isfinite(index) ||
@@ -562,7 +562,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
           return false;
         }
       }
-      float n = Approximation::To<float>(
+      SmallerFloat n = Approximation::To<SmallerFloat>(
           e->child(Parametric::k_valueIndex),
           Approximation::Parameters{.policy = {.optimize = true}});
       assert(!std::isfinite(n) || std::floor(n) == n);
@@ -715,7 +715,7 @@ Dimension Dimension::Get(const Tree* e,
     case Type::Pow: {
       Dimension dim = Get(e->child(0), symbolContext);
       if (dim.isUnit()) {
-        float index = Approximation::To<float>(
+        SmallerFloat index = Approximation::To<SmallerFloat>(
             e->child(1), Approximation::Parameters{
                              .policy = {.optimize = true},
                              .expressionParameters =

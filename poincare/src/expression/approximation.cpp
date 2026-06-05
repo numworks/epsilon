@@ -590,10 +590,10 @@ Tree* Approximator::privateToPoint(const Tree* e) {
   assert(m_context.pointElement == Context::k_unspecifiedPointElement);
   Tree* point = SharedTreeStack->pushPoint();
   m_context.pointElement = 0;
-  m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
+  m_floatPrecision == FloatPrecision::Single ? toComplexTree<SmallerFloat>(e)
                                              : toComplexTree<double>(e);
   m_context.pointElement = 1;
-  m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
+  m_floatPrecision == FloatPrecision::Single ? toComplexTree<SmallerFloat>(e)
                                              : toComplexTree<double>(e);
   m_context.pointElement = Context::k_unspecifiedPointElement;
   return point;
@@ -674,7 +674,7 @@ Tree* Approximator::privateToTree(const Tree* e, Dimension dim) {
       (dim.isPoint() &&
        (m_context.pointElement != Context::k_unspecifiedPointElement))) {
     return m_floatPrecision == FloatPrecision::Single
-               ? toComplexTree<float>(e)
+               ? toComplexTree<SmallerFloat>(e)
                : toComplexTree<double>(e);
   }
   assert(dim.isPoint() || dim.isMatrix());
@@ -825,7 +825,7 @@ void Approximator::approximateAndReplaceEveryScalar(Tree* e, bool isRoot) {
   // Merge addition and multiplication's children while preserving order
   if (e->isAdd() || e->isMult()) {
     m_floatPrecision == FloatPrecision::Single
-        ? MergeChildrenOfMultOrAdd<float>(e)
+        ? MergeChildrenOfMultOrAdd<SmallerFloat>(e)
         : MergeChildrenOfMultOrAdd<double>(e);
   }
 }
@@ -1843,7 +1843,7 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
   if (e->isInequality()) {
     switch (m_floatPrecision) {
       case FloatPrecision::Single:
-        return inequalityToBoolean<float>(e);
+        return inequalityToBoolean<SmallerFloat>(e);
       case FloatPrecision::Double:
         return inequalityToBoolean<double>(e);
     }
@@ -1852,7 +1852,7 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
     assert(e->isEqual() || e->isNotEqual());
     switch (m_floatPrecision) {
       case FloatPrecision::Single:
-        return comparisonToBoolean<float>(e);
+        return comparisonToBoolean<SmallerFloat>(e);
       case FloatPrecision::Double:
         return comparisonToBoolean<double>(e);
     }
@@ -1906,7 +1906,7 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
   }
   if (e->isDep()) {
     DefinedStatus areDepsDefined = (m_floatPrecision == FloatPrecision::Single)
-                                       ? areDependenciesDefined<float>(e)
+                                       ? areDependenciesDefined<SmallerFloat>(e)
                                        : areDependenciesDefined<double>(e);
     if (areDepsDefined != DefinedStatus::Defined) {
       return BooleanOrUndefined::Undef();
@@ -1991,8 +1991,9 @@ Tree* Approximator::toMatrix(const Tree* e) {
   if (e->isMatrix()) {
     Tree* m = e->cloneNode();
     for (const Tree* child : e->children()) {
-      m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(child)
-                                                 : toComplexTree<double>(child);
+      m_floatPrecision == FloatPrecision::Single
+          ? toComplexTree<SmallerFloat>(child)
+          : toComplexTree<double>(child);
     }
     return m;
   }
@@ -2035,7 +2036,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
         Tree* approx = childIsMatrix
                            ? toMatrix(child)
                            : (m_floatPrecision == FloatPrecision::Single
-                                  ? toComplexTree<float>(child)
+                                  ? toComplexTree<SmallerFloat>(child)
                                   : toComplexTree<double>(child));
         if (result == nullptr) {
           resultIsMatrix = childIsMatrix;
@@ -2068,7 +2069,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
       Tree* s = KDiv->cloneNode();
       (1_e)->cloneTree();
       e->child(1)->cloneTree();
-      m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(s)
+      m_floatPrecision == FloatPrecision::Single ? toComplexTree<SmallerFloat>(s)
                                                  : toComplexTree<double>(s);
       s->removeTree();
       s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, this));
@@ -2078,7 +2079,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
     case Type::PowReal:
     case Type::Pow: {
       return m_floatPrecision == FloatPrecision::Single
-                 ? evaluateMatrixPower<float>(e)
+                 ? evaluateMatrixPower<SmallerFloat>(e)
                  : evaluateMatrixPower<double>(e);
     }
     case Type::Inverse:
@@ -2104,8 +2105,8 @@ Tree* Approximator::toMatrix(const Tree* e) {
       Tree* result = SharedTreeStack->pushMatrix(1, 2);
       switch (m_floatPrecision) {
         case FloatPrecision::Single: {
-          SharedTreeStack->pushSingleFloat(float(dim.matrix.rows));
-          SharedTreeStack->pushSingleFloat(float(dim.matrix.cols));
+          SharedTreeStack->pushFloat(SmallerFloat(dim.matrix.rows));
+          SharedTreeStack->pushFloat(SmallerFloat(dim.matrix.cols));
           break;
         }
         case FloatPrecision::Double: {
@@ -2138,7 +2139,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
     case Type::Dep: {
       DefinedStatus dependencyDefinedStatus =
           m_floatPrecision == FloatPrecision::Single
-              ? areDependenciesDefined<float>(e)
+              ? areDependenciesDefined<SmallerFloat>(e)
               : areDependenciesDefined<double>(e);
       switch (dependencyDefinedStatus) {
         case DefinedStatus::Defined:
@@ -2187,7 +2188,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
     case Type::Sum:
     case Type::Product: {
       ParametricBoundOutput bounds = m_floatPrecision == FloatPrecision::Single
-                                         ? getParametricBoundOutput<float>(e)
+                                         ? getParametricBoundOutput<SmallerFloat>(e)
                                          : getParametricBoundOutput<double>(e);
       if (!bounds.isDefined) {
         return Undefined::CreateDimensionedUndef(KUndef, e);

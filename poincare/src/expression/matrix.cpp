@@ -217,7 +217,8 @@ double ApproximateForPivot(const Tree* child,
   switch (approximator->floatPrecision()) {
     case FloatPrecision::Single:
       return std::abs(
-          approximator->specificApproximateTo<std::complex<float>>(child));
+          approximator->specificApproximateTo<std::complex<SmallerFloat>>(
+              child));
     case FloatPrecision::Double:
       return std::abs(
           approximator->specificApproximateTo<std::complex<double>>(child));
@@ -273,12 +274,12 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
      * already do with reduced forms. Output would be different, but correct. */
     int iPivot_temp = row;
     int iPivot = row;
-    float bestPivot = 0.0;
+    SmallerFloat bestPivot = 0.0;
     while (iPivot_temp < m) {
-      /* Find the best pivot in column col.
-       * Using float to find the biggest pivot is sufficient. */
+      /* Find the best pivot in column col. The precision of SmallerFloat (float
+       * where single precision is enabled) is sufficient to pick the pivot. */
       Tree* pivotChild = Child(matrix, iPivot_temp, col);
-      float pivot = ApproximateForPivot(pivotChild, approximator);
+      SmallerFloat pivot = ApproximateForPivot(pivotChild, approximator);
       assert(forceCanonization || !std::isnan(pivot));
       if (std::isnan(pivot)) {
         /* Although children have been checked at the beginning, a potential

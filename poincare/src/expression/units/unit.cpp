@@ -165,7 +165,7 @@ SIVector Unit::GetSIVector(const Tree* baseUnits) {
       const Tree* exp = factor->child(1);
       assert(exp->isRational());
       // Using the closest integer to the exponent.
-      float exponentFloat = Approximation::To<float>(
+      SmallerFloat exponentFloat = Approximation::To<SmallerFloat>(
           exp, Approximation::Parameters{.policy = {.optimize = true}});
       if (exponentFloat != std::round(exponentFloat)) {
         /* If non-integer exponents are found, we round a null vector so that
@@ -179,7 +179,8 @@ SIVector Unit::GetSIVector(const Tree* baseUnits) {
       if (std::fabs(exponentFloat) < INT8_MAX / 3) {
         // Exponent can be safely casted as int
         exponent = static_cast<int8_t>(std::round(exponentFloat));
-        assert(std::fabs(exponentFloat - static_cast<float>(exponent)) <= 0.5f);
+        assert(std::fabs(exponentFloat - static_cast<SmallerFloat>(exponent)) <=
+               0.5f);
       } else {
         /* Base units vector will ignore this coefficient, to avoid exponent
          * overflow. In any way, shallowBeautify will conserve homogeneity. */

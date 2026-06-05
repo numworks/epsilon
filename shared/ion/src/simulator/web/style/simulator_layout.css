@@ -77,3 +77,12 @@ a.action svg {
   display: block;
   height: 100%;
 }
+
+a.action svg.action-fullscreen-exit,
+body.fullscreen a.action svg.action-fullscreen-expand {
+  display: none;
+}
+
+body.fullscreen a.action svg.action-fullscreen-exit {
+  display: block;
+}

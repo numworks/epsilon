@@ -1111,9 +1111,12 @@ QUIZ_CASE(pcj_parse_combined_codepoint) {
   assert_parsed_expression_is("p̂", KUserVariable<"p̂">());
 
   // Accented identifier (precomposed form - one codepoint)
-  is_parsable(RackFromText("indéfini"));
+  constexpr const char* twoCodePointAccent = "indéfini";
   // Accented identifier (decomposed form - two codepoints)
-  is_parsable(RackFromText("indéfini"));
+  constexpr const char* oneCodePointAccent = "indéfini";
+  static_assert(twoCodePointAccent[3] != oneCodePointAccent[3]);
+  is_parsable(RackFromText(twoCodePointAccent));
+  is_parsable(RackFromText(oneCodePointAccent));
 
   /* Number followed by an accented letter (written with a combining accent)
    * that represent a unit (s) or not (a) */

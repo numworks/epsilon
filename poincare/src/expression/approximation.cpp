@@ -2069,8 +2069,9 @@ Tree* Approximator::toMatrix(const Tree* e) {
       Tree* s = KDiv->cloneNode();
       (1_e)->cloneTree();
       e->child(1)->cloneTree();
-      m_floatPrecision == FloatPrecision::Single ? toComplexTree<SmallerFloat>(s)
-                                                 : toComplexTree<double>(s);
+      m_floatPrecision == FloatPrecision::Single
+          ? toComplexTree<SmallerFloat>(s)
+          : toComplexTree<double>(s);
       s->removeTree();
       s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, this));
       a->removeTree();
@@ -2187,9 +2188,10 @@ Tree* Approximator::toMatrix(const Tree* e) {
 #if POINCARE_SUM_AND_PRODUCT
     case Type::Sum:
     case Type::Product: {
-      ParametricBoundOutput bounds = m_floatPrecision == FloatPrecision::Single
-                                         ? getParametricBoundOutput<SmallerFloat>(e)
-                                         : getParametricBoundOutput<double>(e);
+      ParametricBoundOutput bounds =
+          m_floatPrecision == FloatPrecision::Single
+              ? getParametricBoundOutput<SmallerFloat>(e)
+              : getParametricBoundOutput<double>(e);
       if (!bounds.isDefined) {
         return Undefined::CreateDimensionedUndef(KUndef, e);
       }

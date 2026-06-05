@@ -1109,6 +1109,20 @@ QUIZ_CASE(pcj_parse_combined_codepoint) {
   // We could parse this as the conjugate of z
   assert_parsed_expression_is("z̄", KUserVariable<"z̄">());
   assert_parsed_expression_is("p̂", KUserVariable<"p̂">());
+
+  // Accented identifier (precomposed form - one codepoint)
+  is_parsable(RackFromText("indéfini"));
+  // Accented identifier (decomposed form - two codepoints)
+  is_parsable(RackFromText("indéfini"));
+
+  /* Number followed by an accented letter (written with a combining accent)
+   * that represent a unit (s) or not (a) */
+  is_parsable(RackFromText("3ŝ"));
+  is_parsable(RackFromText("3à"));
+  is_parsable(RackFromText("3.5á"));
+  // "Implicit additions" hour / minute / second, but with combining accents
+  is_parsable(RackFromText("3h5s̃"));
+  is_parsable(RackFromText("3h̀40mín5ŝ"));
 }
 
 #if ASSERTIONS

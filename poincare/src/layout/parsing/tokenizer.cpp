@@ -557,6 +557,8 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfNumber;
+    /* Counts code points, only used to detect whether any unit material
+     * follows. */
     size_t lengthOfPotentialUnit = 0;
     while (nextLayoutIsCodePoint && IsNonDigitalIdentifierMaterial(c)) {
       lengthOfPotentialUnit += 1;
@@ -571,9 +573,15 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       isImplicitAddition = false;
       break;
     }
-    length += lengthOfPotentialUnit;
     const Units::Representative* unitRepresentative;
-    LayoutSpanDecoder decoder(currentStringStart, lengthOfPotentialUnit);
+    /* Count trees, not code points: a combined code point layout is one tree
+     * but two code points, so a code point count would overrun the decoder. */
+    const Layout* unitStringEnd =
+        nextLayoutIsCodePoint ? save.layout() : m_decoder.layout();
+    size_t unitTreeLength = static_cast<size_t>(
+        NumberOfNextTreeTo(currentStringStart, unitStringEnd));
+    length += unitTreeLength;
+    LayoutSpanDecoder decoder(currentStringStart, unitTreeLength);
     if (!Units::Unit::CanParse(&decoder, &unitRepresentative, nullptr)) {
       // Second element is not a unit : the string is not an implicit addition
       isImplicitAddition = false;

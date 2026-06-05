@@ -157,6 +157,9 @@ class TableView : public ScrollView {
      * referring to the set of cells of type "type". */
     int typeIndexFromSubviewIndex(int index, int type) const;
 
+    enum SeparatorType : bool { Column, Row };
+    void drawSeparators(KDContext* ctx, SeparatorType type) const;
+
     TableView* m_tableView;
     TableViewDataSource* m_dataSource;
     KDCoordinate m_horizontalCellOverlap;

@@ -69,7 +69,8 @@ TableView::ContentView::ContentView(TableView* tableView,
       m_rowsScrollingOffset(-1),
       m_columnsScrollingOffset(-1) {}
 
-void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
+void TableView::ContentView::drawSeparators(KDContext* ctx,
+                                            SeparatorType type) const {
   /* The separators between cells need to be filled with background color.
    * Cells frames are already set, so we just need to browse through the
    * cells and detect when there is a gap in their frames coordinates.
@@ -80,54 +81,53 @@ void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
    *  */
   KDColor backgroundColor =
       ColorPicker::Resolve(m_tableView->backgroundColor());
-  int numberOfColumns = numberOfDisplayableColumns();
-  int numberOfRows = numberOfDisplayableRows();
-  for (int k = 0; k < 2; k++) {
-    /* If k == 0, draw column separators (go through the first row).
-     * If k == 1, draw row separators (go through the first column). */
-    bool drawColumnsSeparators = k == 0;
-    int iMax = drawColumnsSeparators ? numberOfColumns : numberOfRows;
-    /* If drawColumnsSeparators, check the gap of abscissa in the subview
-     * frames. Else, check the gap of ordinates. */
-    KDCoordinate currentCoordinate = 0;
-    // Lenght of the filled rectangle.
-    KDCoordinate length =
-        drawColumnsSeparators ? bounds().height() : bounds().width();
-    for (int i = 0; i < iMax; i++) {
-      const View* subView =
-          const_cast<TableView::ContentView*>(this)->cellAtRelativeLocation(
-              drawColumnsSeparators ? i : 0, drawColumnsSeparators ? 0 : i);
-      KDRect subviewFrame = relativeChildFrame(subView);
-      if (subviewFrame == KDRectZero) {
-        continue;
-      }
-      KDCoordinate cellCoordinate =
-          drawColumnsSeparators ? subviewFrame.left() : subviewFrame.top();
-      if (cellCoordinate > currentCoordinate) {
-        /* There is a gap between the cell and the current coordinate: draw
-         * the separator rectangle.*/
-        KDRect separator = KDRect(currentCoordinate, 0,
-                                  cellCoordinate - currentCoordinate, length);
-        if (!drawColumnsSeparators) {
-          separator = separator.transposed();
-        }
-        ctx->fillRect(separator, backgroundColor);
-      }
-      currentCoordinate = drawColumnsSeparators ? subviewFrame.right() + 1
-                                                : subviewFrame.bottom() + 1;
+  bool isColSeparator = type == SeparatorType::Column;
+  int iMax =
+      isColSeparator ? numberOfDisplayableColumns() : numberOfDisplayableRows();
+  /* If isColSeparator, check the gap of abscissa in the subview
+   * frames. Else, check the gap of ordinates. */
+  KDCoordinate currentCoordinate = 0;
+  // Lenght of the filled rectangle.
+  KDCoordinate length = isColSeparator ? bounds().height() : bounds().width();
+  for (int i = 0; i < iMax; i++) {
+    const View* subView =
+        const_cast<TableView::ContentView*>(this)->cellAtRelativeLocation(
+            isColSeparator ? i : 0, isColSeparator ? 0 : i);
+    KDRect subviewFrame = relativeChildFrame(subView);
+    if (subviewFrame == KDRectZero) {
+      continue;
     }
-    // Draw the separator on the right/bottom of the table
-    KDCoordinate maxCoordinate =
-        drawColumnsSeparators ? bounds().right() + 1 : bounds().bottom() + 1;
-    if (currentCoordinate < maxCoordinate) {
+    KDCoordinate cellCoordinate =
+        isColSeparator ? subviewFrame.left() : subviewFrame.top();
+    if (cellCoordinate > currentCoordinate) {
+      /* There is a gap between the cell and the current coordinate: draw
+       * the separator rectangle.*/
       KDRect separator = KDRect(currentCoordinate, 0,
-                                maxCoordinate - currentCoordinate, length);
-      if (!drawColumnsSeparators) {
+                                cellCoordinate - currentCoordinate, length);
+      if (!isColSeparator) {
         separator = separator.transposed();
       }
       ctx->fillRect(separator, backgroundColor);
     }
+    currentCoordinate =
+        isColSeparator ? subviewFrame.right() + 1 : subviewFrame.bottom() + 1;
   }
+  // Draw the separator on the right/bottom of the table
+  KDCoordinate maxCoordinate =
+      isColSeparator ? bounds().right() + 1 : bounds().bottom() + 1;
+  if (currentCoordinate < maxCoordinate) {
+    KDRect separator =
+        KDRect(currentCoordinate, 0, maxCoordinate - currentCoordinate, length);
+    if (!isColSeparator) {
+      separator = separator.transposed();
+    }
+    ctx->fillRect(separator, backgroundColor);
+  }
+}
+
+void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
+  drawSeparators(ctx, SeparatorType::Column);
+  drawSeparators(ctx, SeparatorType::Row);
 }
 
 KDRect TableView::ContentView::cellFrame(int col, int row) const {

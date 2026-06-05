@@ -39,9 +39,13 @@ body.fullscreen .col-calculator {
   float: left;
 }
 
+.calculator-container {
+  margin-top: 2vh;
+}
+
 .calculator-container img {
   /* The image set the size of the calculator */
-  max-height: 92.0vh;
+  max-height: 90.0vh;
   max-width: 100%;
 }
 
@@ -51,7 +55,9 @@ body.fullscreen .col-calculator {
 }
 
 a.action {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 10px;
   height: 2vh;
   aspect-ratio: 1.2;
@@ -69,4 +75,5 @@ a.action:hover {
 
 a.action svg {
   display: block;
+  height: 100%;
 }

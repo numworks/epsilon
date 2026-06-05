@@ -576,6 +576,9 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     const Units::Representative* unitRepresentative;
     /* Count trees, not code points: a combined code point layout is one tree
      * but two code points, so a code point count would overrun the decoder. */
+    /* If nextLayoutIsCodePoint, the last code point was read speculatively and
+     * not yet accepted, so "save" (taken before that read) marks the true end;
+     * otherwise m_decoder is already past the end of the unit string. */
     const Layout* unitStringEnd =
         nextLayoutIsCodePoint ? save.layout() : m_decoder.layout();
     size_t unitTreeLength = static_cast<size_t>(

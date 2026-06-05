@@ -46,11 +46,12 @@
           onIonEvent: function (byte, isEvent) {
             this.recordedEvents.push(byte & 0xff);
           },
-          /* A binary state file (.nws) can be injected with epsilon.html?nws=<base64>.
-           * We strip the NWSF header in JS and only push the event stream through
-           * the pre-existing IonSimulatorEventsPushEventArray export, so this stays
-           * compatible with already-deployed wasm builds. The header's language and
-           * theme fields are ignored (they are consumed at boot only). */
+          /* An event stream can be injected with epsilon.html?nws=<base64>.
+           * The payload may be a full .nws file (starting with the "NWSF" magic,
+           * whose 15-byte header is stripped) or a bare event stream. Either way
+           * we only push the events through the pre-existing
+           * IonSimulatorEventsPushEventArray export, so this stays compatible with
+           * already-deployed wasm builds. */
           onLoaded: function () {
             var nwsBase64 = new URLSearchParams(window.location.search).get('nws');
             if (!nwsBase64) {
@@ -61,18 +62,13 @@
             for (var i = 0; i < binary.length; i++) {
               bytes[i] = binary.charCodeAt(i);
             }
-            /* NWSF header: "NWSF"(4) + version(8) + properties(1) + language(2) = 15 */
-            var headerLength = 15;
+            /* NWSF header: "NWSF"(4) + version(8) + properties(1) + language(2) */
             var magic = String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3]);
-            if (magic === 'NWSF' && bytes.length >= headerLength) {
-              var events = bytes.subarray(headerLength);
-              var ptr = this._malloc(events.length);
-              this.HEAPU8.set(events, ptr);
-              this._IonSimulatorEventsPushEventArray(ptr, events.length, 0, -1);
-              this._free(ptr);
-            } else {
-              console.error('Invalid nws parameter: bad magic or too short');
-            }
+            var events = magic === 'NWSF' ? bytes.subarray(15) : bytes;
+            var ptr = this._malloc(events.length);
+            this.HEAPU8.set(events, ptr);
+            this._IonSimulatorEventsPushEventArray(ptr, events.length, 0, -1);
+            this._free(ptr);
           }
       };
       var Module = {
@@ -96,13 +92,9 @@ document.getElementById("action-screenshot").addEventListener("click", function(
 });
 
 document.getElementById("action-share").addEventListener("click", function(e) {
-  /* Build a minimal NWSF file: 15-byte header (only the "NWSF" magic matters,
-   * the rest is ignored on load) followed by the recorded event stream, then
-   * url-safe base64 it into a ?nws= link copied to the clipboard. */
-  var binary = "NWSF";
-  for (var i = 0; i < 11; i++) {
-    binary += "\0";
-  }
+  /* Url-safe base64 the recorded event stream into a ?nws= link copied to the
+   * clipboard (no header: onLoaded injects a bare event stream directly). */
+  var binary = "";
   var events = ModuleAsync.recordedEvents;
   for (var i = 0; i < events.length; i++) {
     binary += String.fromCharCode(events[i]);

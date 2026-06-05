@@ -224,6 +224,7 @@ Tree* PushIK2Pi(int k) {
 }
 
 Tree* PushProductCorrection(const Tree* a, const Tree* b) {
+#if POINCARE_COMPLEX
   // B*ln(A) - ln(A^B) = k*2π*i = (B*arg(A) - arg(A^B))*i
   int k;
   if (CanGetArgProdModulo(a, b, &k)) {
@@ -233,9 +234,14 @@ Tree* PushProductCorrection(const Tree* a, const Tree* b) {
   return PatternMatching::CreateReduce(
       KMult(KAdd(KMult(KB, KArg(KA)), KMult(-1_e, KArg(KPow(KA, KB)))), i_e),
       {.KA = a, .KB = b});
+#else
+  return (GetProperties(b) == Properties::StrictlyNegative() ? KNonReal : 0_e)
+      ->cloneTree();
+#endif
 }
 
 Tree* PushAdditionCorrection(const Tree* firstTree, int numberOfTrees) {
+#if POINCARE_COMPLEX
   /* Push correction by computing either:
    * - if possible, the π-interval for arg(A) + arg(B) + ...
    *   such that ln(A) + ln(B) + ... - ln(A*B*...) = k*2π*i
@@ -275,6 +281,15 @@ Tree* PushAdditionCorrection(const Tree* firstTree, int numberOfTrees) {
   argSum->removeTree();
   multArg->removeTree();
   return correction;
+#else
+  while (numberOfTrees--) {
+    if (GetProperties(firstTree) == Properties::StrictlyNegative()) {
+      return KNonReal->cloneTree();
+    }
+    firstTree = firstTree->nextTree();
+  }
+  return (0_e)->cloneTree();
+#endif
 }
 
 bool Logarithm::ContractLn(Tree* e) {

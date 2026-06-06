@@ -116,7 +116,7 @@ python3 tools/device/dfu.py -s 0x90010000:leave -D output/release/n0120/userland
 
 <img style="float: right;" src="official_upgrade_required.png">
 
-- After a custom firmware installation, if the screen displays the warning `OFFICIAL UPGRADE REQUIRED`, it means the custom firmware is incompatible with you current official firmware version, you may need to clean your output folder to re-build with the proper version.
+- After a custom firmware installation, if the screen displays the warning `OFFICIAL UPGRADE REQUIRED`, it means the custom firmware is incompatible with your current official firmware version, you may need to clean your output folder to re-build with the proper version.
 
 ```shell
 make clean PLATFORM=[MODEL]

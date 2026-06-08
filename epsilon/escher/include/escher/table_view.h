@@ -158,6 +158,8 @@ class TableView : public ScrollView {
     int typeIndexFromSubviewIndex(int index, int type) const;
 
     enum SeparatorType : bool { Column, Row };
+    /* Separator rectangles are drawn to fill a gap between two rows or two
+     * columns, when these two rows or two columns are apart from each other. */
     void drawSeparators(KDContext* ctx, SeparatorType type) const;
 
     TableView* m_tableView;

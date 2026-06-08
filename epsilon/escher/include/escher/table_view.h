@@ -2,6 +2,7 @@
 
 #include <escher/highlight_cell.h>
 #include <escher/scroll_view.h>
+#include <escher/table_grid_view.h>
 #include <escher/table_view_data_source.h>
 
 namespace Escher {
@@ -134,7 +135,12 @@ class TableView : public ScrollView {
     }
     KDCoordinate width() const;
 
-    int numberOfSubviews() const override { return numberOfDisplayableCells(); }
+    // The grid view is the last subview, after the cells
+    int gridViewIndex() const { return numberOfDisplayableCells(); }
+    int numberOfSubviews() const override {
+      // +1 for the grid
+      return numberOfDisplayableCells() + 1;
+    }
     View* subviewAtIndex(int index) override;
     HighlightCell* cellAtRelativeLocation(int relativeColumn, int relativeRow) {
       return cellAtLocation(relativeColumn + columnsScrollingOffset(),
@@ -143,11 +149,13 @@ class TableView : public ScrollView {
     /* These two methods transform a positive index (of subview for instance)
      * into coordinates that refer to the data source entire table */
     int absoluteColumnFromSubviewIndex(int index) const {
+      assert(index != gridViewIndex());
       int nb = numberOfDisplayableColumns();
       assert(nb > 0);
       return (index % nb) + columnsScrollingOffset();
     }
     int absoluteRowFromSubviewIndex(int index) const {
+      assert(index != gridViewIndex());
       int nb = numberOfDisplayableColumns();
       assert(nb > 0);
       return (index / nb) + rowsScrollingOffset();
@@ -164,6 +172,9 @@ class TableView : public ScrollView {
 
     TableView* m_tableView;
     TableViewDataSource* m_dataSource;
+    /* The table grid needs to be the last subview of TableView, so that it its
+     * drawn on top of the cells */
+    TableGridView m_grid;
     KDCoordinate m_horizontalCellOverlap;
     KDCoordinate m_verticalCellOverlap;
     mutable int m_rowsScrollingOffset;

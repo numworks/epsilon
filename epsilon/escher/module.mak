@@ -85,6 +85,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   tab_view_cell.cpp \
   tab_view_controller.cpp \
   tab_view_data_source.cpp \
+  table_grid_view.cpp \
   table_view_with_frozen_header.cpp \
   table_size_1D_manager.cpp \
   table_view.cpp \

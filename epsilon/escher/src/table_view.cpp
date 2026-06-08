@@ -64,6 +64,7 @@ TableView::ContentView::ContentView(TableView* tableView,
     : View(),
       m_tableView(tableView),
       m_dataSource(dataSource),
+      m_grid(m_tableView),
       m_horizontalCellOverlap(horizontalCellOverlap),
       m_verticalCellOverlap(verticalCellOverlap),
       m_rowsScrollingOffset(-1),
@@ -178,6 +179,7 @@ int TableView::ContentView::typeIndexFromSubviewIndex(int index,
       typeIndex++;
     }
   }
+  // +1 for the grid
   assert(typeIndex < m_dataSource->reusableCellCount(type));
   return typeIndex;
 }
@@ -226,11 +228,15 @@ View* TableView::ContentView::subviewAtIndex(int index) {
    * screen driver specifications, blinking is less visible at the top left
    * corner than at the bottom right. */
   assert(0 <= index && index < numberOfSubviews());
+  if (index == gridViewIndex()) {
+    return &m_grid;
+  }
   return static_cast<View*>(
-      reusableCellAtIndex(numberOfSubviews() - 1 - index));
+      reusableCellAtIndex(numberOfDisplayableCells() - 1 - index));
 }
 
 HighlightCell* TableView::ContentView::reusableCellAtIndex(int index) {
+  assert(index != gridViewIndex());
   assert(0 <= index && index < numberOfSubviews());
   int type = typeOfSubviewAtIndex(index);
   int typeIndex = typeIndexFromSubviewIndex(index, type);
@@ -250,6 +256,7 @@ void TableView::ContentView::layoutSubviews(bool force) {
      * must be called on each cells even with an unchanged frame. */
     setChildFrame(cell, cellFrame(col, row), true);
   }
+  setChildFrame(&m_grid, bounds(), force);
 }
 
 int TableView::ContentView::numberOfDisplayableRows() const {

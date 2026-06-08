@@ -46,6 +46,9 @@ class TableView : public ScrollView {
     scrollToContentRect(m_contentView.cellFrame(col, row));
   }
   void scrollToBottom();
+  const HighlightCell* cellAtLocation(int col, int row) const {
+    return m_contentView.cellAtLocation(col, row);
+  }
   HighlightCell* cellAtLocation(int col, int row) {
     return m_contentView.cellAtLocation(col, row);
   }
@@ -101,8 +104,8 @@ class TableView : public ScrollView {
 
     void reloadCellAtLocation(int col, int row, bool forceSetFrame);
 
-    // TODO: cellAtLocation should have a const and a non-const version
     HighlightCell* cellAtLocation(int row, int col);
+    const HighlightCell* cellAtLocation(int row, int col) const;
 
     TableViewDataSource* dataSource() { return m_dataSource; }
     const TableViewDataSource* dataSource() const { return m_dataSource; }
@@ -147,6 +150,11 @@ class TableView : public ScrollView {
       return numberOfDisplayableCells() + static_cast<int>(hasGrid());
     }
     View* subviewAtIndex(int index) override;
+    const HighlightCell* cellAtRelativeLocation(int relativeColumn,
+                                                int relativeRow) const {
+      return cellAtLocation(relativeColumn + columnsScrollingOffset(),
+                            relativeRow + rowsScrollingOffset());
+    }
     HighlightCell* cellAtRelativeLocation(int relativeColumn, int relativeRow) {
       return cellAtLocation(relativeColumn + columnsScrollingOffset(),
                             relativeRow + rowsScrollingOffset());

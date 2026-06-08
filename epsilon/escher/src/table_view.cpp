@@ -188,7 +188,8 @@ int TableView::ContentView::typeIndexFromSubviewIndex(int index,
   return typeIndex;
 }
 
-HighlightCell* TableView::ContentView::cellAtLocation(int col, int row) {
+const HighlightCell* TableView::ContentView::cellAtLocation(int col,
+                                                            int row) const {
   int relativeColumn = col - columnsScrollingOffset();
   int relativeRow = row - rowsScrollingOffset();
   if (relativeRow < 0 || relativeRow >= numberOfDisplayableRows() ||
@@ -199,6 +200,12 @@ HighlightCell* TableView::ContentView::cellAtLocation(int col, int row) {
   int index = relativeRow * numberOfDisplayableColumns() + relativeColumn;
   int typeIndex = typeIndexFromSubviewIndex(index, type);
   return m_dataSource->reusableCell(typeIndex, type);
+}
+
+HighlightCell* TableView::ContentView::cellAtLocation(int col, int row) {
+  return const_cast<HighlightCell*>(
+      const_cast<const TableView::ContentView*>(this)->cellAtLocation(col,
+                                                                      row));
 }
 
 int TableView::ContentView::rowsScrollingOffset() const {

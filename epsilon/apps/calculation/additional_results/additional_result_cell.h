@@ -12,8 +12,8 @@ class AdditionalResultCell : public Escher::MenuCell<ScrollableThreeLayoutsView,
                                                      Escher::MessageTextView> {
  public:
   AdditionalResultCell(I18n::Message subLabelMessage = I18n::Message::Default)
-      : Escher::MenuCell<ScrollableThreeLayoutsView, Escher::MessageTextView>(),
-        m_highlightWholeCell(false) {}
+      : Escher::MenuCell<ScrollableThreeLayoutsView,
+                         Escher::MessageTextView>() {}
 
   void setHighlighted(bool highlight) override {
     label()->evenOddCell()->setHighlighted(highlight);
@@ -30,7 +30,7 @@ class AdditionalResultCell : public Escher::MenuCell<ScrollableThreeLayoutsView,
   };
 
  private:
-  bool m_highlightWholeCell;
+  bool m_highlightWholeCell = false;
 };
 
 }  // namespace Calculation

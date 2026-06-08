@@ -132,7 +132,7 @@ class AbstractScrollableMultipleLayoutsView
       m_highlightWholeCell = highlightWholeCell;
     };
 
-    bool m_highlightWholeCell;
+    bool m_highlightWholeCell = false;
 
    private:
     void updateSubviewsBackgroundAfterChangingState() override;

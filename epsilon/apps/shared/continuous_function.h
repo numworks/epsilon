@@ -54,6 +54,8 @@ class ContinuousFunction : public Function {
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
   size_t nameWithArgument(char* buffer, size_t bufferSize,
                           int derivationOrder = 0) const override;
+  // Title layout for a derivative record: name = d/dx(expr)
+  Poincare::Layout derivativeTitleLayout() const;
   // Insert the value of the symbol in buffer
   size_t printAbscissaValue(double cursorT, double cursorX, char* buffer,
                             size_t bufferSize, int precision) const override;

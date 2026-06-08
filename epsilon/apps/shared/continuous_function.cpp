@@ -123,6 +123,26 @@ size_t ContinuousFunction::nameWithArgument(char* buffer, size_t bufferSize,
   return length;
 }
 
+Layout ContinuousFunction::derivativeTitleLayout() const {
+  assert(isDerivative());
+  constexpr size_t bufferSize = k_maxNameWithArgumentSize;
+  char buffer[bufferSize];
+  size_t length = nameWithArgument(buffer, bufferSize);
+  Layout name = Layout::String(buffer, length);
+  // Add =d/dx(expr)
+  int order = derivationOrder();
+  char symbolName[CodePoint::MaxCodePointCharLength + 1];
+  size_t symbolNameLength =
+      UTF8Helper::WriteCodePoint(symbolName, sizeof(symbolName) - 1, symbol());
+  symbolName[symbolNameLength] = '\0';
+  UserExpression diffEquation =
+      parentFunction()->originalEquation().getDerivative(symbolName, order);
+  Layout rightHandSide = PoincareHelpers::CreateLayout(
+      diffEquation.cloneChildAtIndex(1), GlobalContextAccessor::Context());
+  return Layout::Concatenate(Layout::Concatenate(name, Layout::CodePoint('=')),
+                             rightHandSide);
+}
+
 size_t ContinuousFunction::printAbscissaValue(double cursorT, double cursorX,
                                               char* buffer, size_t bufferSize,
                                               int precision) const {
@@ -1161,10 +1181,7 @@ Layout ContinuousFunction::Model::layout(const Ion::Storage::Record* record,
                                          CodePoint symbol) const {
   ContinuousFunction f(*record);
   if (f.isDerivative()) {
-    constexpr size_t bufferSize = Shared::Function::k_maxNameWithArgumentSize;
-    char buffer[bufferSize];
-    size_t length = f.nameWithArgument(buffer, bufferSize);
-    return Layout::String(buffer, length);
+    return f.derivativeTitleLayout();
   }
   return ExpressionModel::layout(record, symbol);
 }

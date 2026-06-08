@@ -321,7 +321,10 @@ Layout ValuesController::functionTitleLayout(int column) {
   constexpr size_t bufferNameSize =
       ContinuousFunction::k_maxNameWithArgumentSize + 1;
   char buffer[bufferNameSize];
-  if (!function->isNamed() && !function->isDerivative()) {
+  if (function->isDerivative()) {
+    return function->derivativeTitleLayout();
+  }
+  if (!function->isNamed()) {
     return PoincareHelpers::CreateLayout(function->originalEquation(),
                                          App::app()->localContext());
   }

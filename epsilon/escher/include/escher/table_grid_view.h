@@ -11,10 +11,13 @@ class TableGridView : public View {
   TableGridView(const TableView* table);
 
   void drawRect(KDContext* ctx, KDRect rect) const override {
-    // TODO
+    drawLines(ctx, Direction::Column);
+    drawLines(ctx, Direction::Row);
   }
 
   KDSize minimalSizeForOptimalDisplay() const override;
+
+  enum Direction : bool { Column, Row };
 
  protected:
 #if ESCHER_VIEW_LOGGING
@@ -24,6 +27,8 @@ class TableGridView : public View {
   const TableView* table() const { return m_tableView; }
 
  private:
+  void drawLines(KDContext* ctx, Direction direction) const;
+
   const TableView* m_tableView;
 };
 

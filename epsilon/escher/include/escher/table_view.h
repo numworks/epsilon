@@ -39,6 +39,14 @@ class TableView : public ScrollView {
     return m_contentView.dataSource();
   }
 
+  const HighlightCell* cellAtRelativeLocation(int relativeColumn,
+                                              int relativeRow) const {
+    return m_contentView.cellAtRelativeLocation(relativeColumn, relativeRow);
+  }
+  HighlightCell* cellAtRelativeLocation(int relativeColumn, int relativeRow) {
+    return m_contentView.cellAtRelativeLocation(relativeColumn, relativeRow);
+  }
+
   /* This method computes the minimal scrolling needed to properly display the
    * requested cell. */
   void scrollToCell(int col, int row) {
@@ -130,6 +138,16 @@ class TableView : public ScrollView {
     }
     HighlightCell* reusableCellAtIndex(int index);
 
+    HighlightCell* cellAtRelativeLocation(int relativeColumn, int relativeRow) {
+      return cellAtLocation(relativeColumn + columnsScrollingOffset(),
+                            relativeRow + rowsScrollingOffset());
+    }
+    const HighlightCell* cellAtRelativeLocation(int relativeColumn,
+                                                int relativeRow) const {
+      return cellAtLocation(relativeColumn + columnsScrollingOffset(),
+                            relativeRow + rowsScrollingOffset());
+    }
+
    protected:
 #if ESCHER_VIEW_LOGGING
     const char* className() const override { return "TableView::ContentView"; }
@@ -150,15 +168,7 @@ class TableView : public ScrollView {
       return numberOfDisplayableCells() + static_cast<int>(hasGrid());
     }
     View* subviewAtIndex(int index) override;
-    const HighlightCell* cellAtRelativeLocation(int relativeColumn,
-                                                int relativeRow) const {
-      return cellAtLocation(relativeColumn + columnsScrollingOffset(),
-                            relativeRow + rowsScrollingOffset());
-    }
-    HighlightCell* cellAtRelativeLocation(int relativeColumn, int relativeRow) {
-      return cellAtLocation(relativeColumn + columnsScrollingOffset(),
-                            relativeRow + rowsScrollingOffset());
-    }
+
     /* These two methods transform a positive index (of subview for instance)
      * into coordinates that refer to the data source entire table */
     int absoluteColumnFromSubviewIndex(int index) const {

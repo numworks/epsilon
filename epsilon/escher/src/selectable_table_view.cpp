@@ -11,8 +11,8 @@ SelectableTableView::SelectableTableView(
     Responder* parentResponder, TableViewDataSource* dataSource,
     SelectableTableViewDataSource* selectionDataSource,
     SelectableTableViewDelegate* delegate,
-    Escher::ScrollViewDelegate* scrollViewDelegate)
-    : TableView(dataSource, selectionDataSource, scrollViewDelegate),
+    Escher::ScrollViewDelegate* scrollViewDelegate, bool hasGrid)
+    : TableView(dataSource, selectionDataSource, scrollViewDelegate, hasGrid),
       Responder(parentResponder),
       m_selectionDataSource(selectionDataSource),
       m_delegate(delegate) {

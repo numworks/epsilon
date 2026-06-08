@@ -11,7 +11,8 @@ class TableView : public ScrollView {
  public:
   TableView(TableViewDataSource* dataSource,
             ScrollViewDataSource* scrollDataSource,
-            Escher::ScrollViewDelegate* scrollViewDelegate = nullptr);
+            Escher::ScrollViewDelegate* scrollViewDelegate = nullptr,
+            bool hasGrid = false);
 
   void setHorizontalCellOverlap(KDCoordinate o) {
     m_contentView.setHorizontalCellOverlap(o);
@@ -84,7 +85,7 @@ class TableView : public ScrollView {
    public:
     ContentView(TableView* tableView, TableViewDataSource* dataSource,
                 KDCoordinate horizontalCellOverlap,
-                KDCoordinate verticalCellOverlap);
+                KDCoordinate verticalCellOverlap, bool hasGrid);
     KDSize minimalSizeForOptimalDisplay() const override {
       return KDSize(width(), height());
     }
@@ -138,8 +139,7 @@ class TableView : public ScrollView {
     // The grid view is the last subview, after the cells
     int gridViewIndex() const { return numberOfDisplayableCells(); }
     int numberOfSubviews() const override {
-      // +1 for the grid
-      return numberOfDisplayableCells() + 1;
+      return numberOfDisplayableCells() + static_cast<int>(m_hasGrid);
     }
     View* subviewAtIndex(int index) override;
     HighlightCell* cellAtRelativeLocation(int relativeColumn, int relativeRow) {
@@ -175,6 +175,7 @@ class TableView : public ScrollView {
     /* The table grid needs to be the last subview of TableView, so that it its
      * drawn on top of the cells */
     TableGridView m_grid;
+    bool m_hasGrid;
     KDCoordinate m_horizontalCellOverlap;
     KDCoordinate m_verticalCellOverlap;
     mutable int m_rowsScrollingOffset;

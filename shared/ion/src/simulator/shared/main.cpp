@@ -221,6 +221,7 @@ int main(int argc, char* argv[]) {
   Ion::Init();
 #if ION_SIMULATOR_EXTERNAL_APP
   if (args.externalApp) {
+#ifndef __EMSCRIPTEN__
     if (access(args.externalApp, F_OK) != 0) {
       fprintf(stderr, "Error: external app not found: %s\n", args.externalApp);
       return EXIT_FAILURE;
@@ -230,6 +231,7 @@ int main(int argc, char* argv[]) {
               args.externalAppData);
       return EXIT_FAILURE;
     }
+#endif
     if (load_eadk_external_data(args.externalAppData)) {
       return EXIT_FAILURE;
     }

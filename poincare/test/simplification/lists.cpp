@@ -38,7 +38,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("sequence(1, k, 256)", "undef");
   simplifies_to("sequence(k,k,0)", "{}");
   simplifies_to("mean({1,3*x,2})", "x+1");
-  simplifies_to("sum({1,3*x,2})", "3×(x+1)");
+  simplifies_to("sum({1,3*x,2})", "3×x+3");
   simplifies_to("min({1,-4/7,2,-2})", "-2");
   simplifies_to("var(sequence(k,k,6))", "35/12");
   simplifies_to("sort({2+1,1,2})", "{1,2,3}");

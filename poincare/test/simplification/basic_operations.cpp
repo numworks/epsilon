@@ -28,7 +28,7 @@ QUIZ_CASE(pcj_simplification_addition) {
   simplifies_to("1+1+ln(2)+(5+3×2)/9-4/7+1/98", "2347/882+ln(2)");
   simplifies_to("1+2+0+cos(2)", "3+cos(2)");
   simplifies_to("M-M+2cos(2)+P-P-cos(2)", "cos(2)");
-  simplifies_to("x+3+π+2×x", "π+3×(x+1)");
+  simplifies_to("x+3+π+2×x", "3×x+3+π");
   simplifies_to("1/(x+1)+1/(π+2)", "1/(2+π)+1/(x+1)");
   simplifies_to("1/x^2+1/(x^2×π)", "(1+1/π)/x^2");
   simplifies_to("1/x^2+1/(x^3×π)", "1/x^2+1/(π×x^3)");
@@ -38,7 +38,7 @@ QUIZ_CASE(pcj_simplification_addition) {
   simplifies_to("((4π+5)/10)-2.3", "-9/5+(2×π)/5");  // Should be (2×π-9)/5
   simplifies_to("4×_°+3×_'+2×_\"-(3×_°+2×_'+1×_\")", "(3661×π)/648000×_rad");
   simplifies_to("[[1,2+i][3,4][5,6]]+[[1,2+i][3,4][5,6]]",
-                "[[2,2×(2+i)][6,8][10,12]]");
+                "[[2,4+2×i][6,8][10,12]]");
   simplifies_to("3+[[1,2][3,4]]", "undef");
   simplifies_to("[[1][3][5]]+[[1,2+i][3,4][5,6]]", "undef");
   // Beautification order

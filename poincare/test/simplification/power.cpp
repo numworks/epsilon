@@ -181,7 +181,7 @@ QUIZ_CASE(pcj_simplification_roots) {
   simplifies_to("√((-π)^2)", "π");
   simplifies_to("√(e^2)", "e");
   simplifies_to("(1+√(2))^5", "41+29×√(2)");
-  simplifies_to("(π+√(3)+x)^(-2)", "1/(x^2+π^2+3+2×(x×√(3)+π×(x+√(3))))");
+  simplifies_to("(π+√(3)+x)^(-2)", "1/(x^2+2×x×√(3)+π^2+3+2×π×(x+√(3)))");
   simplifies_to("√(3.3×10^(-37))", "√(33)/10^19");
   simplifies_to("√(3.3×10^(-38))", "√(330)/10^20");
   simplifies_to("√(3.3×10^(-39))", "√(33)/10^20");

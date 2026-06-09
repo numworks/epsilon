@@ -65,7 +65,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("e^(arg(e^(x×i))×i)", "cos(x)+sin(x)×i", parameters);
   simplifies_to("arg(abs(x)×e^(arg(z)×i))", "dep(arg(z),{nonNull(abs(x))})",
                 parameters);
-  simplifies_to("arg(-3×(x+y×i))", "arg(-(x+y×i))", parameters);
+  simplifies_to("arg(-3×(x+y×i))", "arg(-x-y×i)", parameters);
   // TODO: Simplify arg between ]-π,π]
   simplifies_to("arg(e^(534/7×i))", "arg(e^(534/7×i))");
   simplifies_to("arg(e^(3.1415×i))", "6283/2000");

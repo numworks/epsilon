@@ -23,7 +23,8 @@ constexpr ThemeComponent SolutionsController::ContentView::k_backgroundColor;
 
 SolutionsController::ContentView::ContentView(SolutionsController* controller)
     : m_warningMessageView(k_warningFormat),
-      m_selectableTableView(controller, controller, controller, this),
+      m_selectableTableView(controller, controller, controller, this, nullptr,
+                            TableView::GridStyle::Allowed),
       m_displayWarningMoreSolutions(false) {
   m_selectableTableView.setBackgroundColor(k_backgroundColor);
   m_selectableTableView.setVerticalCellOverlap(0);

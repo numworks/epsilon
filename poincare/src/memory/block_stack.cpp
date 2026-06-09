@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <omg/memory.h>
+#include <omg/unreachable.h>
 
 #include <algorithm>
 
@@ -220,14 +221,18 @@ Block* BlockStack::ReferenceTable::nodeForIdentifier(uint16_t id) const {
 
 uint16_t BlockStack::ReferenceTable::storeNode(Block* node) {
   if (isFull()) {
-    Block* n;
-    size_t index = 0;
-    do {
-      n = nodeForIdentifier(index++);
-    } while (n && index < m_pool->maxNumberOfReferences());
-    assert(!n);  // Otherwise, the pool is full with non-corrupted
-                 // references; increment k_maxNumberOfReferences?
-    return storeNodeAtIndex(node, index - 1);
+    /* Only DeletedOffset slots are free to recycle: their owning TreeRef has
+     * already released the identifier. An InvalidatedOffset slot resolves to
+     * null too, but its TreeRef owner is still alive and still owns the id;
+     * recycling it would alias two live references onto one identifier. */
+    size_t maxNumberOfReferences = m_pool->maxNumberOfReferences();
+    for (size_t index = 0; index < maxNumberOfReferences; index++) {
+      if (m_nodeOffsetForIdentifier[index] == DeletedOffset) {
+        return storeNodeAtIndex(node, index);
+      }
+    }
+    // Too many live references at the same time: increase MaxNumberOfReferences
+    OMG_UNREACHABLE;
   } else {
     return storeNodeAtIndex(node, m_length);
   }

@@ -11,9 +11,9 @@ SelectableTableView::SelectableTableView(
     Responder* parentResponder, TableViewDataSource* dataSource,
     SelectableTableViewDataSource* selectionDataSource,
     SelectableTableViewDelegate* delegate,
-    Escher::ScrollViewDelegate* scrollViewDelegate, bool canHaveGrid)
-    : TableView(dataSource, selectionDataSource, scrollViewDelegate,
-                canHaveGrid),
+    Escher::ScrollViewDelegate* scrollViewDelegate,
+    TableView::GridStyle gridStyle)
+    : TableView(dataSource, selectionDataSource, scrollViewDelegate, gridStyle),
       Responder(parentResponder),
       m_selectionDataSource(selectionDataSource),
       m_delegate(delegate) {

@@ -9,10 +9,12 @@ namespace Escher {
 
 class TableView : public ScrollView {
  public:
+  enum class GridStyle : bool { None, Allowed };
+
   TableView(TableViewDataSource* dataSource,
             ScrollViewDataSource* scrollDataSource,
             Escher::ScrollViewDelegate* scrollViewDelegate = nullptr,
-            bool canHaveGrid = false);
+            GridStyle gridStyle = GridStyle::None);
 
   void setHorizontalCellOverlap(KDCoordinate o) {
     m_contentView.setHorizontalCellOverlap(o);
@@ -85,7 +87,8 @@ class TableView : public ScrollView {
    public:
     ContentView(TableView* tableView, TableViewDataSource* dataSource,
                 KDCoordinate horizontalCellOverlap,
-                KDCoordinate verticalCellOverlap, bool canHaveGrid);
+                KDCoordinate verticalCellOverlap,
+                TableView::GridStyle gridStyle);
     KDSize minimalSizeForOptimalDisplay() const override {
       return KDSize(width(), height());
     }

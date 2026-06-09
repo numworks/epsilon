@@ -12,10 +12,10 @@ namespace Escher {
 TableView::TableView(TableViewDataSource* dataSource,
                      ScrollViewDataSource* scrollDataSource,
                      Escher::ScrollViewDelegate* scrollViewDelegate,
-                     bool hasGrid)
+                     bool canHaveGrid)
     : ScrollView(&m_contentView, scrollDataSource, scrollViewDelegate),
       m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness,
-                    hasGrid) {
+                    canHaveGrid) {
   m_decorator.setVisibility(true);
 }
 
@@ -63,12 +63,12 @@ TableView::ContentView::ContentView(TableView* tableView,
                                     TableViewDataSource* dataSource,
                                     KDCoordinate horizontalCellOverlap,
                                     KDCoordinate verticalCellOverlap,
-                                    bool hasGrid)
+                                    bool canHaveGrid)
     : View(),
       m_tableView(tableView),
       m_dataSource(dataSource),
       m_grid(m_tableView),
-      m_hasGrid(hasGrid),
+      m_canHaveGrid(canHaveGrid),
       m_horizontalCellOverlap(horizontalCellOverlap),
       m_verticalCellOverlap(verticalCellOverlap),
       m_rowsScrollingOffset(-1),
@@ -221,6 +221,10 @@ int TableView::ContentView::columnsScrollingOffset() const {
            m_dataSource->columnAfterCumulatedWidth(invisibleWidth()));
   }
   return m_columnsScrollingOffset;
+}
+
+bool TableView::ContentView::hasGrid() const {
+  return m_canHaveGrid && ColorPicker::HasTableGrid();
 }
 
 View* TableView::ContentView::subviewAtIndex(int index) {

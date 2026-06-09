@@ -20,7 +20,7 @@ class SelectableTableView : public TableView, public Responder {
       SelectableTableViewDataSource* selectionDataSource = nullptr,
       SelectableTableViewDelegate* delegate = nullptr,
       Escher::ScrollViewDelegate* scrollViewDelegate = nullptr,
-      bool hasGrid = false);
+      bool canHaveGrid = false);
   template <typename T>
   SelectableTableView(T* p) : SelectableTableView(p, p, p){};
 

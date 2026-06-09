@@ -62,6 +62,17 @@ ColorPicker::SelectionThickness ColorPicker::GetSelectionThickness() {
   }
 }
 
+bool ColorPicker::HasTableGrid() {
+  switch (GetCurrentTheme()) {
+    case Theme::Light:
+      return false;
+    case Theme::Dark:
+      return true;
+    default:
+      OMG_UNREACHABLE
+  }
+}
+
 Theme ColorPicker::GetCurrentTheme() { return SharedPreferences->theme(); }
 
 KDColor ColorPicker::Get(Theme theme, ThemeComponent component) {

@@ -32,6 +32,8 @@ class ColorPicker {
   enum class SelectionThickness : bool { Simple, Double };
   static SelectionThickness GetSelectionThickness();
 
+  static bool HasTableGrid();
+
  private:
   /* GetCurrentTheme is defined in the .cpp so that the details of how the
    * theme is accessed are hidden. Currently for Epsilon (the only project which

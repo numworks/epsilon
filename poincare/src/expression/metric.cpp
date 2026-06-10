@@ -184,9 +184,10 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget target) {
           assert(result == GetAddMultMetric(e));
           result = 0.f;
         } else if (e->child(0)->isInteger() &&
-                   !(e->numberOfChildren() == 2 && e->child(1)->isAdd())) {
+                   (!shouldExpand ||
+                    !(e->numberOfChildren() == 2 && e->child(1)->isAdd()))) {
           /* Reduce cost of multiplication by an integer (n*A) if A is not an
-           * addition. */
+           * addition or if target prefers contracted form. */
           result = result * k_integerMultiplicationReductionFactor;
         }
         /* Trigonometry with complexes is beautified into hyperbolic

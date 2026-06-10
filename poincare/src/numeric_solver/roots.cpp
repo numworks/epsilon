@@ -18,8 +18,8 @@
 
 namespace Poincare::Internal {
 
-Tree* Roots::ApplyAdditionalReduction(Tree* solutions) {
-  AdvancedReduction::Reduce(solutions);
+Tree* Roots::ApplyAdditionalReduction(Tree* solutions, ReductionTarget target) {
+  AdvancedReduction::Reduce(solutions, target);
   Dependency::DeepRemoveUselessDependencies(solutions);
   return solutions;
 }
@@ -41,7 +41,8 @@ Tree* Roots::PrivateQuadratic(const Tree* a, const Tree* b, const Tree* c,
                               const Tree* discriminant) {
   assert(a && b && c);
   if (!discriminant) {
-    Tree* discriminant = Roots::QuadraticDiscriminant(a, b, c);
+    Tree* discriminant =
+        Roots::QuadraticDiscriminant(a, b, c, ReductionTarget::System);
     TreeRef solutions = Roots::PrivateQuadratic(a, b, c, discriminant);
     discriminant->removeTree();
     return solutions;
@@ -433,7 +434,8 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
                                      const Tree* delta,
                                      bool approximateCardanoNumber) {
   if (!delta) {
-    Tree* discriminant = Roots::CubicDiscriminant(a, b, c, d);
+    Tree* discriminant =
+        Roots::CubicDiscriminant(a, b, c, d, ReductionTarget::System);
     TreeRef roots = Roots::CubicRootsCardanoMethod(a, b, c, d, discriminant);
     discriminant->removeTree();
     return roots;

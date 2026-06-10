@@ -647,12 +647,14 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
   assert(degree >= 2 && degree <= POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE);
   TreeRef discriminant;
   if (degree == 2) {
-    discriminant = Roots::QuadraticDiscriminant(
-        coefficients[2], coefficients[1], coefficients[0]);
+    discriminant =
+        Roots::QuadraticDiscriminant(coefficients[2], coefficients[1],
+                                     coefficients[0], ReductionTarget::System);
   } else if constexpr (3 <= POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE) {
     assert(degree == 3);
     discriminant = Roots::CubicDiscriminant(coefficients[3], coefficients[2],
-                                            coefficients[1], coefficients[0]);
+                                            coefficients[1], coefficients[0],
+                                            ReductionTarget::System);
   }
   /* Exact solutions are computed, except for some of the cubic polynomials that
    * require Cardano's method, in which case approximate solutions are computed.
@@ -721,6 +723,8 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
   NAry::SetNumberOfChildren(solutionList, numberOfSolutions);
   equation->removeTree();
 
+  // Discriminant was reduced with a System target for computation
+  Roots::ApplyAdditionalReduction(discriminant, ReductionTarget::User);
   NAry::AddChild(solutionList, discriminant);
   solutionMetadata.degree = static_cast<int>(degree);
   return {.exactSolutionList = solutionList,

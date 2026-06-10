@@ -1,6 +1,7 @@
 #pragma once
 
 #include <poincare/k_tree.h>
+#include <poincare/simplification_policies.h>
 #include <poincare/src/memory/tree.h>
 
 #include "omg/unreachable.h"
@@ -25,10 +26,12 @@ class Roots {
     OMG_UNREACHABLE
 #endif
   }
-  static Tree* QuadraticDiscriminant(const Tree* a, const Tree* b,
-                                     const Tree* c) {
+  static Tree* QuadraticDiscriminant(
+      const Tree* a, const Tree* b, const Tree* c,
+      ReductionTarget target = ReductionTarget::User) {
 #if POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE >= 2
-    return ApplyAdditionalReduction(PrivateQuadraticDiscriminant(a, b, c));
+    return ApplyAdditionalReduction(PrivateQuadraticDiscriminant(a, b, c),
+                                    target);
 #else
     OMG_UNREACHABLE
 #endif
@@ -50,14 +53,19 @@ class Roots {
     OMG_UNREACHABLE
 #endif
   }
-  static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
-                                 const Tree* d) {
+  static Tree* CubicDiscriminant(
+      const Tree* a, const Tree* b, const Tree* c, const Tree* d,
+      ReductionTarget target = ReductionTarget::User) {
 #if POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE >= 3
-    return ApplyAdditionalReduction(PrivateCubicDiscriminant(a, b, c, d));
+    return ApplyAdditionalReduction(PrivateCubicDiscriminant(a, b, c, d),
+                                    target);
 #else
     OMG_UNREACHABLE
 #endif
   }
+  // Apply advanced reduction, remove useless dependencies, and return the tree.
+  static Tree* ApplyAdditionalReduction(
+      Tree* solutions, ReductionTarget target = ReductionTarget::User);
 
  private:
   constexpr static SimpleKTrees::KTree k_squareRootOfThree =
@@ -83,9 +91,6 @@ class Roots {
                             bool fastCardanoMethod = false);
   static Tree* PrivateCubicDiscriminant(const Tree* a, const Tree* b,
                                         const Tree* c, const Tree* d);
-
-  // Apply advanced reduction, remove useless dependencies, and return the tree.
-  static Tree* ApplyAdditionalReduction(Tree* solutions);
 
   static Tree* PolynomialEvaluation(const Tree* value, const Tree* a,
                                     const Tree* b, const Tree* c,

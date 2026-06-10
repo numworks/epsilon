@@ -34,6 +34,7 @@ Tree* BuildDecomposition(double value, const Representative* const* list,
   value = roundToMaxPrecision(value / smallestRatio);
 
   for (int i = 0; i < length; i++) {
+    bool firstUnit = i == 0;
     bool lastUnit = i == length - 1;
     const Representative* representative = list[i];
     // Compute ratio from smallest representative to this one
@@ -49,8 +50,7 @@ Tree* BuildDecomposition(double value, const Representative* const* list,
                                 ? std::floor(representativeValue + lax)
                                 : std::ceil(representativeValue - lax);
     }
-    assert(!lastUnit || result->numberOfChildren() > 0);
-    if (std::abs(representativeValue) > lax) {
+    if (std::abs(representativeValue) > lax || (firstUnit && value == 0)) {
       // Add decomposed unit
       SharedTreeStack->pushMult(2);
       SharedTreeStack->pushFloat(representativeValue);

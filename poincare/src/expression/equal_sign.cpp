@@ -1,6 +1,7 @@
 #include "equal_sign.h"
 
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/number.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
@@ -25,10 +26,19 @@ bool isExpectedExpression(const Tree* expr) {
           isExpectedExpression(expr->child(0)));
 }
 
+const Tree* skipMultiplicativeOne(const Tree* e) {
+  if (e->isMult() && e->numberOfChildren() == 2 && Number::IsOne(e->child(0))) {
+    return e->child(1);
+  }
+  return e;
+}
+
 bool RecursiveIsCalculationOutputStrictEquality(const Tree* exact,
                                                 const Tree* approximate,
                                                 int significantDigits) {
   assert(exact && approximate);
+  exact = skipMultiplicativeOne(exact);
+  approximate = skipMultiplicativeOne(approximate);
   if (exact->isUndefined() || approximate->isUndefined()) {
     // We never want to display "≈ undef" nor "undef ≈"
     return true;

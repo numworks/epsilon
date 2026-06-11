@@ -142,7 +142,7 @@ void StoreController::setTitleCellStyle(HighlightCell* cell, int column) {
       static_cast<Shared::BufferFunctionTitleCell*>(cell);
   // TODO Share GrayDark with graph/list_controller
   myCell->setColor(!m_store->seriesIsActive(seriesIndex)
-                       ? ThemeComponent::TextGrayDark
+                       ? ThemeComponent::TextDeactivated
                        : m_store->colorOfSeriesAtIndex(seriesIndex));
   myCell->setFont(KDFont::Size::Small);
 }

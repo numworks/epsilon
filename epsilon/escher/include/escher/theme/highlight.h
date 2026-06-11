@@ -23,6 +23,8 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
     case ThemeComponent::TextTables:
     case ThemeComponent::TokenEllipsis:
       return ThemeComponent::TextSelect;
+    case ThemeComponent::TextDeactivated:
+      return ThemeComponent::TextSelectDeactivated;
     case ThemeComponent::TextGrayDark:
       return ThemeComponent::TextSelectGrayDark;
     case ThemeComponent::TextGrayVeryDark:

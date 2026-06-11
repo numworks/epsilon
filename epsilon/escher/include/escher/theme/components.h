@@ -37,7 +37,9 @@ namespace Escher {
   X(TextDefault)                   \
   X(TextTables)                    \
   X(TextBanner)                    \
+  X(TextDeactivated)               \
   X(TextSelect)                    \
+  X(TextSelectDeactivated)         \
   X(TextSelectGrayDark)            \
   X(TextSelectGrayVeryDark)        \
   X(TextSelectPurple)              \

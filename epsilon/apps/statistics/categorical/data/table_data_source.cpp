@@ -15,6 +15,7 @@ TableViewDataSource::TableViewDataSource(
   for (EvenOddEditableCell& cell : m_editableCells) {
     cell.setParentResponder(editableCellsParentResponder);
     cell.editableTextCell()->textField()->setDelegate(textFieldDelegate);
+    cell.setTextColor(Escher::ThemeComponent::TextTables);
   }
 }
 

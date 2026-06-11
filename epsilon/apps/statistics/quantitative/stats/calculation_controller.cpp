@@ -76,7 +76,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       AbstractEvenOddTableBufferTextCell* bufferCell =
           static_cast<AbstractEvenOddTableBufferTextCell*>(cell);
       bufferCell->setTextColor(column == 1 ? ThemeComponent::TextGrayDark
-                                           : ThemeComponent::TextDefault);
+                                           : ThemeComponent::TextTables);
       bufferCell->setText(buffer);
       return;
     }
@@ -101,7 +101,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       EvenOddTableMessageTextCell* calcTitleCell =
           static_cast<EvenOddTableMessageTextCell*>(cell);
       calcTitleCell->setTextColor(column == 1 ? ThemeComponent::TextGrayDark
-                                              : ThemeComponent::TextDefault);
+                                              : ThemeComponent::TextTables);
       calcTitleCell->setMessage(message);
       return;
     }

@@ -138,7 +138,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
     EvenOddTableMessageTextCell* myCell =
         static_cast<EvenOddTableMessageTextCell*>(cell);
     myCell->setTextColor(type == k_calculationTitleCellType
-                             ? ThemeComponent::TextDefault
+                             ? ThemeComponent::TextTables
                              : ThemeComponent::TextGrayDark);
     I18n::Message message = type == k_calculationTitleCellType
                                 ? MessageForCalculation(c)
@@ -166,7 +166,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
             ? model->formula()
             : I18n::translate(I18n::Message::Dash));
     static_cast<AbstractEvenOddTableBufferTextCell*>(cell)->setTextColor(
-        ThemeComponent::TextDefault);
+        ThemeComponent::TextTables);
     return;
   }
 
@@ -228,7 +228,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
   // Single calculation cells
   AbstractEvenOddTableBufferTextCell* bufferCell =
       static_cast<AbstractEvenOddTableBufferTextCell*>(cell);
-  bufferCell->setTextColor(ThemeComponent::TextDefault);
+  bufferCell->setTextColor(ThemeComponent::TextTables);
   double result = NAN;
 
   if (c >= Calculation::NumberOfDots && c <= Calculation::SumOfProducts) {

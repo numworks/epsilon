@@ -93,7 +93,7 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
     myCell->setText(buffer);
     ThemeComponent textColor =
         m_store->seriesIsActive(m_store->seriesAtColumn(column))
-            ? ThemeComponent::TextDefault
+            ? ThemeComponent::TextTables
             : ThemeComponent::TextGrayDark;
     myCell->setTextColor(textColor);
   }

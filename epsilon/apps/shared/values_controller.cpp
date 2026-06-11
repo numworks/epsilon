@@ -531,6 +531,7 @@ void ValuesController::initValueCells() {
     assert(valueCell);
     valueCell->setFont(k_cellFont);
     valueCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+    valueCell->setTextColor(ThemeComponent::TextTables);
     // TODO: Factorize margin computation
     valueCell->setMargins(
         {EvenOddCell::k_horizontalMargin, EvenOddCell::k_horizontalMargin});

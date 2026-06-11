@@ -24,7 +24,8 @@ class EvenOddCell : public HighlightCell {
 
   constexpr static KDCoordinate k_horizontalMargin = Metric::SmallCellMargin;
   constexpr static TextFormat k_smallCellDefaultFormat = {
-      .style = {.font = KDFont::Size::Small},
+      .style = {.glyphColor = ThemeComponent::TextTables,
+                .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignRight};
 
  protected:

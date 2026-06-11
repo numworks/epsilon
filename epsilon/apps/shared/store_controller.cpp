@@ -108,7 +108,7 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
     ThemeComponent textColor =
         (m_store->seriesIsActive(m_store->seriesAtColumn(column)) ||
          m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(column)) == 0)
-            ? ThemeComponent::TextDefault
+            ? ThemeComponent::TextTables
             : ThemeComponent::TextDeactivated;
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }

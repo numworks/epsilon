@@ -67,8 +67,11 @@ void BarGraphView::ContentView::drawCategory(KDContext* ctx, KDRect rect,
                           KDSize(rect.width(), k_legendHeight),
                           {.style = {.glyphColor = Escher::ColorPicker::Resolve(
                                          // TODO: change this color
-                                         Escher::ThemeComponent::DataGreen),
+                                         Escher::ThemeComponent::TextDefault),
                                      // TODO: also change the background color
+                                     .backgroundColor = Escher::ColorPicker::Resolve(
+                                      Escher::ThemeComponent::DefaultBackground
+                                     ),
                                      .font = KDFont::Size::Small},
                            .horizontalAlignment = KDGlyph::k_alignCenter,
                            .verticalAlignment = KDGlyph::k_alignCenter});

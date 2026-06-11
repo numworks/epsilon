@@ -63,18 +63,16 @@ void BarGraphView::ContentView::drawCategory(KDContext* ctx, KDRect rect,
   // Draw legend
   char buffer[sizeof(Store::Label)];
   m_store->getCategoryName(category, buffer, sizeof(buffer));
-  ctx->alignAndDrawString(buffer, KDPoint(xOffset, yOffset + k_maxBarHeight),
-                          KDSize(rect.width(), k_legendHeight),
-                          {.style = {.glyphColor = Escher::ColorPicker::Resolve(
-                                         // TODO: change this color
-                                         Escher::ThemeComponent::TextDefault),
-                                     // TODO: also change the background color
-                                     .backgroundColor = Escher::ColorPicker::Resolve(
-                                      Escher::ThemeComponent::DefaultBackground
-                                     ),
-                                     .font = KDFont::Size::Small},
-                           .horizontalAlignment = KDGlyph::k_alignCenter,
-                           .verticalAlignment = KDGlyph::k_alignCenter});
+  ctx->alignAndDrawString(
+      buffer, KDPoint(xOffset, yOffset + k_maxBarHeight),
+      KDSize(rect.width(), k_legendHeight),
+      {.style = {.glyphColor = Escher::ColorPicker::Resolve(
+                     Escher::ThemeComponent::TextDefault),
+                 .backgroundColor = Escher::ColorPicker::Resolve(
+                     Escher::ThemeComponent::DefaultBackground),
+                 .font = KDFont::Size::Small},
+       .horizontalAlignment = KDGlyph::k_alignCenter,
+       .verticalAlignment = KDGlyph::k_alignCenter});
 
   // Draw bars
   if (maxValue == 0.0f) {

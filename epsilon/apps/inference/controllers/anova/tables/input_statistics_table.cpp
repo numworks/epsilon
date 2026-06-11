@@ -76,7 +76,7 @@ void InputStatisticsTable::fillColumnTitleForLocation(
       innerColumn < k_numberOfInnerColumns - 1) {
     /* The last header has its title grayed out, except if the column is the
      * last possible column. */
-    myCell->setTextColor(ThemeComponent::TextGrayDark);
+    myCell->setTextColor(ThemeComponent::TextDeactivated);
   }
 }
 void InputStatisticsTable::fillRowTitleForLocation(Escher::HighlightCell* cell,

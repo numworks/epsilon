@@ -284,7 +284,8 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
                                             : properties.caption());
       functionCell->setHideMessage(isDerivative);
       functionCell->expressionCell()->setTextColor(
-          active ? ThemeComponent::TextDefault : ThemeComponent::TextGrayDark);
+          active ? ThemeComponent::TextDefault
+                 : ThemeComponent::TextDeactivated);
       functionCell->setParameterSelected(m_parameterColumnSelected);
     }
     ThemeComponent functionColor =

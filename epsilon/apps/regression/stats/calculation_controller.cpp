@@ -101,7 +101,7 @@ void DashBufferCell(AbstractEvenOddTableBufferTextCell* bufferCell) {
 }
 
 void DisableBufferCell(AbstractEvenOddTableBufferTextCell* bufferCell) {
-  bufferCell->setTextColor(ThemeComponent::TextGrayDark);
+  bufferCell->setTextColor(ThemeComponent::TextDeactivated);
   bufferCell->setText(I18n::translate(I18n::Message::Disabled));
 }
 
@@ -148,7 +148,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
          c == Calculation::DeterminationCoeff || c == Calculation::RSquared) &&
         forbidStatsDiagnostics) {
       // R and R2 messages should be grayed out.
-      myCell->setTextColor(ThemeComponent::TextGrayDark);
+      myCell->setTextColor(ThemeComponent::TextDeactivated);
     }
     return;
   }

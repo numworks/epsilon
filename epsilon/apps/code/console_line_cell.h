@@ -54,8 +54,9 @@ class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
     ConsoleLineView m_consoleLineView;
   };
   static Escher::ThemeComponent TextColor(const ConsoleLine* line) {
-    return line->isFromCurrentSession() ? Escher::ThemeComponent::TextDefault
-                                        : Escher::ThemeComponent::TextGrayDark;
+    return line->isFromCurrentSession()
+               ? Escher::ThemeComponent::TextDefault
+               : Escher::ThemeComponent::TextDeactivated;
   }
   Escher::MessageTextView m_promptView;
   ScrollableConsoleLineView m_scrollableView;

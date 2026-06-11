@@ -176,7 +176,7 @@ void ListController::fillExpressionCellForRow(HighlightCell* cell, int row) {
   // Set the color
   ThemeComponent textColor = sequence->isActive()
                                  ? ThemeComponent::TextDefault
-                                 : ThemeComponent::TextGrayDark;
+                                 : ThemeComponent::TextDeactivated;
   myCell->setTextColor(textColor);
   // Set the layout
   return myCell->setLayout(sequence->aggregatedLayout());

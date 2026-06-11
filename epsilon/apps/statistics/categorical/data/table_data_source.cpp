@@ -35,7 +35,7 @@ void TableViewDataSource::prepareHeaderCell(Escher::HighlightCell* cell,
   }
   myCell->setColor(store()->isGroupActive(info.groupNumber)
                        ? store()->colorOfGroupAtIndex(info.groupNumber)
-                       : Escher::ThemeComponent::TextGrayDark);
+                       : Escher::ThemeComponent::TextDeactivated);
   static_assert(Escher::k_numberOfDataColors >= Store::k_maxNumberOfGroups);
 }
 
@@ -58,7 +58,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     myCell->setText(txt);
     myCell->setTextColor(store()->isCategoryActive(dataRow(row))
                              ? Escher::ThemeComponent::TextTables
-                             : Escher::ThemeComponent::TextGrayDark);
+                             : Escher::ThemeComponent::TextDeactivated);
   } else if (type == k_typeOfInnerCells) {
     float p = store()->getValue(dataColumn(column), dataRow(row));
     EvenOddEditableCell* editableCell = static_cast<EvenOddEditableCell*>(cell);

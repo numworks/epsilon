@@ -59,7 +59,7 @@ void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
     /* The last header has its title grayed out, except if the column is the
      * last possible column. */
     static_cast<InferenceEvenOddBufferCell*>(cell)->setTextColor(
-        ThemeComponent::TextGrayDark);
+        ThemeComponent::TextDeactivated);
   }
 }
 

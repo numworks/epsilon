@@ -109,7 +109,7 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
         (m_store->seriesIsActive(m_store->seriesAtColumn(column)) ||
          m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(column)) == 0)
             ? ThemeComponent::TextDefault
-            : ThemeComponent::TextGrayDark;
+            : ThemeComponent::TextDeactivated;
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
   fillCellForLocationWithDisplayMode(
@@ -140,7 +140,6 @@ void StoreController::setTitleCellStyle(HighlightCell* cell, int column) {
   int seriesIndex = m_store->seriesAtColumn(column);
   Shared::BufferFunctionTitleCell* myCell =
       static_cast<Shared::BufferFunctionTitleCell*>(cell);
-  // TODO Share GrayDark with graph/list_controller
   myCell->setColor(!m_store->seriesIsActive(seriesIndex)
                        ? ThemeComponent::TextDeactivated
                        : m_store->colorOfSeriesAtIndex(seriesIndex));

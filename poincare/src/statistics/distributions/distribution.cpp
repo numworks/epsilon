@@ -129,9 +129,10 @@ template <typename T>
 T ComputeYMax(Type type, const ParametersArray<T>& parameters) {
   switch (type) {
     case Type::Binomial: {
-      int maxAbscissa = parameters[1] < 1.0f
-                            ? (parameters[0] + 1) * parameters[1]
-                            : parameters[0];
+      /* Use T (not int) to avoid overflow when n is very large. */
+      T maxAbscissa =
+          std::floor(parameters[1] < 1.0f ? (parameters[0] + 1) * parameters[1]
+                                          : parameters[0]);
       float result = EvaluateAtAbscissa<T>(type, maxAbscissa, parameters);
       if (std::isnan(result) || result <= 0.0f) {
         result = 1.0f;

@@ -54,6 +54,13 @@ QUIZ_CASE(distributions_parameters_binomial) {
       distribution.authorizedParameterAtIndex(1.0, Params::Binomial::P));
   quiz_assert(
       !distribution.authorizedParameterAtIndex(2.0, Params::Binomial::P));
+  // Very large n must not overflow ComputeYMax (mode index overflows int)
+  distribution.setParameterAtIndex(1e16, Params::Binomial::N);
+  quiz_assert(distribution.yMax() > 0.f);
+  /* n = 1e10 exceeds INT_MAX but yMax is still computable (n = 1e16 underflows
+   * to fallback) */
+  distribution.setParameterAtIndex(1e10, Params::Binomial::N);
+  quiz_assert(distribution.yMax() > 0.f && distribution.yMax() < 1e-3f);
 }
 
 QUIZ_CASE(distributions_parameters_uniform) {

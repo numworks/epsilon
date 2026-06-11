@@ -471,7 +471,9 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
     //   Step 3.2: Bar height
     KDCoordinate top =
         plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical, y);
-    assert(top >= 0);
+    /* Clip bar top to the visible area. The y value may exceed the plot's
+     * y-range (e.g. due to numerical instability for extreme parameters). */
+    top = std::max(top, static_cast<KDCoordinate>(0));
     KDCoordinate barHeight = plotViewHeight - top;
     assert(barHeight >= 0);
     KDCoordinate minBarHeight = 1 + (m_highlightWithBorder ? k_borderWidth : 0);

@@ -692,7 +692,18 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
         layoutBuiltin(parentRack, expression);
       } else {
         Tree* layout =
-            (expression->child(2)->isOne() ? KDiffL : KNthDiffL)->cloneNode();
+            (expression->child(Parametric::k_orderIndex)->isOne() ? KDiffL
+                                                                  : KNthDiffL)
+                ->cloneNode();
+        if (expression->child(Parametric::k_variableIndex)
+                ->treeIsIdenticalTo(
+                    expression->child(Parametric::k_valueIndex))) {
+          /* The derivative is evaluated at the variable itself. Hide the
+           * abscissa in the layout.
+           * For example, diff(f(x), x, x, n) lays out as d/dx(f(x)) instead of
+           * d/dx(f(x))|x=x. */
+          layout->toDiffLayoutNode()->hideAbscissa = true;
+        }
         layoutChildrenAsRacks(expression);
         NAry::AddChild(parentRack, layout);
       }

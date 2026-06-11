@@ -295,7 +295,9 @@ KDSize Render::Size(const Layout* l) {
       }
 
       KDPoint abscissaPosition = PositionOfChild(l, k_abscissaIndex);
-      KDSize abscissaSize = Size(l->child(k_abscissaIndex));
+      KDSize abscissaSize = l->toDiffLayoutNode()->hideAbscissa
+                                ? KDSizeZero
+                                : Size(l->child(k_abscissaIndex));
       width = abscissaPosition.x() + abscissaSize.width();
       height = std::max(
           abscissaPosition.y() + abscissaSize.height(),
@@ -587,15 +589,19 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
                    ? PositionOfOrderInDenominator(l, baseline, s_font)
                    : PositionOfOrderInNumerator(l, baseline, s_font);
       }
-      return KDPoint(PositionOfRightParenthesis(l, baseline, s_font,
-                                                Size(l->child(k_derivandIndex)))
-                             .x() +
-                         Parenthesis::k_parenthesisWidth +
-                         2 * k_barHorizontalMargin + k_barWidth +
-                         Width(l->child(k_variableIndex)) +
-                         KDFont::Font(s_font)->stringSize("=").width(),
-                     AbscissaBaseline(l, baseline, s_font) -
-                         Baseline(l->child(k_abscissaIndex)));
+      assert(childIndex == k_abscissaIndex);
+      KDCoordinate rightParenthesisEnd =
+          PositionOfRightParenthesis(l, baseline, s_font,
+                                     Size(l->child(k_derivandIndex)))
+              .x() +
+          Parenthesis::k_parenthesisWidth;
+      return l->toDiffLayoutNode()->hideAbscissa
+                 ? KDPoint(rightParenthesisEnd, 0)
+                 : KDPoint(rightParenthesisEnd + 2 * k_barHorizontalMargin +
+                               k_barWidth + Width(l->child(k_variableIndex)) +
+                               KDFont::Font(s_font)->stringSize("=").width(),
+                           AbscissaBaseline(l, baseline, s_font) -
+                               Baseline(l->child(k_abscissaIndex)));
     }
     case LayoutType::Integral: {
       using namespace Integral;
@@ -837,8 +843,11 @@ void Render::DrawSimpleLayout(const Layout* l, KDContext* ctx, KDPoint p,
   assert(l->numberOfChildren() <= 4);
   RenderNode(l, ctx, p, style);
   for (IndexedChild<const Tree*> child : l->indexedChildren()) {
-    if (l->isDiffLayout() && !l->toDiffLayoutNode()->isNthDerivative &&
-        child.index == Derivative::k_orderIndex) {
+    if (l->isDiffLayout() && ((!l->toDiffLayoutNode()->isNthDerivative &&
+                               child.index == Derivative::k_orderIndex) ||
+                              (l->toDiffLayoutNode()->hideAbscissa &&
+                               child.index == Derivative::k_abscissaIndex))) {
+      // Skip order if it's not an nth derivative and abscissa if it's hidden
       continue;
     }
     DrawRack(Rack::From(child), ctx,
@@ -1204,32 +1213,34 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                                        rightParenthesisPosition.translatedBy(p),
                                        style);
 
-      // ...|x=
-      KDSize variableSize = Size(l->child(k_variableIndex));
-      KDRect verticalBar(
-          rightParenthesisPosition.x() + Parenthesis::k_parenthesisWidth +
-              k_barHorizontalMargin,
-          0, k_barWidth,
-          AbscissaBaseline(l, baseline, style.textStyle.font) -
-              Baseline(l->child(k_variableIndex)) + variableSize.height());
-      ctx->fillRect(verticalBar.translatedBy(p), style.textStyle.glyphColor);
+      if (!l->toDiffLayoutNode()->hideAbscissa) {
+        // ...|x=
+        KDSize variableSize = Size(l->child(k_variableIndex));
+        KDRect verticalBar(
+            rightParenthesisPosition.x() + Parenthesis::k_parenthesisWidth +
+                k_barHorizontalMargin,
+            0, k_barWidth,
+            AbscissaBaseline(l, baseline, style.textStyle.font) -
+                Baseline(l->child(k_variableIndex)) + variableSize.height());
+        ctx->fillRect(verticalBar.translatedBy(p), style.textStyle.glyphColor);
 
-      KDPoint variableAssignmentPosition =
-          PositionOfVariableInAssignmentSlot(l, baseline, style.textStyle.font);
-      KDPoint equalPosition = variableAssignmentPosition.translatedBy(KDPoint(
-          variableSize.width(),
-          Baseline(l->child(k_variableIndex)) -
-              KDFont::Font(style.textStyle.font)->stringSize("=").height() /
-                  2));
-      ctx->drawString("=", equalPosition.translatedBy(p), style.textStyle);
+        KDPoint variableAssignmentPosition = PositionOfVariableInAssignmentSlot(
+            l, baseline, style.textStyle.font);
+        KDPoint equalPosition = variableAssignmentPosition.translatedBy(KDPoint(
+            variableSize.width(),
+            Baseline(l->child(k_variableIndex)) -
+                KDFont::Font(style.textStyle.font)->stringSize("=").height() /
+                    2));
+        ctx->drawString("=", equalPosition.translatedBy(p), style.textStyle);
 
-      // Draw the copy of x
-      KDPoint copyPosition = GetVariableSlot(l) == VariableSlot::Fraction
-                                 ? variableAssignmentPosition
-                                 : PositionOfVariableInFractionSlot(
-                                       l, baseline, style.textStyle.font);
-      DrawRack(l->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
-               style, {});
+        // Draw the copy of x
+        KDPoint copyPosition = GetVariableSlot(l) == VariableSlot::Fraction
+                                   ? variableAssignmentPosition
+                                   : PositionOfVariableInFractionSlot(
+                                         l, baseline, style.textStyle.font);
+        DrawRack(l->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
+                 style, {});
+      }
 
       if (l->toDiffLayoutNode()->isNthDerivative) {
         // Draw the copy of the order

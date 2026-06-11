@@ -71,6 +71,7 @@ NODE(CondensedSum, SUM_AND_PRODUCT, 3)
 NODE(Diff, DIFF, 4, {
   bool cursorIsOnTheLeft : 1;
   bool cursorIsOnTheBottom : 1;
+  bool hideAbscissa : 1;
   bool isNthDerivative;
 })
 

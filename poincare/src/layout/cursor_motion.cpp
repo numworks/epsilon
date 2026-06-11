@@ -49,8 +49,12 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     case LayoutType::Diff: {
       using namespace Derivative;
       assert(l->isDiffLayout());
+      bool hideAbscissa = l->toDiffLayoutNode()->hideAbscissa;
       if (!l->toDiffLayoutNode()->isNthDerivative) {
         if (currentIndex == k_derivandIndex) {
+          if (direction.isRight() && hideAbscissa) {
+            return k_outsideIndex;
+          }
           SetVariableSlot(l, direction.isRight() ? VariableSlot::Assignment
                                                  : VariableSlot::Fraction);
           return k_variableIndex;
@@ -62,6 +66,9 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       } else {
         if (currentIndex == k_derivandIndex) {
           if (direction.isRight()) {
+            if (hideAbscissa) {
+              return k_outsideIndex;
+            }
             SetVariableSlot(l, VariableSlot::Assignment);
             return k_variableIndex;
           }
@@ -102,14 +109,16 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       switch (currentIndex) {
         case k_outsideIndex:
           assert(direction.isLeft());
-          return k_abscissaIndex;
+          return hideAbscissa ? k_derivandIndex : k_abscissaIndex;
         case k_abscissaIndex:
           assert(direction.isRight());
           return k_outsideIndex;
         default: {
           assert(currentIndex == k_variableIndex &&
                  GetVariableSlot(l) == VariableSlot::Assignment);
-          return direction.isRight() ? k_abscissaIndex : k_derivandIndex;
+          return direction.isRight()
+                     ? (hideAbscissa ? k_outsideIndex : k_abscissaIndex)
+                     : k_derivandIndex;
         }
       }
     }
@@ -279,7 +288,8 @@ int CursorMotion::IndexAfterVerticalCursorMove(
         return k_derivandIndex;
       }
       if (direction.isDown() && currentIndex == k_derivandIndex &&
-          positionAtCurrentIndex == PositionInLayout::Right) {
+          positionAtCurrentIndex == PositionInLayout::Right &&
+          !l->toDiffLayoutNode()->hideAbscissa) {
         return k_abscissaIndex;
       }
       return k_cantMoveIndex;

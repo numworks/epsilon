@@ -131,6 +131,7 @@ Layout ContinuousFunction::derivativeTitleLayout() const {
   Layout name = Layout::String(buffer, length);
   Layout leftHandSide = Layout::Concatenate(name, Layout::CodePoint('='));
   UserExpression equation = originalEquation();
+  assert(!equation.isUninitialized() && equation.numberOfChildren() == 2);
   Layout rightHandSide = PoincareHelpers::CreateLayout(
       equation.cloneChildAtIndex(1), GlobalContextAccessor::Context());
   return Layout::Concatenate(leftHandSide, rightHandSide);

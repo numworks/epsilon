@@ -285,8 +285,6 @@ class ContinuousFunction : public Function {
   // Insert ContinuousFunction's name in buffer ("f" or "y")
   size_t nameWithoutArgument(char* buffer, size_t bufferSize,
                              int derivationOrder = 0) const;
-  Poincare::UserExpression createDerivativeEquationFromParent() const;
-
   /* Expressions */
 
   // Return the expression representing the equation for computations

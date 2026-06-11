@@ -129,18 +129,11 @@ Layout ContinuousFunction::derivativeTitleLayout() const {
   char buffer[bufferSize];
   size_t length = nameWithArgument(buffer, bufferSize);
   Layout name = Layout::String(buffer, length);
-  // Add =d/dx(expr)
-  int order = derivationOrder();
-  char symbolName[CodePoint::MaxCodePointCharLength + 1];
-  size_t symbolNameLength =
-      UTF8Helper::WriteCodePoint(symbolName, sizeof(symbolName) - 1, symbol());
-  symbolName[symbolNameLength] = '\0';
-  UserExpression diffEquation =
-      parentFunction()->originalEquation().getDerivative(symbolName, order);
+  Layout leftHandSide = Layout::Concatenate(name, Layout::CodePoint('='));
+  UserExpression equation = originalEquation();
   Layout rightHandSide = PoincareHelpers::CreateLayout(
-      diffEquation.cloneChildAtIndex(1), GlobalContextAccessor::Context());
-  return Layout::Concatenate(Layout::Concatenate(name, Layout::CodePoint('=')),
-                             rightHandSide);
+      equation.cloneChildAtIndex(1), GlobalContextAccessor::Context());
+  return Layout::Concatenate(leftHandSide, rightHandSide);
 }
 
 size_t ContinuousFunction::printAbscissaValue(double cursorT, double cursorX,
@@ -783,22 +776,31 @@ const Internal::Tree* ContinuousFunction::Model::expressionTree(
   return ExpressionModel::expressionTree(record)->child(1);
 }
 
-UserExpression ContinuousFunction::createDerivativeEquationFromParent() const {
-  assert(isDerivative());
-  int order = derivationOrder();
-  return parentFunction()->equationClone().getDerivative(k_unknownName, order);
-}
-
 UserExpression ContinuousFunction::Model::originalEquation(
     const Ion::Storage::Record* record, CodePoint symbol) const {
-  ContinuousFunction f(*record);
-  UserExpression unknownSymbolEquation =
-      f.isDerivative() ? f.createDerivativeEquationFromParent()
-                       : equationClone(record);
-  if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
-    return unknownSymbolEquation;
+  OMG::ExpiringPointer<ContinuousFunction> f =
+      GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(*record);
+  if (!f->isDerivative()) {
+    UserExpression equationWithUnknown = f->equationClone();
+    if (equationWithUnknown.isUninitialized() || symbol == UCodePointUnknown) {
+      return equationWithUnknown;
+    }
+    return equationWithUnknown.cloneAndReplaceUnknownWithSymbol(symbol);
   }
-  return unknownSymbolEquation.cloneAndReplaceUnknownWithSymbol(symbol);
+  // Derivative case
+  int derivationOrder = f->derivationOrder();
+  UserExpression parentEquation = f->parentFunction()->equationClone();
+  if (parentEquation.isUninitialized()) {
+    return parentEquation;
+  }
+  if (symbol != UCodePointUnknown) {
+    parentEquation = parentEquation.cloneAndReplaceUnknownWithSymbol(symbol);
+  }
+  char symbolName[CodePoint::MaxCodePointCharLength + 1];
+  size_t symbolNameLength =
+      UTF8Helper::WriteCodePoint(symbolName, sizeof(symbolName) - 1, symbol);
+  symbolName[symbolNameLength] = '\0';
+  return parentEquation.getDerivative(symbolName, derivationOrder);
 }
 
 bool ContinuousFunction::IsFunctionAssignment(const UserExpression& e) {
@@ -824,10 +826,7 @@ ContinuousFunction::Model::expressionEquation(
       .functionSymbol = ContinuousFunctionProperties::k_defaultSymbolType,
       .isCartesianEquation = false,
   };
-  ContinuousFunction f(*record);
-  UserExpression result = f.isDerivative()
-                              ? f.createDerivativeEquationFromParent()
-                              : equationClone(record);
+  UserExpression result = originalEquation(record, UCodePointUnknown);
   if (result.isUninitialized()) {
     data.equation = UserExpression::Undefined();
     return data;
@@ -906,10 +905,13 @@ ContinuousFunction::Model::expressionEquation(
         SymbolHelper::BuildUserVariable(k_ordinateSymbol),
         SymbolHelper::BuildUserVariable(UCodePointTemporaryUnknown));
 
-    if (f.isDerivative()) {
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        GlobalContextAccessor::ContinuousFunctionStore().modelForRecord(
+            *record);
+    if (f->isDerivative()) {
       /* A derivative's symbol is lost when it is changed to an equation, but it
        * can be found from its parent's symbol. */
-      data.functionSymbol = f.parentFunction()->properties().symbolType();
+      data.functionSymbol = f->parentFunction()->properties().symbolType();
     }
   }
   // Replace all defined symbols and functions to extract symbols

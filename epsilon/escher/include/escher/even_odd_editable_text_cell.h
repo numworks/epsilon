@@ -15,6 +15,10 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
   Responder* responder() override { return this; }
   const char* text() const override { return editableTextCell()->text(); }
 
+  void setTextColor(ThemeComponent textColor) {
+    editableTextCell()->setTextColor(textColor);
+  }
+
  protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;
 

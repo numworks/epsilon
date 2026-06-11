@@ -15,6 +15,9 @@ class AbstractEditableTextCell : public HighlightCell, public Responder {
       : HighlightCell(), Responder(parentResponder) {}
   virtual TextField* textField() = 0;
   void setHighlighted(bool highlight) override;
+  void setTextColor(ThemeComponent textColor) {
+    textField()->setTextColor(textColor);
+  }
   Responder* responder() override { return this; }
   const char* text() const override;
   int numberOfSubviews() const override;

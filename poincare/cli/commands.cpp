@@ -1,12 +1,15 @@
 #include "commands.h"
 
 #include <poincare/expression.h>
+#include <poincare/simplification_parameters.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/system_expression.h>
+#include <poincare/user_expression.h>
 
 #include <iostream>
 
@@ -18,11 +21,10 @@ HistoryContext s_historyContext;
 bool s_isInteractive = false;
 
 SimplificationParameters simplificationParameters() {
-  SimplificationParameters result;
-  result.context = &s_historyContext;
-  simplificationParameters.projectionPolicy.symbolic =
-      SymbolicComputation::ReplaceDefinedSymbols;
-  return result;
+  return SimplificationParameters{
+      .user = {.context = s_historyContext},
+      .projectionPolicy = {.symbolic =
+                               SymbolicComputation::ReplaceDefinedSymbols}};
 }
 
 UserExpression getExpression(const std::vector<std::string>& args) {
@@ -30,30 +32,30 @@ UserExpression getExpression(const std::vector<std::string>& args) {
     std::cerr << "This command expects an expression tree\n";
     return UserExpression::Undefined();
   }
-  UserExpression e = UserExpression::Parse(args[0].c_str(), &s_historyContext);
+  UserExpression e = UserExpression::Parse(args[0].c_str(), s_historyContext);
   if (e.isUninitialized()) {
     std::cerr << "Syntax error\n";
-    return UserExpression::Expression::Undefined();
+    return UserExpression::Undefined();
   }
   return e;
 }
 
 void printExpression(const Expression& expr) {
   if (s_isInteractive) {
-    int id = s_historyContext.addOutput(expr);
+    int id = s_historyContext.addOutput(expr.tree());
     std::cout << "o" << id << " = ";
   }
-  char buffer[65536];
-  // TODO: expr could be of any subType.
-  expr.serialize(buffer);
-  std::cout << buffer << std::endl;
+  // The base Expression no longer exposes serialize, so render the tree
+  // directly through its linear layout serialization.
+  expr.tree()->logSerialize(std::cout);
 }
 
 // Command implementations
 void expandCommand(const std::vector<std::string>& args) {
   UserExpression s = getExpression(args);
   Internal::Tree* p = s.tree()->cloneTree();
-  Internal::Simplification::ToSystem(p, context());
+  Internal::Simplification::ToSystem(
+      p, ToProjectionParameters(simplificationParameters()));
   Internal::SystematicReduction::DeepReduce(p);
   Internal::AdvancedReduction::DeepExpand(p);
   SystemExpression r = SystemExpression::Builder(p);
@@ -63,10 +65,11 @@ void expandCommand(const std::vector<std::string>& args) {
 void approximateCommand(const std::vector<std::string>& args) {
   UserExpression s = getExpression(args);
   Internal::Tree* p = s.tree()->cloneTree();
-  Internal::Simplification::ToSystem(p, context());
+  Internal::Simplification::ToSystem(
+      p, ToProjectionParameters(simplificationParameters()));
   Internal::Tree* a = Internal::Approximation::To<Tree*>(
-      p, FloatPrecision::Double, Approximation::Parameters{});
-  Expression r = Expression::Builder(a);
+      p, FloatPrecision::Double, Internal::Approximation::Parameters{});
+  SystemExpression r = SystemExpression::Builder(a);
   p->removeTree();
   printExpression(r);
 }

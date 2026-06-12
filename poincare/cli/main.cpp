@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
     std::exit(0);
   }
 
-  Ion::Simulator::Random::init();
+  Ion::Simulator::Random::init(true);
   Ion::Init();
   DefaultPreferences::s_sharedPreferences.init();
   Poincare::Init(DefaultPreferences::s_sharedPreferences);

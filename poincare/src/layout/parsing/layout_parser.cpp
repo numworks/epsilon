@@ -167,12 +167,13 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
 #endif
     default: {
       // The layout children map one-to-one to the expression
-      Tree* ref = SharedTreeStack->pushBlock(ExpressionType(l->layoutType()));
+      Tree* result =
+          SharedTreeStack->pushBlock(ExpressionType(l->layoutType()));
       int n = l->numberOfChildren();
 
       /* TODO: The behaviour relative to the parametric expressions
        * is duplicated with RackParser::parseReservedFunction */
-      bool isParametric = ref->isParametric();
+      bool isParametric = result->isParametric();
       TreeVariableContext parameterContext(nullptr, nullptr);  // For parametric
 
       for (int i = 0; i < n; i++) {
@@ -183,7 +184,7 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
             /* Set preserveInput to true for the variable so that it's
              * properly parsed as a symbol, and not as a unit or a product. */
             preserveInput = true;
-          } else if (Parametric::IsFunctionIndex(i, ref)) {
+          } else if (Parametric::IsFunctionIndex(i, result)) {
             // Use the parameter context for the function child
             childContext = &parameterContext;
           }
@@ -209,7 +210,7 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
         }
       }
 
-      return ref;
+      return result;
     }
   }
 }

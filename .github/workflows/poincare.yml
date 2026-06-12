@@ -75,3 +75,8 @@ jobs:
           TEST_RUNNER: ${{ matrix.platform == 'web' && 'node' || '' }}
         run: |
           $DOCKER_RUN "$TEST_RUNNER poincare/test/output/debug/optimized/${{ matrix.platform }}/poincare_test.$TEST_EXTENSION --headless"
+
+      - name: Build poincare_cli for linux
+        if: matrix.platform == 'linux'
+        run: |
+          $DOCKER_RUN "make PLATFORM=${{ matrix.platform }} DEBUG=0 VERBOSE=0 ASSERTIONS=1 poincare_cli.bin"

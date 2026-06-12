@@ -4,6 +4,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/symbol_context.h>
 
+#include <cstring>
 #include <string>
 #include <vector>
 

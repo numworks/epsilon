@@ -95,6 +95,7 @@ install_linux_binary_deps() {
     clang-format-17 \
     git \
     imagemagick \
+    libedit-dev \
     libfreetype6-dev \
     libjpeg-dev \
     libpng-dev \

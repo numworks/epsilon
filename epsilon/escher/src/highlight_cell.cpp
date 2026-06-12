@@ -8,6 +8,10 @@ void HighlightCell::setVisible(bool visible) {
   if (m_state == State::Hidden && visible) {
     m_state = State::Visible;
   } else if (!visible) {
+    // If the cell was highlighted, call the unhighlight virtual method
+    if (m_state == State::Highlighted) {
+      this->setHighlighted(false);
+    }
     m_state = State::Hidden;
   }
 }

@@ -167,7 +167,7 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
 #endif
     default: {
       // The layout children map one-to-one to the expression
-      TreeRef ref = SharedTreeStack->pushBlock(ExpressionType(l->layoutType()));
+      Tree* ref = SharedTreeStack->pushBlock(ExpressionType(l->layoutType()));
       int n = l->numberOfChildren();
 
       /* TODO: The behaviour relative to the parametric expressions
@@ -192,7 +192,7 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
         ParserHelper::ParsingParameters childParams = parsingContext.params;
         childParams.preserveInput = preserveInput;
 
-        TreeRef parsedChild = LayoutParser::Parse(
+        Tree* parsedChild = LayoutParser::Parse(
             l->child(i), {.context = childContext, .params = childParams});
 
         if (isParametric && i == Parametric::k_variableIndex) {

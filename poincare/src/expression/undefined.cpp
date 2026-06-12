@@ -160,6 +160,27 @@ bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   return true;
 }
 
+bool Undefined::DeepBubbleUpUndef(Tree* e) {
+  if (e->isDepList()) {
+    // Don't bubble up undef in depedencies
+    return false;
+  }
+  bool modified = false;
+  for (Tree* child : e->children()) {
+    modified |= DeepBubbleUpUndef(child);
+  }
+
+#if ASSERTIONS
+  TreeRef previousTree = e->cloneTree();
+#endif
+  bool shallowModified = ShallowBubbleUpUndef(e);
+#if ASSERTIONS
+  assert(shallowModified != e->treeIsIdenticalTo(previousTree));
+  previousTree->removeTree();
+#endif
+  return shallowModified || modified;
+}
+
 bool Undefined::IsDimensionedUndefined(const Tree* t) {
   if (t->isUndefined()) {
     return true;

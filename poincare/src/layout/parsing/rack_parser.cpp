@@ -145,10 +145,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
   // Parse leftHandSide
   m_nextToken = m_tokenizer.popToken();
   Tree* leftHandSide = parseUntil(Token::Type::RightwardsArrow);
-  leftHandSide->swapWithTree(rightHandSide);
-  // After the swap, leftHandSide sits at rightHandSide's old address
-  leftHandSide = rightHandSide;
-  rightHandSide = leftHandSide->nextTree();
+  SwapTreesPointers(&leftHandSide, &rightHandSide);
   turnIntoBinaryNode(KStore, leftHandSide, rightHandSide);
   return leftHandSide;
 }
@@ -987,7 +984,7 @@ void RackParser::privateParseReservedFunction(Tree*& leftHandSide,
       // Unexpected number of many parameters.
       RaiseParseFail(SyntaxError::LogBaseMustHaveOneParameter);
     } else {
-      parameter->moveTreeOverTree(parameter->child(0));
+      parameter->removeNode();
       base->swapWithTree(parameter);
       // After the swap, parameter sits at base's old address
       leftHandSide = base;
@@ -1244,7 +1241,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     RaiseParseFail(SyntaxError::FunctionMustHaveOneParameter);
   }
 
-  parameter->moveTreeOverTree(parameter->child(0));
+  parameter->removeNode();
   if (parameter->type() == Type::UserVariable &&
       strncmp(Symbol::GetName(parameter), name, length) == 0) {
     // Function and variable must have distinct names.
@@ -1563,7 +1560,7 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
   assert(result);
   assert(caretIntegerValue);
   if (allowParenthesis && result->isParentheses()) {
-    result->moveTreeOverTree(result->child(0));
+    result->removeNode();
   }
   if (ParsingHelper::ExtractInteger(result, caretIntegerValue)) {
     result->removeTree();

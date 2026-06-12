@@ -440,17 +440,16 @@ void RackParser::parseNumber(Tree*& leftHandSide, Token::Type stoppingType) {
       assert(numberOfDigits >= 0);
       Tree* fractionalPart =
           Integer::Push(fractionalDigits, OMG::Base::Decimal, numberOfDigits);
-      Tree* result = IntegerHandler::Power(IntegerHandler(10),
-                                           IntegerHandler(numberOfDigits));
-      result->moveTreeOverTree(IntegerHandler::Multiplication(
-          Integer::Handler(result), Integer::Handler(integerPart)));
-      result->moveTreeOverTree(IntegerHandler::Addition(
-          Integer::Handler(result), Integer::Handler(fractionalPart)));
-      // Discard the scratch integers, moving result at integerPart's address
-      integerPart->moveTreeOverTree(result);
-      leftHandSide = integerPart;
-      leftHandSide->nextTree()->removeTree();
-      leftHandSide->moveNodeAtNode(SharedTreeStack->pushDecimal());
+      TreeRef decimal = SharedTreeStack->pushDecimal();
+      Tree* value = IntegerHandler::Power(IntegerHandler(10),
+                                          IntegerHandler(numberOfDigits));
+      value->moveTreeOverTree(IntegerHandler::Multiplication(
+          Integer::Handler(value), Integer::Handler(integerPart)));
+      value->moveTreeOverTree(IntegerHandler::Addition(
+          Integer::Handler(value), Integer::Handler(fractionalPart)));
+      fractionalPart->removeTree();
+      integerPart->removeTree();
+      leftHandSide = decimal;
       Integer::Push(numberOfDigits - expValue);
       /* Decimal(integerDigits*10^numberOfDigits + fractionalDigits,
        * numberOfDigits - expValue) */

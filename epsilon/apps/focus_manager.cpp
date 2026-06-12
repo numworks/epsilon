@@ -43,6 +43,9 @@ bool FocusManager::dispatchEvent(Ion::Events::Event event,
 }
 
 void FocusManager::focusOn(KDPoint point) {
+  if (!Ion::Display::Rect.contains(point)) {
+    return;
+  }
   /* Find best offsets such that Rect(m_horizontalOffset * k_step,
    * m_verticalOffset * k_step, k_width, k_height) is centered on point.
    * The + step/2 gives nearest-integer rounding. */

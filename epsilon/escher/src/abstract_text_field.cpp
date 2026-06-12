@@ -582,7 +582,16 @@ bool AbstractTextField::insertText(const char* eventText, bool indentation,
       if (forceCursorRightOfText) {
         nextCursorLocation += strlen(buffer);
       } else {
-        nextCursorLocation += TextInputHelpers::CursorIndexInCommand(eventText);
+        /* CursorIndexInCommand returns a byte offset in eventText, but buffer
+         * has '\n' removed. Subtract removed bytes before the cursor. */
+        size_t cursorIndex = TextInputHelpers::CursorIndexInCommand(eventText);
+        size_t removedNewlines = 0;
+        for (size_t i = 0; i < cursorIndex; i++) {
+          if (eventText[i] == '\n') {
+            removedNewlines++;
+          }
+        }
+        nextCursorLocation += cursorIndex - removedNewlines;
       }
       setCursorLocation(nextCursorLocation);
     }

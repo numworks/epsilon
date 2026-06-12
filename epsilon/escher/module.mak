@@ -107,6 +107,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   window.cpp \
 ) \
   test/layout_field.cpp:+test \
+  test/text_field.cpp:+test \
 )
 
 ESCHER_VIEW_LOGGING ?= 0

@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/tree.h>
 
+#include "rack_layout.h"
 #include "vertical_offset.h"
 
 namespace Poincare::Internal {
@@ -54,6 +55,14 @@ inline OrderSlot GetOrderSlot(const Tree* l) {
 inline void SetOrderSlot(Tree* l, OrderSlot slot) {
   return l->nodeValueBlock(0)->setBit(1, static_cast<bool>(slot));
 }
+
+inline bool HideAbscissa(const Tree* l) {
+  assert(l->isDiffLayout());
+  // Abscissa is hidden if the layout is not being edited.
+  return l->toDiffLayoutNode()->hideAbscissa &&
+         !(RackLayout::s_cursor && RackLayout::s_cursor->rack);
+}
+
 }  // namespace Derivative
 
 namespace Integral {

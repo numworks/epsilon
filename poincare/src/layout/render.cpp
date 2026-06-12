@@ -295,7 +295,7 @@ KDSize Render::Size(const Layout* l) {
       }
 
       KDPoint abscissaPosition = PositionOfChild(l, k_abscissaIndex);
-      KDSize abscissaSize = l->toDiffLayoutNode()->hideAbscissa
+      KDSize abscissaSize = Derivative::HideAbscissa(l)
                                 ? KDSizeZero
                                 : Size(l->child(k_abscissaIndex));
       width = abscissaPosition.x() + abscissaSize.width();
@@ -595,7 +595,7 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
                                      Size(l->child(k_derivandIndex)))
               .x() +
           Parenthesis::k_parenthesisWidth;
-      return l->toDiffLayoutNode()->hideAbscissa
+      return Derivative::HideAbscissa(l)
                  ? KDPoint(rightParenthesisEnd, 0)
                  : KDPoint(rightParenthesisEnd + 2 * k_barHorizontalMargin +
                                k_barWidth + Width(l->child(k_variableIndex)) +
@@ -845,7 +845,7 @@ void Render::DrawSimpleLayout(const Layout* l, KDContext* ctx, KDPoint p,
   for (IndexedChild<const Tree*> child : l->indexedChildren()) {
     if (l->isDiffLayout() && ((!l->toDiffLayoutNode()->isNthDerivative &&
                                child.index == Derivative::k_orderIndex) ||
-                              (l->toDiffLayoutNode()->hideAbscissa &&
+                              (Derivative::HideAbscissa(l) &&
                                child.index == Derivative::k_abscissaIndex))) {
       // Skip order if it's not an nth derivative and abscissa if it's hidden
       continue;
@@ -1213,7 +1213,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                                        rightParenthesisPosition.translatedBy(p),
                                        style);
 
-      if (!l->toDiffLayoutNode()->hideAbscissa) {
+      if (!Derivative::HideAbscissa(l)) {
         // ...|x=
         KDSize variableSize = Size(l->child(k_variableIndex));
         KDRect verticalBar(

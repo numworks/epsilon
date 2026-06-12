@@ -1184,7 +1184,10 @@ Layout ContinuousFunction::Model::layout(const Ion::Storage::Record* record,
                                          CodePoint symbol) const {
   ContinuousFunction f(*record);
   if (f.isDerivative()) {
-    return f.derivativeTitleLayout();
+    if (m_layout.isUninitialized()) {
+      m_layout = f.derivativeTitleLayout();
+    }
+    return m_layout;
   }
   return ExpressionModel::layout(record, symbol);
 }

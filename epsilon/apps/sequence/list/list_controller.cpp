@@ -121,14 +121,10 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
       recurrenceDepth = 0;
       notation = SequenceHelper::RecursiveNotation::Default;
     } else {
-      int sequenceDefinition;
-      // FIXME: It seems sequenceDefinition will always be 0 here.
       Shared::Sequence* sequence =
-          modelStore()->modelForRecord(selectedRecord(&sequenceDefinition));
+          modelStore()->modelForRecord(selectedRecord());
       sequenceName = sequence->fullName();
-      recurrenceDepth = (sequenceDefinition == k_sequenceDefinition)
-                            ? sequence->numberOfElements() - 1
-                            : -1;
+      recurrenceDepth = sequence->order();
       notation = sequence->recursiveNotation();
     }
     m_sequenceToolboxDataSource.buildExtraCellsLayouts(

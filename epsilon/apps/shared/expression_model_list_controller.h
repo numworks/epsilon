@@ -91,13 +91,9 @@ class ExpressionModelListController
     return m_isAddingNewModel;
   }
   bool isNewModelRow(int row) const;
-  // Relative row is the index of the row starting from the model row
-  int modelIndexForRow(int row, int* relativeRow) const;
   int modelIndexForRow(int row) const;
   // Record getters
-  Ion::Storage::Record recordAtRow(int row, int* relativeRow) const;
   Ion::Storage::Record recordAtRow(int row) const;
-  Ion::Storage::Record selectedRecord(int* relativeRow) const;
   Ion::Storage::Record selectedRecord() const;
 
   virtual Escher::LayoutField* layoutField() = 0;
@@ -130,9 +126,6 @@ class ExpressionModelListController
   virtual bool isValidExpressionModel(
       const Poincare::UserExpression& expression) {
     return true;
-  }
-  virtual int numberOfRowsForRecord(Ion::Storage::Record record) const {
-    return 1;
   }
   virtual bool isRecordShownInList(Ion::Storage::Record record) const {
     return true;

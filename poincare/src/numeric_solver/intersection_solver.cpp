@@ -2,6 +2,7 @@
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/undefined.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric_solver/hone_functions.h>
 #include <poincare/src/numeric_solver/solver_tests.h>
@@ -14,13 +15,17 @@ namespace Poincare::NumericSolver {
 
 static Tree* FunctionDifferenceForIntersection(const Tree* f, const Tree* g,
                                                bool areAlongSameAxis) {
-  /* TODO: simplify if we decide that functions should be simplified. Either
-   * pass ProjectionContext(m_complexFormat, m_angleUnit,
-   * ReductionTarget::SystemForAnalysis, UnitFormat::Metric, m_context) or
-   * ensure expression is projected. */
   if (areAlongSameAxis) {
-    return PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),
-                                   {.KA = f, .KB = g});
+    Tree* result =
+        PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)), {.KA = f, .KB = g});
+    /* When working with PreparedFunctions, it is not possible to simplify the
+     * result after the addition as with SystemExpressions. However, a simple
+     * operation such as this function difference should preserve the
+     * PreparedFunction correctness of the result. The problematic cases can
+     * occur when one or both the functions are "undef". An undef bubble-up
+     * should fix these cases. */
+    Undefined::DeepBubbleUpUndef(result);
+    return result;
   }
   // Build the g(f(a))-a expression
   Tree* difference = SharedTreeStack->pushAdd(2);
@@ -35,6 +40,8 @@ static Tree* FunctionDifferenceForIntersection(const Tree* f, const Tree* g,
   if (f->isDep()) {
     Dependency::AddDependencies(difference, Dependency::Dependencies(f));
   }
+  // See comment about DeepBubbleUpUndef in the areAlongSameAxis case
+  Undefined::DeepBubbleUpUndef(difference);
   return difference;
 }
 

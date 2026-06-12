@@ -62,6 +62,8 @@ QUIZ_CASE(python_numpy) {
       env, "np.cross(np.array([1,2,3]),np.array([3,4,5]))",
       "array([-2.0, 4.0, -2.0])\n");
   assert_command_execution_succeeds(env, "np.arange(0,0)", "array([])\n");
+  assert_command_execution_succeeds(env, "np.arange(0,0)[::-1]");
+  assert_command_execution_succeeds(env, "np.array(np.arange(0,0)[::-1])");
   assert_command_execution_fails(env, "np.arange(0,3,0)");
   assert_command_execution_fails(env, "np.concatenate((0,0))");
   // Numpy reverse methods

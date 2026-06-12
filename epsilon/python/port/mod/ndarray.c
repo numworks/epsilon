@@ -1196,8 +1196,13 @@ static ndarray_obj_t *ndarray_view_from_slices(ndarray_obj_t *ndarray, mp_obj_tu
             }
         } else {
             mp_bound_slice_t slice = generate_slice(shape[ULAB_MAX_DIMS - ndarray->ndim + i], tuple->items[i]);
-            shape[ULAB_MAX_DIMS - ndarray->ndim + i] = slice_length(slice);
-            offset += ndarray->strides[ULAB_MAX_DIMS - ndarray->ndim + i] * (int32_t)slice.start;
+            size_t slen = slice_length(slice);
+            shape[ULAB_MAX_DIMS - ndarray->ndim + i] = slen;
+            /* slice.start == -1 is a sentinel for an empty reversed slice; skip
+               the offset update to avoid advancing the pointer before the array. */
+            if(slen > 0) {
+                offset += ndarray->strides[ULAB_MAX_DIMS - ndarray->ndim + i] * (int32_t)slice.start;
+            }
             strides[ULAB_MAX_DIMS - ndarray->ndim + i] = (int32_t)slice.step * ndarray->strides[ULAB_MAX_DIMS - ndarray->ndim + i];
         }
     }

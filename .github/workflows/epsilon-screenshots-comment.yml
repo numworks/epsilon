@@ -13,3 +13,4 @@ jobs:
     uses: ./.github/workflows/screenshots-comment.yml
     with:
       project-path: epsilon
+      has-cas-dataset: true

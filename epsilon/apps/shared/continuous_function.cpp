@@ -791,9 +791,7 @@ UserExpression ContinuousFunction::Model::originalEquation(
   // Derivative case
   int derivationOrder = f->derivationOrder();
   UserExpression parentEquation = f->parentFunction()->equationClone();
-  if (parentEquation.isUninitialized()) {
-    return parentEquation;
-  }
+  assert(!parentEquation.isUninitialized());
   if (symbol != UCodePointUnknown) {
     parentEquation = parentEquation.cloneAndReplaceUnknownWithSymbol(symbol);
   }

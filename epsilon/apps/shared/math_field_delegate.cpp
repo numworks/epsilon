@@ -114,12 +114,17 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
 template <typename T>
 T MathTextFieldDelegate::ParseInputFloatValue(const char* text) {
   return UserExpression::ParseAndSimplifyAndApproximateToRealScalar<T>(
-      text, SimplificationParameters{
-                .user = {
-                    .complexFormat = SharedGlobalPrefs().complexFormat(),
-                    .angleUnit = SharedGlobalPrefs().angleUnit(),
-                    .context = App::app()->localContext(),
-                }});
+      text,
+      SimplificationParameters{
+          .user =
+              {
+                  .complexFormat = SharedGlobalPrefs().complexFormat(),
+                  .angleUnit = SharedGlobalPrefs().angleUnit(),
+                  .context = App::app()->localContext(),
+              },
+          .projectionPolicy = {.symbolic =
+                                   SymbolicComputation::ReplaceDefinedSymbols},
+      });
 }
 
 template <typename T>

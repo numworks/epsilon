@@ -15,10 +15,10 @@ void LegendView::DotView::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 void LegendView::StripedDotView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillCircleWithStripes(KDPointZero, k_diameter / 2,
-                             // TODO: should we use a TokenPurple?
-                             ColorPicker::Resolve(ThemeComponent::BannerPurple),
-                             ColorPicker::Resolve(k_backgroundColor), 3);
+  ctx->fillCircleWithStripes(
+      KDPointZero, k_diameter / 2,
+      ColorPicker::Resolve(ThemeComponent::CurveHatchedArea),
+      ColorPicker::Resolve(k_backgroundColor), 3);
 }
 
 LegendView::LegendView()

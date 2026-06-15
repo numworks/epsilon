@@ -15,16 +15,17 @@ namespace Poincare::NumericSolver {
 
 static Tree* FunctionDifferenceForIntersection(const Tree* f, const Tree* g,
                                                bool areAlongSameAxis) {
+  assert(!f->isUndefined());
+  assert(!g->isUndefined());
+  /* When working with PreparedFunctions, it is not possible to simplify the
+   * result after the addition as with SystemExpressions. However, a simple
+   * operation such as a function difference should preserve the
+   * PreparedFunction correctness of the result. Some problematic cases could
+   * have occured when one or both the functions are "undef", but this is
+   * asserted not to happen. */
   if (areAlongSameAxis) {
     Tree* result =
         PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)), {.KA = f, .KB = g});
-    /* When working with PreparedFunctions, it is not possible to simplify the
-     * result after the addition as with SystemExpressions. However, a simple
-     * operation such as this function difference should preserve the
-     * PreparedFunction correctness of the result. The problematic cases can
-     * occur when one or both the functions are "undef". An undef bubble-up
-     * should fix these cases. */
-    Undefined::DeepBubbleUpUndef(result);
     return result;
   }
   // Build the g(f(a))-a expression
@@ -40,8 +41,6 @@ static Tree* FunctionDifferenceForIntersection(const Tree* f, const Tree* g,
   if (f->isDep()) {
     Dependency::AddDependencies(difference, Dependency::Dependencies(f));
   }
-  // See comment about DeepBubbleUpUndef in the areAlongSameAxis case
-  Undefined::DeepBubbleUpUndef(difference);
   return difference;
 }
 

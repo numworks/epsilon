@@ -124,6 +124,35 @@ function Calculator(emModule) {
       span.addEventListener('pointerup', upHandler);
     });
 
+    /* Physical arrow keys are not reliably detected by SDL's native keydown scan
+     * in some browsers (notably Safari). Route them through the same export used
+     * by the on-screen keys. */
+    var physicalKeyToIndex = {
+      ArrowLeft: 0,
+      ArrowUp: 1,
+      ArrowDown: 2,
+      ArrowRight: 3,
+    };
+    function physicalKeyHandler(keyHandler) {
+      return function (ev) {
+        var index = physicalKeyToIndex[ev.code];
+        if (typeof index === 'undefined') {
+          return;
+        }
+        keyHandler(index);
+        // Prevent default action of event.
+        ev.preventDefault();
+        // Prevent the native SDL path from also handling the event.
+        ev.stopImmediatePropagation();
+      };
+    }
+    window.addEventListener(
+      'keydown',
+      physicalKeyHandler(emModule._IonSimulatorKeyboardKeyDown),
+      true,
+    );
+    window.addEventListener('keyup', physicalKeyHandler(emModule._IonSimulatorKeyboardKeyUp), true);
+
     /* Post-load hook: lets the embedder run code once Epsilon is loaded and the
      * _IonSimulator* exports are available (e.g. the standalone simulator uses
      * it to inject a .nws state file). */

@@ -125,16 +125,12 @@ class UserExpression : public Expression {
   /* UserExpression to UserExpression helpers */
 
   /* Expressions in parameters are outputs. The return boolean indicates the
-   * reduction status (success or failure)
-   * The "optimize" flag should always be activated for approximation, as
-   * simplification will check the dimension
-   */
+   * reduction status (success or failure). */
   bool cloneAndSimplifyAndApproximate(
       UserExpression* simplifiedExpression,
       UserExpression* approximatedExpression,
       const SimplificationParameters& simplificationParameters,
-      const ApproximationPolicy& approximationPolicy = ApproximationPolicy{
-          .optimize = true}) const;
+      bool onlyReplaceNumerical = false) const;
   UserExpression cloneAndSimplify(
       const SimplificationParameters& simplificationParameters,
       bool* reductionFailure) const;

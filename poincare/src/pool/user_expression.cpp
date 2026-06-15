@@ -159,7 +159,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
     const SimplificationParameters& simplificationParameters,
-    const ApproximationPolicy& approximationPolicy) const {
+    bool onlyReplaceNumerical) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   bool reductionFailure = false;
@@ -167,13 +167,13 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
       cloneAndSimplify(simplificationParameters, &reductionFailure);
   assert(!simplifiedExpression->isUninitialized());
   // Deactivate optimize approximation policy if reduction failed.
-  ApproximationPolicy newApproximationPolicy = approximationPolicy;
-  newApproximationPolicy.optimize =
-      newApproximationPolicy.optimize && !reductionFailure;
+  ApproximationPolicy approximationPolicy{
+      .onlyReplaceNumerical = onlyReplaceNumerical,
+      .optimize = !reductionFailure};
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
   *approximatedExpression = simplifiedExpression->cloneAndApproximate(
-      simplificationParameters.user, newApproximationPolicy);
+      simplificationParameters.user, approximationPolicy);
   /* Second approximation attempt.
    * Condition: simplified expression is well defined, but approximation failed
    * (it returned undef). This can happen if the simplified expression is a
@@ -182,7 +182,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   if (approximatedExpression->isUndefined() &&
       !simplifiedExpression->isUndefinedOrNonReal()) {
     *approximatedExpression = this->cloneAndApproximate(
-        simplificationParameters.user, newApproximationPolicy);
+        simplificationParameters.user, approximationPolicy);
   }
   return reductionFailure;
 }

@@ -42,8 +42,6 @@ inline bool IsUndefSpecial(const Tree* e, SpecialType type) {
 
 bool ShallowBubbleUpUndef(Tree* e);
 
-bool DeepBubbleUpUndef(Tree* e);
-
 bool CanBeUndefined(const Tree* e);
 
 bool MustBubbleUpUndefinedChild(const Tree* e, int childIndex);

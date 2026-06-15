@@ -1111,6 +1111,8 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("ln(3+4)", {}, &store);
   assertCalculationAdditionalResultTypeHas("cos(i)", {}, &store);
   assertCalculationAdditionalResultTypeHas("cos(i%)", {}, &store);
+  assertCalculationAdditionalResultTypeHas("arcsin(i)^(-6)", {}, &store);
+
   assertMainCalculationOutputIs("i→z", "i", &store);
   assertCalculationAdditionalResultTypeHas("z+1", {.complex = true}, &store);
   Shared::GlobalContextAccessor::Store().resetAll();

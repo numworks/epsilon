@@ -258,8 +258,8 @@ bool AdditionalResultsHelper::expressionIsInterestingFunction(
         e.cloneChildAtIndex(0));
   }
   return !e.isConstantNumber() && !e.tree()->isUnitConversion() &&
-         !deepIsOfType(e, {Type::UserSequence, Type::Factor, Type::Re, Type::Im,
-                           Type::Arg, Type::Conj}) &&
+         !deepIsOfType(e, {Type::UserSequence, Type::Factor, Type::ComplexI,
+                           Type::Re, Type::Im, Type::Arg, Type::Conj}) &&
          AdditionalResultsHelper::HasSingleNumericalValue(e);
 }
 

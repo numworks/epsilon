@@ -46,9 +46,8 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
                       m_distribution->xMin(), m_distribution->xMax(),
                       plotView->pixelWidth(),
                       ColorPicker::Resolve(ThemeComponent::Curve), true);
-    plot.setPatternOptions(Pattern(ColorPicker::Resolve(ThemeComponent::Curve)),
-                           lowerBound, upperBound, Curve2D(evaluateZero),
-                           Curve2D(), false);
+    plot.setPatternOptions(Pattern(ThemeComponent::Curve), lowerBound,
+                           upperBound, Curve2D(evaluateZero), Curve2D(), false);
     plot.draw(plotView, ctx, rect);
   } else {
     double context[] = {lowerBound, upperBound};

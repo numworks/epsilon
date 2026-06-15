@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <poincare/coordinate_2D.h>
 
 #include <initializer_list>
@@ -61,11 +62,12 @@ class WithCurves {
     constexpr static int k_numberOfSections = 4;
 
     Pattern(KDColor c0, KDColor c1, KDColor c2, KDColor c3,
-            KDColor cBackground = k_transparent);
-    Pattern(KDColor c = k_transparent) : Pattern(c, c, c, c, c) {}
+            Escher::ThemeComponent cBackground = k_transparent);
+    Pattern(Escher::ThemeComponent c = k_transparent);
     Pattern(bool s0, bool s1, bool s2, bool s3, KDColor color,
-            KDColor backgroundColor = k_transparent);
-    Pattern(int s, KDColor color, KDColor backgroundColor = k_transparent);
+            Escher::ThemeComponent backgroundColor = k_transparent);
+    Pattern(int s, KDColor color,
+            Escher::ThemeComponent backgroundColor = k_transparent);
 
     // Return KDCoordinate at which the line has been drawn.
     KDCoordinate drawInLine(const AbstractPlotView* plotView, KDContext* ctx,
@@ -75,10 +77,11 @@ class WithCurves {
 
    private:
     constexpr static size_t k_size = 4;
-    // TODO: should k_transparent be themed?
-    constexpr static KDColor k_transparent = Escher::Palette::White;
+    constexpr static Escher::ThemeComponent k_transparent =
+        Escher::ThemeComponent::TransparencyBase;
 
-    KDColor m_c0, m_c1, m_c2, m_c3, m_cBackground;
+    KDColor m_c0, m_c1, m_c2, m_c3;
+    Escher::ThemeComponent m_cBackground;
   };
 
   class CurveDrawing {

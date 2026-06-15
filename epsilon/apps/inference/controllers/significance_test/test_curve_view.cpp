@@ -95,11 +95,11 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
     patternBoth =
         Pattern(true, false, false, true,
                 ColorPicker::Resolve(ThemeComponent::CurveHatchedArea),
-                ColorPicker::Resolve(ThemeComponent::Curve));
+                ThemeComponent::Curve);
     singleCurveStart = range->xMin();
     if (z < xAlpha) {
       singleStart = clampedZ;
-      patternSingle = Pattern(ColorPicker::Resolve(ThemeComponent::Curve));
+      patternSingle = Pattern(ThemeComponent::Curve);
       bothStart = clampedXAlpha;
     } else {
       singleStart = clampedXAlpha;
@@ -116,7 +116,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
     patternBoth =
         Pattern(true, false, true, false,
                 ColorPicker::Resolve(ThemeComponent::CurveHatchedArea),
-                ColorPicker::Resolve(ThemeComponent::Curve));
+                ThemeComponent::Curve);
     bothStart = range->xMin();
     if (z < xAlpha) {
       bothEnd = clampedZ;
@@ -126,7 +126,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
       singleEnd = clampedXAlpha;
     } else {
       bothEnd = clampedXAlpha;
-      patternSingle = Pattern(ColorPicker::Resolve(ThemeComponent::Curve));
+      patternSingle = Pattern(ThemeComponent::Curve);
       singleEnd = clampedZ;
     }
     singleCurveStart = singleStart = bothEnd;

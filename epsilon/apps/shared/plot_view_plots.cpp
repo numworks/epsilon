@@ -1,11 +1,13 @@
 #include "plot_view_plots.h"
 
 #include <escher/bordered.h>
+#include <escher/theme/color_picker.h>
 #include <float.h>
 
 #include <algorithm>
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Shared {
 namespace PlotPolicy {
@@ -13,16 +15,26 @@ namespace PlotPolicy {
 // WithCurves::Pattern
 
 WithCurves::Pattern::Pattern(KDColor c0, KDColor c1, KDColor c2, KDColor c3,
-                             KDColor cBackground)
+                             ThemeComponent cBackground)
     : m_c0(c0), m_c1(c1), m_c2(c2), m_c3(c3), m_cBackground(cBackground) {}
 
+WithCurves::Pattern::Pattern(Escher::ThemeComponent c)
+    : m_c0{ColorPicker::Resolve(c)},
+      m_c1{ColorPicker::Resolve(c)},
+      m_c2{ColorPicker::Resolve(c)},
+      m_c3{ColorPicker::Resolve(c)},
+      m_cBackground{c} {}
+
 WithCurves::Pattern::Pattern(bool s0, bool s1, bool s2, bool s3, KDColor color,
-                             KDColor backgroundColor)
-    : Pattern(s0 ? color : backgroundColor, s1 ? color : backgroundColor,
-              s2 ? color : backgroundColor, s3 ? color : backgroundColor,
+                             ThemeComponent backgroundColor)
+    : Pattern(s0 ? color : ColorPicker::Resolve(backgroundColor),
+              s1 ? color : ColorPicker::Resolve(backgroundColor),
+              s2 ? color : ColorPicker::Resolve(backgroundColor),
+              s3 ? color : ColorPicker::Resolve(backgroundColor),
               backgroundColor) {}
 
-WithCurves::Pattern::Pattern(int s, KDColor color, KDColor backgroundColor)
+WithCurves::Pattern::Pattern(int s, KDColor color,
+                             ThemeComponent backgroundColor)
     : Pattern(s == 0, s == 1, s == 2, s == 3, color, backgroundColor) {}
 
 KDCoordinate WithCurves::Pattern::drawInLine(
@@ -44,12 +56,13 @@ KDCoordinate WithCurves::Pattern::drawInLine(
     secondColor = m_c3;
   }
 
+  KDColor backgroundColor = ColorPicker::Resolve(m_cBackground);
   bool canSpeedUpDrawing =
-      firstColor == m_cBackground && secondColor == m_cBackground;
+      firstColor == backgroundColor && secondColor == backgroundColor;
   if (canSpeedUpDrawing) {
     if (m_cBackground != k_transparent) {
       plotView->drawStraightSegment(ctx, rect, parallel, position, min, max,
-                                    m_cBackground);
+                                    backgroundColor);
     }
     return posC;
   }
@@ -81,16 +94,16 @@ KDCoordinate WithCurves::Pattern::drawInLine(
   if (posC % (k_size / 2) == 0) {
     colors[0] = firstColor;
     colors[2] = secondColor;
-    colors[1] = colors[3] = m_cBackground;
+    colors[1] = colors[3] = ColorPicker::Resolve(m_cBackground);
   } else {
     colors[1] = firstColor;
     colors[3] = secondColor;
-    colors[0] = colors[2] = m_cBackground;
+    colors[0] = colors[2] = ColorPicker::Resolve(m_cBackground);
   }
 
   for (int i = minC; i < maxC; i++) {
     KDColor color = colors[i % k_size];
-    if (color != k_transparent) {
+    if (color != ColorPicker::Resolve(k_transparent)) {
       ctx->setPixel(parallel == OMG::Axis::Horizontal ? KDPoint(i, posC)
                                                       : KDPoint(posC, i),
                     color);

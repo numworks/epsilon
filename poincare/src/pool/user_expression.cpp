@@ -175,11 +175,11 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   *approximatedExpression = simplifiedExpression->cloneAndApproximate(
       simplificationParameters.user, approximationPolicy);
   /* Second approximation attempt.
-   * Condition: simplified expression is well defined, but approximation failed
-   * (it returned undef). This can happen if the simplified expression is a
-   * ratio of two very big numbers.
-   * Second strategy: approximate from the input expression. */
-  if (approximatedExpression->isUndefined() &&
+   * Condition: simplified expression is well defined and reduced successfully,
+   * but approximation failed (it returned undef). This can happen if the
+   * simplified expression is a ratio of two very big numbers. Second strategy:
+   * approximate from the input expression. */
+  if (!reductionFailure && approximatedExpression->isUndefined() &&
       !simplifiedExpression->isUndefinedOrNonReal()) {
     *approximatedExpression = this->cloneAndApproximate(
         simplificationParameters.user, approximationPolicy);

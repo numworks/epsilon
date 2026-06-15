@@ -378,6 +378,8 @@ PointOfInterest findIntersections(PointSearchContext* ctx) {
     OMG::ExpiringPointer<ContinuousFunction> g =
         ctx->store->modelForRecord(ctx->otherRecord);
     bool gIsStrict = g->properties().isStrictInequality();
+    // First properties computation could invalidate cache, refetch g
+    g = ctx->store->modelForRecord(ctx->otherRecord);
     bool gAlongY = g->properties().isAlongY();
     if (!g->shouldDisplayIntersections()) {
       continue;

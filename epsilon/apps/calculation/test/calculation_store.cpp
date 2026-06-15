@@ -611,6 +611,13 @@ QUIZ_CASE(calculation_big_expressions) {
                       "(1200000/7)-4000000(-ln(2)-ln(5)-ln(7)+ln(73))",
                       "3571.7750324415", &store);
 
+  // max tree depth
+  assertCalculationIs(
+      "(((((((((((((((((((0×_L^2)^2)^2)^2)^2)^2)^2)^2)^2)^2)^2)^2)^2)^2)^2)^2)^"
+      "2)^2)^2)^2",
+      DisplayOutput::ApproximateOnly, EqualSign::Hidden, nullptr, "undef",
+      &store);
+
   GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);
 }

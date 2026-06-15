@@ -166,10 +166,14 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   *simplifiedExpression =
       cloneAndSimplify(simplificationParameters, &reductionFailure);
   assert(!simplifiedExpression->isUninitialized());
+  // Deactivate optimize approximation policy if reduction failed.
+  ApproximationPolicy newApproximationPolicy = approximationPolicy;
+  newApproximationPolicy.optimize =
+      newApproximationPolicy.optimize && !reductionFailure;
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
   *approximatedExpression = simplifiedExpression->cloneAndApproximate(
-      simplificationParameters.user, approximationPolicy);
+      simplificationParameters.user, newApproximationPolicy);
   /* Second approximation attempt.
    * Condition: simplified expression is well defined, but approximation failed
    * (it returned undef). This can happen if the simplified expression is a
@@ -178,7 +182,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   if (approximatedExpression->isUndefined() &&
       !simplifiedExpression->isUndefinedOrNonReal()) {
     *approximatedExpression = this->cloneAndApproximate(
-        simplificationParameters.user, approximationPolicy);
+        simplificationParameters.user, newApproximationPolicy);
   }
   return reductionFailure;
 }
@@ -291,10 +295,11 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   bool reductionFailure;
   exp = exp.cloneAndSimplify(simplificationParameters, &reductionFailure);
   assert(!exp.isUninitialized());
-  /* ApproximationPolicy is always optimized because dimension has been checked
-   * during simplification */
-  return exp.approximateToRealScalar<T>(simplificationParameters.user,
-                                        ApproximationPolicy{.optimize = true});
+  /* Unless reduction failed, ApproximationPolicy is optimized because dimension
+   * has been checked during simplification. */
+  return exp.approximateToRealScalar<T>(
+      simplificationParameters.user,
+      ApproximationPolicy{.optimize = !reductionFailure});
 }
 
 constexpr char ordinateName[] = {CodePoints::k_ordinateSymbol, 0};

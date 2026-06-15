@@ -9,6 +9,10 @@ inputs:
     required: true
   github-token:
     required: true
+  update-only:
+    description: "If 'true', update an existing comment but never create a new one"
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -23,6 +27,7 @@ runs:
           const pr_number = ${{ inputs.pr-number }}
           const owner = "${{ inputs.repository }}".split('/')[0]
           const repo = "${{ inputs.repository }}".split('/')[1]
+          const updateOnly = ${{ inputs.update-only }}
 
           const oldComments = await github.paginate(
             github.rest.issues.listComments,
@@ -41,7 +46,7 @@ runs:
               owner, repo, body,
               comment_id: commentToUpdate.id,
             });
-          } else {
+          } else if (!updateOnly) {
             await github.rest.issues.createComment({
               owner, repo, body,
               issue_number: pr_number,

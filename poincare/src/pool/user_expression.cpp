@@ -334,10 +334,6 @@ UserExpression UserExpression::getDerivative(const char* symbolName,
   SharedTreeStack->pushUserVariable(symbolName);
   Integer::Push(derivationOrder);
   tree()->child(1)->cloneTree();
-  // Check dimension again as the diff may have changed it.
-  if (!Internal::Dimension::DeepCheck(equation)) {
-    equation->cloneTreeOverTree(KUndefUnhandledDimension);
-  }
   return UserExpression::Builder(equation);
 }
 

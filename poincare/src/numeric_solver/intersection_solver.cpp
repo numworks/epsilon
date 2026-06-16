@@ -14,14 +14,15 @@ namespace Poincare::NumericSolver {
 
 static Tree* FunctionDifferenceForIntersection(const Tree* f, const Tree* g,
                                                bool areAlongSameAxis) {
-  assert(!f->isUndefined());
-  assert(!g->isUndefined());
+  if (f->isUndefined() || g->isUndefined()) {
+    return KUndefSystem->cloneTree();
+  }
   /* When working with PreparedFunctions, it is not possible to simplify the
    * result after the addition as with SystemExpressions. However, a simple
    * operation such as a function difference should preserve the
    * PreparedFunction correctness of the result. Some problematic cases could
    * have occured when one or both the functions are "undef", but this is
-   * asserted not to happen. */
+   * handled above. */
   if (areAlongSameAxis) {
     return PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),
                                    {.KA = f, .KB = g});

@@ -263,7 +263,9 @@ T UserExpression::approximateToRealScalar(
     const UserParameters& userParameters,
     const ApproximationPolicy& approximationPolicy) const {
   static_assert(std::is_floating_point_v<T>);
-  if (!Internal::Dimension::IsNonListScalar(tree(), userParameters.context)) {
+  if ((!approximationPolicy.optimize &&
+       !Internal::Dimension::DeepCheck(tree(), userParameters.context)) ||
+      !Internal::Dimension::IsNonListScalar(tree(), userParameters.context)) {
     return NAN;
   }
   return privateApproximateToRealScalar<T>(userParameters, approximationPolicy);

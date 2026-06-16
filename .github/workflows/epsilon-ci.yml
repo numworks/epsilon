@@ -253,6 +253,7 @@ jobs:
     with:
       project-path: epsilon
       has-cas-dataset: true
+      post-comment: true
     secrets: inherit
 
   coverage:

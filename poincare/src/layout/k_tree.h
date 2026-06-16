@@ -156,6 +156,9 @@ consteval auto operator""_l() {
   return _RackSimpleLayoutHelper<S>();
 }
 
+constexpr auto KTemporaryUnknownSymbolL =
+    KCodePointL<UCodePointTemporaryUnknown>();
+
 // Unfortunately template operator'' does not exist, we must use strings instead
 template <String S>
   requires(S.codePointSize() == 2)

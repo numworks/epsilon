@@ -664,14 +664,14 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       const Tree* variableTree = expression->child(Parametric::k_variableIndex);
       const Tree* valueTree = variableTree->nextTree();
       const Tree* orderTree = valueTree->nextTree();
+      const Tree* derivandTree = orderTree->nextTree();
       // Case 1: f'(a)
       if (variableTree->treeIsIdenticalTo(
+              Derivation::k_functionDerivativeVariable) &&
+          derivandTree->isUserFunction() &&
+          derivandTree->child(0)->isUserVariable() &&
+          derivandTree->child(0)->treeIsIdenticalTo(
               Derivation::k_functionDerivativeVariable)) {
-        const Tree* derivandTree = orderTree->nextTree();
-        assert(derivandTree->isUserFunction() &&
-               derivandTree->child(0)->isUserVariable() &&
-               derivandTree->child(0)->treeIsIdenticalTo(
-                   Derivation::k_functionDerivativeVariable));
         layoutText(parentRack, Symbol::GetName(derivandTree));
         assert(orderTree->isInteger() &&
                Integer::Handler(orderTree).is<uint8_t>());
@@ -709,6 +709,20 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
         }
         layoutChildrenAsRacks(expression);
         NAry::AddChild(parentRack, layout);
+      }
+      if (variableTree->treeIsIdenticalTo(
+              Derivation::k_functionDerivativeVariable)) {
+        /* When f'(a) has been simplified to
+         * diff(k_functionDerivativeVariable, a, n, ...).
+         * We need to introduce a local variable that can be laid out. Use x. */
+        if (derivandTree->hasDescendantSatisfying(
+                [](const Tree* e) { return e->treeIsIdenticalTo("x"_e); })) {
+          /* Fail the layout when x was already used. We could look for
+           * another variable, but it isn't worth it at the time. */
+          TreeStackCheckpoint::Raise(ExceptionType::Other);
+        }
+        EVALUATE_AND_ASSERT(parentRack->deepReplaceWith(
+            KTemporaryUnknownSymbolL, KCodePointL<'x'>()));
       }
       break;
     }

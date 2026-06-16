@@ -537,6 +537,16 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Approximation, "(1+π)·log(7,3)", "7.335770099",
                       &store);
   GlobalPreferences::SharedGlobalPreferences()->setCountry(previousCountry);
+
+  assertCalculationIs("x%→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
+                      "x%", nullptr, &store);
+  assertCalculationIs("binompdf(2,3,x)→g(x)", DisplayOutput::ExactOnly,
+                      EqualSign::Hidden, "binompdf(2,3,x)", nullptr, &store);
+  assertCalculationIs("f'(1)", DisplayOutput::ExactHidden, EqualSign::Equal,
+                      nullptr, "0.01", &store);
+  assertCalculationIs("g'(0.5)", DisplayOutput::ExactHidden,
+                      EqualSign::Approximation, nullptr, "0.75", &store);
+  Shared::GlobalContextAccessor::Store().resetAll();
 }
 
 void assertInputIsPreserved(const char* input, CalculationStore* store) {

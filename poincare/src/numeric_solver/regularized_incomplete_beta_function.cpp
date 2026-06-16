@@ -27,6 +27,8 @@
 
 #include "regularized_incomplete_beta_function.h"
 
+#include <omg/float.h>
+
 #include <cmath>
 
 namespace Poincare::Internal {
@@ -37,6 +39,19 @@ namespace Poincare::Internal {
 double RegularizedIncompleteBetaFunction(double a, double b, double x) {
   if (x < 0.0 || x > 1.0) {
     return NAN;
+  }
+  /* The regularized incomplete beta function (RIBF) has known values for
+   * special values of x:
+   * RIBF(a, b, 0) = 0 for all values of a and b
+   * RIBF(a, b, 1) = 1 for all values of a and b.
+   * We check for x=0 or x=1 with a float-tolerant equality. Otherwise the
+   * recursive call to RegularizedIncompleteBetaFunction (see below) could lead
+   * to an infinite loop. */
+  if (x < OMG::Float::SqrtEpsilon<double>()) {
+    return 0.0;
+  }
+  if (x > 1.0 - OMG::Float::SqrtEpsilon<double>()) {
+    return 1.0;
   }
 
   /*The continued fraction converges nicely for x < (a+1)/(a+b+2)*/

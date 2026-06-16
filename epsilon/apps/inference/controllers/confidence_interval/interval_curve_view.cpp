@@ -139,8 +139,8 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
     double intervalLeftBound = estimate + marginOfError;
     KDColor intervalColor =
         isMainInterval
-            // TODO: confirm that we should use banner components
-            ? Escher::ColorPicker::Resolve(Escher::ThemeComponent::BannerYellow)
+            // TODO: create a dedicated component
+            ? Escher::ColorPicker::Resolve(Escher::ThemeComponent::TitleBar)
             : Escher::ColorPicker::Resolve(
                   Escher::ThemeComponent::BannerGrayDarkMiddle);
     KDCoordinate intervalThickness =

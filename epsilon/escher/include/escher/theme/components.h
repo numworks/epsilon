@@ -28,7 +28,7 @@ namespace Escher {
   X(InactiveTabSelected)           \
   X(SurfaceSelect)                 \
   X(SurfaceSelectApps)             \
-  X(BannerYellow)                  \
+  X(TitleBar)                      \
   X(BannerPurple)                  \
   X(BannerElements)                \
   X(BannerGrayMiddle)              \

@@ -270,6 +270,8 @@ bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
   switch (e->type()) {
     case Type::Unit:
     case Type::PhysicalConstant:
+    // Do not simplify piecewise
+    case Type::Piecewise:
       didRemovedTree = false;
       break;
     case Type::Add:

@@ -328,6 +328,15 @@ bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
       e->removeTree();
       didRemovedTree = true;
       break;
+    case Type::UndefSpecial:
+      /* An UndefSpecial tree should be removed for the unit computation, except
+       * if it has SpecialType::Unit */
+      if (e->treeIsIdenticalTo(KUndefSpecial<Undefined::SpecialType::Unit>)) {
+        assert(wasUnit);
+        didRemovedTree = false;
+        break;
+      }
+      [[fallthrough]];
     default:
       // By default ignore units contained in tree.
       assert(!wasUnit);

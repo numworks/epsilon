@@ -656,7 +656,6 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       break;
     }
     case Type::Diff: {
-      // TODO_PCJ: isValidCondensedForm and createValidExpandedForm
       static_assert(Parametric::k_variableIndex + 1 ==
                     Parametric::k_valueIndex);
       static_assert(Parametric::k_valueIndex + 1 == Parametric::k_orderIndex);

@@ -39,8 +39,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to_no_beautif("[[0,∞]]×[[0,1][1,1]]×arcsin(6)",
                            "[[nonreal,nonreal]]");
   simplifies_to("sequence(random(),k,5)<arcsin(4)",
-                "dep({undef,undef,undef,undef,undef},{sequence(random(),k,5)<"
-                "arcsin(4)})");
+                "{undef,undef,undef,undef,undef}");
 
   Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KDepList(0_e)), 4_e)->cloneTree();
   const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KDepList(0_e));

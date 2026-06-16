@@ -216,7 +216,17 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     // To avoid infinite loops
     if (!main->isNonReal()) {
       NAry::AddChild(set, main->cloneTree());
+      /* Only the "main" tree is replaced with NonReal, in case one of the
+       * dependencies has a stronger "undef" value. */
       Undefined::ReplaceTreePreservingDimension(main, KNonReal);
+      if (!Undefined::IsDimensionedNonReal(main)) {
+        /* The dimensioned tree may lose the NonReal information (in case of a
+         * unit or boolean dimension for instance). In that case, we replace the
+         * whole expression with the dimensioned undef. */
+        assert(Undefined::IsDimensionedUndefined(main));
+        dep->moveTreeOverTree(main);
+        return true;
+      }
       ShallowRemoveUselessDependencies(dep);
       return true;
     }

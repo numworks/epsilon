@@ -655,19 +655,28 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
 #endif
       break;
     }
-    case Type::Diff:
+    case Type::Diff: {
       // TODO_PCJ: isValidCondensedForm and createValidExpandedForm
+      static_assert(Parametric::k_variableIndex + 1 ==
+                    Parametric::k_valueIndex);
+      static_assert(Parametric::k_valueIndex + 1 == Parametric::k_orderIndex);
+      static_assert(Parametric::k_orderIndex + 1 ==
+                    Parametric::k_derivandIndex);
+      const Tree* variableTree = expression->child(Parametric::k_variableIndex);
+      const Tree* valueTree = variableTree->nextTree();
+      const Tree* orderTree = valueTree->nextTree();
       // Case 1: f'(a)
-      if (expression->child(0)->treeIsIdenticalTo(
+      if (variableTree->treeIsIdenticalTo(
               Derivation::k_functionDerivativeVariable)) {
-        assert(expression->lastChild()->isUserFunction() &&
-               expression->lastChild()->child(0)->isUserVariable() &&
-               expression->lastChild()->child(0)->treeIsIdenticalTo(
+        const Tree* derivandTree = orderTree->nextTree();
+        assert(derivandTree->isUserFunction() &&
+               derivandTree->child(0)->isUserVariable() &&
+               derivandTree->child(0)->treeIsIdenticalTo(
                    Derivation::k_functionDerivativeVariable));
-        layoutText(parentRack, Symbol::GetName(expression->lastChild()));
-        assert(expression->child(2)->isInteger() &&
-               Integer::Handler(expression->child(2)).is<uint8_t>());
-        int order = Integer::Handler(expression->child(2)).to<int>();
+        layoutText(parentRack, Symbol::GetName(derivandTree));
+        assert(orderTree->isInteger() &&
+               Integer::Handler(orderTree).is<uint8_t>());
+        int order = Integer::Handler(orderTree).to<int>();
         if (order <= 2) {
           PushCodePoint(parentRack, order == 1
                                         ? Derivation::k_firstOrderSymbol
@@ -682,22 +691,17 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
             rack = SharedTreeStack->pushRackLayout(0);
             NAry::AddChild(parentRack, createdLayout);
           }
-          layoutExpression(rack, expression->child(2), k_forceParentheses);
+          layoutExpression(rack, orderTree, k_forceParentheses);
         }
-        layoutExpression(parentRack, expression->child(1), k_forceParentheses);
+        layoutExpression(parentRack, valueTree, k_forceParentheses);
         break;
       }
       // Case 2: diff(f(x),x,a,n)
       if (linearMode()) {
         layoutBuiltin(parentRack, expression);
       } else {
-        Tree* layout =
-            (expression->child(Parametric::k_orderIndex)->isOne() ? KDiffL
-                                                                  : KNthDiffL)
-                ->cloneNode();
-        if (expression->child(Parametric::k_variableIndex)
-                ->treeIsIdenticalTo(
-                    expression->child(Parametric::k_valueIndex))) {
+        Tree* layout = (orderTree->isOne() ? KDiffL : KNthDiffL)->cloneNode();
+        if (variableTree->treeIsIdenticalTo(valueTree)) {
           /* The derivative is evaluated at the variable itself. Hide the
            * abscissa in the layout.
            * For example, diff(f(x), x, x, n) lays out as d/dx(f(x)) instead of
@@ -708,6 +712,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
         NAry::AddChild(parentRack, layout);
       }
       break;
+    }
     case Type::Binomial:
     case Type::Permute:
       if (linearMode() || SharedPreferences->combinatoricSymbols() ==

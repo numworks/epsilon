@@ -160,8 +160,22 @@ bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   return true;
 }
 
-bool Undefined::IsDimensionedUndefined(const Tree* t) {
-  if (t->isUndefined()) {
+static bool CheckUndefinedOrNonReal(const Tree* t, bool checkNonReal) {
+  if (checkNonReal) {
+    return t->isNonReal();
+  }
+  return t->isUndefined();
+}
+
+static bool CheckUndefinedOrNonReal(TypeBlock type, bool checkNonReal) {
+  if (checkNonReal) {
+    return type.isNonReal();
+  }
+  return type.isUndefined();
+}
+
+static bool IsDimensionedUndefinedOrNonReal(const Tree* t, bool checkNonReal) {
+  if (CheckUndefinedOrNonReal(t, checkNonReal)) {
     return true;
   }
   if (t->isMatrix() || t->isList() || t->isPoint()) {
@@ -171,7 +185,7 @@ bool Undefined::IsDimensionedUndefined(const Tree* t) {
     // Check all children are the same and undefined
     const Tree* child = t->child(0);
     TypeBlock type = child->type();
-    if (!type.isUndefined()) {
+    if (!CheckUndefinedOrNonReal(type, checkNonReal)) {
       return false;
     }
     for (const Tree* child : t->children()) {
@@ -182,8 +196,18 @@ bool Undefined::IsDimensionedUndefined(const Tree* t) {
     return true;
   }
   if (t->isListSequence()) {
-    return t->child(Parametric::FunctionIndex(t))->isUndefined();
+    return CheckUndefinedOrNonReal(t->child(Parametric::FunctionIndex(t)),
+                                   checkNonReal);
   }
   return false;
 }
+
+bool Undefined::IsDimensionedUndefined(const Tree* t) {
+  return IsDimensionedUndefinedOrNonReal(t, false);
+}
+
+bool Undefined::IsDimensionedNonReal(const Tree* t) {
+  return IsDimensionedUndefinedOrNonReal(t, true);
+}
+
 }  // namespace Poincare::Internal

@@ -68,6 +68,9 @@ inline void ReplaceTreePreservingDimension(Tree* e, const Tree* undefTree) {
 // Return true if t is a scalar/list/matrix/point/sequence of undefined tree
 bool IsDimensionedUndefined(const Tree* t);
 
+// Return true if t is a scalar/list/matrix/point/sequence of Nonreal tree
+bool IsDimensionedNonReal(const Tree* t);
+
 template <typename T>
 inline bool IsUndefined(std::complex<T> c) {
   return std::isnan(c.real()) || std::isnan(c.imag());

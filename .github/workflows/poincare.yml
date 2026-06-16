@@ -18,7 +18,7 @@ env:
 jobs:
   poincarejs:
     timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.RUNNER_LABELS_LARGE) }}
+    runs-on: ${{ fromJSON(vars.RUNNER_LABELS) }}
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:

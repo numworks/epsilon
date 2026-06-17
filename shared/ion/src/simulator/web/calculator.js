@@ -126,7 +126,8 @@ function Calculator(emModule) {
 
     /* Physical arrow keys are not reliably detected by SDL's native keydown scan
      * in some browsers (notably Safari). Route them through the same export used
-     * by the on-screen keys. */
+     * by the on-screen keys.
+     * This can be reverted when switching to SDL3. */
     var physicalKeyToIndex = {
       ArrowLeft: 0,
       ArrowUp: 1,

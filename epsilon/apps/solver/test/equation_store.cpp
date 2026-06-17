@@ -359,6 +359,7 @@ QUIZ_CASE(solver_approximate) {
                                {3.0});
   assert_solves_numerically_to(".91×ln(x - 4) + 22.796 = 26", 0, 100,
                                {37.814142093595251});
+  assert_solves_numerically_to("Fcdf(x,9,x^72)=0", 1, 2, {});
 
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   // ApproximateSolve failure

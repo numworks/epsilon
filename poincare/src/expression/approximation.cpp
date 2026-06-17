@@ -258,9 +258,9 @@ Tree* CleanUpTreeStack(Tree* processed, Tree* result) {
   return processed;
 }
 
-bool CheckDimension(const Tree* e,
-                    const ExpressionVariantParameters& expressionParameters,
-                    bool optimize) {
+bool DimensionChecks(const Tree* e,
+                     const ExpressionVariantParameters& expressionParameters,
+                     bool optimize) {
   const SymbolContext& symbolContext =
       expressionParameters.expressionType() == ExpressionType::User
           ? expressionParameters.get<UserParameters>().context
@@ -289,8 +289,8 @@ template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    const Parameters& parameters,
                    ContextArguments... contextArguments) {
-  if (!CheckDimension(e, parameters.expressionParameters,
-                      parameters.policy.optimize)) {
+  if (!DimensionChecks(e, parameters.expressionParameters,
+                       parameters.policy.optimize)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
   Tree* processed = PreprocessTree(e, parameters.expressionParameters);

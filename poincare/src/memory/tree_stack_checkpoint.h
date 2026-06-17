@@ -60,7 +60,7 @@ enum class ExceptionType : int {
   TreeStackOverflow,
   IntegerOverflow,
   // Misc
-  ParseFail,  // Used by parser, TODO: Use more distinct errors.
+  ParseFail,  // Used by parser
   SerializeBufferOverflow,
   SortFail,  // NAry::Sort encountered unsortable types with respect to Order
   NonPolynomial,  // Used by polynomial parser

@@ -184,7 +184,7 @@ bool Arithmetic::ReduceRound(Tree* e) {
 
 bool Arithmetic::ReduceFactor(Tree* e) {
   const Tree* child = e->child(0);
-  if (!child->isRational()) {
+  if (!child->isInteger()) {
     e->cloneTreeOverTree(KBadType);
     return true;
   }
@@ -196,13 +196,9 @@ bool Arithmetic::BeautifyFactor(
   if (!e->isFactor()) {
     return false;
   }
-  if (
-      // factor(a / b) -> factor(a) / factor(b)
-      PatternMatching::MatchReplace(e, KFactor(KDiv(KA, KB)),
-                                    KDiv(KFactor(KA), KFactor(KB))) ||
-      // factor(- a) -> - factor(a)
-      PatternMatching::MatchReplace(e, KFactor(KOpposite(KA)),
+  if (PatternMatching::MatchReplace(e, KFactor(KOpposite(KA)),
                                     KOpposite(KFactor(KA)))) {
+    // factor(- a) -> - factor(a)
     return true;
   }
   Tree* child = e->child(0);

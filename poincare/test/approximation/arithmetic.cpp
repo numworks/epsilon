@@ -91,8 +91,9 @@ QUIZ_CASE(pcj_approximation_arithmetic) {
   approximates_to<float>("rem(29, 10)", "9");
   approximates_to<double>("rem(29, 10)", "9");
 
-  approximates_to<float>("factor(-23/4)", "-5.75");
-  approximates_to<double>("factor(-123/24)", "-5.125");
+  // Forbid factor of non-integers
+  approximates_to<float>("factor(-23/4)", "undef");
+  approximates_to<double>("factor(-123/24)", "undef");
   approximates_to<float>("factor(i)", "undef");
 }
 

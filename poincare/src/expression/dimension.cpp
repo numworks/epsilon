@@ -520,6 +520,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       }
       return true;
     }
+    case Type::Factor:
+      return IsIntegerExpression(e->child(0));
     case Type::UnitConversion:
       /* Not using Dimension operator == because different representatives are
        * allowed. */

@@ -31,17 +31,22 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(23)", "23");
   simplifies_to("factor(42*3)", "2×3^2×7");
   simplifies_to("factor(-12)", "-2^2×3");
-  simplifies_to("factor(-4/17)", "-2^2/17");
+  simplifies_to("105×10^14", "1.05×10^16");
+  simplifies_to("factor(105×10^14)", "2^14×3×5^15×7");
+  simplifies_to("factor(10007)", "10007");
+  simplifies_to("factor(-10008)", "-2^3×3^2×139");
+  simplifies_to("factor(6895)", "5×7×197");
+  simplifies_to("factor(3+5)", "2^3");
+  simplifies_to("factor(3^2)", "3^2");
+  simplifies_to("factor(floor(12.1))", "2^2×3");
+  // Undefined on non-integer expressions
+  simplifies_to("factor(-4/17)", "undef");
   simplifies_to("factor(2π)", "undef");
+  simplifies_to("factor(-1008/6895)", "undef");
+  simplifies_to("factor(10007^2)", "undef");
   simplifies_to("factor(42*3)", "2×3^2×7",
                 SimplificationParameters{
                     .user = {.complexFormat = ComplexFormat::Polar}});
-  simplifies_to("105×10^14", "1.05×10^16");
-  simplifies_to("factor(105×10^14)", "2^14×3×5^15×7");
-  simplifies_to("factor(-10008/6895)", "-(2^3×3^2×139)/(5×7×197)");
-  simplifies_to("factor(1008/6895)", "(2^4×3^2)/(5×197)");
-  simplifies_to("factor(10007)", "10007");
-  simplifies_to("factor(10007^2)", "undef");
   simplifies_to("factor(i)", "undef", k_cartesianSimplification);
   // Behavior of factor in a dependency
   simplifies_to("asin(factor(-2)b)",

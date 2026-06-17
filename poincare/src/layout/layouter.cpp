@@ -115,6 +115,7 @@ Tree* Layouter::LayoutExpression(const Tree* expression,
     switch (exc) {
       case ExceptionType::TreeStackOverflow:
       case ExceptionType::IntegerOverflow:
+      case ExceptionType::LayoutFail:
         return UnsafeLayoutExpression(KUndef, params);
       default:
         TreeStackCheckpoint::Raise(exc);

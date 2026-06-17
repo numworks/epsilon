@@ -54,7 +54,7 @@ ExceptionCheckpoint.
 namespace Poincare::Internal {
 
 // All ExceptionType must be handled in ExceptionRunAndStoreExceptionType.
-enum class ExceptionType : int {
+enum class ExceptionType : uint8_t {
   None = 0,
   // Memory exceptions
   TreeStackOverflow,

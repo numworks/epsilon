@@ -261,21 +261,20 @@ T UserExpression::privateApproximateToRealScalar(
 template <typename T>
 T UserExpression::approximateToRealScalar(
     const UserParameters& userParameters,
-    const ApproximationPolicy& approximationPolicy) const {
+    const ApproximationPolicy& approximationPolicy, bool forbidUnits) const {
   static_assert(std::is_floating_point_v<T>);
-  if ((!approximationPolicy.optimize &&
-       !Internal::Dimension::DeepCheck(tree(), userParameters.context)) ||
-      !Internal::Dimension::Get(tree(), userParameters.context).isScalar()) {
-    return NAN;
+  /* Dimension checks are only done when optimize=false, otherwise the dimension
+   * correctness will be asserted in the approximation */
+  if (!approximationPolicy.optimize) {
+    if (!Internal::Dimension::DeepCheck(tree(), userParameters.context)) {
+      return NAN;
+    }
+    Internal::Dimension dimension =
+        Internal::Dimension::Get(tree(), userParameters.context);
+    if (forbidUnits ? !dimension.isScalar() : !dimension.isScalarOrUnit()) {
+      return NAN;
+    }
   }
-  return privateApproximateToRealScalar<T>(userParameters, approximationPolicy);
-}
-
-template <typename T>
-T UserExpression::approximateUnitToRealScalar(
-    const UserParameters& userParameters,
-    const ApproximationPolicy& approximationPolicy) const {
-  static_assert(std::is_floating_point_v<T>);
   return privateApproximateToRealScalar<T>(userParameters, approximationPolicy);
 }
 
@@ -698,13 +697,9 @@ template float UserExpression::privateApproximateToRealScalar<float>(
 template double UserExpression::privateApproximateToRealScalar<double>(
     const UserParameters&, const ApproximationPolicy&) const;
 template float UserExpression::approximateToRealScalar<float>(
-    const UserParameters&, const ApproximationPolicy&) const;
+    const UserParameters&, const ApproximationPolicy&, bool) const;
 template double UserExpression::approximateToRealScalar<double>(
-    const UserParameters&, const ApproximationPolicy&) const;
-template float UserExpression::approximateUnitToRealScalar<float>(
-    const UserParameters&, const ApproximationPolicy&) const;
-template double UserExpression::approximateUnitToRealScalar<double>(
-    const UserParameters&, const ApproximationPolicy&) const;
+    const UserParameters&, const ApproximationPolicy&, bool) const;
 template bool UserExpression::hasDefinedComplexApproximation<float>(
     AngleUnit, ComplexFormat, const SymbolContext&, float*, float*) const;
 template bool UserExpression::hasDefinedComplexApproximation<double>(

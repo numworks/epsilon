@@ -155,18 +155,17 @@ class UserExpression : public Expression {
   // Returns KFailedSimplification if the reduction failed
   SystemExpression cloneAndReduce(
       const SimplificationParameters& simplificationParameters) const;
-  // Approximate real scalar (returns NAN for non real scalars)
+  /* Approximate to a real scalar. If the expression dimension is not a scalar,
+   * a NaN is returned (in the case of an "optimize=false" policy), or the
+   * approximation asserts the scalar dimension (in the case of an
+   * "optimize=true" policy). The unit dimension can be allowed or not,
+   * returning NaN or asserting in case of failure also depending on "optimize"
+   */
   template <typename T>
-  T approximateToRealScalar(const UserParameters& userParameters,
-                            const ApproximationPolicy& approximationPolicy =
-                                ApproximationPolicy{}) const;
-  // Approximate scalar part of unit expression (returns NAN for non units)
-  /* TODO_PCJ: This method is almost never used, and we might prefer to split it
-   * into "removeUnit" and "approximateToRealScalar" methods */
-  template <typename T>
-  T approximateUnitToRealScalar(const UserParameters& userParameters,
-                                const ApproximationPolicy& approximationPolicy =
-                                    ApproximationPolicy{}) const;
+  T approximateToRealScalar(
+      const UserParameters& userParameters,
+      const ApproximationPolicy& approximationPolicy = ApproximationPolicy{},
+      bool forbidUnits = true) const;
 
   // Return NAN for all non real scalar expressions
   template <typename T>

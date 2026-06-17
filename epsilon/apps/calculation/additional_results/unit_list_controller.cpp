@@ -198,11 +198,11 @@ void UnitListController::computeAdditionalResults(
   }
 
   // Compute SI Value
-  m_SIValue = approximatedSIExpression.approximateUnitToRealScalar<double>(
+  m_SIValue = approximatedSIExpression.approximateToRealScalar<double>(
       UserParameters{.complexFormat = complexFormat(),
                      .angleUnit = angleUnit(),
                      .context = EmptySymbolContext{}},
-      ApproximationPolicy{.optimize = true});
+      ApproximationPolicy{.optimize = true}, false);
   // Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
       m_SIValue, approximatedSIExpression, symbolContext, m_referenceValues,

@@ -459,8 +459,9 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
    * allowed, just like 3->cos) */
   if (CompareLayoutSpanWithNullTerminatedString(span, "min") == 0) {
     bool followedByParenthesis =
-        m_decoder.layout()->isParenthesesLayout() ||
-        CodePointLayout::IsCodePoint(m_decoder.layout(), '(');
+        !m_decoder.isEmpty() &&
+        (m_decoder.layout()->isParenthesesLayout() ||
+         CodePointLayout::IsCodePoint(m_decoder.layout(), '('));
     return followedByParenthesis ? Token::Type::ReservedFunction
                                  : Token::Type::Unit;
   }

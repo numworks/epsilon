@@ -1,6 +1,7 @@
 #include "unit_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/additional_results_helper.h>
 #include <poincare/src/expression/projection.h>
 
 #include "../app.h"
@@ -142,6 +143,8 @@ void UnitListController::computeAdditionalResults(
   input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
                                        &approximatedSIExpression,
                                        simplificationParameters);
+  assert(AdditionalResultsType::HasUnit(approximatedSIExpression,
+                                        m_calculationPreferences));
   if (reductionFailure) {
     expressions[--numberOfExpressions] = UserExpression();
   }

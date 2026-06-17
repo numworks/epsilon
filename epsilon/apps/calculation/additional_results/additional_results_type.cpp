@@ -166,8 +166,10 @@ bool AdditionalResultsType::HasUnit(
     const Preferences::CalculationPreferences calculationPreferences) {
   // HasUnit is only called when exactOutput has Units
   assert(exactOutput.hasUnit());
-  /* Assume units that cancel themselves have been removed by simplification.
-   * Returns NaN if dimension isn't unit */
+  // Check whether units cancel out between themselves
+  if (!Poincare::Dimension(exactOutput).isUnit()) {
+    return false;
+  }
   double value = exactOutput.approximateUnitToRealScalar<double>(
       UserParameters{calculationPreferences.complexFormat,
                      calculationPreferences.angleUnit},

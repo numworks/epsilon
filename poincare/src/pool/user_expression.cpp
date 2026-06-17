@@ -276,10 +276,7 @@ T UserExpression::approximateUnitToRealScalar(
     const UserParameters& userParameters,
     const ApproximationPolicy& approximationPolicy) const {
   static_assert(std::is_floating_point_v<T>);
-  Poincare::Dimension dimension =
-      Poincare::Dimension(*this, userParameters.context);
-  if (!dimension.isUnit() ||
-      Internal::Dimension::IsList(tree(), userParameters.context)) {
+  if (Internal::Dimension::IsList(tree(), userParameters.context)) {
     return NAN;
   }
   return privateApproximateToRealScalar<T>(userParameters, approximationPolicy);

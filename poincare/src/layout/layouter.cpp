@@ -719,7 +719,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
                 [](const Tree* e) { return e->treeIsIdenticalTo("x"_e); })) {
           /* Fail the layout when x was already used. We could look for
            * another variable, but it isn't worth it at the time. */
-          TreeStackCheckpoint::Raise(ExceptionType::Other);
+          TreeStackCheckpoint::Raise(ExceptionType::LayoutFail);
         }
         EVALUATE_AND_ASSERT(parentRack->deepReplaceWith(
             KTemporaryUnknownSymbolL, KCodePointL<'x'>()));

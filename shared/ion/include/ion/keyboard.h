@@ -78,6 +78,11 @@ class State {
       m_bitField |= (uint64_t)1 << (uint8_t)k;
     }
   }
+  constexpr void clearKey(Key k) {
+    if (k != Key::None) {
+      m_bitField &= ~((uint64_t)1 << (uint8_t)k);
+    }
+  }
 
  private:
   uint64_t m_bitField;

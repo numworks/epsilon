@@ -153,9 +153,26 @@ namespace Ion {
 namespace Simulator {
 namespace Keyboard {
 
-void keyDown(Ion::Keyboard::Key k) { Queue::sharedQueue()->push(State(k)); }
+static State heldSDLState() {
+  // Refresh SDL's view of the host keyboard before reading it.
+  SDL_PumpEvents();
+  const uint8_t* SDLstate = SDL_GetKeyboardState(NULL);
+  State state(0);
+  setHeldKeysInState(state, SDLstate, sKeyPairs, sNumberOfKeyPairs);
+  return state;
+}
 
-void keyUp(Ion::Keyboard::Key k) { Queue::sharedQueue()->push(State(0)); }
+void keyDown(Ion::Keyboard::Key k) {
+  State state = heldSDLState();
+  state.setKey(k);
+  Queue::sharedQueue()->push(state);
+}
+
+void keyUp(Ion::Keyboard::Key k) {
+  State state = heldSDLState();
+  state.clearKey(k);
+  Queue::sharedQueue()->push(state);
+}
 
 bool scanHandlesSDLKey(SDL_Scancode key) {
   for (int i = 0; i < sNumberOfKeyPairs; i++) {

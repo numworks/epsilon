@@ -37,7 +37,7 @@ namespace Poincare::Internal {
 #define TINY 1.0e-30
 
 double RegularizedIncompleteBetaFunction(double a, double b, double x) {
-  if (x < 0.0 || x > 1.0) {
+  if (x < 0.0 || x > 1.0 || a <= 0.0 || b <= 0.0) {
     return NAN;
   }
   /* The regularized incomplete beta function (RIBF) has known values for

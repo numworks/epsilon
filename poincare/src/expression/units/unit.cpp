@@ -259,8 +259,10 @@ bool Unit::ShallowRemoveUnit(Tree* e, void*) {
 }
 
 bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
-  if (e->isDep()) {
-    // Ignoring Dep and DepList here
+  if (e->isDep() || e->isPiecewise()) {
+    /* Dependencies are ignored for the unit computation. For piecewise, only
+     * the first branch is taken into account. As the dimension has been checked
+     * beforehand, the other piecewise branches have a matching dimension. */
     e->cloneTreeOverTree(e->child(0));
   }
 #if ASSERTIONS
@@ -270,8 +272,6 @@ bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
   switch (e->type()) {
     case Type::Unit:
     case Type::PhysicalConstant:
-    // Do not simplify piecewise
-    case Type::Piecewise:
       didRemovedTree = false;
       break;
     case Type::Add:

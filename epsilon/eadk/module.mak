@@ -1,4 +1,4 @@
-EADK_EXPECTED_CRC := 26852e98
+EADK_EXPECTED_CRC := aeb2e004
 
 # Compute crc of eadk.h if the crc32 command exists (on devs machines for instance)
 EADK_CRC := $(shell crc32 $(PATH_eadk)/include/eadk/eadk.h 2>/dev/null || echo $(EADK_EXPECTED_CRC))

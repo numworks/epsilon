@@ -182,7 +182,7 @@ namespace Private {
  * (abscissa, list element etc.) */
 template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
-                   const Parameters& parameters,
+                   bool isListElement, const Parameters& parameters,
                    ContextArguments... contextArguments);
 
 using VariableType = std::complex<double>;

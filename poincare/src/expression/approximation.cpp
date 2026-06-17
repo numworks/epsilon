@@ -83,14 +83,14 @@ struct FloatToDouble<Coordinate2D<float>> {
 template <typename ReturnType>
 ReturnType To(const Tree* e, const Parameters& parameters) {
   using float_type = typename FloatTypeAccessor<ReturnType>::type;
-  return Private::Process<ReturnType>(e, Precision<float_type>::value,
+  return Private::Process<ReturnType>(e, Precision<float_type>::value, false,
                                       parameters);
 }
 
 template <typename ReturnType>
 ReturnType To(const Tree* e, FloatPrecision floatPrecision,
               const Parameters& parameters) {
-  return Private::Process<ReturnType>(e, floatPrecision, parameters);
+  return Private::Process<ReturnType>(e, floatPrecision, false, parameters);
 }
 
 template <typename ReturnType, typename FloatType>
@@ -99,7 +99,7 @@ ReturnType To(const Tree* e, FloatType abscissa, const Parameters& parameters) {
       std::is_same_v<ReturnType, Tree*> ||
       std::is_same_v<ReturnType, BooleanOrUndefined> ||
       std::is_same_v<FloatType, typename FloatTypeAccessor<ReturnType>::type>);
-  return Private::Process<ReturnType>(e, Precision<FloatType>::value,
+  return Private::Process<ReturnType>(e, Precision<FloatType>::value, false,
                                       parameters, abscissa);
 }
 
@@ -110,13 +110,14 @@ ReturnType To(const Tree* e, FloatType abscissa, int16_t listElementIndex,
       std::is_same_v<ReturnType, Tree*> ||
       std::is_same_v<ReturnType, BooleanOrUndefined> ||
       std::is_same_v<FloatType, typename FloatTypeAccessor<ReturnType>::type>);
-  return Private::Process<ReturnType>(e, Precision<FloatType>::value,
+  return Private::Process<ReturnType>(e, Precision<FloatType>::value, true,
                                       parameters, abscissa, listElementIndex);
 }
 
 bool Approximate(Tree* e, FloatPrecision floatPrecision,
                  const Parameters& parameters) {
-  Tree* approximated = Private::Process<Tree*>(e, floatPrecision, parameters);
+  Tree* approximated =
+      Private::Process<Tree*>(e, floatPrecision, false, parameters);
   bool hasChanged = !approximated->treeIsIdenticalTo(e);
   e->moveTreeOverTree(approximated);
   return hasChanged;
@@ -260,11 +261,12 @@ Tree* CleanUpTreeStack(Tree* processed, Tree* result) {
 
 bool DimensionChecks(const Tree* e,
                      const ExpressionVariantParameters& expressionParameters,
-                     bool optimize) {
+                     bool isListAllowed, bool optimize) {
   const SymbolContext& symbolContext =
       expressionParameters.expressionType() == ExpressionType::User
           ? expressionParameters.get<UserParameters>().context
           : k_emptySymbolContext;
+  // TODO: check list dimension if no list allowed
   if (!optimize) {
     return Dimension::DeepCheck(e, symbolContext);
   }
@@ -287,9 +289,13 @@ FloatPrecision UpdateFloatPrecision(const Tree* e,
 
 template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
-                   const Parameters& parameters,
+                   bool isListElement, const Parameters& parameters,
                    ContextArguments... contextArguments) {
   if (!DimensionChecks(e, parameters.expressionParameters,
+                       /* The input can be a list only if the return type is a
+                          Tree*, or if we are approximating a list element (see
+                          the "To" entry point passing a listElementIndex) */
+                       std::is_same_v<ReturnType, Tree*> || isListElement,
                        parameters.policy.optimize)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }

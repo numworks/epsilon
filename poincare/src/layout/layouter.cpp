@@ -668,33 +668,41 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       const Tree* derivandTree = orderTree->nextTree();
       // Case 1: f'(a)
       if (variableTree->treeIsIdenticalTo(
-              Derivation::k_functionDerivativeVariable) &&
-          derivandTree->isUserFunction() &&
-          derivandTree->child(0)->isUserVariable() &&
-          derivandTree->child(0)->treeIsIdenticalTo(
               Derivation::k_functionDerivativeVariable)) {
-        layoutText(parentRack, Symbol::GetName(derivandTree));
-        assert(orderTree->isInteger() &&
-               Integer::Handler(orderTree).is<uint8_t>());
-        int order = Integer::Handler(orderTree).to<int>();
-        if (order <= 2) {
-          PushCodePoint(parentRack, order == 1
-                                        ? Derivation::k_firstOrderSymbol
-                                        : Derivation::k_secondOrderSymbol);
-        } else {
-          TreeRef rack;
-          if (linearMode()) {
-            PushCodePoint(parentRack, '^');
-            rack = parentRack;
+        if (derivandTree->isUserFunction() &&
+            derivandTree->child(0)->isUserVariable() &&
+            derivandTree->child(0)->treeIsIdenticalTo(
+                Derivation::k_functionDerivativeVariable)) {
+          layoutText(parentRack, Symbol::GetName(derivandTree));
+          assert(orderTree->isInteger() &&
+                 Integer::Handler(orderTree).is<uint8_t>());
+          int order = Integer::Handler(orderTree).to<int>();
+          if (order <= 2) {
+            PushCodePoint(parentRack, order == 1
+                                          ? Derivation::k_firstOrderSymbol
+                                          : Derivation::k_secondOrderSymbol);
           } else {
-            Tree* createdLayout = KSuperscriptL->cloneNode();
-            rack = SharedTreeStack->pushRackLayout(0);
-            NAry::AddChild(parentRack, createdLayout);
+            TreeRef rack;
+            if (linearMode()) {
+              PushCodePoint(parentRack, '^');
+              rack = parentRack;
+            } else {
+              Tree* createdLayout = KSuperscriptL->cloneNode();
+              rack = SharedTreeStack->pushRackLayout(0);
+              NAry::AddChild(parentRack, createdLayout);
+            }
+            layoutExpression(rack, orderTree, k_forceParentheses);
           }
-          layoutExpression(rack, orderTree, k_forceParentheses);
+          layoutExpression(parentRack, valueTree, k_forceParentheses);
+          break;
+        } else {
+          /* When f'(a) has been simplified to
+           * diff(k_functionDerivativeVariable, a, n, ...) but
+           * k_functionDerivativeVariable cannot be laid out. We could introduce
+           * a local variable that can be laid out, but it isn't worth it at the
+           * time. Interrupt layouting to return undef instead. */
+          TreeStackCheckpoint::Raise(ExceptionType::LayoutFail);
         }
-        layoutExpression(parentRack, valueTree, k_forceParentheses);
-        break;
       }
       // Case 2: diff(f(x),x,a,n)
       if (linearMode()) {
@@ -710,20 +718,6 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
         }
         layoutChildrenAsRacks(expression);
         NAry::AddChild(parentRack, layout);
-      }
-      if (variableTree->treeIsIdenticalTo(
-              Derivation::k_functionDerivativeVariable)) {
-        /* When f'(a) has been simplified to
-         * diff(k_functionDerivativeVariable, a, n, ...).
-         * We need to introduce a local variable that can be laid out. Use x. */
-        if (derivandTree->hasDescendantSatisfying(
-                [](const Tree* e) { return e->treeIsIdenticalTo("x"_e); })) {
-          /* Fail the layout when x was already used. We could look for
-           * another variable, but it isn't worth it at the time. */
-          TreeStackCheckpoint::Raise(ExceptionType::LayoutFail);
-        }
-        EVALUATE_AND_ASSERT(parentRack->deepReplaceWith(
-            KTemporaryUnknownSymbolL, KCodePointL<'x'>()));
       }
       break;
     }

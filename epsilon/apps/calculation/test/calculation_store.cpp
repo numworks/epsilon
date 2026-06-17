@@ -548,8 +548,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       &store);
   assertCalculationIs("f'(1)", DisplayOutput::ExactHidden, EqualSign::Equal,
                       nullptr, "0.01", &store);
-  assertCalculationIs("g'(0.5)", DisplayOutput::ExactHidden,
-                      EqualSign::Approximation, nullptr, "0.75", &store);
+  assertCalculationIs("g'(0.5)", DisplayOutput::ExactHidden, EqualSign::Equal,
+                      nullptr, "0.75", &store);
   assertCalculationIs("h'(0.5)", DisplayOutput::ExactHidden, EqualSign::Equal,
                       nullptr, "1.408996582", &store);
   Shared::GlobalContextAccessor::Store().resetAll();

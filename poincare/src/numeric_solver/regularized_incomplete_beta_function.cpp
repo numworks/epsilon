@@ -27,6 +27,7 @@
 
 #include "regularized_incomplete_beta_function.h"
 
+#include <assert.h>
 #include <omg/float.h>
 
 #include <cmath>
@@ -56,6 +57,7 @@ double RegularizedIncompleteBetaFunction(double a, double b, double x) {
 
   /*The continued fraction converges nicely for x < (a+1)/(a+b+2)*/
   if (x > (a + 1.0) / (a + b + 2.0)) {
+    assert(!(((1.0 - x) > (b + 1.0) / (b + a + 2.0))));
     return (1.0 -
             RegularizedIncompleteBetaFunction(
                 b, a, 1.0 - x)); /*Use the fact that beta is symmetrical.*/

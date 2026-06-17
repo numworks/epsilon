@@ -43,20 +43,6 @@ namespace CustomTypeStructs {
 #include "types.inc"
 }  // namespace CustomTypeStructs
 
-consteval bool rangeIsDisabled(uint8_t first, uint8_t last) {
-  constexpr const bool isEnabled[] = {
-#define NODE_USE(F, N, S) true,
-#define DISABLED_NODE_USE(F, N, S) false,
-#include "types.inc"
-  };
-  for (uint8_t i = first; i <= last; i++) {
-    if (isEnabled[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
 class TypeBlock : public Block {
  public:
   constexpr TypeBlock(AnyType content) : Block(static_cast<uint8_t>(content)) {
@@ -75,21 +61,27 @@ class TypeBlock : public Block {
    * NODE(MinusOne) => "MinusOne", */
   constexpr static const char* names[] = {
 #define NODE_USE(F, N, S) #F,
-#define DISABLED_NODE_USE(F, N, S) "",
+#define DISABLED_NODE_USE(F, N, S)
 #include "types.inc"
   };
 #endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
+/* Range membership is tested against compacted ids (what type() returns), but
+ * computed from the full ordinals of the boundaries so disabled boundaries stay
+ * valid. The enabled members of [FIRST, LAST] form a contiguous compacted block
+ * [FirstCompact, LastCompact]. */
 #define RANGE(NAME, FIRST, LAST)                                             \
   __attribute__((always_inline)) constexpr static bool Is##NAME(Type type) { \
-    constexpr uint8_t firstIndex = static_cast<uint8_t>(Type::FIRST);        \
-    constexpr uint8_t lastIndex = static_cast<uint8_t>(Type::LAST);          \
-    static_assert(firstIndex <= lastIndex);                                  \
-    if constexpr (rangeIsDisabled(firstIndex, lastIndex)) {                  \
+    constexpr uint8_t first = static_cast<uint8_t>(TypeEnum::FIRST);         \
+    constexpr uint8_t last = static_cast<uint8_t>(TypeEnum::LAST);           \
+    static_assert(first <= last);                                            \
+    if constexpr (TypeCompaction::RangeIsDisabled(first, last)) {            \
       return false;                                                          \
     } else {                                                                 \
-      return firstIndex <= type && type <= lastIndex;                        \
+      constexpr uint8_t firstCompact = TypeCompaction::FirstCompact(first);  \
+      constexpr uint8_t lastCompact = TypeCompaction::LastCompact(last);     \
+      return firstCompact <= type && type <= lastCompact;                    \
     }                                                                        \
   }                                                                          \
                                                                              \

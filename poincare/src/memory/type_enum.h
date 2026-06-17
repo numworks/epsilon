@@ -12,9 +12,53 @@ enum class TypeEnum : uint8_t {
 #include "types.inc"
 };
 
+/* The TypeEnum above keeps a stable, product-independent ordinal for every type
+ * (enabled and disabled). Stored type bytes and switch cases use a compacted id
+ * instead: disabled ordinals are skipped so enabled types are contiguous. This
+ * keeps dispatch jump tables dense. RANGE membership is still computed from the
+ * full ordinals (so disabled boundaries remain valid) and remapped to compacted
+ * bounds, see type_block.h. */
+namespace TypeCompaction {
+constexpr bool kEnabled[] = {
+#define NODE_USE(F, N, S) true,
+#define DISABLED_NODE_USE(F, N, S) false,
+#include "types.inc"
+};
+constexpr uint8_t kNumberOfTypes = sizeof(kEnabled) / sizeof(kEnabled[0]);
+
+/* Prefix sum built once: values[i] = number of enabled types with an ordinal
+ * strictly lower than i (so values[ordinal] is the compacted id of an enabled
+ * type, and the table doubles as range-bound lookups). */
+struct PrefixTable {
+  uint8_t values[kNumberOfTypes + 1];
+  consteval PrefixTable() : values{} {
+    uint8_t compact = 0;
+    for (uint8_t i = 0; i < kNumberOfTypes; i++) {
+      values[i] = compact;
+      compact += kEnabled[i];
+    }
+    values[kNumberOfTypes] = compact;
+  }
+};
+constexpr PrefixTable kPrefix{};
+
+// Compacted id of an enabled type from its full ordinal.
+constexpr uint8_t CompactId(uint8_t ordinal) { return kPrefix.values[ordinal]; }
+
+/* The enabled members of the full-ordinal range [first, last] map to the
+ * contiguous compacted range [FirstCompact, LastCompact]. */
+constexpr bool RangeIsDisabled(uint8_t first, uint8_t last) {
+  return kPrefix.values[last + 1] == kPrefix.values[first];
+}
+constexpr uint8_t FirstCompact(uint8_t first) { return kPrefix.values[first]; }
+constexpr uint8_t LastCompact(uint8_t last) {
+  return kPrefix.values[last + 1] - 1;
+}
+}  // namespace TypeCompaction
+
 struct AnyType {
   static consteval AnyType Enabled(TypeEnum e) {
-    return AnyType(static_cast<uint8_t>(e));
+    return AnyType(TypeCompaction::CompactId(static_cast<uint8_t>(e)));
   }
   static consteval AnyType Disabled(TypeEnum e) {
     /* Types disabled have an id > UINT8_MAX for the compiler to

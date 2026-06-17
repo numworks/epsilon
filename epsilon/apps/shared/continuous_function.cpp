@@ -195,8 +195,7 @@ bool ContinuousFunction::isActiveInTable() const {
   int order = derivationOrder();
   assert(order == 1 || order == 2);
   OMG::ExpiringPointer<ContinuousFunction> parent = parentFunction();
-  assert(!parent->isNull() && parent->isActive() &&
-         parent->properties().canBeActiveInTable());
+  assert(!parent->isNull() && parent->isActive());
   return parent->displayValueDerivative(order);
 }
 

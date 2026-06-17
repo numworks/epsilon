@@ -55,20 +55,19 @@ double RegularizedIncompleteBetaFunction(double a, double b, double x) {
     return 1.0;
   }
 
-  /*The continued fraction converges nicely for x < (a+1)/(a+b+2)*/
+  // The continued fraction converges nicely for x < (a+1)/(a+b+2)
   if (x > (a + 1.0) / (a + b + 2.0)) {
     assert(!(((1.0 - x) > (b + 1.0) / (b + a + 2.0))));
-    return (1.0 -
-            RegularizedIncompleteBetaFunction(
-                b, a, 1.0 - x)); /*Use the fact that beta is symmetrical.*/
+    // Use the fact that beta is symmetrical
+    return (1.0 - RegularizedIncompleteBetaFunction(b, a, 1.0 - x));
   }
 
-  /*Find the first part before the continued fraction.*/
+  // Find the first part before the continued fraction
   const double lbeta_ab = std::lgamma(a) + std::lgamma(b) - std::lgamma(a + b);
   const double front =
       std::exp(std::log(x) * a + std::log(1.0 - x) * b - lbeta_ab) / a;
 
-  /*Use Lentz's algorithm to evaluate the continued fraction.*/
+  // Use Lentz's algorithm to evaluate the continued fraction
   double f = 1.0, c = 1.0, d = 0.0;
 
   // TODO Use Helper::ContinuedFractionEvaluation
@@ -78,16 +77,18 @@ double RegularizedIncompleteBetaFunction(double a, double b, double x) {
 
     double numerator;
     if (i == 0) {
-      numerator = 1.0; /*First numerator is 1.0.*/
+      // First numerator is 1.0
+      numerator = 1.0;
     } else if (i % 2 == 0) {
-      numerator = (m * (b - m) * x) /
-                  ((a + 2.0 * m - 1.0) * (a + 2.0 * m)); /*Even term.*/
+      // Even term
+      numerator = (m * (b - m) * x) / ((a + 2.0 * m - 1.0) * (a + 2.0 * m));
     } else {
-      numerator = -((a + m) * (a + b + m) * x) /
-                  ((a + 2.0 * m) * (a + 2.0 * m + 1)); /*Odd term.*/
+      // Odd term
+      numerator =
+          -((a + m) * (a + b + m) * x) / ((a + 2.0 * m) * (a + 2.0 * m + 1));
     }
 
-    /*Do an iteration of Lentz's algorithm.*/
+    // Do an iteration of Lentz's algorithm
     d = 1.0 + numerator * d;
     if (std::fabs(d) < TINY) {
       d = TINY;
@@ -102,13 +103,14 @@ double RegularizedIncompleteBetaFunction(double a, double b, double x) {
     const double cd = c * d;
     f *= cd;
 
-    /*Check for stop.*/
+    // Check for stop
     if (std::fabs(1.0 - cd) < STOP) {
       return front * (f - 1.0);
     }
   }
 
-  return NAN; /*Needed more loops, did not converge.*/
+  // Needed more loops, did not converge
+  return NAN;
 }
 
 }  // namespace Poincare::Internal

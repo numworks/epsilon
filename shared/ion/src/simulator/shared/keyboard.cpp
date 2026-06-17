@@ -87,6 +87,16 @@ constexpr static KeySDLKeyPair sKeyPairsPythonAddon[] = {
 constexpr int sNumberOfKeyPairs = std::size(sKeyPairs);
 constexpr int sNumberOfKeyPairsPython = std::size(sKeyPairsPythonAddon);
 
+static void setHeldKeysInState(Ion::Keyboard::State& state,
+                               const uint8_t* SDLstate,
+                               const KeySDLKeyPair* pairs, int numberOfPairs) {
+  for (int i = 0; i < numberOfPairs; i++) {
+    if (SDLstate[pairs[i].SDLKey()]) {
+      state.setKey(pairs[i].key());
+    }
+  }
+}
+
 namespace Ion {
 namespace Keyboard {
 
@@ -126,19 +136,10 @@ State scan(bool forPython) {
 
   // Catch the physical keyboard events
   const uint8_t* SDLstate = SDL_GetKeyboardState(NULL);
-  for (int i = 0; i < sNumberOfKeyPairs; i++) {
-    KeySDLKeyPair pair = sKeyPairs[i];
-    if (SDLstate[pair.SDLKey()]) {
-      state.setKey(pair.key());
-    }
-  }
+  setHeldKeysInState(state, SDLstate, sKeyPairs, sNumberOfKeyPairs);
   if (forPython) {
-    for (int i = 0; i < sNumberOfKeyPairsPython; i++) {
-      KeySDLKeyPair pair = sKeyPairsPythonAddon[i];
-      if (SDLstate[pair.SDLKey()]) {
-        state.setKey(pair.key());
-      }
-    }
+    setHeldKeysInState(state, SDLstate, sKeyPairsPythonAddon,
+                       sNumberOfKeyPairsPython);
   }
 
   keyboardWasScanned(state);

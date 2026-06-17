@@ -266,11 +266,19 @@ bool DimensionChecks(const Tree* e,
       expressionParameters.expressionType() == ExpressionType::User
           ? expressionParameters.get<UserParameters>().context
           : k_emptySymbolContext;
-  // TODO: check list dimension if no list allowed
   if (!optimize) {
-    return Dimension::DeepCheck(e, symbolContext);
+    if (!Dimension::DeepCheck(e, symbolContext)) {
+      return false;
+    }
+    if (!isListAllowed && Dimension::IsList(e, symbolContext)) {
+      return false;
+    }
+    return true;
   }
   COSTLY_ASSERT(Dimension::DeepCheck(e, symbolContext));
+  if (!isListAllowed) {
+    COSTLY_ASSERT(!Dimension::IsList(e, symbolContext));
+  }
   return true;
 }
 

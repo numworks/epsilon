@@ -119,4 +119,9 @@ constexpr static ThemeContainer k_lightTheme =
                    .PythonGutterBackground = Palette::PYTHON_GrayLight,
                    .MagnifyIndicator = Palette::Black};
 
+/*  The title bar color need to be the same as the theme main color, so that the
+ * spinner logo background (drawn by the ion kernel) is consistent with the
+ * title bar background.  */
+static_assert(k_lightTheme.TitleBar == KDSpecialColors::k_lightThemeMain);
+
 }  // namespace Escher

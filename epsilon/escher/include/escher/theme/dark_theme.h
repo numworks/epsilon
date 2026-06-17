@@ -119,4 +119,9 @@ constexpr static ThemeContainer k_darkTheme =
                    .PythonGutterBackground = Palette::DARK_AxisSecondary,
                    .MagnifyIndicator = Palette::White};
 
+/*  The title bar color need to be the same as the theme main color, so that the
+ * spinner logo background (drawn by the ion kernel) is consistent with the
+ * title bar background.  */
+static_assert(k_darkTheme.TitleBar == KDSpecialColors::k_darkThemeMain);
+
 }  // namespace Escher

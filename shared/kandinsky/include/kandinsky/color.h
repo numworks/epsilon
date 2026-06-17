@@ -75,3 +75,17 @@ class KDColor {
 
 constexpr KDColor KDBlack = KDColor::RGB24(0x000000);
 constexpr KDColor KDWhite = KDColor::RGB24(0xFFFFFF);
+
+/* Colors are normally defined at the Escher level in a Palette object. However
+ * some special colors need to be defined at the Kandinsky level to be accessed
+ * when inside ion. This is the case for the spinner logo which is drawn by the
+ * kernel. */
+namespace KDSpecialColors {
+// Theme (light / dark) signature colors (used for example in the title bar)
+constexpr KDColor k_lightThemeMain = KDColor::RGB24(0xFFB734);
+constexpr KDColor k_darkThemeMain = KDColor::RGB24(0xC3CAF4);
+// Theme (light / dark) neutral colors (black or white)
+constexpr KDColor k_lightThemeNeutral = KDWhite;
+constexpr KDColor k_darkThemeNeutral = KDBlack;
+
+}  // namespace KDSpecialColors

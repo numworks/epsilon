@@ -46,10 +46,17 @@ namespace CustomTypeStructs {
 class TypeBlock : public Block {
  public:
   constexpr TypeBlock(AnyType content) : Block(static_cast<uint8_t>(content)) {
-    assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
+    /* if !consteval to allow KTree to use disable blocks as long as
+     * the KTree themselves are not used. We could comment out those
+     * KTrees as an alternative. */
+    if !consteval {
+      assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
+    }
   }
   constexpr TypeBlock(Type content) : Block(static_cast<uint8_t>(content)) {
-    assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
+    if !consteval {
+      assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
+    }
   }
   constexpr Type type() const { return static_cast<uint8_t>(m_content); }
 

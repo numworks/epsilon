@@ -8,8 +8,8 @@ namespace Escher {
 
 class GaugeView : public View, public CellWidget {
  public:
-  GaugeView();
-  float level();
+  GaugeView() = default;
+  float level() const { return m_level; }
   void setLevel(float level);
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -32,8 +32,8 @@ class GaugeView : public View, public CellWidget {
 
  private:
   constexpr static KDCoordinate k_thickness = 2;
-  float m_level;
-  ThemeComponent m_backgroundColor;
+  float m_level = 1.0;
+  ThemeComponent m_backgroundColor = ThemeComponent::DefaultBackground;
 };
 
 }  // namespace Escher

@@ -19,11 +19,6 @@ const uint8_t gaugeIndicatorMask
         {0xFF, 0xFF, 0xE1, 0x0C, 0x00, 0x00, 0x0C, 0xE1, 0xFF, 0xFF},
 };
 
-GaugeView::GaugeView()
-    : m_level(1), m_backgroundColor(ThemeComponent::DefaultBackground) {}
-
-float GaugeView::level() { return m_level; }
-
 void GaugeView::setLevel(float level) {
   if (m_level != level) {
     level = level < 0 ? 0 : level;

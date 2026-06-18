@@ -90,6 +90,7 @@ bool IsIntegerExpression(const Tree* e, bool excludeFunctionCalls = false) {
       return true;
     }
     case Type::Pow:
+    case Type::PowReal:
       return IsIntegerExpression(e->child(0), excludeFunctionCalls) &&
              Integer::Is<uint8_t>(e->child(1));
     case Type::Ceil:

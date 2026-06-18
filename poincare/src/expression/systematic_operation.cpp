@@ -721,6 +721,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
 
   if (child->isMult()) {
     PatternMatching::Context ctx;
+#if POINCARE_COMPLEX
     // exp(πi) case, shortcuts one AdvancedReduction step (ExpandExp)
     if (child->treeIsIdenticalTo(KMult(π_e, i_e))) {
       e->cloneTreeOverTree(-1_e);
@@ -733,6 +734,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
       e->cloneTreeOverTree(i.isEven() ? 1_e : -1_e);
       return true;
     }
+#endif
     // Power-like case (exp(A*ln(B)))
     if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx)) {
       const Tree* base = ctx.getTree(KB);
@@ -768,6 +770,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
       }
     }
 
+#if POINCARE_COMPLEX
     /* This last step shortcuts at least three advanced reduction steps and is
      * quite common when manipulating roots of negatives.
      * TODO: Deactivate it if advanced reduction is strong enough. */
@@ -787,6 +790,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
       e->moveTreeOverTree(PatternMatching::Create(KExp(KA), ctx));
       return true;
     }
+#endif
     return ReduceSquareRoot(e) || ReduceNestedRadicals(e);
   }
   return false;

@@ -457,17 +457,21 @@ bool ShallowBeautifyPowerOfTangent(Tree* e, void* context) {
       // (sin(A))^n/(cos(A))^n -> (tan(A))^n
       PatternMatching::MatchReplace(
           e, KDiv(KMult(KA_s, KPow(KSin(KB), KC), KD_s), KPow(KCos(KB), KC)),
-          KMult(KA_s, KPow(KTan(KB), KC), KD_s)) ||
+          KMult(KA_s, KPow(KTan(KB), KC), KD_s))
 #if POINCARE_TRIGONOMETRY_ADVANCED
       // (cos(A))^n/(sin(A))^n -> (cot(A))^n
-      PatternMatching::MatchReplace(
-          e, KDiv(KMult(KA_s, KPow(KCos(KB), KC), KD_s), KPow(KSin(KB), KC)),
-          KMult(KA_s, KPow(KCot(KB), KC), KD_s)) ||
+      || PatternMatching::MatchReplace(
+             e, KDiv(KMult(KA_s, KPow(KCos(KB), KC), KD_s), KPow(KSin(KB), KC)),
+             KMult(KA_s, KPow(KCot(KB), KC), KD_s))
 #endif
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
       // (sinh(A))^n/(cosh(A))^n -> (tanh(A))^n
+      ||
       PatternMatching::MatchReplace(
           e, KDiv(KMult(KA_s, KPow(KSinH(KB), KC), KD_s), KPow(KCosH(KB), KC)),
-          KMult(KA_s, KPow(KTanH(KB), KC), KD_s));
+          KMult(KA_s, KPow(KTanH(KB), KC), KD_s))
+#endif
+      ;
   /* Even if e was sorted before, nothing guarantees it is still sorted after
    * this operation, so we sort again */
   if (matchResult && e->isMult()) {

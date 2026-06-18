@@ -172,6 +172,7 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
 }
 
 bool AdvancedOperation::ExpandExp(Tree* e) {
+#if POINCARE_COMPLEX
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
       ctx.getTree(KA)->isHalf()) {
@@ -199,7 +200,9 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
       return true;
     }
   }
+#endif
   return
+#if POINCARE_COMPLEX
       // exp(A?+B?i+C?) = exp(A+C)*(cos(B) + sin(B)*i)
       /* This is a more generic form of the previous exp(ai) => cos(b)+sin(b)i.
        * It shortcuts what could be done in 2/3 Advanced operation before:
@@ -209,6 +212,7 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
           KMult(KExp(KAdd(KA_s, KC_s)),
                 KAdd(KTrig(KMult(KB_s), 0_e),
                      KMult(KTrig(KMult(KB_s), 1_e), i_e)))) ||
+#endif
       // exp(A+B?) = exp(A) * exp(B)
       PatternMatching::MatchReplaceReduce(e, KExp(KAdd(KA, KB_p)),
                                           KMult(KExp(KA), KExp(KAdd(KB_p))));
@@ -237,9 +241,11 @@ bool AdvancedOperation::ContractExp(Tree* e) {
   }
   return
       // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
-      PatternMatching::MatchReplaceReduce(
-          e, KMult(KA_s, KExp(KB), KExp(KC), KD_s),
-          KMult(KA_s, KExp(KAdd(KB, KC)), KD_s)) ||
+      PatternMatching::MatchReplaceReduce(e,
+                                          KMult(KA_s, KExp(KB), KExp(KC), KD_s),
+                                          KMult(KA_s, KExp(KAdd(KB, KC)), KD_s))
+#if POINCARE_COMPLEX
+      ||
       // A? + cos(B) + C? + sin(B)*i + D? = A + C + D + exp(B*i)
       PatternMatching::MatchReplaceReduce(
           e, KAdd(KA_s, KTrig(KB, 0_e), KC_s, KMult(KTrig(KB, 1_e), i_e), KD_s),
@@ -255,7 +261,9 @@ bool AdvancedOperation::ContractExp(Tree* e) {
           e, KMult(KA_s, KExp(KMult(i_e, KB_s)), KC_s, i_e),
           KMult(KA_s,
                 KExp(KMult(i_e, KAdd(KMult(KB_s), KMult(π_e, 1_e / 2_e)))),
-                KC_s));
+                KC_s))
+#endif
+          ;
 }
 
 // A*(B+C+..)*(D+E+...) = A*B*D + A*B*E+...+A*C*D+...

@@ -585,8 +585,7 @@ Tree* RackParser::parseEuclideanDivision(Tree* leftHandSide,
   leftHandSide->cloneNodeAtNode(KEuclideanDiv);
   return leftHandSide;
 #else
-  assert(false);
-  return leftHandSide;
+  RaiseParseFail(SyntaxError::EuclideanDivisionNotImplemented);
 #endif
 }
 

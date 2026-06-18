@@ -63,6 +63,7 @@ enum class SyntaxError : uint8_t {
   NonAcceptableExpression = 52,  // Used in Epsilon
   DataNotSuitable = 53,          // Used in Epsilon
   TooManyParametersInParentheses = 54,
+  EuclideanDivisionNotImplemented = 55,
 };
 
 }  // namespace Poincare

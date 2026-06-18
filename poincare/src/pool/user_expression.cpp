@@ -264,7 +264,10 @@ T UserExpression::approximateToRealScalar(
     const ApproximationPolicy& approximationPolicy, bool allowUnits) const {
   static_assert(std::is_floating_point_v<T>);
   /* Dimension checks are only done when optimize=false, otherwise the dimension
-   * correctness will be asserted in the approximation */
+   * correctness will be asserted in the approximation;
+   * Note: this check on the unit dimension could be moved to inside the common
+   * approximation pipeline, and we could add an allowUnits flag to the
+   * ApproximationPolicy. */
   if (!approximationPolicy.optimize) {
     if (!Internal::Dimension::DeepCheck(tree(), userParameters.context)) {
       return NAN;
@@ -272,6 +275,13 @@ T UserExpression::approximateToRealScalar(
     if (!allowUnits &&
         Internal::Dimension::Get(tree(), userParameters.context).isUnit()) {
       return NAN;
+    }
+  } else {
+    COSTLY_ASSERT(
+        Internal::Dimension::DeepCheck(tree(), userParameters.context));
+    if (!allowUnits) {
+      COSTLY_ASSERT(
+          !Internal::Dimension::Get(tree(), userParameters.context).isUnit());
     }
   }
   return privateApproximateToRealScalar<T>(userParameters, approximationPolicy);

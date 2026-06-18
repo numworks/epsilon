@@ -93,6 +93,7 @@ namespace Escher {
   X(TokenEllipsis)                 \
   X(TokenBatteryLevel)             \
   X(TokenInactive)                 \
+  X(TokenInactiveSelected)         \
   X(TokenLowBattery)               \
   X(DataDefault)                   \
   X(DataRed)                       \

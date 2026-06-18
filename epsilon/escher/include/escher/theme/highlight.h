@@ -38,6 +38,8 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
     case ThemeComponent::CellTableEven:
     case ThemeComponent::CellTableOdd:
       return ThemeComponent::SurfaceSelect;
+    case ThemeComponent::TokenInactive:
+      return ThemeComponent::TokenInactiveSelected;
     case ThemeComponent::TextWhite:
     case ThemeComponent::TokenMainColor:
     case ThemeComponent::SurfaceSelect:

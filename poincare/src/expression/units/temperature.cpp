@@ -10,6 +10,8 @@
 #include "../approximation.h"
 #include "../dimension.h"
 #include "../integer.h"
+#include "../simplification.h"
+#include "../systematic_reduction.h"
 #include "representatives.h"
 #include "unit.h"
 
@@ -22,6 +24,7 @@ bool IsNonKelvinTemperature(const Representative* representative) {
 }
 
 void RemoveTemperatureUnitFromRoot(Tree* root) {
+  assert(!SystematicReduction::DeepReduce(root));
   assert(Dimension::DeepCheck(root));
   // Find and remove the unit.
   const Representative* representative = nullptr;
@@ -42,13 +45,20 @@ void RemoveTemperatureUnitFromRoot(Tree* root) {
   assert(IsNonKelvinTemperature(representative));
   bool isCelsius = (representative == &Temperature::representatives.celsius);
   // A -> (A + origin) * ratio
-  TreeRef ratio = representative->pushReducedRatioExpression();
-  root->moveTreeOverTree(PatternMatching::Create(
-      KMult(KAdd(KA, KB), KC), {.KA = root,
-                                .KB = isCelsius ? Temperature::celsiusOrigin
-                                                : Temperature::fahrenheitOrigin,
-                                .KC = ratio}));
-  ratio->removeTree();
+  Tree* result = KMult.node<2>->cloneNode();
+
+  Tree* addition = KAdd.node<2>->cloneNode();
+  root->cloneTree();
+  SharedTreeStack->pushDoubleFloat(Approximation::To<double>(
+      isCelsius ? Temperature::celsiusOrigin : Temperature::fahrenheitOrigin,
+      Approximation::Parameters{.policy = {.optimize = true}}));
+  SystematicReduction::ShallowReduce(addition);
+
+  representative->pushReducedRatioExpression();
+  SystematicReduction::ShallowReduce(result);
+
+  root->moveTreeOverTree(result);
+  assert(!SystematicReduction::DeepReduce(root));
 }
 
 double TemperatureFromKelvin(double value,

@@ -306,9 +306,8 @@ void Tokenizer::fillIdentifiersList() {
   const Layout* identifiersStringStart = m_decoder.layout();
   popIdentifiersString();
   const Tree* currentStringEnd = m_decoder.layoutUnsafe();
-  assert(currentStringEnd >
-         reinterpret_cast<const Tree*>(identifiersStringStart));
-  while (identifiersStringStart < currentStringEnd) {
+  assert(currentStringEnd > static_cast<const Tree*>(identifiersStringStart));
+  while (currentStringEnd > static_cast<const Tree*>(identifiersStringStart)) {
     if (m_storedIdentifiersList.isFull()) {
       /* If there is not enough space in the list, just empty it.
        * All the tokens that have already been parsed are lost and will be
@@ -369,7 +368,7 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
 #else
   m_storedIdentifiersList.clear();
 #endif
-  *stringEnd = stringStart;
+  *stringEnd = static_cast<const Tree*>(stringStart);
   return Token(tokenType, stringStart, tokenLength);
 }
 

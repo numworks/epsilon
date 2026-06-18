@@ -259,13 +259,8 @@ Tree* CleanUpTreeStack(Tree* processed, Tree* result) {
   return processed;
 }
 
-bool DimensionChecks(const Tree* e,
-                     const ExpressionVariantParameters& expressionParameters,
+bool DimensionChecks(const Tree* e, const SymbolContext& symbolContext,
                      bool isListAllowed, bool optimize) {
-  const SymbolContext& symbolContext =
-      expressionParameters.expressionType() == ExpressionType::User
-          ? expressionParameters.get<UserParameters>().context
-          : k_emptySymbolContext;
   if (!optimize) {
     if (!Dimension::DeepCheck(e, symbolContext)) {
       return false;
@@ -299,12 +294,17 @@ template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    bool isListElement, const Parameters& parameters,
                    ContextArguments... contextArguments) {
-  if (!DimensionChecks(e, parameters.expressionParameters,
-                       /* The input can be a list only if the return type is a
-                          Tree*, or if we are approximating a list element (see
-                          the "To" entry point passing a listElementIndex) */
-                       std::is_same_v<ReturnType, Tree*> || isListElement,
-                       parameters.policy.optimize)) {
+  if (!DimensionChecks(
+          e,
+          parameters.expressionParameters.expressionType() ==
+                  ExpressionType::User
+              ? parameters.expressionParameters.get<UserParameters>().context
+              : k_emptySymbolContext,
+          /* The input can be a list only if the return type is a
+             Tree*, or if we are approximating a list element (see
+             the "To" entry point passing a listElementIndex) */
+          std::is_same_v<ReturnType, Tree*> || isListElement,
+          parameters.policy.optimize)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
   Tree* processed = PreprocessTree(e, parameters.expressionParameters);

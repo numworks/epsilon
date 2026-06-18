@@ -463,6 +463,47 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
   static_cast<EvenOddCell*>(cell)->setEven(row % 2 == 0);
 }
 
+void SolutionsController::drawAfterGrid(KDContext* ctx, KDRect rect) const {
+  /* The predefined variables message is a hack: it is split across the two
+   * columns of the table to display a single sentence. The table grid is drawn
+   * on top of the cells, so it adds an horizontal line above the message and
+   * three vertical lines cutting through its text. We erase those segments here
+   * (after the grid is drawn) to keep the message readable. */
+  const int messageRow = definedVariablesMessageRow();
+  if (messageRow < 0) {
+    return;
+  }
+  /* const_cast is valid: these size helpers are only non-const for memoization
+   * and a const SolutionsController is never needed (see buttonAtIndex). */
+  SolutionsController* source = const_cast<SolutionsController*>(this);
+  const KDColor background =
+      ColorPicker::Resolve(ContentView::k_backgroundColor);
+
+  /* Vertical extent to clear : the empty margin row above the message (if any)
+   * and the message row itself. */
+  const bool hasEmptyRow = messageRow > 0;
+  const int topRow = hasEmptyRow ? messageRow - 1 : messageRow;
+  const KDCoordinate top = source->cumulatedHeightBeforeRow(topRow);
+  const KDCoordinate bottom = source->cumulatedHeightBeforeRow(messageRow + 1);
+  const KDCoordinate height = bottom - top;
+
+  // Erase the horizontal line above the message text.
+  const KDCoordinate messageTop = source->cumulatedHeightBeforeRow(messageRow);
+  const KDCoordinate tableWidth =
+      source->cumulatedWidthBeforeColumn(numberOfColumns());
+  ctx->fillRect(KDRect(0, messageTop, tableWidth, 1), background);
+
+  /* Erase the three vertical lines (column edges) over the message area. Start
+   * one pixel below `top` to preserve the horizontal grid line bordering the
+   * row above at each intersection. */
+  const KDCoordinate columnEdges[] = {
+      0, source->columnWidth(0, false),
+      static_cast<KDCoordinate>(tableWidth - 1)};
+  for (KDCoordinate x : columnEdges) {
+    ctx->fillRect(KDRect(x, top + 1, 1, height - 1), background);
+  }
+}
+
 KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   const int definedVariablesRow = definedVariablesMessageRow();
   SystemOfEquations* system = App::app()->system();

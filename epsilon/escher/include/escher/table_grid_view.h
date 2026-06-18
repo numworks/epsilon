@@ -10,10 +10,7 @@ class TableGridView : public View {
  public:
   TableGridView(const TableView* table);
 
-  void drawRect(KDContext* ctx, KDRect rect) const override {
-    drawLines(ctx, Direction::Column);
-    drawLines(ctx, Direction::Row);
-  }
+  void drawRect(KDContext* ctx, KDRect rect) const override;
 
   KDSize minimalSizeForOptimalDisplay() const override;
 

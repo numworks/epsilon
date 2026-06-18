@@ -25,6 +25,10 @@ class TableViewDataSource {
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
   virtual void fillCellForLocation(HighlightCell* cell, int column, int row);
+  /* Called by the table grid view after it has drawn its lines, in the grid's
+   * coordinate system (origin at the content top-left). Lets a data source
+   * erase grid line segments that should not be visible. */
+  virtual void drawAfterGrid(KDContext* ctx, KDRect rect) const {}
   virtual bool canSelectCellAtLocation(int column, int row) { return true; }
   virtual bool canStoreCellAtLocation(int column, int row) { return true; }
 

@@ -7,6 +7,12 @@ namespace Escher {
 TableGridView::TableGridView(const TableView* tableView)
     : m_tableView(tableView) {}
 
+void TableGridView::drawRect(KDContext* ctx, KDRect rect) const {
+  drawLines(ctx, Direction::Column);
+  drawLines(ctx, Direction::Row);
+  table()->dataSource()->drawAfterGrid(ctx, rect);
+}
+
 KDSize TableGridView::minimalSizeForOptimalDisplay() const {
   return KDSize(table()->bounds().width(), table()->bounds().height());
 }

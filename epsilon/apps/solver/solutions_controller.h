@@ -56,6 +56,7 @@ class SolutionsController : public Escher::ViewController,
   int numberOfColumns() const override { return 2; }
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
+  void drawAfterGrid(KDContext* ctx, KDRect rect) const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;

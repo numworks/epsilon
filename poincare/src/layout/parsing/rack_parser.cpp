@@ -491,7 +491,8 @@ Tree* RackParser::privateParsePlusAndMinus(Tree* leftHandSide, bool plus,
     }
     return leftHandSide;
   }
-  Tree* rightHandSide = parseBinaryOperator(leftHandSide, Token::Type::Minus);
+  Tree* rightHandSide =
+      parseBinaryOperatorRightHandSide(leftHandSide, Token::Type::Minus);
   if (mergeIntoPercentAdditionIfNeeded(leftHandSide, rightHandSide, plus)) {
     return leftHandSide;
   }
@@ -521,7 +522,8 @@ Tree* RackParser::parseSouthEastArrow(Tree* leftHandSide,
 
 Tree* RackParser::privateParseEastArrow(Tree* leftHandSide, bool north,
                                         Token::Type stoppingType) {
-  Tree* rightHandSide = parseBinaryOperator(leftHandSide, Token::Type::Minus);
+  Tree* rightHandSide =
+      parseBinaryOperatorRightHandSide(leftHandSide, Token::Type::Minus);
   if (!mergeIntoPercentAdditionIfNeeded(leftHandSide, rightHandSide, north)) {
     RaiseParseFail(SyntaxError::CannotParsePercentOperator);
   }
@@ -573,7 +575,7 @@ Tree* RackParser::parseImplicitAdditionBetweenUnits(Tree* leftHandSide,
 }
 
 Tree* RackParser::parseSlash(Tree* leftHandSide, Token::Type stoppingType) {
-  parseBinaryOperator(leftHandSide, Token::Type::Slash);
+  parseBinaryOperatorRightHandSide(leftHandSide, Token::Type::Slash);
   leftHandSide->cloneNodeAtNode(KDiv);
   return leftHandSide;
 }
@@ -581,7 +583,8 @@ Tree* RackParser::parseSlash(Tree* leftHandSide, Token::Type stoppingType) {
 Tree* RackParser::parseEuclideanDivision(Tree* leftHandSide,
                                          Token::Type stoppingType) {
 #if POINCARE_EUCLIDEAN_DIVISION
-  parseBinaryOperator(leftHandSide, Token::Type::EuclideanDivision);
+  parseBinaryOperatorRightHandSide(leftHandSide,
+                                   Token::Type::EuclideanDivision);
   leftHandSide->cloneNodeAtNode(KEuclideanDiv);
   return leftHandSide;
 #else
@@ -591,7 +594,8 @@ Tree* RackParser::parseEuclideanDivision(Tree* leftHandSide,
 
 Tree* RackParser::privateParseTimes(Tree* leftHandSide,
                                     Token::Type stoppingType) {
-  Tree* rightHandSide = parseBinaryOperator(leftHandSide, stoppingType);
+  Tree* rightHandSide =
+      parseBinaryOperatorRightHandSide(leftHandSide, stoppingType);
   /* mult<2>(A, mult<2>(B, C)) -> mult<3>(A, B, C) */
   turnIntoBinaryNode(KMult.node<2>, leftHandSide, rightHandSide);
   NAry::Flatten(leftHandSide);
@@ -599,8 +603,8 @@ Tree* RackParser::privateParseTimes(Tree* leftHandSide,
 }
 
 Tree* RackParser::parseCaret(Tree* leftHandSide, Token::Type stoppingType) {
-  Tree* rightHandSide =
-      parseBinaryOperator(leftHandSide, Token::Type::ImplicitTimes);
+  Tree* rightHandSide = parseBinaryOperatorRightHandSide(
+      leftHandSide, Token::Type::ImplicitTimes);
   turnIntoBinaryNode(KPow, leftHandSide, rightHandSide);
   return leftHandSide;
 }
@@ -628,8 +632,8 @@ Tree* RackParser::parseComparisonOperator(Tree* leftHandSide,
   assert(check);
   assert(m_currentToken.length() == operatorLength);
   (void)check;
-  Tree* rightHandSide =
-      parseBinaryOperator(leftHandSide, Token::Type::ComparisonOperator);
+  Tree* rightHandSide = parseBinaryOperatorRightHandSide(
+      leftHandSide, Token::Type::ComparisonOperator);
   if (leftHandSide->isComparison() || leftHandSide->isLogicalAnd()) {
 #if POINCARE_BOOLEAN
     /* TODO: a < b = c usd to be parsed to Comparison[<,=](a,b,c).
@@ -656,7 +660,7 @@ Tree* RackParser::parseComparisonOperator(Tree* leftHandSide,
 
 Tree* RackParser::parseAssignmentEqual(Tree* leftHandSide,
                                        Token::Type stoppingType) {
-  parseBinaryOperator(leftHandSide, Token::Type::AssignmentEqual);
+  parseBinaryOperatorRightHandSide(leftHandSide, Token::Type::AssignmentEqual);
   leftHandSide->cloneNodeAtNode(KEqual);
   return leftHandSide;
 }
@@ -746,8 +750,8 @@ Tree* RackParser::parseBinaryLogicalOperator(Type operatorType,
   return leftHandSide;
 }
 
-Tree* RackParser::parseBinaryOperator(const Tree* leftHandSide,
-                                      Token::Type stoppingType) {
+Tree* RackParser::parseBinaryOperatorRightHandSide(const Tree* leftHandSide,
+                                                   Token::Type stoppingType) {
   if (!leftHandSide) {
     // Left-hand side missing.
     RaiseParseFail(SyntaxError::MissingLeftExpression3);

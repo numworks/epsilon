@@ -157,8 +157,8 @@ class RackParser {
                                         bool plus);
   Tree* parseBinaryLogicalOperator(Type operatorType, Tree* leftHandSide,
                                    Token::Type stoppingType);
-  // Parse and return the right-hand side of a binary operator.
-  Tree* parseBinaryOperator(const Tree* leftHandSide, Token::Type stoppingType);
+  Tree* parseBinaryOperatorRightHandSide(const Tree* leftHandSide,
+                                         Token::Type stoppingType);
   Tree* parseVector();
   // Return nullptr if parentheses could not be parsed
   Tree* tryParseFunctionParameters(bool isBuiltinFunction = false);

@@ -1,6 +1,7 @@
 #include <escher/gauge_view.h>
 #include <escher/menu_cell.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/components.h>
 #include <escher/theme/highlight.h>
 
 namespace Escher {
@@ -29,15 +30,15 @@ void GaugeView::setLevel(float level) {
 }
 
 void GaugeView::setHighlighted(bool highlighted) {
-  ThemeComponent backgroundColor = Highlight(k_defaultBackground, highlighted);
-  if (m_backgroundColor != backgroundColor) {
-    m_backgroundColor = backgroundColor;
+  if (m_isHighlighted != highlighted) {
+    m_isHighlighted = highlighted;
     markWholeFrameAsDirty();
   }
 }
 
 void GaugeView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), ColorPicker::Resolve(m_backgroundColor));
+  ctx->fillRect(bounds(), ColorPicker::Resolve(
+                              Highlight(k_defaultBackground, m_isHighlighted)));
   /* Draw the gauge centered vertically on all the width available */
   KDCoordinate width = bounds().width() - k_indicatorDiameter;
   KDCoordinate height = bounds().height();
@@ -46,11 +47,13 @@ void GaugeView::drawRect(KDContext* ctx, KDRect rect) const {
 
   ctx->fillRect(KDRect(k_indicatorDiameter / 2, (height - k_thickness) / 2,
                        width * m_level, k_thickness),
-                ColorPicker::Resolve(ThemeComponent::TokenMainColor));
+                ColorPicker::Resolve(Highlight(ThemeComponent::TokenMainColor,
+                                               m_isHighlighted)));
   ctx->fillRect(
       KDRect(k_indicatorDiameter / 2 + width * m_level,
              (height - k_thickness) / 2, width * (1.0f - m_level), k_thickness),
-      ColorPicker::Resolve(ThemeComponent::TokenInactive));
+      ColorPicker::Resolve(
+          Highlight(ThemeComponent::TokenInactive, m_isHighlighted)));
   KDRect frame(width * m_level, (height - k_indicatorDiameter) / 2,
                k_indicatorDiameter, k_indicatorDiameter);
   ctx->blendRectWithMask(

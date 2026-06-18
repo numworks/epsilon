@@ -55,7 +55,7 @@ void GaugeView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(
       KDRect(k_indicatorDiameter / 2 + width * m_level,
              (height - k_thickness) / 2, width * (1.0f - m_level), k_thickness),
-      ColorPicker::Resolve(ThemeComponent::TokenBatteryBackground));
+      ColorPicker::Resolve(ThemeComponent::TokenInactive));
   KDRect frame(width * m_level, (height - k_indicatorDiameter) / 2,
                k_indicatorDiameter, k_indicatorDiameter);
   ctx->blendRectWithMask(

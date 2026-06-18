@@ -92,7 +92,7 @@ namespace Escher {
   X(TokenMainColor)                \
   X(TokenEllipsis)                 \
   X(TokenBatteryLevel)             \
-  X(TokenBatteryBackground)        \
+  X(TokenInactive)                 \
   X(TokenLowBattery)               \
   X(DataDefault)                   \
   X(DataRed)                       \

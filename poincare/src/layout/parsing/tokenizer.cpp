@@ -539,16 +539,17 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   size_t length = 0;
   const Units::Representative* storedUnitRepresentative = nullptr;
   LayoutSpanDecoder save(LayoutSpan{});
-  while (c != UCodePointNull) {
+  while (!m_decoder.isEmpty() && c != UCodePointNull) {
     /* Check if the string is of the form:
      * decimalNumber-unit-decimalNumber-unit...
      * Each loop will check for a pair decimalNumber-unit */
     size_t lengthOfNumber = 0;
     const Layout* currentStringStart = m_decoder.layout();
-    while (nextLayoutIsCodePoint && (c.isDecimalDigit() || c == '.')) {
+    while (nextLayoutIsCodePoint && !m_decoder.isEmpty() &&
+           (c.isDecimalDigit() || c == '.')) {
       lengthOfNumber += 1;
       nextLayoutIsCodePoint = m_decoder.nextLayoutIsCodePoint();
-      if (nextLayoutIsCodePoint) {
+      if (nextLayoutIsCodePoint && !m_decoder.isEmpty()) {
         currentStringStart = m_decoder.layout();
         c = m_decoder.nextCodePoint();
       }

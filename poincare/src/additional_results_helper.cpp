@@ -62,7 +62,14 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   if (!directTrigonometry) {
     assert(!approximateOutput.isUndefined());
     approximateAngleTree = approximateOutput.tree()->cloneTree();
-    if (GetSign(approximateAngleTree).isStrictlyNegative()) {
+    // Temporarily reduce approximateOutput for sign detection
+    Tree* reducedApproximateAngleTree = approximateAngleTree->cloneTree();
+    Simplification::ProjectAndReduce(reducedApproximateAngleTree,
+                                     simplificationParameters);
+    bool angleIsNegative =
+        GetSign(reducedApproximateAngleTree).isStrictlyNegative();
+    reducedApproximateAngleTree->removeTree();
+    if (angleIsNegative) {
       // If the approximate angle is in [-π, π], set it in [0, 2π]
       approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
           KAdd(KA, KB), {.KA = period, .KB = approximateAngleTree}));

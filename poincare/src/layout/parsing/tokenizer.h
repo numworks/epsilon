@@ -117,7 +117,7 @@ class Tokenizer {
   size_t popIdentifiersString();
   void fillIdentifiersList();
   Token popLongestRightMostIdentifier(const Layout* stringStart,
-                                      const Layout** stringEnd);
+                                      const Tree** stringEnd);
   Token::Type stringTokenType(const Layout* start, size_t* length) const;
 
   /* ========== IMPLICIT ADDITION BETWEEN UNITS ==========

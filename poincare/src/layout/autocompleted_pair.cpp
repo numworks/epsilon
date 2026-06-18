@@ -49,8 +49,10 @@ void AutocompletedPair::BalanceBrackets(Tree* rootRack, TreeRef& cursorRack,
                                         int* cursorPosition) {
   PrivateBalanceBrackets(Type::ParenthesesLayout, rootRack, cursorRack,
                          cursorPosition);
+#if POINCARE_LIST
   PrivateBalanceBrackets(Type::CurlyBracesLayout, rootRack, cursorRack,
                          cursorPosition);
+#endif
 }
 
 void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,

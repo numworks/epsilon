@@ -181,6 +181,13 @@ bool Projection::DeepSystemProject(
       .complexFormat = projectionParameters.user.complexFormat,
       .m_hasNonKelvinTemperatureUnit = dimension.hasNonKelvinTemperatureUnit(),
   };
+  if ((e->isFactor() ? e->child(0) : e)
+          ->hasDescendantSatisfying(
+              [](const Tree* t) { return t->isFactor(); })) {
+    // Only allow Factor at the root
+    e->cloneTreeOverTree(KUndefUnhandled);
+    return true;
+  }
   if (e->isEuclideanDivision()) {
     /* The euclidian division node is kept only at the root level and
      * it replaced by quo in ShallowSystemProject otherwise. */

@@ -48,9 +48,10 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
                 SimplificationParameters{
                     .user = {.complexFormat = ComplexFormat::Polar}});
   simplifies_to("factor(i)", "undef", k_cartesianSimplification);
-  // Behavior of factor in a dependency
-  simplifies_to("asin(factor(-2)b)",
-                "dep(arcsin(b×(-2)),{realPos(1-abs(b×(-2)))})");
+  // Factor is only allowed at the root
+  simplifies_to("asin(factor(-2)b)", "undef");
+  simplifies_to("arcsin(gcd(0,factor(0^c)))", "undef");
+  simplifies_to("sin(factor(0))", "undef");
 
   // Euclidean division
   simplifies_to("quo(23,5)", "4");

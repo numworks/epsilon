@@ -277,7 +277,7 @@ template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    bool isListElement, const Parameters& parameters,
                    ContextArguments... contextArguments) {
-  if (!DimensionChecks(
+  if (!DimensionChecks<ReturnType>(
           e,
           parameters.expressionParameters.expressionType() ==
                   ExpressionType::User

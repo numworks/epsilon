@@ -9,11 +9,22 @@
 #include "boolean_or_undefined.h"
 #include "k_tree.h"
 
+namespace Poincare::Internal {
+
+struct Dimension;
+}
+
 namespace Poincare::Internal::Approximation {
+
+/* Check that the approximation return type (Tree*, float, Coordinate2D etc.) is
+ * compatible with the expression dimension */
+template <typename ReturnType>
+bool DimensionMatchesReturnType(Dimension dimension);
 
 /* Checks that the expression has a valid dimension, returning true or false. If
  * optimize is true, the checks are asserted instead of returning false in case
  * of failure */
+template <typename ReturnType>
 bool DimensionChecks(const Tree* e, const SymbolContext& symbolContext,
                      bool isListAllowed, bool optimize);
 

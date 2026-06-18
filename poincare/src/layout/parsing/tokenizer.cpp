@@ -305,7 +305,7 @@ void Tokenizer::fillIdentifiersList() {
   LayoutSpanDecoder save = m_decoder;
   const Layout* identifiersStringStart = m_decoder.layout();
   popIdentifiersString();
-  const Tree* currentStringEnd = m_decoder.pointedLayout();
+  const Tree* currentStringEnd = m_decoder.layoutUnsafe();
   assert(currentStringEnd >
          reinterpret_cast<const Tree*>(identifiersStringStart));
   while (identifiersStringStart < currentStringEnd) {
@@ -344,7 +344,7 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
   assert(stringStart == decoder.layout());
   size_t tokenLength = 0;
   while (tokenType == Token::Type::Undefined && !decoder.isEmpty()) {
-    assert(decoder.pointedLayout() < *stringEnd);
+    assert(decoder.layoutUnsafe() < *stringEnd);
     stringStart = decoder.layout();
     tokenLength =
         static_cast<size_t>(NumberOfNextTreeTo(stringStart, *stringEnd));
@@ -583,7 +583,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
      * not yet accepted, so "save" (taken before that read) marks the true end;
      * otherwise m_decoder is already past the end of the unit string. */
     const Tree* unitStringEnd =
-        (nextLayoutIsCodePoint ? save : m_decoder).pointedLayout();
+        (nextLayoutIsCodePoint ? save : m_decoder).layoutUnsafe();
     size_t unitTreeLength = static_cast<size_t>(
         NumberOfNextTreeTo(currentStringStart, unitStringEnd));
     length += unitTreeLength;

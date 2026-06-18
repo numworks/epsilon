@@ -49,6 +49,14 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
 
   bool isEmpty() const override { return m_length == 0; }
 
+  /* Return the address pointed by m_layout. It can be a corrupted tree if
+   * isEmpty(). */
+  const Tree* pointedLayout() const {
+    assert(m_length != k_outOfRange);
+    return m_layout;
+  }
+
+  // Warning: May return a corrupted tree if isEmpty().
   const Layout* layout() const {
     assert(m_length != k_outOfRange);
     return m_layout;

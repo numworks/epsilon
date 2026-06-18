@@ -580,8 +580,8 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     /* If nextLayoutIsCodePoint, the last code point was read speculatively and
      * not yet accepted, so "save" (taken before that read) marks the true end;
      * otherwise m_decoder is already past the end of the unit string. */
-    const Layout* unitStringEnd =
-        nextLayoutIsCodePoint ? save.layout() : m_decoder.layout();
+    const Tree* unitStringEnd =
+        (nextLayoutIsCodePoint ? save : m_decoder).pointedLayout();
     size_t unitTreeLength = static_cast<size_t>(
         NumberOfNextTreeTo(currentStringStart, unitStringEnd));
     length += unitTreeLength;

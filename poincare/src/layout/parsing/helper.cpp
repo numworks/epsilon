@@ -204,7 +204,7 @@ bool ParsingHelper::ParameterText(LayoutSpanDecoder* varDecoder,
      * variable cannot be found. */
     return false;
   }
-  const Tree* endOfVariable = varDecoder->layout();
+  const Tree* endOfVariable = varDecoder->pointedLayout();
   *varDecoder = startOfVariable;
   // Skip whitespaces
   while (varDecoder->codePoint() == ' ') {

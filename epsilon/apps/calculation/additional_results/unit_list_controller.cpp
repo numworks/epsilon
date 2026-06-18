@@ -202,7 +202,7 @@ void UnitListController::computeAdditionalResults(
       UserParameters{.complexFormat = complexFormat(),
                      .angleUnit = angleUnit(),
                      .context = EmptySymbolContext{}},
-      ApproximationPolicy{.optimize = true}, false);
+      ApproximationPolicy{.optimize = true}, true);
   // Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
       m_SIValue, approximatedSIExpression, symbolContext, m_referenceValues,

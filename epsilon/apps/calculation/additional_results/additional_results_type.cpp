@@ -173,7 +173,7 @@ bool AdditionalResultsType::HasUnit(
   double value = exactOutput.approximateToRealScalar<double>(
       UserParameters{calculationPreferences.complexFormat,
                      calculationPreferences.angleUnit},
-      ApproximationPolicy{.optimize = true}, false);
+      ApproximationPolicy{.optimize = true}, true);
   /* TODO_PCJ: For now we assume there will always be AdditionalOutputs to
    * display if approximation is finite. We should simplify the exact output
    * with each relevant UnitDisplay and return false if all of them produce the

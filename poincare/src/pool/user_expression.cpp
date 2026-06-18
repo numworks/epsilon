@@ -261,7 +261,7 @@ T UserExpression::privateApproximateToRealScalar(
 template <typename T>
 T UserExpression::approximateToRealScalar(
     const UserParameters& userParameters,
-    const ApproximationPolicy& approximationPolicy, bool forbidUnits) const {
+    const ApproximationPolicy& approximationPolicy, bool allowUnits) const {
   static_assert(std::is_floating_point_v<T>);
   /* Dimension checks are only done when optimize=false, otherwise the dimension
    * correctness will be asserted in the approximation */
@@ -271,7 +271,7 @@ T UserExpression::approximateToRealScalar(
     }
     Internal::Dimension dimension =
         Internal::Dimension::Get(tree(), userParameters.context);
-    if (forbidUnits ? !dimension.isScalar() : !dimension.isScalarOrUnit()) {
+    if (allowUnits ? !dimension.isScalarOrUnit() : !dimension.isScalar()) {
       return NAN;
     }
   }

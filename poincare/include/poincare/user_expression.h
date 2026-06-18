@@ -165,7 +165,7 @@ class UserExpression : public Expression {
   T approximateToRealScalar(
       const UserParameters& userParameters,
       const ApproximationPolicy& approximationPolicy = ApproximationPolicy{},
-      bool forbidUnits = true) const;
+      bool allowUnits = false) const;
 
   // Return NAN for all non real scalar expressions
   template <typename T>

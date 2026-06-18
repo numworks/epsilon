@@ -592,23 +592,9 @@ Tree* RackParser::parseEuclideanDivision(Tree* leftHandSide,
 Tree* RackParser::privateParseTimes(Tree* leftHandSide,
                                     Token::Type stoppingType) {
   Tree* rightHandSide = parseBinaryOperator(leftHandSide, stoppingType);
-  /* Splice rightHandSide first: wrapping leftHandSide would shift the
-   * rightHandSide pointer.
-   * mult<2>(A, mult<2>(B, C)) -> mult<3>(A, B, C) */
-  int childrenAdded = 1;
-  if (rightHandSide->isMult()) {
-    childrenAdded = rightHandSide->numberOfChildren();
-    rightHandSide->removeNode();
-  }
-  if (leftHandSide->isMult()) {
-    NAry::SetNumberOfChildren(leftHandSide,
-                              leftHandSide->numberOfChildren() + childrenAdded);
-  } else {
-    leftHandSide->cloneNodeAtNode(KMult.node<2>);
-    if (childrenAdded > 1) {
-      NAry::SetNumberOfChildren(leftHandSide, 1 + childrenAdded);
-    }
-  }
+  /* mult<2>(A, mult<2>(B, C)) -> mult<3>(A, B, C) */
+  turnIntoBinaryNode(KMult.node<2>, leftHandSide, rightHandSide);
+  NAry::Flatten(leftHandSide);
   return leftHandSide;
 }
 

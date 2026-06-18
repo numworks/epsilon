@@ -19,6 +19,7 @@
 #include "arithmetic.h"
 #include "dependency.h"
 #include "dimension.h"
+#include "dimension_checks.h"
 #include "float_helper.h"
 #include "matrix.h"
 #include "number.h"
@@ -259,24 +260,6 @@ Tree* CleanUpTreeStack(Tree* processed, Tree* result) {
   return processed;
 }
 
-bool DimensionChecks(const Tree* e, const SymbolContext& symbolContext,
-                     bool isListAllowed, bool optimize) {
-  if (!optimize) {
-    if (!Dimension::DeepCheck(e, symbolContext)) {
-      return false;
-    }
-    if (!isListAllowed && Dimension::IsList(e, symbolContext)) {
-      return false;
-    }
-    return true;
-  }
-  COSTLY_ASSERT(Dimension::DeepCheck(e, symbolContext));
-  if (!isListAllowed) {
-    COSTLY_ASSERT(!Dimension::IsList(e, symbolContext));
-  }
-  return true;
-}
-
 FloatPrecision UpdateFloatPrecision(const Tree* e,
                                     FloatPrecision currentFloatPrecision,
                                     bool onlyReplaceNumerical) {
@@ -372,56 +355,6 @@ Tree* PreprocessTree(const Tree* e,
       OMG_UNREACHABLE
   }
   return clone;
-}
-
-template <>
-Tree* UndefinedUnhandledDimension() {
-  return KUndefUnhandledDimension->cloneTree();
-}
-
-template <>
-std::complex<float> UndefinedUnhandledDimension() {
-  return std::complex<float>{NAN};
-}
-
-template <>
-std::complex<double> UndefinedUnhandledDimension() {
-  return std::complex<double>{NAN};
-}
-
-template <>
-PointOrRealScalar<float> UndefinedUnhandledDimension() {
-  return PointOrRealScalar<float>(NAN, NAN);
-}
-
-template <>
-PointOrRealScalar<double> UndefinedUnhandledDimension() {
-  return PointOrRealScalar<double>(NAN, NAN);
-}
-
-template <>
-BooleanOrUndefined UndefinedUnhandledDimension() {
-  return BooleanOrUndefined::Undef();
-}
-
-template <>
-float UndefinedUnhandledDimension() {
-  return NAN;
-}
-
-template <>
-double UndefinedUnhandledDimension() {
-  return NAN;
-}
-
-template <>
-Coordinate2D<float> UndefinedUnhandledDimension() {
-  return Coordinate2D<float>{NAN, NAN};
-}
-
-template <>
-Coordinate2D<double> UndefinedUnhandledDimension() {
-  return Coordinate2D<double>{NAN, NAN};
 }
 
 template <typename T>

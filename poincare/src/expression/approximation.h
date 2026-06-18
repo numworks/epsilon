@@ -226,14 +226,6 @@ class Context {
 Tree* PreprocessTree(const Tree* e,
                      const ExpressionVariantParameters& expressionParameters);
 
-/* Undefined value representing an unhandled dimension for the T type (Tree,
- * float / double, boolean etc.)
- * TODO: this template method and its specializations can disappear once we find
- * a way to assert the dimension check in To instead of returning an
- * undefined value. */
-template <typename T>
-T UndefinedUnhandledDimension();
-
 template <typename T>
 std::complex<T> NonReal() {
   return std::complex<T>(OMG::SignalingNan<T>(), static_cast<T>(0));

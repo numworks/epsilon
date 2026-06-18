@@ -40,6 +40,7 @@ $(addprefix expression/, \
   dependency.cpp \
   derivation.cpp \
   dimension.cpp \
+  dimension_checks.cpp \
   division.cpp \
   equal_sign.cpp \
   float_helper.cpp \

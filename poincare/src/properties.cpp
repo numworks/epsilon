@@ -7,6 +7,7 @@
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -364,6 +365,9 @@ namespace Internal {
 
 // Note: A complex function plotter can be used to fill in these methods.
 ComplexProperties GetComplexProperties(const Tree* e) {
+  /* Complex properties should not be computed on non-system expressions.
+   * TODO: Uncomment this assertion and solve all cases. */
+  // assert(Simplification::CanBeSystem(e));
   assert(Dimension::Get(e).isScalarOrUnit());
   if (e->isNumber()) {
     return ComplexProperties(Number::Properties(e), Properties::Zero());

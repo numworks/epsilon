@@ -341,15 +341,15 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
   Token::Type tokenType = Token::Type::Undefined;
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
    * then 'cd' and then 'd' until you find a defined identifier. */
-  const Layout* nextTokenStart = stringStart;
+  assert(stringStart == decoder.layout());
   size_t tokenLength = 0;
-  while (tokenType == Token::Type::Undefined && nextTokenStart < *stringEnd) {
-    stringStart = nextTokenStart;
+  while (tokenType == Token::Type::Undefined && !decoder.isEmpty()) {
+    assert(decoder.pointedLayout() < *stringEnd);
+    stringStart = decoder.layout();
     tokenLength =
         static_cast<size_t>(NumberOfNextTreeTo(stringStart, *stringEnd));
     tokenType = stringTokenType(stringStart, &tokenLength);
     decoder.nextCodePoint();
-    nextTokenStart = decoder.layout();
   }
   /* FIXME The former condition was faulty, as it worked on strings, not trees.
    * As a result, the rest of the parser was built around the stored identifiers

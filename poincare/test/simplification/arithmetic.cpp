@@ -39,10 +39,12 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(3+5)", "2^3");
   simplifies_to("factor(3^2)", "3^2");
   simplifies_to("factor(floor(12.1))", "2^2×3");
+  simplifies_to("factor(1234567890123456789)", "3^2×101×3541×3607×3803×27961");
   // Undefined on non-integer expressions
   simplifies_to("factor(-4/17)", "undef");
   simplifies_to("factor(2π)", "undef");
   simplifies_to("factor(-1008/6895)", "undef");
+  simplifies_to("factor(floor(x))", "undef");
   simplifies_to("factor(10007^2)", "undef");
   simplifies_to("factor(42*3)", "2×3^2×7",
                 SimplificationParameters{

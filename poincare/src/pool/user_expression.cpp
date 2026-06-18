@@ -269,9 +269,8 @@ T UserExpression::approximateToRealScalar(
     if (!Internal::Dimension::DeepCheck(tree(), userParameters.context)) {
       return NAN;
     }
-    Internal::Dimension dimension =
-        Internal::Dimension::Get(tree(), userParameters.context);
-    if (allowUnits ? !dimension.isScalarOrUnit() : !dimension.isScalar()) {
+    if (!allowUnits &&
+        Internal::Dimension::Get(tree(), userParameters.context).isUnit()) {
       return NAN;
     }
   }

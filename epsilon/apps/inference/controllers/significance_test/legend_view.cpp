@@ -9,9 +9,10 @@ using namespace Escher;
 namespace Inference {
 
 void LegendView::DotView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2,
-                             ColorPicker::Resolve(ThemeComponent::TokenYellow),
-                             ColorPicker::Resolve(k_backgroundColor));
+  ctx->fillAntialiasedCircle(
+      KDPointZero, k_diameter / 2,
+      ColorPicker::Resolve(ThemeComponent::TokenMainColor),
+      ColorPicker::Resolve(k_backgroundColor));
 }
 
 void LegendView::StripedDotView::drawRect(KDContext* ctx, KDRect rect) const {

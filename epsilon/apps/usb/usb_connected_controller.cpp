@@ -13,7 +13,7 @@ constexpr I18n::Message sUSBConnectedMessages[] = {
 
 constexpr Escher::ThemeComponent sUSBConnectedColors[] = {
     Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault,
-    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TokenYellow,
+    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TokenMainColor,
     Escher::ThemeComponent::TokenWhite,  Escher::ThemeComponent::TextDefault,
     Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault};
 

@@ -89,7 +89,7 @@ namespace Escher {
   X(CurveHatchedArea)              \
   X(IntersectionArea)              \
   X(TokenWhite)                    \
-  X(TokenYellow)                   \
+  X(TokenMainColor)                \
   X(TokenEllipsis)                 \
   X(TokenBatteryLevel)             \
   X(TokenBatteryBackground)        \

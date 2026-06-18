@@ -39,7 +39,7 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
     case ThemeComponent::CellTableOdd:
       return ThemeComponent::SurfaceSelect;
     case ThemeComponent::TextWhite:
-    case ThemeComponent::TokenYellow:
+    case ThemeComponent::TokenMainColor:
     case ThemeComponent::SurfaceSelect:
     case ThemeComponent::PythonComment:
     case ThemeComponent::PythonNumber:

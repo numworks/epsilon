@@ -9,6 +9,7 @@ const Escher::ThemeComponent AppsContainer::k_promptColors[] = {
     Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault,
     Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextWhite,
     // TODO: TextYellowDark
-    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TokenYellow};
+    Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TokenMainColor};
 
 const int AppsContainer::k_promptNumberOfMessages = 6;

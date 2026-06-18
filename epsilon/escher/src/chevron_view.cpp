@@ -29,7 +29,7 @@ void ChevronView::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor
       workingBuffer[ChevronView::k_chevronWidth * ChevronView::k_chevronHeight];
   ctx->blendRectWithMask(frame,
-                         ColorPicker::Resolve(ThemeComponent::TokenYellow),
+                         ColorPicker::Resolve(ThemeComponent::TokenMainColor),
                          (const uint8_t*)chevronMask, workingBuffer);
 }
 

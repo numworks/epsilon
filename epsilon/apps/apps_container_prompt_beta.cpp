@@ -7,9 +7,13 @@ const I18n::Message AppsContainer::k_promptMessages[] = {
     I18n::Message::BetaVersionMessage5, I18n::Message::BetaVersionMessage6};
 
 const Escher::ThemeComponent AppsContainer::k_promptColors[] = {
-    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault,
-    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault,
-    Escher::ThemeComponent::TokenWhite,  Escher::ThemeComponent::TextDefault,
-    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TokenYellow};
+    Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TokenWhite,
+    Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TokenMainColor};
 
 const int AppsContainer::k_promptNumberOfMessages = 8;

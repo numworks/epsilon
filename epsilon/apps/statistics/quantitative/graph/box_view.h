@@ -31,7 +31,7 @@ class BoxPlotPolicy {
 
  protected:
   constexpr static Escher::ThemeComponent k_selectedColor =
-      Escher::ThemeComponent::TokenYellow;
+      Escher::ThemeComponent::TokenMainColor;
 
   constexpr static std::array<KDCoordinate, Store::k_numberOfSeries>
       k_boxesHeights = {40, 40, 27, 18, 15, 11};

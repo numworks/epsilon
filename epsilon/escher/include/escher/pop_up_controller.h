@@ -14,7 +14,7 @@ class HighContrastButton : public SimpleButtonCell {
  public:
   using SimpleButtonCell::SimpleButtonCell;
   ThemeComponent highlightedBackgroundColor() const override {
-    return ThemeComponent::TokenYellow;
+    return ThemeComponent::TokenMainColor;
   }
 };
 

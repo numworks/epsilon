@@ -152,7 +152,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   measuringContext.reset();
   plotView->drawDot(
       &measuringContext, rect, Dots::Size::Medium, {x, y},
-      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenYellow));
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenMainColor));
   m_dotCache.save(ctx, measuringContext.writtenRect());
   Poincare::Print::CustomPrintf(name + nameLength, bufferSize - nameLength,
                                 "(%i)", rank);
@@ -170,7 +170,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   }
   plotView->drawDot(
       ctx, rect, Dots::Size::Medium, {x, y},
-      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenYellow));
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenMainColor));
   // Draw label above x-axis
   plotView->drawLabel(ctx, rect, name, {x, 0.f},
                       AbstractPlotView::RelativePosition::After,

@@ -56,9 +56,8 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
     return m_layout;
   }
 
-  // Warning: May return a corrupted tree if isEmpty().
   const Layout* layout() const {
-    assert(m_length != k_outOfRange);
+    assert(m_length != k_outOfRange && !isEmpty());
     return m_layout;
   }
 

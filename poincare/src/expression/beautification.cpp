@@ -231,7 +231,7 @@ bool ShallowBeautifyPercent(Tree* e) {
 // Turn "m" into "1*m", "m*s" into "1*m*s" and "3vyd+ft" into "3*yd+1*ft".
 bool DeepBeautifyUnits(Tree* e) {
 #if POINCARE_UNIT
-  if (e->isAdd()) {
+  if (e->isAdd() || e->isOpposite()) {
     bool changed = false;
     for (Tree* child : e->children()) {
       changed = DeepBeautifyUnits(child) || changed;

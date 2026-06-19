@@ -474,6 +474,13 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   // Add 1 because test fails with 0 on linux
   assertCalculationIs("int(6/x^2-8/x^3,x,1,2)+1", DisplayOutput::ExactHidden,
                       EqualSign::Approximation, nullptr, "1", &store);
+  // Beautification of units with value 1
+  assertCalculationIs("m", DisplayOutput::ExactHidden, EqualSign::Equal,
+                      nullptr, "1m", &store);
+  assertCalculationIs("-A", DisplayOutput::ExactHidden, EqualSign::Equal,
+                      nullptr, "-1A", &store);
+  assertCalculationIs("-kg*s", DisplayOutput::ExactHidden, EqualSign::Equal,
+                      nullptr, "-1s·kg", &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(AngleUnit::Degree);
   Shared::GlobalContextAccessor::Store().resetAll();

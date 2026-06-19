@@ -37,7 +37,7 @@ class CalculationController : public Shared::DoublePairTableController {
     return m_dataTypeViewModel->isCategorical() ||
            Shared::DoublePairTableController::isEmpty();
   }
-  I18n::Message emptyMessage() override {
+  I18n::Message emptyMessage() const override {
     return m_dataTypeViewModel->isCategorical()
                ? I18n::Message::NoStatForCategorical
                : Shared::DoublePairTableController::emptyMessage();

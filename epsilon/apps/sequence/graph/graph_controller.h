@@ -25,7 +25,7 @@ class GraphController final : public Shared::FunctionGraphController {
   void viewWillAppear() override;
 
   // AlternateEmptyViewDelegate
-  I18n::Message emptyMessage() override;
+  I18n::Message emptyMessage() const override;
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,

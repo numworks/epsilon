@@ -33,7 +33,7 @@ GraphController::GraphController(
   showGridTypeMenu(true);
 }
 
-I18n::Message GraphController::emptyMessage() {
+I18n::Message GraphController::emptyMessage() const {
   if (functionOrSequenceContext().numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }

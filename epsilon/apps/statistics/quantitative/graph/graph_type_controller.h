@@ -31,7 +31,9 @@ class GraphTypeController
 
   // AlternateEmptyViewDelegate (showing graph selection menu or empty)
   bool isEmpty() const override { return !m_store->hasActiveSeries(); }
-  I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
+  I18n::Message emptyMessage() const override {
+    return I18n::Message::NoDataToPlot;
+  }
   Escher::Responder* responderWhenEmpty() override;
 
   // AlternateViewDelegate (which graphView is shown)

@@ -35,7 +35,7 @@ class GraphController : public Shared::FunctionGraphController,
   void viewWillAppear() override;
 
   // AlternateEmptyViewDelegate
-  I18n::Message emptyMessage() override;
+  I18n::Message emptyMessage() const override;
 
   // InteractiveCurveViewRangeDelegate
   Poincare::Range2D<float> optimalRange(

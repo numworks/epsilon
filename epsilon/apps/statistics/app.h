@@ -124,7 +124,9 @@ class App : public Shared::StoreApp,
                ? !m_categoricalStore.hasActiveGroups()
                : !m_store.hasActiveSeries();
   }
-  I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
+  I18n::Message emptyMessage() const override {
+    return I18n::Message::NoDataToPlot;
+  }
   Escher::Responder* responderWhenEmpty() override {
     m_tabViewController.selectTab();
     return &m_tabViewController;

@@ -24,7 +24,7 @@ class NormalProbabilityController : public PlotController,
   }
   Escher::Responder* responderWhenEmpty() override { return this; }
   // Only two causes : either too many or non-integer frequencies
-  I18n::Message emptyMessage() override {
+  I18n::Message emptyMessage() const override {
     return m_store->hasActiveSeries(Store::SumOfOccurrencesUnderMax)
                ? I18n::Message::NonIntegerFrequencies
                : I18n::Message::TooManyDataPoints;

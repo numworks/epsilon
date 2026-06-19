@@ -49,7 +49,7 @@ class ValuesController : public Shared::ValuesController,
   bool isEmpty() const override {
     return functionStore()->numberOfActiveFunctionsInTable() == 0;
   }
-  I18n::Message emptyMessage() override {
+  I18n::Message emptyMessage() const override {
     return functionStore()->numberOfDefinedModels() == 0
                ? I18n::Message::NoFunction
                : I18n::Message::NoActivatedFunction;

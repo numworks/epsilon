@@ -28,7 +28,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
   void viewWillAppear() override;
 
   // AlternateEmptyViewDelegate
-  I18n::Message emptyMessage() override;
+  I18n::Message emptyMessage() const override;
 
   // SimpleInteractiveCurveViewController
   bool moveCursorHorizontally(OMG::HorizontalDirection direction,

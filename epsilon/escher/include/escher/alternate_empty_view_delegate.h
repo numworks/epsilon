@@ -19,7 +19,7 @@ class AlternateEmptyViewDelegate {
     m_emptyView.setMessage(emptyMessage());
     return &m_emptyView;
   }
-  virtual I18n::Message emptyMessage() = 0;
+  virtual I18n::Message emptyMessage() const = 0;
   virtual Responder* responderWhenEmpty() = 0;
 
  private:

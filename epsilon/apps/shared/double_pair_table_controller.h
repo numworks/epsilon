@@ -27,7 +27,7 @@ class DoublePairTableController
 
   // AlternateEmptyViewDelegate
   bool isEmpty() const override { return !store()->hasActiveSeries(); }
-  I18n::Message emptyMessage() override {
+  I18n::Message emptyMessage() const override {
     return I18n::Message::NoValueToCompute;
   }
   Escher::Responder* responderWhenEmpty() override;

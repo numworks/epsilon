@@ -41,7 +41,7 @@ GraphController::GraphController(
   interactiveRange->setDelegate(this);
 }
 
-I18n::Message GraphController::emptyMessage() {
+I18n::Message GraphController::emptyMessage() const {
   return I18n::Message::NoDataToPlot;
 }
 

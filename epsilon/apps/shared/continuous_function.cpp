@@ -277,7 +277,7 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
   }
   if (wasCartesian != properties().isCartesian() ||
       !properties().canHaveCustomDomain()) {
-    // The definition's domain must be reset.
+    // The definition domain must be reset.
     setTAuto(true);
   }
   if (!canDisplayDerivative()) {
@@ -587,7 +587,7 @@ ContinuousFunction::RecordDataBuffer::RecordDataBuffer(
 
 const SystemExpression& ContinuousFunction::Model::expressionReduced(
     const Ion::Storage::Record* record) const {
-  // m_expression might already be memmoized.
+  // m_expression might already be memoized.
   if (!m_expression.isUninitialized()) {
     return m_expression;
   }
@@ -875,7 +875,7 @@ ContinuousFunction::Model::expressionEquation(
       result = result.cloneChildAtIndex(1);
       isUnnamedFunction = false;
     } else {
-      /* Function in left part of the equation refer to an already defined one.
+      /* Function in left part of the equation refers to an already defined one.
        * Replace the symbol. */
       leftExpression = ExpressionModel::ReplaceSymbolWithUnknown(
           leftExpression, codePointSymbol);
@@ -916,7 +916,7 @@ ContinuousFunction::Model::expressionEquation(
   result = result.cloneAndReplaceSymbols(GlobalContextAccessor::Context());
 
   if (result.isUninitialized()) {
-    // result was Circularly defined
+    // result was circularly defined
     data.equation = UserExpression::Undefined();
     return data;
   }
@@ -1073,7 +1073,7 @@ Poincare::UserExpression ContinuousFunction::Model::BuildFunctionFromLayout(
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
   assert(symbol == k_unnamedExpressionSymbol);
-  // if l is uninitialized, we want to reinit the Expression
+  // If l is uninitialized, we want to reinit the Expression
   if (l.isUninitialized() || l.isEmpty()) {
     return UserExpression();
   }

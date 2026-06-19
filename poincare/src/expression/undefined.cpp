@@ -50,6 +50,45 @@ const char* Undefined::Description(const Tree* e) {
   }
 }
 
+const char* Undefined::Name(const Tree* e) {
+  assert(e && e->isUndefined());
+  switch (e->type()) {
+    case Type::UndefSystem:
+      return "UndefSystem";
+    case Type::Undef:
+      return "Undef";
+    case Type::NonReal:
+      return "Nonreal";
+  }
+  assert(e->isUndefSpecial());
+  switch (Undefined::GetSpecialType(e)) {
+    case SpecialType::FailedSimplification:
+      return "FailedSimplification";
+    case SpecialType::ZeroPowerZero:
+      return "ZeroPowerZero";
+    case SpecialType::ZeroDivision:
+      return "ZeroDivision";
+    case SpecialType::Boolean:
+      return "Boolean";
+    case SpecialType::Unit:
+      return "Unit";
+    case SpecialType::Unhandled:
+      return "Unhandled";
+    case SpecialType::UnhandledDimension:
+      return "UnhandledDimension";
+    case SpecialType::BadType:
+      return "BadType";
+    case SpecialType::OutOfDefinition:
+      return "OutOfDefinition";
+    case SpecialType::NotDefined:
+      return "NotDefined";
+    case SpecialType::Forbidden:
+      return "Forbidden";
+    default:
+      OMG_UNREACHABLE;
+  }
+}
+
 #endif
 
 bool Undefined::CanBeUndefined(const Tree* e) {

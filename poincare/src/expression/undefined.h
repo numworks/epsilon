@@ -29,6 +29,8 @@ enum class SpecialType : uint8_t {
 /* Return undefined description.
  * This is currently only used for debugging, not for user display. */
 const char* Description(const Tree* e);
+// To be used in the tree logger
+const char* Name(const Tree* e);
 #endif
 
 inline SpecialType GetSpecialType(const Tree* e) {

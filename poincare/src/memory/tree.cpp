@@ -153,6 +153,9 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " firstRank=\""
            << static_cast<int>(SequenceLayout::FirstRank(this)) << "\"";
   }
+  if (isUndefined()) {
+    stream << " type=\"" << Undefined::Name(this) << "\"";
+  }
 }
 
 bool Tree::s_isInLogSerialize = false;

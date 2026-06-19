@@ -7,7 +7,6 @@
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/rational.h>
-#include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/pattern_matching.h>

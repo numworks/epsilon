@@ -5,7 +5,9 @@
 
 namespace Poincare::Internal {
 
+// [e] should be a projected expression.
 Properties GetProperties(const Tree* e);
+// [e] should be a projected expression.
 ComplexProperties GetComplexProperties(const Tree* e);
 
 /* Properties of e1 - e2 so that e1 < e2 <=> ComplexPropertiesOfDifference(e1,

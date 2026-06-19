@@ -5,6 +5,7 @@
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/degree.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/properties.h>
@@ -24,6 +25,7 @@ using namespace Internal;
 SystemExpression SystemExpression::CreateReduce(const Tree* structure,
                                                 ContextTrees ctx) {
   Tree* tree = PatternMatching::CreateReduce(structure, ctx);
+  Dependency::DeepRemoveUselessDependencies(tree);
   return SystemExpression::Builder(tree);
 }
 

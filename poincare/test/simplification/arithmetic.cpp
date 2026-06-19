@@ -54,6 +54,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("asin(factor(-2)b)", "undef");
   simplifies_to("arcsin(gcd(0,factor(0^c)))", "undef");
   simplifies_to("sin(factor(0))", "undef");
+  simplifies_to("factor(factor(3))", "undef");
 
   // Euclidean division
   simplifies_to("quo(23,5)", "4");

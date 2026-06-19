@@ -11,7 +11,7 @@ namespace Shared {
 
 class MathToolboxExtraCellsDataSource {
  public:
-  virtual int numberOfExtraCells() = 0;
+  virtual int numberOfExtraCells() const = 0;
   virtual Poincare::Layout extraCellLayoutAtRow(int row) = 0;
 };
 

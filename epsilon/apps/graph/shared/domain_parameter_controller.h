@@ -36,7 +36,7 @@ class DomainParameterController
   }
 
   // MathToolboxExtraCellsDataSource
-  int numberOfExtraCells() override { return 1; }
+  int numberOfExtraCells() const override { return 1; }
   Poincare::Layout extraCellLayoutAtRow(int row) override;
 
  private:

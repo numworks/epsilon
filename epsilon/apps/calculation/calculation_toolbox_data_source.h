@@ -7,7 +7,7 @@ namespace Calculation {
 class CalculationToolboxDataSource
     : public Shared::MathToolboxExtraCellsDataSource {
  public:
-  int numberOfExtraCells() override {
+  int numberOfExtraCells() const override {
     return m_displayAngleUnits ? k_numberOfExtraCells : 0;
   }
 

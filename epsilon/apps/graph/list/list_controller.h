@@ -44,7 +44,9 @@ class ListController : public Shared::FunctionListController,
   bool isRecordShownInList(Ion::Storage::Record record) const override;
 
   // MathToolboxExtraCellsDataSource
-  int numberOfExtraCells() override { return k_numberOfToolboxExtraCells; }
+  int numberOfExtraCells() const override {
+    return k_numberOfToolboxExtraCells;
+  }
   Poincare::Layout extraCellLayoutAtRow(int row) override;
 
   // ParameterDelegate

@@ -12,7 +12,7 @@ class SequenceToolboxDataSource
     : public Shared::MathToolboxExtraCellsDataSource {
  public:
   SequenceToolboxDataSource() : m_numberOfAddedCells(0) {}
-  int numberOfExtraCells() override {
+  int numberOfExtraCells() const override {
     assert(m_numberOfAddedCells <= k_maxNumberOfLayouts);
     return m_numberOfAddedCells;
   }

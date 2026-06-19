@@ -28,8 +28,8 @@ class Calculation {
     assert(distribution != nullptr);
   }
   virtual ~Calculation() = default;
-  virtual Type type() = 0;
-  virtual int numberOfParameters() = 0;
+  virtual Type type() const = 0;
+  virtual int numberOfParameters() const = 0;
   virtual I18n::Message legendForParameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(double f, int index) = 0;
   virtual double parameterAtIndex(int index) = 0;

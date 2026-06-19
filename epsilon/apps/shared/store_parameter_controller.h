@@ -38,7 +38,9 @@ class StoreParameterController : public ColumnParameterController {
 
  private:
   ClearColumnHelper* clearColumnHelper() override;
-  virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
+  virtual I18n::Message sortMessage() const {
+    return I18n::Message::SortValues;
+  }
   void updateHideCellSwitch() {
     m_hideCell.accessory()->setState(
         m_storeColumnHelper->selectedSeriesIsActive());

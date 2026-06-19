@@ -35,7 +35,7 @@ class StoreParameterController
   constexpr static int k_displayCFIndex =
       Shared::ColorableStoreParameterController::k_numberOfCells;
 
-  I18n::Message sortMessage() override;
+  I18n::Message sortMessage() const override;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>

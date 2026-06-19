@@ -51,7 +51,9 @@ class IllustratedExpressionsListController
  private:
   Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,
                                  int index) override;
-  virtual KDCoordinate illustrationHeight() { return k_illustrationHeight; }
+  virtual KDCoordinate illustrationHeight() const {
+    return k_illustrationHeight;
+  }
   virtual IllustrationCell* illustrationCell() = 0;
 };
 

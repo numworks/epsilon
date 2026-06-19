@@ -75,7 +75,7 @@ void StoreParameterController::viewWillAppear() {
   Shared::ColorableStoreParameterController::viewWillAppear();
 }
 
-I18n::Message StoreParameterController::sortMessage() {
+I18n::Message StoreParameterController::sortMessage() const {
   return m_store->relativeColumn(m_column) == 1 ? I18n::Message::SortFrequencies
                                                 : I18n::Message::SortValues;
 }

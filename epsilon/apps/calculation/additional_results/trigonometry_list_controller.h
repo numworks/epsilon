@@ -27,7 +27,9 @@ class TrigonometryListController : public IllustratedExpressionsListController {
  private:
   I18n::Message messageAtIndex(int index) override;
   IllustrationCell* illustrationCell() override { return &m_graphCell; }
-  KDCoordinate illustrationHeight() override { return k_illustrationHeight; }
+  KDCoordinate illustrationHeight() const override {
+    return k_illustrationHeight;
+  }
 
   TrigonometryGraphCell m_graphCell;
   TrigonometryModel m_model;

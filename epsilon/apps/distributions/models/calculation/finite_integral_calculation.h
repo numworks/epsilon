@@ -7,8 +7,8 @@ namespace Distributions {
 class FiniteIntegralCalculation : public Calculation {
  public:
   FiniteIntegralCalculation(Distribution* distribution);
-  Type type() override { return Type::FiniteIntegral; }
-  int numberOfParameters() override { return 3; }
+  Type type() const override { return Type::FiniteIntegral; }
+  int numberOfParameters() const override { return 3; }
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;

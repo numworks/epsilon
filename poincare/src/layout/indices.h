@@ -58,9 +58,9 @@ inline void SetOrderSlot(Tree* l, OrderSlot slot) {
 
 inline bool HideAbscissa(const Tree* l) {
   assert(l->isDiffLayout());
+  assert(RackLayout::s_cursor);
   // Abscissa is hidden if the layout is not being edited.
-  return l->toDiffLayoutNode()->hideAbscissa &&
-         !(RackLayout::s_cursor && RackLayout::s_cursor->rack);
+  return l->toDiffLayoutNode()->hideAbscissa && !RackLayout::s_cursor->rack;
 }
 
 }  // namespace Derivative

@@ -165,8 +165,8 @@ class Temperature : public Helper<Temperature> {
   using Helper::Helper;
   const static Representatives<const Self> representatives;
 
-  static const Tree* celsiusOrigin;
-  static const Tree* fahrenheitOrigin;
+  static const double celsiusOrigin;
+  static const double fahrenheitOrigin;
 };
 
 class AmountOfSubstance : public Helper<AmountOfSubstance> {

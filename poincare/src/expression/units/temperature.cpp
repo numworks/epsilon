@@ -47,9 +47,8 @@ void RemoveTemperatureUnitFromRoot(Tree* root) {
 
   Tree* addition = KAdd.node<2>->cloneNode();
   root->cloneTree();
-  SharedTreeStack->pushDoubleFloat(Approximation::To<double>(
-      isCelsius ? Temperature::celsiusOrigin : Temperature::fahrenheitOrigin,
-      Approximation::Parameters{.policy = {.optimize = true}}));
+  SharedTreeStack->pushDoubleFloat(isCelsius ? Temperature::celsiusOrigin
+                                             : Temperature::fahrenheitOrigin);
   SystematicReduction::ShallowReduce(addition);
 
   representative->pushReducedRatioExpression();
@@ -68,10 +67,8 @@ double TemperatureFromKelvin(double value,
   bool isCelsius = (representative == &Temperature::representatives.celsius);
   // A -> (A / ratio) - origin
   return (value / representative->ratio()) -
-         Approximation::To<double>(
-             isCelsius ? Temperature::celsiusOrigin
-                       : Temperature::fahrenheitOrigin,
-             Approximation::Parameters{.policy = {.optimize = true}});
+         (isCelsius ? Temperature::celsiusOrigin
+                    : Temperature::fahrenheitOrigin);
 }
 
 }  // namespace Units

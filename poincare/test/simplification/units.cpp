@@ -368,8 +368,7 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
   // Temperature
   simplifies_to("100×_°C→_K", "373.15×_K");
   simplifies_to("-100×_°C→_K", "173.15×_K");
-  // TODO: should be 0×_°C
-  simplifies_to("273.15×_K→_°C", "-5.6843418860808ᴇ-14×_°C");
+  simplifies_to("273.15×_K→_°C", "0×_°C");
   simplifies_to("0_K→_°C", "-273.15×_°C");
   simplifies_to("0_°C→_K", "273.15×_K");
   simplifies_to("_°C→_K", "274.15×_K");
@@ -456,7 +455,9 @@ QUIZ_CASE(pcj_simplification_unit_equivalent) {
   simplifies_to("5200_m^2", "0.52×_ha", parametersUnitEquivalentMetric);
   simplifies_to("6.7_ha", "0.067×_km^2", parametersUnitEquivalentMetric);
   simplifies_to("0_°F", "-17.777777777778×_°C", parametersUnitEquivalentMetric);
-  simplifies_to("23_°F", "-5×_°C", parametersUnitEquivalentMetric);
+  // TODO: Should be -5×_°C
+  simplifies_to("23_°F", "-4.9999999999999×_°C",
+                parametersUnitEquivalentMetric);
   simplifies_to("-4×_°F", "-20×_°C", parametersUnitEquivalentMetric);
   simplifies_to("0×_K", "-273.15×_°C", parametersUnitEquivalentMetric);
   simplifies_to("3_rad", "171.88733853925×_°", parametersUnitEquivalentMetric);

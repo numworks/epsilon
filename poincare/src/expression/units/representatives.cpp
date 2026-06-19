@@ -64,8 +64,8 @@ const Temperature::Representatives<const Temperature>
         .celsius = {"°C", 1_e, None, None},
         .fahrenheit = {"°F", 5_e / 9_e, None, None, true}};
 
-const Tree* Temperature::celsiusOrigin = 273.15_e;
-const Tree* Temperature::fahrenheitOrigin = 459.67_e;
+const double Temperature::celsiusOrigin = 273.15;
+const double Temperature::fahrenheitOrigin = 459.67;
 
 const AmountOfSubstance::Representatives<const AmountOfSubstance>
     AmountOfSubstance::representatives = {.mole = {"mol", 1_e, All, LongScale}};

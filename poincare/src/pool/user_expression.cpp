@@ -268,18 +268,15 @@ T UserExpression::approximateToRealScalar(
    * Note: this check on the unit dimension could be moved to inside the common
    * approximation pipeline, and we could add an allowUnits flag to the
    * ApproximationPolicy. */
-  if (!approximationPolicy.optimize) {
-    if (!Internal::Dimension::DeepCheck(tree(), userParameters.context)) {
-      return NAN;
-    }
-    if (!allowUnits &&
-        Internal::Dimension::Get(tree(), userParameters.context).isUnit()) {
-      return NAN;
-    }
-  } else {
-    COSTLY_ASSERT(
-        Internal::Dimension::DeepCheck(tree(), userParameters.context));
-    if (!allowUnits) {
+  if (!allowUnits) {
+    if (!approximationPolicy.optimize) {
+      if (!Internal::Dimension::DeepCheck(tree(), userParameters.context) ||
+          Internal::Dimension::Get(tree(), userParameters.context).isUnit()) {
+        return NAN;
+      }
+    } else {
+      COSTLY_ASSERT(
+          Internal::Dimension::DeepCheck(tree(), userParameters.context));
       COSTLY_ASSERT(
           !Internal::Dimension::Get(tree(), userParameters.context).isUnit());
     }

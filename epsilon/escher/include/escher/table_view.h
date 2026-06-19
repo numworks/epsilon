@@ -39,6 +39,7 @@ class TableView : public ScrollView {
     return m_contentView.dataSource();
   }
 
+  // Relative cells takes the scrolling offset into account
   const HighlightCell* cellAtRelativeLocation(int relativeColumn,
                                               int relativeRow) const {
     return m_contentView.cellAtRelativeLocation(relativeColumn, relativeRow);

@@ -63,7 +63,7 @@ class Tree : public TypeBlock {
   __attribute__((__used__)) void logDiffWith(const Tree* n) const {
     log(std::cout, true, false, 0, n);
   }
-  void log(std::ostream& stream, bool recursive = true, bool verbose = true,
+  void log(std::ostream& stream, bool recursive = true, bool verbose = false,
            int indentation = 0, const Tree* comparison = nullptr) const;
   void logName(std::ostream& stream) const;
   void logAttributes(std::ostream& stream) const;

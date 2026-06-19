@@ -3,15 +3,13 @@
 
 #include "temperature.h"
 
+#include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 
-#include "../approximation.h"
-#include "../dimension.h"
-#include "../integer.h"
-#include "../simplification.h"
-#include "../systematic_reduction.h"
 #include "representatives.h"
 #include "unit.h"
 

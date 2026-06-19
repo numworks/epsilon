@@ -107,7 +107,7 @@ class ExpressionModelListController
       Escher::Metric::StoreRowHeight;
 
   // ListViewDataSource
-  bool canStoreCellAtRow(int row) override {
+  bool canStoreCellAtRow(int row) const override {
     // Always disable storing cells since they are equations.
     return false;
   }

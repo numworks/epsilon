@@ -30,7 +30,7 @@ class HypothesisController
   KDCoordinate separatorBeforeRow(int row) const override {
     return cell(row) == &m_next ? k_defaultRowSeparator : 0;
   }
-  bool canStoreCellAtRow(int row) override { return false; }
+  bool canStoreCellAtRow(int row) const override { return false; }
 
  protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;

@@ -89,7 +89,7 @@ void DetailsListController::fillCellForRow(HighlightCell* cell, int row) {
   typedCell->accessory()->setLayout(dataField->getLayout(z, significantDigits));
 }
 
-bool DetailsListController::canStoreCellAtRow(int row) {
+bool DetailsListController::canStoreCellAtRow(int row) const {
   return DataFieldForRow(row)->canBeStored(
       App::app()->elementsViewDataSource()->selectedElement());
 }

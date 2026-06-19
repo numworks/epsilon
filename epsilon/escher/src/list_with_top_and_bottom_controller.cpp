@@ -87,7 +87,7 @@ bool ListWithTopAndBottomDataSource::canSelectCellAtRow(int row) {
   return m_innerDataSource->canSelectCellAtRow(row - hasTopView());
 }
 
-bool ListWithTopAndBottomDataSource::canStoreCellAtRow(int row) {
+bool ListWithTopAndBottomDataSource::canStoreCellAtRow(int row) const {
   if (typeAtRow(row) == k_topCellType || typeAtRow(row) == k_bottomCellType) {
     return false;
   }

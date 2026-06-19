@@ -42,7 +42,7 @@ class DetailsParameterController
     return k_numberOfDataPoints;
   }
   int typeAtRow(int row) const override { return 0; }
-  bool canStoreCellAtRow(int row) override {
+  bool canStoreCellAtRow(int row) const override {
     return row != k_indexOfCurveTypeRow;
   }
 

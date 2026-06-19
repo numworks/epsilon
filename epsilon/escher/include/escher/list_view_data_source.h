@@ -18,7 +18,7 @@ class ListViewDataSource : public TableViewDataSource {
   virtual void fillCellForRow(HighlightCell* cell, int row) {}
   virtual int typeAtRow(int row) const { return 0; }
   virtual bool canSelectCellAtRow(int row) { return true; }
-  virtual bool canStoreCellAtRow(int row) { return true; }
+  virtual bool canStoreCellAtRow(int row) const { return true; }
 
  protected:
   KDCoordinate defaultColumnWidth() override { return m_width; }

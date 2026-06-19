@@ -118,6 +118,7 @@ namespace Escher {
   X(DataMintLight)                 \
   X(ElementsConnector)             \
   X(PythonText)                    \
+  X(PythonKeyword)                 \
   X(PythonGutterBackground)        \
   X(MagnifyIndicator)
 
@@ -137,7 +138,6 @@ namespace Escher {
   X(BasicPurple, BasicColor::Purple)              \
   X(PythonComment, Palette::PYTHON_KhakiGray)     \
   X(PythonNumber, Palette::PYTHON_DarkCyan)       \
-  X(PythonKeyword, Palette::PYTHON_Red)           \
   X(PythonOperator, Palette::PYTHON_RaspberryRed) \
   X(PythonString, Palette::PYTHON_DarkBlue)       \
   X(PythonAutocomplete, Palette::PYTHON_GrayMiddle)

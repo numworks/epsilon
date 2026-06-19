@@ -117,6 +117,7 @@ constexpr static ThemeContainer k_darkTheme =
                    .DataMintLight = Palette::MintLight,
                    .ElementsConnector = Palette::DARK_VioletPale,
                    .PythonText = Palette::White,
+                   .PythonKeyword = Palette::DARK_Red,
                    .PythonGutterBackground = Palette::DARK_AxisSecondary,
                    .MagnifyIndicator = Palette::White};
 

@@ -49,7 +49,6 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     case LayoutType::Diff: {
       using namespace Derivative;
       assert(l->isDiffLayout());
-      assert(!HideAbscissa(l));
       if (!l->toDiffLayoutNode()->isNthDerivative) {
         if (currentIndex == k_derivandIndex) {
           SetVariableSlot(l, direction.isRight() ? VariableSlot::Assignment
@@ -279,7 +278,6 @@ int CursorMotion::IndexAfterVerticalCursorMove(
           GetVariableSlot(l) == VariableSlot::Assignment) {
         return k_derivandIndex;
       }
-      assert(!Derivative::HideAbscissa(l));
       if (direction.isDown() && currentIndex == k_derivandIndex &&
           positionAtCurrentIndex == PositionInLayout::Right) {
         return k_abscissaIndex;

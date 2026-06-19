@@ -12,9 +12,8 @@
 namespace Poincare::Internal {
 
 struct Dimension;
-}
 
-namespace Poincare::Internal::Approximation {
+namespace Approximation {
 
 /* Check that the approximation return type (Tree*, float, Coordinate2D etc.) is
  * compatible with the expression dimension */
@@ -86,4 +85,6 @@ inline Coordinate2D<double> UndefinedUnhandledDimension() {
   return Coordinate2D<double>{NAN, NAN};
 }
 
-}  // namespace Poincare::Internal::Approximation
+}  // namespace Approximation
+
+}  // namespace Poincare::Internal

@@ -115,7 +115,8 @@ bool ProjectToBestUnits(Tree* e, Dimension dimension,
     case UnitDisplay::Forbidden:
       extractedUnits->removeTree();
       foundResult = false;
-      break;
+      e->cloneTreeOverTree(KUndefUnhandledDimension);
+      return true;
     case UnitDisplay::MainOutput:
       ApplyMainOutputDisplay(e, extractedUnits, dimension,
                              unitParameters.angleUnit);

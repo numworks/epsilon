@@ -57,10 +57,15 @@ void DiscontinuitySolver::findAndPushSolution(Coordinate2D<double> start,
   // Note: If this assertion fails, escape and return no discontinuity.
   assert(leftIsDiscontinuous || rightIsDiscontinuous);
 
-  // There should be at least one finite value
-  assert((leftIsDiscontinuous && std::isfinite(left.y())) ||
-         std::isfinite(middle.y()) ||
-         (rightIsDiscontinuous && std::isfinite(right.y())));
+  /* If the function evaluates to NaN on both sides (e.g. f(x)=x^0*i, a
+   * complex-valued function), no finite value exists to characterize the
+   * discontinuity. Skip rather than assert. */
+  if (!((leftIsDiscontinuous && std::isfinite(left.y())) ||
+        std::isfinite(middle.y()) ||
+        (rightIsDiscontinuous && std::isfinite(right.y())))) {
+    return;
+  }
+  // There is at least one finite value
 
   // Unreached discontinuities
   if (leftIsDiscontinuous && std::isfinite(left.y())) {

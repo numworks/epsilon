@@ -817,7 +817,8 @@ QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
                .angleUnit = AngleUnit::Radian,
                .context = symbolStore},
       .projectionPolicy = {.symbolic =
-                               SymbolicComputation::ReplaceDefinedSymbols}};
+                               SymbolicComputation::ReplaceDefinedSymbols},
+      .unitPolicy = UnitDisplay::MainOutput};
   simplifies_to("abc", "a×b×c", parameters, false);
   simplifies_to("\"abc\"", "\"abc\"", parameters, false);
   store("2→a", symbolStore);

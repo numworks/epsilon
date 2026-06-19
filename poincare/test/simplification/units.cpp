@@ -275,7 +275,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("ln(2/2)_rad", "0×_rad");
   simplifies_to(
       "ln(2/2)_°", "0×_°",
-      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree},
+                               .unitPolicy = UnitDisplay::MainOutput});
   simplifies_to(
       "5×_°-5×_°", "0×_°",
       SimplificationParameters{.user = {.angleUnit = AngleUnit::Radian},
@@ -298,10 +299,12 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("π×π×_rad", "π^2×_rad");
   simplifies_to(
       "π×π×_rad", "180×π×_°",
-      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree},
+                               .unitPolicy = UnitDisplay::MainOutput});
   simplifies_to(
       "1×π×_°", "π×_°",
-      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree},
+                               .unitPolicy = UnitDisplay::MainOutput});
   simplifies_to("π×π×_rad×_m", "9.8696044010894×_rad×_m");
   simplifies_to("π×π×_rad×_rad", "π^2×_rad^2");
   simplifies_to("0.2_rad", "1/5×_rad");
@@ -494,7 +497,8 @@ QUIZ_CASE(pcj_simplification_unit_imperial) {
                                .unitPolicy = UnitDisplay::AutomaticMetric});
   simplifies_to(
       "2×π×_cK", "6.2831853071796×_cK",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial}});
+      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
+                               .unitPolicy = UnitDisplay::MainOutput});
   simplifies_to(
       "_lgtn", "1.0160469088×_t",
       SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},

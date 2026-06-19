@@ -158,13 +158,15 @@ Tree* parse(const char* input, const Poincare::SymbolContext& symbolContext,
   return private_parse(input, symbolContext, params);
 }
 
-Tree* parse_and_reduce(const char* input, bool beautify) {
+Tree* parse_and_reduce(const char* input, bool beautify, bool allowUnits) {
   Tree* e = parse(input);
   assert(e);
   simplify(e,
            Poincare::SimplificationParameters{
                .user = {.complexFormat = Poincare::ComplexFormat::Real,
-                        .angleUnit = Poincare::AngleUnit::Radian}},
+                        .angleUnit = Poincare::AngleUnit::Radian},
+               .unitPolicy = allowUnits ? Poincare::UnitDisplay::MainOutput
+                                        : Poincare::UnitDisplay::Forbidden},
            beautify);
   return e;
 }

@@ -30,7 +30,8 @@ void TrigonometryListController::computeAdditionalResults(
       .user = {.complexFormat = complexFormat(),
                .angleUnit = angleUnit(),
                .context = App::app()->localContext()},
-      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
+      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
+      .unitPolicy = UnitDisplay::MainOutput};
 
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =
       AdditionalResultsHelper::TrigonometryAngleHelper(

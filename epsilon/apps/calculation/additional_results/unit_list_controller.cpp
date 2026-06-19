@@ -84,7 +84,7 @@ void UnitListController::computeAdditionalResults(
               .context = symbolContext,
           },
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
-  };
+      .unitPolicy = UnitDisplay::MainOutput};
 
   // Initialize expressions and layouts
   Poincare::UserExpression expressions[k_maxNumberOfExpressionCells];

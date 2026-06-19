@@ -17,13 +17,13 @@ struct SimplificationParameters {
   UserParameters user = {};
   ProjectionPolicy projectionPolicy = {};
   ReductionPolicy reductionPolicy = {};
-  UnitDisplay unitPolicy = {};
+  UnitDisplay unitPolicy = UnitDisplay::Forbidden;
 };
 
 struct BeautificationParameters {
   UserParameters user = {};
   ReductionPolicy reductionPolicy = {};
-  UnitDisplay unitPolicy = {};
+  UnitDisplay unitPolicy = UnitDisplay::Forbidden;
 };
 
 struct UnitParameters {

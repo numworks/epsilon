@@ -142,8 +142,8 @@ void assert_approximate_is_double(const char* input, double lowerBound = 0.0,
 }
 
 void assert_approximate_is_int(const char* input, int lowerBound,
-                               int upperBound) {
-  Tree* e = parse_and_reduce(input, true);
+                               int upperBound, bool allowUnits = false) {
+  Tree* e = parse_and_reduce(input, true, allowUnits);
   if (Dimension::IsList(e)) {
     int length = Dimension::ListLength(e);
     Tree* eApproximated = Approximation::To<Tree*>(
@@ -179,8 +179,8 @@ QUIZ_CASE(pcj_random_range_values) {
                               static_cast<float>(-123456789876543),
                               static_cast<float>(123456789876543));
 
-  assert_approximate_is_int("_m * random()^0", 1, 1);
-  assert_approximate_is_int("randint(0,1)_m", 0, 1);
+  assert_approximate_is_int("_m * random()^0", 1, 1, true);
+  assert_approximate_is_int("randint(0,1)_m", 0, 1, true);
   assert_approximate_is_int("randint(0,1)", 0, 1);
   assert_approximate_is_int("randint(-10,0)", -10, 0);
   assert_approximate_is_int("randint(1,10)", 1, 10);

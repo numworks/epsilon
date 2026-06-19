@@ -288,7 +288,8 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
                exactDisplayOutput, approximateDisplayOutput,
                SharedGlobalPrefs().numberOfSignificantDigits(),
                SimplificationParameters{.user = {.complexFormat = complexFormat,
-                                                 .angleUnit = angleUnit}})
+                                                 .angleUnit = angleUnit},
+                                        .unitPolicy = UnitDisplay::MainOutput})
                ? EqualSign::Equal
                : EqualSign::Approximation;
   } else {

@@ -52,6 +52,7 @@ KDSize Render::SizeBetweenIndexes(const Tree* l, KDFont::Size fontSize,
   KDSize result = RackLayout::SizeBetweenIndexes(
       static_cast<const Rack*>(withMemoRoot), leftIndex, rightIndex, false);
   withMemoRoot->removeTree();
+  RackLayout::s_cursor = nullptr;
   return result;
 }
 
@@ -69,6 +70,7 @@ KDCoordinate Render::BaselineBetweenIndexes(const Tree* l,
   KDCoordinate result = RackLayout::BaselineBetweenIndexes(
       static_cast<const Rack*>(withMemoRoot), leftIndex, rightIndex);
   withMemoRoot->removeTree();
+  RackLayout::s_cursor = nullptr;
   return result;
 }
 
@@ -81,6 +83,7 @@ KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root,
   Tree* withMemoRoot = CloneWithRackMemoized(root, &localCursor);
   KDPoint result = AbsoluteOriginRec(localCursor.rack, withMemoRoot);
   withMemoRoot->removeTree();
+  RackLayout::s_cursor = nullptr;
   return result;
 }
 
@@ -97,6 +100,7 @@ void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
                   : LayoutSelection();
   DrawRack(Rack::From(withMemo), ctx, p, style, localSelection, false);
   withMemo->removeTree();
+  RackLayout::s_cursor = nullptr;
 }
 
 /* Implementations on Rack */

@@ -124,7 +124,7 @@ SystemExpression ReplaceSymbolAndReduce(
     assert(Internal::Dimension::Get(replaceSymbolWith) ==
            Internal::Dimension::Get(symbol));
     TreeRef result = e.tree()->cloneTree();
-    result->deepReplaceWith(symbol, replaceSymbolWith);
+    Variables::ReplaceSymbolWithTree(result, symbol, replaceSymbolWith);
     symbol->removeTree();
     if (Variables::HasUserVariables(result, true)) {
       // TODO: Only this case is used and handled for now.

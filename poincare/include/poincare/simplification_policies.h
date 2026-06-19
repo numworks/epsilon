@@ -48,7 +48,7 @@ enum class UnitDisplay : uint8_t {
   BasicSI,
   // Units are unchanged
   None,
-  // Undef if input has non-angle unit dimension
+  // Expression is replaced by undef if it contains units
   Forbidden,
 };
 

@@ -177,13 +177,18 @@ bool PrepareForProjection(Tree* e,
   return changed;
 }
 
-Dimension CheckAndComputeDimension(Tree* e, bool& hasChanged) {
+Dimension CheckAndComputeDimension(Tree* e, bool allowUnits, bool& hasChanged) {
   // No need to pass SymbolContext as variables have already been replaced
   if (!Dimension::DeepCheck(e)) {
     e->cloneTreeOverTree(KUndefUnhandledDimension);
     hasChanged = true;
   }
-  return Dimension::Get(e);
+  Dimension dimension = Dimension::Get(e);
+  if (!allowUnits && dimension.isUnit()) {
+    e->cloneTreeOverTree(KUndefUnhandledDimension);
+    hasChanged = true;
+  }
+  return dimension;
 }
 
 ToSystemOutput ToSystem(Tree* e,
@@ -193,7 +198,8 @@ ToSystemOutput ToSystem(Tree* e,
   /* 2 - Check and compute expression's dimension
    * Note: dimension computation can only be done after having replaced symbols
    * and functions */
-  Dimension dim = CheckAndComputeDimension(e, changed);
+  Dimension dim =
+      CheckAndComputeDimension(e, projectionParameters.allowUnits, changed);
   /* 3 - Project */
   changed =
       Projection::DeepSystemProject(e, projectionParameters, dim) || changed;
@@ -253,7 +259,7 @@ bool CanBeSystem(const Tree* e) {
 #if POINCARE_COMPLEX
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
   ProjectionParameters projectionParameters = {
-      .user = {.complexFormat = ComplexFormat::Cartesian}};
+      .user = {.complexFormat = ComplexFormat::Cartesian}, .allowUnits = true};
 #else
   /* Pow is used both in UserExpressions to represent all the types of powers
    * and in system for some specific powers (simple integral powers for
@@ -262,7 +268,7 @@ bool CanBeSystem(const Tree* e) {
    * CanBeSystem while they are produced by the reduction.
    * TODO: introduce a PowUser node similar to LnUser to clarify the situation ?
    */
-  ProjectionParameters projectionParameters = {};
+  ProjectionParameters projectionParameters = {.allowUnits = true};
   for (Tree* d : c->selfAndDescendants()) {
     if (d->isPow()) {
       d->cloneNodeOverNode(KPowReal);

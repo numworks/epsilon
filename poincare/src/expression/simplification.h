@@ -19,7 +19,7 @@ bool BeautifyReduced(Tree* e,
 bool PrepareForProjection(Tree* e,
                           const ProjectionParameters& projectionParameters);
 
-Dimension CheckAndComputeDimension(Tree* e, bool& hasChanged);
+Dimension CheckAndComputeDimension(Tree* e, bool allowUnits, bool& hasChanged);
 
 struct ToSystemOutput {
   bool changed;

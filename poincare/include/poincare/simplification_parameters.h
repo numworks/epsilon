@@ -10,6 +10,7 @@ struct ProjectionParameters {
   /* UnitFormat isn't needed for projection but it's more convenient to reuse
    * the same struct. */
   UserParameters user = {};
+  bool allowUnits = false;
   ProjectionPolicy projectionPolicy = {};
 };
 
@@ -38,6 +39,8 @@ inline ProjectionParameters ToProjectionParameters(
     const SimplificationParameters& simplificationParameters) {
   return ProjectionParameters{
       .user = simplificationParameters.user,
+      .allowUnits =
+          (simplificationParameters.unitPolicy != UnitDisplay::Forbidden),
       .projectionPolicy = simplificationParameters.projectionPolicy};
 }
 
@@ -45,6 +48,8 @@ inline ProjectionParameters ToProjectionParameters(
     const BeautificationParameters& beautificationParameters) {
   return ProjectionParameters{
       .user = beautificationParameters.user,
+      .allowUnits =
+          (beautificationParameters.unitPolicy != UnitDisplay::Forbidden),
       .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols}};
 }
 

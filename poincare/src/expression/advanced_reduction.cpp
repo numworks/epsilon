@@ -112,10 +112,13 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget target) {
 #endif
   /* In the case of a list, advanced reduction works more efficiently when
    * called independently on the list elements. Thus we ensure that there are no
-   * "hidden" lists. The List::BubbleUp function fails when the tree has
-   * randomized descendants, so this case is excluded. This exception is not
-   * critical for the advanced reduction performance. */
-  ASSERT_IF_LEVEL(2, e->isList() || !Dimension::IsList(e) ||
+   * "hidden" lists. ListSort and ListSlice are exceptions to this as they
+   * contain a list not at the expression root. The List::BubbleUp function
+   * fails when the tree has randomized descendants, so this case is also
+   * excluded. This exception is not critical for the advanced reduction
+   * performance. */
+  ASSERT_IF_LEVEL(2, e->isList() || !Dimension::IsList(e) || e->isListSort() ||
+                         e->isListSlice() ||
                          e->hasDescendantSatisfying(
                              [](const Tree* e) { return e->isRandomized(); }));
   ASSERT_IF_LEVEL(2, !SystematicReduction::DeepReduce(e));

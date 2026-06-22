@@ -216,7 +216,8 @@ static bool IsDimensionedUndefinedOrNonReal(const Tree* t, bool checkNonReal) {
   }
   if (t->isMatrix() || t->isList() || t->isPoint()) {
     if (t->numberOfChildren() == 0) {
-      return false;
+      assert(t->isList());
+      return true;
     }
     // Check all children are the same and undefined
     const Tree* child = t->child(0);

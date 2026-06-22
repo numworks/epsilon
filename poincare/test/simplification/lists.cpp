@@ -192,6 +192,8 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("sort({(undef,1),(6,1),(5,-3)})",
                 "{(undef,undef),(undef,undef),(undef,undef)}");
   simplifies_to("sort(ln({7-π7,7}))", "{undef,undef}");
+  // Empty list and dependencies
+  simplifies_to("sort(ln(i)*{})", "{}");
 
   // Mean of a list
   simplifies_to("mean({})", "undef");

@@ -107,14 +107,19 @@ bool SystematicOperation::ReducePower(Tree* e) {
 
   /* Note: if this Dimension check is too costly, we could have two distinct
    * power nodes. One general that will handle both matrices and scalars, and
-   * one for scalar only, that can skip this check. */
-  if (Dimension::Get(base).isMatrix()) {
+   * one for scalar only, that can skip this check. Dimension check is optimized
+   * out when base has no children and therefore can't be a matrix. */
+  if (base->isMatrix() ||
+      (base->numberOfChildren() > 0 && Dimension::Get(base).isMatrix())) {
     if (!base->isMatrix() || !Integer::Is<int>(n)) {
       return false;
     }
     e->moveTreeOverTree(Matrix::Power(base, Integer::Handler(n).to<int>()));
     return true;
   }
+  // Ensure there are no childless nodes with matrix dimension
+  COSTLY_ASSERT(base->numberOfChildren() > 0 ||
+                !Dimension::Get(base).isMatrix());
 
   if (base->isZero()) {
     return PowerLike::ReducePowerOfZero(e, n);

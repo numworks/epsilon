@@ -174,20 +174,25 @@ bool PrepareForProjection(Tree* e,
   }
   // No additional random nodes should have appeared
   assert(Random::SeedRandomNodes(e, maxRandomSeed) == maxRandomSeed);
-  // Check dimension after having replaced symbols and functions
+  return changed;
+}
+
+Dimension CheckAndComputeDimension(Tree* e, bool& hasChanged) {
   if (!Dimension::DeepCheck(e)) {
     e->cloneTreeOverTree(KUndefUnhandledDimension);
-    changed = true;
+    hasChanged = true;
   }
-  return changed;
+  return Dimension::Get(e);
 }
 
 ToSystemOutput ToSystem(Tree* e,
                         const ProjectionParameters& projectionParameters) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionParameters);
-  /* 2 - Compute expression's dimension */
-  Dimension dim = Dimension::Get(e);
+  /* 2 - Check and compute expression's dimension
+   * Note: dimension computation can only be done after having replaced symbols
+   * and functions */
+  Dimension dim = CheckAndComputeDimension(e, changed);
   /* 3 - Project */
   changed =
       Projection::DeepSystemProject(e, projectionParameters, dim) || changed;

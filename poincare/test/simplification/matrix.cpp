@@ -66,8 +66,8 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("[[1,2]]^2", "undef");
   simplifies_to("[[1]]^π", "undef");
   simplifies_to("log(det([[0]]^2))", "undef");
-  simplifies_to("[[0]]^-10000000000", "[[0]]^-10000000000");
-  simplifies_to("[[1]]^-10000000000", "[[1]]^-10000000000");
+  simplifies_to("[[0]]^-10000000000", "undef");
+  simplifies_to("[[1]]^-10000000000", "[[1]]");
 
   // Sum and product
   simplifies_to("sum([[k,0]],k,0,5)", "[[15,0]]");

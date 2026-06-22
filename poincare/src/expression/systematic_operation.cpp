@@ -104,13 +104,18 @@ bool SystematicOperation::ReducePower(Tree* e) {
   // base^n
   Tree* base = e->child(0);
   TreeRef n = base->nextTree();
-
+#if POINCARE_MATRIX
   /* Note: if this Dimension check is too costly, we could have two distinct
    * power nodes. One general that will handle both matrices and scalars, and
    * one for scalar only, that can skip this check. Dimension check is optimized
    * out when base has no children and therefore can't be a matrix. */
   if (base->isMatrix() ||
       (base->numberOfChildren() > 0 && Dimension::Get(base).isMatrix())) {
+    if (base->isMatrix() && base->numberOfChildren() == 1) {
+      // [[a]]^n -> [[a^n]]
+      return PatternMatching::MatchReplaceReduce(e, KPow(KMatrix<1, 1>(KA), KB),
+                                                 KMatrix<1, 1>(KPow(KA, KB)));
+    }
     if (!base->isMatrix() || !Integer::Is<int>(n)) {
       return false;
     }
@@ -120,6 +125,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
   // Ensure there are no childless nodes with matrix dimension
   COSTLY_ASSERT(base->numberOfChildren() > 0 ||
                 !Dimension::Get(base).isMatrix());
+#endif
 
   if (base->isZero()) {
     return PowerLike::ReducePowerOfZero(e, n);

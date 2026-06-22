@@ -178,6 +178,7 @@ bool PrepareForProjection(Tree* e,
 }
 
 Dimension CheckAndComputeDimension(Tree* e, bool& hasChanged) {
+  // No need to pass SymbolContext as variables have already been replaced
   if (!Dimension::DeepCheck(e)) {
     e->cloneTreeOverTree(KUndefUnhandledDimension);
     hasChanged = true;

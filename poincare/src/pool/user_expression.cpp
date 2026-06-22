@@ -288,6 +288,7 @@ template <typename T>
 T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
     const char* text,
     const SimplificationParameters& simplificationParameters) {
+  static_assert(std::is_floating_point_v<T>);
   UserExpression exp =
       UserExpression::Parse(text, simplificationParameters.user.context);
   if (exp.isUninitialized()) {
@@ -296,6 +297,13 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   bool reductionFailure;
   exp = exp.cloneAndSimplify(simplificationParameters, &reductionFailure);
   assert(!exp.isUninitialized());
+  /* REFACTOR: SimplificationParameters could include a flag to only allow a
+   * non-list scalar dimension. When the dimension is computed at the projection
+   * step, we could early exit by replacing the expression by Undefined, instead
+   * of going on with simplification. */
+  if (!Internal::Dimension::IsNonListScalar(exp)) {
+    return NAN;
+  }
   /* Unless reduction failed, ApproximationPolicy is optimized because dimension
    * has been checked during simplification. */
   return exp.approximateToRealScalar<T>(

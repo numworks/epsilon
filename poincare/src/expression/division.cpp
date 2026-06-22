@@ -100,11 +100,11 @@ Division::DivisionComponentsResult Division::GetDivisionComponents(
       Tree* pow = factor->cloneTree();
       Tree* base = pow->child(0);
       Tree* exponent = base->nextTree();
-      /* Preserve m^(-2) and e^(-2) and x^(-inf)
+      /* Preserve m^(-2) and e^(-2) and x^(-inf) and [[...]]^(-2)
        * Indeed x^(-inf) can be different from 1/x^inf
        * for example (-2)^inf is undef but (-2)^-inf is 0 (and not undef) */
       assert(!Infinity::IsPlusOrMinusInfinity(exponent));
-      if (base->isUnitOrPhysicalConstant()) {
+      if (base->isUnitOrPhysicalConstant() || base->isMatrix()) {
         factorsOuterNumerator = pow;
       } else if (!base->isEulerE() &&
                  MakePositiveAnyNegativeNumeralFactor(exponent)) {

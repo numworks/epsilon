@@ -467,18 +467,21 @@ void SolutionsController::drawAfterGrid(KDContext* ctx, KDRect rect) const {
   /* The predefined variables message spans both columns. Redraw both message
    * cells here (after the grid) so their backgrounds and text paint over the
    * grid lines that would otherwise cut through the message. */
-  if (definedVariablesMessageRow() < 0) {
+  const int definedVariablesRow = definedVariablesMessageRow();
+  if (definedVariablesRow < 0) {
     return;
   }
-  // Redraw empty cells
-  for (int col = 0; col < numberOfColumns(); col++) {
-    /* SolidColorCell::drawRect uses the rect param directly, no ctx
-     * modification is needed. */
-    Escher::SolidColorCell cell = m_emptyCell[col];
-    KDPoint relOrigin = cell.absoluteOrigin().relativeTo(ctx->origin());
-    cell.drawRect(
-        ctx, KDRect(relOrigin.x(), relOrigin.y() + 1, cell.bounds().width(),
-                    cell.bounds().height() - 1));
+  if (definedVariablesRow > 0) {
+    // Redraw empty cells
+    for (int col = 0; col < numberOfColumns(); col++) {
+      /* SolidColorCell::drawRect uses the rect param directly, no ctx
+       * modification is needed. */
+      Escher::SolidColorCell cell = m_emptyCell[col];
+      KDPoint relOrigin = cell.absoluteOrigin().relativeTo(ctx->origin());
+      cell.drawRect(
+          ctx, KDRect(relOrigin.x(), relOrigin.y() + 1, cell.bounds().width(),
+                      cell.bounds().height() - 1));
+    }
   }
   // Redraw message cells
   const KDPoint savedOrigin = ctx->origin();

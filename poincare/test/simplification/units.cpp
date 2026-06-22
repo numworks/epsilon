@@ -359,9 +359,7 @@ QUIZ_CASE(pcj_simplification_unit_basicSI) {
 
 QUIZ_CASE(pcj_simplification_unit_conversion) {
   // Angle
-  simplifies_to(
-      "180×_°→_rad", "π×_rad",
-      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+  simplifies_to("180×_°→_rad", "π×_rad", k_degreeSimplification);
   simplifies_to("0_°→_rad", "0×_rad");
   simplifies_to("180_°→_rad", "π×_rad");
   simplifies_to("π_rad→_'", "10800×_'");
@@ -389,19 +387,22 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
   simplifies_to("4×_min→_s^3/_s^2", "240×_s");
   simplifies_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
   simplifies_to("-5_cm→_m", "-0.05×_m");
-  simplifies_to(
-      "-5_cm→_m", "-0.05×_m",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial}});
+  simplifies_to("-5_cm→_m", "-0.05×_m",
+                SimplificationParameters{
+                    .user = {.unitFormat = UnitFormat::Imperial},
+                    .unitPolicy = Poincare::UnitDisplay::MainOutput});
   simplifies_to("10_m/_s→_km", "undef");
   simplifies_to("_hplanck→_eV×_s", "4.1356676969239ᴇ-15×_s×_eV");
 
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("2_kg→a", symbolStore);
-  simplifies_to("a→g", "2000×_g",
-                SimplificationParameters{
-                    .user = {.context = symbolStore},
-                    .projectionPolicy = {
-                        .symbolic = SymbolicComputation::ReplaceAllSymbols}});
+  simplifies_to(
+      "a→g", "2000×_g",
+      SimplificationParameters{
+          .user = {.context = symbolStore},
+          .projectionPolicy = {.symbolic =
+                                   SymbolicComputation::ReplaceAllSymbols},
+          .unitPolicy = UnitDisplay::MainOutput});
 }
 
 QUIZ_CASE(pcj_simplification_unit_decomposition) {
@@ -706,8 +707,10 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("sign(3_m) + 2", "undef");
   simplifies_to("tan(2_m)", "undef");
   simplifies_to("tan(2_rad^2)", "undef");
-  simplifies_to("(_A×x)^2×_s", "undef",
-                SimplificationParameters{
-                    .projectionPolicy = {
-                        .symbolic = SymbolicComputation::ReplaceAllSymbols}});
+  simplifies_to(
+      "(_A×x)^2×_s", "undef",
+      SimplificationParameters{
+          .projectionPolicy = {.symbolic =
+                                   SymbolicComputation::ReplaceAllSymbols},
+          .unitPolicy = UnitDisplay::MainOutput});
 }

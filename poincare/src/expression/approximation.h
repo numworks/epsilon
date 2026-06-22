@@ -343,7 +343,7 @@ class Approximator {
    * approximated has been approximated.
    * Reorder n-aries if the expression is system. */
   template <typename ReturnType>
-  ReturnType approximateScalars(const Tree* e, bool isSystem);
+  ReturnType approximateScalars(const Tree* e, ExpressionType type);
 
   /* Approximate the conditions of a piecewise and return the tree corresponding
    * to the matching branch. Return nullptr if a condition was undefined. */
@@ -489,8 +489,9 @@ class Approximator {
   // Tree can be of any dimension
   Tree* privateToTree(const Tree* e, Dimension dim);
 
-  void approximateAndReplaceEveryScalar(Tree* e, bool isRoot = true,
-                                        bool isSystem = false);
+  void approximateAndReplaceEveryScalar(
+      Tree* e, ExpressionType type = ExpressionType::Unspecified,
+      bool isRoot = true);
 
   // Tree must be of point dimension.
   Tree* privateToPoint(const Tree* e);

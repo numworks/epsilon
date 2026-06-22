@@ -314,8 +314,8 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
 
   ComputationType result =
       parameters.policy.onlyReplaceNumerical
-          ? approximator.approximateScalars<ComputationType>(
-                targetTree, expressionType == ExpressionType::System)
+          ? approximator.approximateScalars<ComputationType>(targetTree,
+                                                             expressionType)
           : approximator.specificApproximateTo<ComputationType>(targetTree);
   if (!processed) {
     return result;
@@ -738,21 +738,22 @@ bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
 }
 
 template <typename ReturnType>
-ReturnType Approximator::approximateScalars(const Tree*, bool isSystem) {
+ReturnType Approximator::approximateScalars(const Tree*, ExpressionType type) {
   // This method only makes sense for a Tree* return type
   assert(false);
   OMG_UNREACHABLE;
 }
 
 template <>
-Tree* Approximator::approximateScalars(const Tree* e, bool isSystem) {
+Tree* Approximator::approximateScalars(const Tree* e, ExpressionType type) {
   Tree* eClone = e->cloneTree();
-  approximateAndReplaceEveryScalar(eClone, true, isSystem);
+  approximateAndReplaceEveryScalar(eClone, type);
   return eClone;
 }
 
-void Approximator::approximateAndReplaceEveryScalar(Tree* e, bool isRoot,
-                                                    bool isSystem) {
+void Approximator::approximateAndReplaceEveryScalar(Tree* e,
+                                                    ExpressionType type,
+                                                    bool isRoot) {
   /* If e is not the root, SkipApproximation has already been checked before
    * entering the function */
   if (isRoot && SkipApproximation(e->type(), m_floatPrecision)) {
@@ -767,7 +768,7 @@ void Approximator::approximateAndReplaceEveryScalar(Tree* e, bool isRoot,
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     if (!SkipApproximation(child->type(), m_floatPrecision, e->type(),
                            child.index, previousChildWasApproximated)) {
-      approximateAndReplaceEveryScalar(child, false, isSystem);
+      approximateAndReplaceEveryScalar(child, type, false);
     }
     previousChildWasApproximated = child->isFloat();
   }
@@ -775,7 +776,7 @@ void Approximator::approximateAndReplaceEveryScalar(Tree* e, bool isRoot,
   // Merge addition and multiplication's children
   if (e->isAdd() || e->isMult()) {
     // Sort if the expression is system, preserve order otherwise
-    if (isSystem) {
+    if (type == ExpressionType::System) {
       NAry::Sort(e, Order::OrderType::System);
     }
     m_floatPrecision == FloatPrecision::Single

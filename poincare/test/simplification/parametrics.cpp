@@ -498,4 +498,9 @@ QUIZ_CASE(pcj_simplification_integral) {
   // Random nodes
   simplifies_to("int(random(),x,0,1)", "int(random(),x,0,1)");
   simplifies_to("int(random()*x,x,0,1)", "int(random()×x,x,0,1)");
+
+  // With float bounds
+  simplifies_to(KIntegral("x"_e, 0.1_fe, 0.2_fe, "x"_e), 0.015_fe);
+  simplifies_to(KIntegral("x"_e, 0.0_fe, 0.0_fe, KMult("b"_e, e_e)),
+                KMult(0_fe, "b"_e));
 }

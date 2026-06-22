@@ -291,7 +291,13 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   static_assert(std::is_floating_point_v<T>);
   UserExpression exp =
       UserExpression::Parse(text, simplificationParameters.user.context);
-  if (exp.isUninitialized()) {
+  /* Return a NaN in the following cases:
+   * - parsing failed (it returned an uninitialized expression)
+   * - the expression is a store / unit conversion operation ('→' operator),
+   * which is not allowed in an expression field reducing to a float value (for
+   * example in a statistics input table)
+   */
+  if (exp.isUninitialized() || exp.isStore()) {
     return NAN;
   }
   bool reductionFailure;

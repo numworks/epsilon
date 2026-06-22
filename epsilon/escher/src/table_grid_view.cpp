@@ -32,7 +32,6 @@ static void Draw(KDRect shape, TableGridView::Direction direction,
 void TableGridView::drawLines(KDContext* ctx, Direction direction) const {
   const KDColor lineColor =
       ColorPicker::Resolve(ThemeComponent::BorderGrayBright);
-  const KDCoordinate lineWidth = 1;
   const bool isColumn = direction == Direction::Column;
   const int nRowsOrColumns = isColumn ? table()->numberOfDisplayableColumns()
                                       : table()->numberOfDisplayableRows();
@@ -43,11 +42,11 @@ void TableGridView::drawLines(KDContext* ctx, Direction direction) const {
     KDRect headerCell = relativeChildFrame(
         table()->cellAtRelativeLocation(isColumn ? i : 0, isColumn ? 0 : i));
     KDCoordinate cellBegin = isColumn ? headerCell.left() : headerCell.top();
-    Draw(KDRect(cellBegin, 0, lineWidth, lineLength), direction, ctx,
+    Draw(KDRect(cellBegin, 0, k_lineWidth, lineLength), direction, ctx,
          lineColor);
   }
   KDCoordinate tableEnd = isColumn ? bounds().right() : bounds().bottom();
-  Draw(KDRect(tableEnd, 0, lineWidth, lineLength), direction, ctx, lineColor);
+  Draw(KDRect(tableEnd, 0, k_lineWidth, lineLength), direction, ctx, lineColor);
 }
 
 }  // namespace Escher

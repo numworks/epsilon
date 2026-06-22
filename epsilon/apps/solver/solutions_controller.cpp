@@ -478,9 +478,11 @@ void SolutionsController::drawAfterGrid(KDContext* ctx, KDRect rect) const {
        * modification is needed. */
       Escher::SolidColorCell cell = m_emptyCell[col];
       KDPoint relOrigin = cell.absoluteOrigin().relativeTo(ctx->origin());
+      // Do not redraw over the border above
       cell.drawRect(
-          ctx, KDRect(relOrigin.x(), relOrigin.y() + 1, cell.bounds().width(),
-                      cell.bounds().height() - 1));
+          ctx, KDRect(relOrigin.x(), relOrigin.y() + TableGridView::k_lineWidth,
+                      cell.bounds().width(),
+                      cell.bounds().height() - TableGridView::k_lineWidth));
     }
   }
   // Redraw message cells

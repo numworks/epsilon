@@ -8,6 +8,8 @@ class TableView;
 
 class TableGridView : public View {
  public:
+  constexpr static KDCoordinate k_lineWidth = 1;
+
   TableGridView(const TableView* table);
 
   void drawRect(KDContext* ctx, KDRect rect) const override;

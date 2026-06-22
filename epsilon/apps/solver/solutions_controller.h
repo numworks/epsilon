@@ -146,6 +146,7 @@ class SolutionsController : public Escher::ViewController,
     void setMessage(I18n::Message message) {
       m_messageView.setMessage(message);
     }
+    void redraw(KDContext* ctx) const { m_messageView.drawRect(ctx, bounds()); }
 
    private:
     /* Text is placed at the very top of the cell to simplify text centering

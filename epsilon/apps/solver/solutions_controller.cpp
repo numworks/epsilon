@@ -464,44 +464,35 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
 }
 
 void SolutionsController::drawAfterGrid(KDContext* ctx, KDRect rect) const {
-  /* The predefined variables message is a hack: it is split across the two
-   * columns of the table to display a single sentence. The table grid is drawn
-   * on top of the cells, so it adds an horizontal line above the message and
-   * three vertical lines cutting through its text. We erase those segments here
-   * (after the grid is drawn) to keep the message readable. */
-  const int messageRow = definedVariablesMessageRow();
-  if (messageRow < 0) {
+  /* The predefined variables message spans both columns. Redraw both message
+   * cells here (after the grid) so their backgrounds and text paint over the
+   * grid lines that would otherwise cut through the message. */
+  if (definedVariablesMessageRow() < 0) {
     return;
   }
-  /* const_cast is valid: these size helpers are only non-const for memoization
-   * and a const SolutionsController is never needed (see buttonAtIndex). */
-  SolutionsController* source = const_cast<SolutionsController*>(this);
-  const KDColor background =
-      ColorPicker::Resolve(ContentView::k_backgroundColor);
-
-  /* Vertical extent to clear : the empty margin row above the message (if any)
-   * and the message row itself. */
-  const bool hasEmptyRow = messageRow > 0;
-  const int topRow = hasEmptyRow ? messageRow - 1 : messageRow;
-  const KDCoordinate top = source->cumulatedHeightBeforeRow(topRow);
-  const KDCoordinate bottom = source->cumulatedHeightBeforeRow(messageRow + 1);
-  const KDCoordinate height = bottom - top;
-
-  // Erase the horizontal line above the message text.
-  const KDCoordinate messageTop = source->cumulatedHeightBeforeRow(messageRow);
-  const KDCoordinate tableWidth =
-      source->cumulatedWidthBeforeColumn(numberOfColumns());
-  ctx->fillRect(KDRect(0, messageTop, tableWidth, 1), background);
-
-  /* Erase the three vertical lines (column edges) over the message area. Start
-   * one pixel below `top` to preserve the horizontal grid line bordering the
-   * row above at each intersection. */
-  const KDCoordinate columnEdges[] = {
-      0, source->columnWidth(0, false),
-      static_cast<KDCoordinate>(tableWidth - 1)};
-  for (KDCoordinate x : columnEdges) {
-    ctx->fillRect(KDRect(x, top + 1, 1, height - 1), background);
+  // Redraw empty cells
+  for (int col = 0; col < numberOfColumns(); col++) {
+    /* SolidColorCell::drawRect uses the rect param directly, no ctx
+     * modification is needed. */
+    Escher::SolidColorCell cell = m_emptyCell[col];
+    KDPoint relOrigin = cell.absoluteOrigin().relativeTo(ctx->origin());
+    cell.drawRect(
+        ctx, KDRect(relOrigin.x(), relOrigin.y() + 1, cell.bounds().width(),
+                    cell.bounds().height() - 1));
   }
+  // Redraw message cells
+  const KDPoint savedOrigin = ctx->origin();
+  const KDRect savedClipping = ctx->clippingRect();
+  for (int col = 0; col < numberOfColumns(); col++) {
+    /* TextView::drawRect ignores rect and uses bounds(), so ctx->origin() must
+     * be set to the cell's absolute position for the text to land correctly. */
+    MessageCell cell = m_messageCells[col];
+    ctx->setOrigin(cell.absoluteOrigin());
+    ctx->setClippingRect(KDRect(cell.absoluteOrigin(), cell.bounds().size()));
+    cell.redraw(ctx);
+  }
+  ctx->setOrigin(savedOrigin);
+  ctx->setClippingRect(savedClipping);
 }
 
 KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {

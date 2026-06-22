@@ -383,6 +383,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
             Shared::Function::k_unknownName, abscissaExpression,
             &simplificationFailure,
             SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+    // Fetch function again in case of invalidation in expressionReduced
+    function = functionAtIndex(column, row, &abscissa);
     UserExpression approximation;
     e.cloneAndBeautifyAndApproximate(
         &result, &approximation,

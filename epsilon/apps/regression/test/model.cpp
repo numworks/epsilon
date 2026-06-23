@@ -666,7 +666,7 @@ QUIZ_CASE(regression_trigonometric_constant_y) {
   constexpr double y[] = {4, 4, 4, 4, 4};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
-  constexpr Coefficients coefficients = {0.0, 1.5708, 1.5708, 4.0};
+  constexpr Coefficients coefficients = {0.0, 0.0, 0.0, 4.0};
   constexpr double sr = 0;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::AngleUnit::Radian, sr);

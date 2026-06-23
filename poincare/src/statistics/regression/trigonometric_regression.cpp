@@ -216,31 +216,43 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
     Coefficients& modelCoefficients) const {
   // Coefficients must be unique.
   double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
-  // A must be positive.
-  if (modelCoefficients[0] < 0.0) {
-    // A * sin(B * x + C) + D = -A * sin(B * x + C + π) + D
-    modelCoefficients[0] *= -1.0;
-    modelCoefficients[2] += piInAngleUnit;
-  }
-  // B must be positive.
-  if (modelCoefficients[1] < 0.0) {
-    /* A * sin(B * x + C) + D = -A * sin(-B * x - C) + D
-     * -A * sin(-B * x - C) + D = A * sin(-B * x - C + π) + D */
-    modelCoefficients[1] *= -1.0;
-    modelCoefficients[2] *= -1.0;
-    modelCoefficients[2] += piInAngleUnit;
-  }
-  // C must be between -π (excluded) and π (included).
-  if (modelCoefficients[2] <= -piInAngleUnit ||
-      modelCoefficients[2] > piInAngleUnit) {
-    /* A*sin(B*x + C) + D = A*sin(B*x + C - 2π) = A*sin(B*x + C + 2π)
-     * Using remainder(C,2π) = C - 2π * round(C / 2π) */
-    modelCoefficients[2] -=
-        2.0 * piInAngleUnit *
-        std::round(modelCoefficients[2] / (2.0 * piInAngleUnit));
-    if (modelCoefficients[2] == -piInAngleUnit) {
-      // Keep π instead of -π
-      modelCoefficients[2] = piInAngleUnit;
+  if (std::abs(modelCoefficients[0]) <= OMG::Float::Epsilon<double>()) {
+    // If A is null, B and C must be too
+    modelCoefficients[0] = 0.0;
+    modelCoefficients[1] = 0.0;
+    modelCoefficients[2] = 0.0;
+  } else {
+    /* Not expected when modelCoefficients[0] isn't null. If this happens, A
+     * and C should be set to 0, and D should be set to D + A*sin(C), taking
+     * piInAngleUnit into account. */
+    assert(std::abs(modelCoefficients[1]) > OMG::Float::Epsilon<double>());
+
+    // A must be positive.
+    if (modelCoefficients[0] < 0.0) {
+      // A * sin(B * x + C) + D = -A * sin(B * x + C + π) + D
+      modelCoefficients[0] *= -1.0;
+      modelCoefficients[2] += piInAngleUnit;
+    }
+    // B must be positive.
+    if (modelCoefficients[1] < 0.0) {
+      /* A * sin(B * x + C) + D = -A * sin(-B * x - C) + D
+       * -A * sin(-B * x - C) + D = A * sin(-B * x - C + π) + D */
+      modelCoefficients[1] *= -1.0;
+      modelCoefficients[2] *= -1.0;
+      modelCoefficients[2] += piInAngleUnit;
+    }
+    // C must be between -π (excluded) and π (included).
+    if (modelCoefficients[2] <= -piInAngleUnit ||
+        modelCoefficients[2] > piInAngleUnit) {
+      /* A*sin(B*x + C) + D = A*sin(B*x + C - 2π) = A*sin(B*x + C + 2π)
+       * Using remainder(C,2π) = C - 2π * round(C / 2π) */
+      modelCoefficients[2] -=
+          2.0 * piInAngleUnit *
+          std::round(modelCoefficients[2] / (2.0 * piInAngleUnit));
+      if (modelCoefficients[2] == -piInAngleUnit) {
+        // Keep π instead of -π
+        modelCoefficients[2] = piInAngleUnit;
+      }
     }
   }
 }

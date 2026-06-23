@@ -270,6 +270,14 @@ double TrigonometricRegression::coefficientMagnitude(
 double TrigonometricRegression::modelScore(
     double meanSquaredError,
     const Regression::Coefficients& modelCoefficients) const {
+  assert(meanSquaredError >= 0.);
+  assert(modelCoefficients[1] >= 0.);
+  assert(m_dataMetrics.amplitude >= 0.);
+  assert(m_dataMetrics.frequency > 0.);
+  // To prevent division by zero, fallback to 1 if denominator is null.
+  double amplitude = m_dataMetrics.amplitude > OMG::Float::Epsilon<double>()
+                         ? m_dataMetrics.amplitude
+                         : 1.0;
   /* The model score is a weighted combination of the mean squared error and of
    * the frequency, that should be the lowest possible for a trigonometric
    * regression. This is to avoid overfitting the data with a high frequency.
@@ -279,24 +287,8 @@ double TrigonometricRegression::modelScore(
    * frequency estimation from the data is not so reliable, we choose a low
    * coefficient in front of the frequency term. */
   constexpr static double lambda_f = 0.1;
-
-  assert(meanSquaredError >= 0.);
-  assert(modelCoefficients[1] >= 0.);
-
-  double epsilon = OMG::Float::Epsilon<double>();
-  // To prevent division by zero, use either amplitude, yDelta or 1
-  assert(m_dataMetrics.amplitude >= 0.);
-  double amplitude = m_dataMetrics.amplitude > epsilon
-                         ? m_dataMetrics.amplitude
-                         : (std::abs(m_dataMetrics.yDelta) > epsilon
-                                ? std::abs(m_dataMetrics.yDelta)
-                                : 1.0);
-  // To prevent division by zero, use either frequency, or 1
-  assert(m_dataMetrics.frequency >= 0.);
-  double frequency =
-      m_dataMetrics.frequency > epsilon ? m_dataMetrics.frequency : 1.0;
   return (std::sqrt(meanSquaredError) / amplitude) +
-         lambda_f * (modelCoefficients[1] / frequency);
+         lambda_f * (modelCoefficients[1] / m_dataMetrics.frequency);
 }
 
 }  // namespace Poincare::Internal

@@ -159,10 +159,18 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
         s->approximateAtContextRank(targetRank, intermediateComputation);
 
     if (targetRank != *currentRank) {
-      assert(intermediateComputation && targetRank > *currentRank);
-      // approximateAtContextRank altered the intermediate cache, re-shift it.
-      shiftCacheRight(sequenceIndex, intermediateComputation,
-                      targetRank - *currentRank);
+      // approximateAtContextRank recursively altered the intermediate cache.
+      assert(intermediateComputation);
+      if (targetRank > *currentRank) {
+        // The recursion re-stepped the cache to a lower rank, re-shift it.
+        shiftCacheRight(sequenceIndex, intermediateComputation,
+                        targetRank - *currentRank);
+      } else {
+        /* The expression references the sequence at a higher rank (forward or
+         * circular reference). Reset and restore targetRank. */
+        resetRanksAndValuesOfSequence(sequenceIndex, intermediateComputation);
+        *currentRank = targetRank;
+      }
       assert(targetRank == *currentRank);
     }
     *values = newValue;

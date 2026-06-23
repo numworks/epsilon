@@ -878,6 +878,24 @@ QUIZ_CASE(sequence_evaluation) {
     check_sequences_defined_by(results, sequences);
   }
   sequences.reset();
+
+  /* Circularly defined sequences.
+   * u(n) = 10v(n), v(n+1) = v(n)*u(n*u(n)), w(n) = u(n*u(n)) */
+  {
+    double results[SequenceStore::k_maxNumberOfSequences][10] = {
+        {10.0, 100.0, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+        {1.0, 10.0, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+        {10.0, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}};
+    sequences.types[0] = Sequence::Type::Explicit;
+    sequences.types[1] = Sequence::Type::SingleRecurrence;
+    sequences.types[2] = Sequence::Type::Explicit;
+    sequences.definitions[0] = "10v(n)";
+    sequences.definitions[1] = "v(n)*u(n*u(n))";
+    sequences.definitions[2] = "u(n*u(n))";
+    sequences.conditions1[1] = "1";
+    check_sequences_defined_by(results, sequences);
+  }
+  sequences.reset();
 }
 
 QUIZ_CASE(sequence_store) {

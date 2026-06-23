@@ -112,11 +112,6 @@ bool ProjectToBestUnits(Tree* e, Dimension dimension,
   assert(dimension.unit.vector == Dimension::Get(extractedUnits).unit.vector);
   bool foundResult = true;
   switch (unitDisplay) {
-    case UnitDisplay::Forbidden:
-      extractedUnits->removeTree();
-      foundResult = false;
-      e->cloneTreeOverTree(KUndefUnhandledDimension);
-      return true;
     case UnitDisplay::MainOutput:
       ApplyMainOutputDisplay(e, extractedUnits, dimension,
                              unitParameters.angleUnit);
@@ -144,6 +139,7 @@ bool ProjectToBestUnits(Tree* e, Dimension dimension,
       assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);
       break;
+    case UnitDisplay::Forbidden:
     case UnitDisplay::None:
       OMG_UNREACHABLE;
   }

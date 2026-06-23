@@ -227,6 +227,7 @@ $(addprefix statistics/, \
 
 _sources_poincare_test_cases := $(addprefix test/, \
   additional_results_helper.cpp \
+  allowed_dimensions.cpp \
   beautification.cpp \
   bounds.cpp \
   conics.cpp \

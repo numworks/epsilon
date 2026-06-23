@@ -99,7 +99,7 @@ void assert_regression_is(const double* xi, const double* yi,
 
   double r = store.correlationCoefficient(series);
   double r2 = store.determinationCoefficientForSeries(series);
-  double sr = store.residualStandardDeviation(series);
+  double residualStdDev = store.residualStandardDeviation(series);
 
   if (!Store::DisplayR(modelType)) {
     assert(std::isnan(r) && std::isnan(trueR));
@@ -132,13 +132,13 @@ void assert_regression_is(const double* xi, const double* yi,
     quiz_assert(cond);
   }
 
-  bool cond = roughly_equal(sr, trueResidualStdDev, precision, true,
+  bool cond = roughly_equal(residualStdDev, trueResidualStdDev, precision, true,
                             nullExpectedPrecision);
 #if POINCARE_TREE_LOG
   if (!cond) {
     std::cout << "Residual Std dev different:" << std::endl;
     std::cout << "\tExpected:" << trueResidualStdDev << std::endl;
-    std::cout << "\t     Got:" << sr << std::endl;
+    std::cout << "\t     Got:" << residualStdDev << std::endl;
   }
 #endif
   quiz_assert(cond);
@@ -151,11 +151,11 @@ QUIZ_CASE(regression_linear) {
   constexpr Coefficients coefficientsApbx = {-7.0, 3.4};
   constexpr double r = 1.0;
   constexpr double r2 = 1.0;
-  constexpr double sr = 0.0425;
+  constexpr double residualStdDev = 0.0425;
   assert_regression_is(x, y, std::size(x), Model::Type::LinearAxpb,
-                       coefficientsAxpb, r, r2, sr);
+                       coefficientsAxpb, r, r2, residualStdDev);
   assert_regression_is(x, y, std::size(x), Model::Type::LinearApbx,
-                       coefficientsApbx, r, r2, sr);
+                       coefficientsApbx, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_linear_2) {
@@ -165,11 +165,11 @@ QUIZ_CASE(regression_linear_2) {
   constexpr Coefficients coefficientsApbx = {18.1191, 3.31824};
   constexpr double r = 0.5857;
   constexpr double r2 = 0.343;
-  constexpr double sr = 27.642;
+  constexpr double residualStdDev = 27.642;
   assert_regression_is(x, y, std::size(x), Model::Type::LinearAxpb,
-                       coefficientsAxpb, r, r2, sr);
+                       coefficientsAxpb, r, r2, residualStdDev);
   assert_regression_is(x, y, std::size(x), Model::Type::LinearApbx,
-                       coefficientsApbx, r, r2, sr);
+                       coefficientsApbx, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_linear_3) {
@@ -181,11 +181,11 @@ QUIZ_CASE(regression_linear_3) {
   constexpr Coefficients coefficientsApbx = {10.0, 2.0};
   constexpr double r = 1.0;
   constexpr double r2 = 1.0;
-  constexpr double sr = NAN;
+  constexpr double residualStdDev = NAN;
   assert_regression_is(x, y, std::size(x), Model::Type::LinearAxpb,
-                       coefficientsAxpb, r, r2, sr);
+                       coefficientsAxpb, r, r2, residualStdDev);
   assert_regression_is(x, y, std::size(x), Model::Type::LinearApbx,
-                       coefficientsApbx, r, r2, sr);
+                       coefficientsApbx, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_proportional) {
@@ -193,9 +193,9 @@ QUIZ_CASE(regression_proportional) {
   constexpr double y[] = {-41.4851, -29.62186, -6.454245, -53.4976, -18.03325};
   constexpr Coefficients coefficients = {-5.89};
   constexpr double r2 = 0.9999648161902982;
-  constexpr double sr = 0.2852;
+  constexpr double residualStdDev = 0.2852;
   assert_regression_is(x, y, 5, Model::Type::Proportional, coefficients, NAN,
-                       r2, sr);
+                       r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_proportional_2) {
@@ -204,9 +204,9 @@ QUIZ_CASE(regression_proportional_2) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {2.12963963};
   constexpr double r2 = 0.53227513227513223;
-  constexpr double sr = 1.168;
+  constexpr double residualStdDev = 1.168;
   assert_regression_is(x, y, std::size(x), Model::Type::Proportional,
-                       coefficients, NAN, r2, sr);
+                       coefficients, NAN, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_proportional_3) {
@@ -215,9 +215,9 @@ QUIZ_CASE(regression_proportional_3) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {0.0};
   constexpr double r2 = 1.0;
-  constexpr double sr = 0.0;
+  constexpr double residualStdDev = 0.0;
   assert_regression_is(x, y, std::size(x), Model::Type::Proportional,
-                       coefficients, NAN, r2, sr);
+                       coefficients, NAN, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_proportional_4) {
@@ -227,9 +227,9 @@ QUIZ_CASE(regression_proportional_4) {
   constexpr Coefficients coefficients = {0.0};
   // Y is constant, and proportional regression cannot fit it, R2 is null.
   constexpr double r2 = 0.0;
-  constexpr double sr = 1.2247;
+  constexpr double residualStdDev = 1.2247;
   assert_regression_is(x, y, std::size(x), Model::Type::Proportional,
-                       coefficients, NAN, r2, sr);
+                       coefficients, NAN, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_proportional_5) {
@@ -240,9 +240,9 @@ QUIZ_CASE(regression_proportional_5) {
   /* In this case, proportional regression performed poorly compared to a
    * constant regression, R2 is negative. */
   constexpr double r2 = -45300.5;
-  constexpr double sr = 1.2288;
+  constexpr double residualStdDev = 1.2288;
   assert_regression_is(x, y, std::size(x), Model::Type::Proportional,
-                       coefficients, NAN, r2, sr);
+                       coefficients, NAN, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_quadratic) {
@@ -251,9 +251,9 @@ QUIZ_CASE(regression_quadratic) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {-6.50001, 21.3004, -3.15799};
   constexpr double r2 = 1.0;
-  constexpr double sr = 0.02477;
+  constexpr double residualStdDev = 0.02477;
   assert_regression_is(x, y, std::size(x), Model::Type::Quadratic, coefficients,
-                       NAN, r2, sr);
+                       NAN, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_quadratic_2) {
@@ -262,9 +262,9 @@ QUIZ_CASE(regression_quadratic_2) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {0.26, -3.11, 0.};
   constexpr double r2 = 1.0;
-  constexpr double sr = 0.;
+  constexpr double residualStdDev = 0.;
   assert_regression_is(x, y, std::size(x), Model::Type::Quadratic, coefficients,
-                       NAN, r2, sr, false);
+                       NAN, r2, residualStdDev, false);
 }
 
 QUIZ_CASE(regression_cubic) {
@@ -273,9 +273,9 @@ QUIZ_CASE(regression_cubic) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {-21.2015, 16.0141, 4.14522, -12.8658};
   constexpr double r2 = 1.0;
-  constexpr double sr = 0.006858;
+  constexpr double residualStdDev = 0.006858;
   assert_regression_is(x, y, std::size(x), Model::Type::Cubic, coefficients,
-                       NAN, r2, sr);
+                       NAN, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_cubic_2) {
@@ -287,9 +287,9 @@ QUIZ_CASE(regression_cubic_2) {
   constexpr Coefficients coefficients = {-0.00488992, 29.5594, -59561.3,
                                          4.00045e+07};
   constexpr double r2 = 0.961654;
-  constexpr double sr = 0.182868;
+  constexpr double residualStdDev = 0.182868;
   assert_regression_is(x, y, std::size(x), Model::Type::Cubic, coefficients,
-                       NAN, r2, sr);
+                       NAN, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_cubic_3) {
@@ -310,9 +310,9 @@ QUIZ_CASE(regression_quartic) {
   constexpr Coefficients coefficients = {0.59998, -42.9998, 21.5015, 3.09232,
                                          -0.456824};
   constexpr double r2 = 1.0;
-  constexpr double sr = 0.022338;
+  constexpr double residualStdDev = 0.022338;
   assert_regression_is(x, y, std::size(x), Model::Type::Quartic, coefficients,
-                       NAN, r2, sr);
+                       NAN, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_logarithmic) {
@@ -322,9 +322,9 @@ QUIZ_CASE(regression_logarithmic) {
   constexpr Coefficients coefficients1 = {-6.81679, 3.19383};
   constexpr double r1 = 1.0;
   constexpr double r21 = 1.0;
-  constexpr double sr1 = 0.01879485;
+  constexpr double residualStdDev1 = 0.01879485;
   assert_regression_is(x1, y1, std::size(x1), Model::Type::Logarithmic,
-                       coefficients1, r1, r21, sr1);
+                       coefficients1, r1, r21, residualStdDev1);
 
   constexpr double x2[] = {0.5, 1.0, 2.0, 3.0};
   constexpr double y2[] = {12.772, 10, 7.227, 5.606};
@@ -332,9 +332,9 @@ QUIZ_CASE(regression_logarithmic) {
   constexpr Coefficients coefficients2 = {10.0, -4.0};
   constexpr double r2 = -1.0;
   constexpr double r22 = 1.0;
-  constexpr double sr2 = 4.0359318E-4;
+  constexpr double residualStdDev2 = 4.0359318E-4;
   assert_regression_is(x2, y2, std::size(x2), Model::Type::Logarithmic,
-                       coefficients2, r2, r22, sr2);
+                       coefficients2, r2, r22, residualStdDev2);
 }
 
 QUIZ_CASE(regression_exponential) {
@@ -345,9 +345,9 @@ QUIZ_CASE(regression_exponential) {
   constexpr Coefficients coefficients = {-3.4, 0.8};
   constexpr double r = 1.0;
   constexpr double r2 = 1.0;
-  constexpr double sr = 0.0258;
+  constexpr double residualStdDev = 0.0258;
   assert_regression_is(x, y, std::size(x), Model::Type::ExponentialAebx,
-                       coefficients, r, r2, sr);
+                       coefficients, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_exponential_2) {
@@ -357,9 +357,9 @@ QUIZ_CASE(regression_exponential_2) {
   constexpr Coefficients coefficients = {3000, .1};
   constexpr double r = 1.0;
   constexpr double r2 = 1.0;
-  constexpr double sr = 2.149035E-4;
+  constexpr double residualStdDev = 2.149035E-4;
   assert_regression_is(x, y, std::size(x), Model::Type::ExponentialAebx,
-                       coefficients, r, r2, sr);
+                       coefficients, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_exponential_3) {
@@ -371,9 +371,9 @@ QUIZ_CASE(regression_exponential_3) {
   constexpr Coefficients coefficients = {-1, -1};
   constexpr double r = -1.0;
   constexpr double r2 = 1.0;
-  constexpr double sr = 1.67164E-8;
+  constexpr double residualStdDev = 1.67164E-8;
   assert_regression_is(x, y, std::size(x), Model::Type::ExponentialAebx,
-                       coefficients, r, r2, sr);
+                       coefficients, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_exponential_4) {
@@ -383,9 +383,9 @@ QUIZ_CASE(regression_exponential_4) {
   constexpr Coefficients coefficients = {3.4641, -0.179};
   constexpr double r = -0.3848;
   constexpr double r2 = 0.1481;
-  constexpr double sr = 1.66167;
+  constexpr double residualStdDev = 1.66167;
   assert_regression_is(x, y, std::size(x), Model::Type::ExponentialAebx,
-                       coefficients, r, r2, sr);
+                       coefficients, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_exponential_5) {
@@ -395,9 +395,9 @@ QUIZ_CASE(regression_exponential_5) {
   constexpr Coefficients coefficients = {1.41421, 0.0};
   constexpr double r = 0.0;
   constexpr double r2 = 0.0;
-  constexpr double sr = 0.71744;
+  constexpr double residualStdDev = 0.71744;
   assert_regression_is(x, y, std::size(x), Model::Type::ExponentialAebx,
-                       coefficients, r, r2, sr);
+                       coefficients, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_exponential_abx) {
@@ -407,9 +407,9 @@ QUIZ_CASE(regression_exponential_abx) {
   constexpr Coefficients coefficients = {1, 2};
   constexpr double r = 1.0;
   constexpr double r2 = 1.0;
-  constexpr double sr = 0.0;
+  constexpr double residualStdDev = 0.0;
   assert_regression_is(x, y, std::size(x), Model::Type::ExponentialAbx,
-                       coefficients, r, r2, sr);
+                       coefficients, r, r2, residualStdDev);
 }
 
 QUIZ_CASE(regression_power) {
@@ -419,9 +419,9 @@ QUIZ_CASE(regression_power) {
   constexpr Coefficients coefficients1 = {71.8, 2.7};
   constexpr double r1 = 1.0;
   constexpr double r21 = 1.0;
-  constexpr double sr1 = 373.1534;
+  constexpr double residualStdDev1 = 373.1534;
   assert_regression_is(x1, y1, std::size(x1), Model::Type::Power, coefficients1,
-                       r1, r21, sr1);
+                       r1, r21, residualStdDev1);
 
   constexpr double x2[] = {1.0, 2.0, 3.0, 4.0};
   constexpr double y2[] = {2.0, 3.0, 4.0, 1.0};
@@ -429,9 +429,9 @@ QUIZ_CASE(regression_power) {
   constexpr Coefficients coefficients2 = {2.63994478, -0.22182701};
   constexpr double r2 = -0.2218;
   constexpr double r22 = 0.0492;
-  constexpr double sr2 = 1.66825;
+  constexpr double residualStdDev2 = 1.66825;
   assert_regression_is(x2, y2, std::size(x2), Model::Type::Power, coefficients2,
-                       r2, r22, sr2);
+                       r2, r22, residualStdDev2);
 
   constexpr double x3[] = {0.5, 1.0, 2.0, 3.0};
   constexpr double y3[] = {-8.0, -2.0, -0.5, -0.2222222};
@@ -439,9 +439,9 @@ QUIZ_CASE(regression_power) {
   constexpr Coefficients coefficients3 = {-2.0, -2.0};
   constexpr double r3 = -1.0;
   constexpr double r23 = 1.0;
-  constexpr double sr3 = 1.03277E-7;
+  constexpr double residualStdDev3 = 1.03277E-7;
   assert_regression_is(x3, y3, std::size(x3), Model::Type::Power, coefficients3,
-                       r3, r23, sr3);
+                       r3, r23, residualStdDev3);
 
   /* Check for approximations errors (here, since we take the ln of the column,
    * the variance of column y is not exactly evaluated to 0.0. Check that r is
@@ -453,9 +453,9 @@ QUIZ_CASE(regression_power) {
   constexpr Coefficients coefficients4 = {10.0, 0};
   constexpr double r4 = 1.0;
   constexpr double r24 = 1.0;
-  constexpr double sr4 = 0.0;
+  constexpr double residualStdDev4 = 0.0;
   assert_regression_is(x4, y4, std::size(x4), Model::Type::Power, coefficients4,
-                       r4, r24, sr4);
+                       r4, r24, residualStdDev4);
 }
 
 QUIZ_CASE(regression_median_0) {
@@ -472,9 +472,9 @@ QUIZ_CASE(regression_median_1) {
   constexpr double y[] = {4.0, 3.0, 2.0};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {-1.0, 5.0};
-  constexpr double sr = 0.0;
+  constexpr double residualStdDev = 0.0;
   assert_regression_is(x, y, std::size(x), Model::Type::Median, coefficients,
-                       NAN, NAN, sr);
+                       NAN, NAN, residualStdDev);
 }
 
 QUIZ_CASE(regression_median_2) {
@@ -484,9 +484,9 @@ QUIZ_CASE(regression_median_2) {
                           31.0, 23.0,  43.0, -5.0, 39.0};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {2.0, -7.0};
-  constexpr double sr = 19623.89656;
+  constexpr double residualStdDev = 19623.89656;
   assert_regression_is(x, y, std::size(x), Model::Type::Median, coefficients,
-                       NAN, NAN, sr);
+                       NAN, NAN, residualStdDev);
 }
 
 void assert_trigonometric_regression_is(const double* xi, const double* yi,
@@ -521,9 +521,10 @@ QUIZ_CASE(regression_trigonometric_1) {
                           14.41, 13.24, 11.88, 10.54, 9.48,  9.19};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {2.9723, 0.016780, -1.3067, 12.146};
-  constexpr double sr = 0.061848;
+  constexpr double residualStdDev = 0.061848;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_2) {
@@ -534,9 +535,10 @@ QUIZ_CASE(regression_trigonometric_2) {
                           -3, -5, -2, 3,  5, 7, 10, 10, 5, 2, 2, 1};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {6.42, 0.26, -2.16, 2.82};
-  constexpr double sr = 1.5093235;
+  constexpr double residualStdDev = 1.5093235;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_3) {
@@ -545,9 +547,10 @@ QUIZ_CASE(regression_trigonometric_3) {
   constexpr double y[] = {8, 13, 21, 36, 47, 53};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
   constexpr Coefficients coefficients = {22.55, 0.5955, -2.180, 30.86};
-  constexpr double sr = 1.2068486;
+  constexpr double residualStdDev = 1.2068486;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_4) {
@@ -564,9 +567,10 @@ QUIZ_CASE(regression_trigonometric_4) {
     y[i] = std::sin(static_cast<double>(i));
   }
   constexpr Coefficients coefficients = {1.0, 1.0, 0.0, 0.0};
-  constexpr double sr = 0.0;
+  constexpr double residualStdDev = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_4_bis) {
@@ -600,9 +604,10 @@ QUIZ_CASE(regression_trigonometric_4_bis) {
       },
       static_cast<void*>(context), numberOfPoints);
   constexpr Coefficients coefficients = {1.0, 1.0, 0.0, 0.0};
-  constexpr double sr = 0.0;
+  constexpr double residualStdDev = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_5) {
@@ -611,9 +616,10 @@ QUIZ_CASE(regression_trigonometric_5) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
   constexpr Coefficients coefficients = {4.116, 2.006, -2.944, 4.747};
-  constexpr double sr = 0.2244;
+  constexpr double residualStdDev = 0.2244;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_6) {
@@ -622,9 +628,10 @@ QUIZ_CASE(regression_trigonometric_6) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
   constexpr Coefficients coefficients = {25.611, 0.5090, -2.0685, 56.880};
-  constexpr double sr = 0.719;
+  constexpr double residualStdDev = 0.719;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_7) {
@@ -634,9 +641,10 @@ QUIZ_CASE(regression_trigonometric_7) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
   constexpr Coefficients coefficients = {7.0226, 0.6281, -1.5705, 7.999};
-  constexpr double sr = 0.0276;
+  constexpr double residualStdDev = 0.0276;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_8) {
@@ -645,9 +653,10 @@ QUIZ_CASE(regression_trigonometric_8) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
   constexpr Coefficients coefficients = {0.6606, 0.4912, -1.768, 1.393};
-  constexpr double sr = 0.085;
+  constexpr double residualStdDev = 0.085;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_9) {
@@ -656,9 +665,10 @@ QUIZ_CASE(regression_trigonometric_9) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
   constexpr Coefficients coefficients = {2.51597, 0.707654, -1.76789, 4.72679};
-  constexpr double sr = 0.383362;
+  constexpr double residualStdDev = 0.383362;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_trigonometric_constant_y) {
@@ -667,9 +677,10 @@ QUIZ_CASE(regression_trigonometric_constant_y) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
   constexpr Coefficients coefficients = {0.0, 0.0, 0.0, -4.0};
-  constexpr double sr = 0;
+  constexpr double residualStdDev = 0;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::AngleUnit::Radian, sr);
+                                     Poincare::AngleUnit::Radian,
+                                     residualStdDev);
 }
 
 QUIZ_CASE(regression_logistic) {
@@ -680,9 +691,9 @@ QUIZ_CASE(regression_logistic) {
   static_assert(std::size(x1) == std::size(y1), "Column sizes are different");
   constexpr Coefficients coefficients1 = {6.0, 1.5, 4.7};
   constexpr double r21 = NAN;  // 0.9999999917270119;
-  constexpr double sr1 = 9.49529E-5;
+  constexpr double residualStdDev1 = 9.49529E-5;
   assert_regression_is(x1, y1, std::size(x1), Model::Type::Logistic,
-                       coefficients1, NAN, r21, sr1);
+                       coefficients1, NAN, r21, residualStdDev1);
 
   constexpr double x2[] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
   constexpr double y2[] = {5.0,   9.0,   40.0,  64.0,  144.0,
@@ -690,36 +701,36 @@ QUIZ_CASE(regression_logistic) {
   static_assert(std::size(x2) == std::size(y2), "Column sizes are different");
   constexpr Coefficients coefficients2 = {64.9, 1.0, 297.4};
   constexpr double r22 = NAN;  // 0.9984396821656006;
-  constexpr double sr2 = 7.672929;
+  constexpr double residualStdDev2 = 7.672929;
   assert_regression_is(x2, y2, std::size(x2), Model::Type::Logistic,
-                       coefficients2, NAN, r22, sr2);
+                       coefficients2, NAN, r22, residualStdDev2);
 
   constexpr double x3[] = {-400.0, 0.0, 400.0, 450.0, 800.0};
   constexpr double y3[] = {1.523, 76.92, 819.8, 882.4, 996.0};
   static_assert(std::size(x3) == std::size(y3), "Column sizes are different");
   constexpr Coefficients coefficients3 = {12.0, 0.01, 1000.0};
   constexpr double r23 = NAN;  // 1.0;
-  constexpr double sr3 = 0.01945416;
+  constexpr double residualStdDev3 = 0.01945416;
   assert_regression_is(x3, y3, std::size(x3), Model::Type::Logistic,
-                       coefficients3, NAN, r23, sr3);
+                       coefficients3, NAN, r23, residualStdDev3);
 
   constexpr double x4[] = {-2.0, -1.0, 0.0, 1.0, 2.0, 3.0};
   constexpr double y4[] = {-5.0, -5.0, -4.99, -4.90, -3.56, -0.55};
   static_assert(std::size(x4) == std::size(y4), "Column sizes are different");
   constexpr Coefficients coefficients4 = {0.001, -3.0, -5.0};
   constexpr double r24 = NAN;  // 1.0;
-  constexpr double sr4 = 0.002416132;
+  constexpr double residualStdDev4 = 0.002416132;
   assert_regression_is(x4, y4, std::size(x4), Model::Type::Logistic,
-                       coefficients4, NAN, r24, sr4);
+                       coefficients4, NAN, r24, residualStdDev4);
 
   constexpr double x5[] = {3.0, 7.0, 11.0, 20.0, 43.0};
   constexpr double y5[] = {11.66, 13.51, 15.21, 17.38, 18.7};
   static_assert(std::size(x5) == std::size(y5), "Column sizes are different");
   constexpr Coefficients coefficients5 = {0.88, 0.118, 18.8};
   constexpr double r25 = NAN;  // 1.0;
-  constexpr double sr5 = 0.06274639;
+  constexpr double residualStdDev5 = 0.06274639;
   assert_regression_is(x5, y5, std::size(x5), Model::Type::Logistic,
-                       coefficients5, NAN, r25, sr5);
+                       coefficients5, NAN, r25, residualStdDev5);
 
   constexpr double x6[] = {-0.1, -0.09, -0.08, -0.07, -0.06};
   constexpr double y6[] = {1.82e-6, 3.66e-6, 7.34e-6, 1.46e-5, 2.91e-5};
@@ -727,9 +738,9 @@ QUIZ_CASE(regression_logistic) {
   constexpr Coefficients coefficients6 = {
       0.00413634, 93.7908, 5.95219e-05};  // target : {0.5, 70.0, 0.001};
   constexpr double r26 = NAN;  // 0.902321;               // target : 1.0;
-  constexpr double sr6 = 1.27954e-06;
+  constexpr double residualStdDev6 = 1.27954e-06;
   assert_regression_is(x6, y6, std::size(x6), Model::Type::Logistic,
-                       coefficients6, NAN, r26, sr6);
+                       coefficients6, NAN, r26, residualStdDev6);
 
   constexpr double x7[] = {1.0, 3.0, 4.0, 6.0, 8.0};
   constexpr double y7[] = {4.0, 4.0, 0.0, 58.0, 5.0};
@@ -737,9 +748,9 @@ QUIZ_CASE(regression_logistic) {
   constexpr Coefficients coefficients7 = {3.58693e+65, 33.7498,
                                           31.4};  // No target
   constexpr double r27 = NAN;  // 0.4;  // No target (But should be positive)
-  constexpr double sr7 = 26.88173;
+  constexpr double residualStdDev7 = 26.88173;
   assert_regression_is(x7, y7, std::size(x7), Model::Type::Logistic,
-                       coefficients7, NAN, r27, sr7);
+                       coefficients7, NAN, r27, residualStdDev7);
 
   double x8[] = {1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996,
                  1997, 1998, 1999, 2000, 2001, 2002, 2003, 2009};
@@ -750,9 +761,9 @@ QUIZ_CASE(regression_logistic) {
   constexpr Coefficients coefficients8 = {1.88355e+227, 0.261513,
                                           41117.7};  // No target
   constexpr double r28 = NAN;
-  constexpr double sr8 = 922.457;
+  constexpr double residualStdDev8 = 922.457;
   assert_regression_is(x8, y8, std::size(x8), Model::Type::Logistic,
-                       coefficients8, NAN, r28, sr8);
+                       coefficients8, NAN, r28, residualStdDev8);
 
   for (double& x : x8) {
     x += 1000;
@@ -767,9 +778,9 @@ QUIZ_CASE(regression_logistic) {
   static_assert(std::size(x10) == std::size(y10), "Column sizes are different");
   constexpr Coefficients coefficients10 = {1.15976, 0.00148216, 540};
   constexpr double r210 = NAN;
-  constexpr double sr10 = NAN;  // Normal: Too few points
+  constexpr double residualStdDev10 = NAN;  // Normal: Too few points
   assert_regression_is(x10, y10, std::size(x10), Model::Type::Logistic,
-                       coefficients10, NAN, r210, sr10);
+                       coefficients10, NAN, r210, residualStdDev10);
 
   constexpr double x11[] = {1900, 1910, 1920, 1930, 1940, 1950,
                             1960, 1970, 1980, 1990, 2000};
@@ -779,9 +790,9 @@ QUIZ_CASE(regression_logistic) {
   static_assert(std::size(x11) == std::size(y11), "Column sizes are different");
   constexpr Coefficients coefficients11 = {1.56372e+14, 0.0160339, 7.99474e+08};
   constexpr double r211 = NAN;
-  constexpr double sr11 = 3.46263e+06;
+  constexpr double residualStdDev11 = 3.46263e+06;
   assert_regression_is(x11, y11, std::size(x11), Model::Type::Logistic,
-                       coefficients11, NAN, r211, sr11);
+                       coefficients11, NAN, r211, residualStdDev11);
 }
 
 // Testing column and regression calculation

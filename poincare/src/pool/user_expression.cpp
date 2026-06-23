@@ -307,6 +307,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
           .allowedDimensions = AllowedDimensions::PureScalar()},
       &reductionFailure);
   assert(!exp.isUninitialized());
+  COSTLY_ASSERT(Internal::Dimension::IsNonListScalar(exp));
   /* Unless reduction failed, ApproximationPolicy is optimized because dimension
    * has been checked during simplification. */
   return exp.approximateToRealScalar<T>(

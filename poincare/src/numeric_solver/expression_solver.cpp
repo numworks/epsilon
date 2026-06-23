@@ -54,8 +54,12 @@ void DiscontinuitySolver::findAndPushSolution(Coordinate2D<double> start,
   bool rightIsDiscontinuous =
       ExpressionDiscontinuityTester<double>{}.isDiscontinuousBetween(
           middle, right, m_evaluator.data());
-  // Note: If this assertion fails, escape and return no discontinuity.
-  assert(leftIsDiscontinuous || rightIsDiscontinuous);
+  /* For a highly oscillating function (example: y=ln(sin(x*sin(x)))) or other
+   * difficult cases, both sides can fail the discontinuity test. In that case,
+   * return no discontinuity. */
+  if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
+    return;
+  }
 
   /* If the function evaluates to NaN on both sides (e.g. f(x)=x^0*i, a
    * complex-valued function), no finite value exists to characterize the

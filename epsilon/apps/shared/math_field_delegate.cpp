@@ -115,16 +115,12 @@ template <typename T>
 T MathTextFieldDelegate::ParseInputFloatValue(const char* text) {
   return UserExpression::ParseAndSimplifyAndApproximateToRealScalar<T>(
       text,
-      SimplificationParameters{
-          .user =
-              {
-                  .complexFormat = SharedGlobalPrefs().complexFormat(),
-                  .angleUnit = SharedGlobalPrefs().angleUnit(),
-                  .context = App::app()->localContext(),
-              },
-          .projectionPolicy = {.symbolic =
-                                   SymbolicComputation::ReplaceDefinedSymbols},
-      });
+      {
+          .complexFormat = SharedGlobalPrefs().complexFormat(),
+          .angleUnit = SharedGlobalPrefs().angleUnit(),
+          .context = App::app()->localContext(),
+      },
+      SymbolicComputation::ReplaceDefinedSymbols);
 }
 
 template <typename T>

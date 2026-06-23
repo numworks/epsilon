@@ -286,11 +286,10 @@ T UserExpression::approximateToRealScalar(
 
 template <typename T>
 T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
-    const char* text,
-    const SimplificationParameters& simplificationParameters) {
+    const char* text, const UserParameters& userParameters,
+    SymbolicComputation symbolicPolicy) {
   static_assert(std::is_floating_point_v<T>);
-  UserExpression exp =
-      UserExpression::Parse(text, simplificationParameters.user.context);
+  UserExpression exp = UserExpression::Parse(text, userParameters.context);
   /* Return a NaN in the following cases:
    * - parsing failed (it returned an uninitialized expression)
    * - the expression is a store / unit conversion operation ('→' operator),
@@ -301,20 +300,17 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
     return NAN;
   }
   bool reductionFailure;
-  exp = exp.cloneAndSimplify(simplificationParameters, &reductionFailure);
+  exp = exp.cloneAndSimplify(
+      SimplificationParameters{
+          .user = userParameters,
+          .projectionPolicy = {.symbolic = symbolicPolicy},
+          .allowedDimensions = AllowedDimensions::PureScalar()},
+      &reductionFailure);
   assert(!exp.isUninitialized());
-  /* REFACTOR: SimplificationParameters could include a flag to only allow a
-   * non-list scalar dimension. When the dimension is computed at the projection
-   * step, we could early exit by replacing the expression by Undefined, instead
-   * of going on with simplification. */
-  if (!Internal::Dimension::IsNonListScalar(exp)) {
-    return NAN;
-  }
   /* Unless reduction failed, ApproximationPolicy is optimized because dimension
    * has been checked during simplification. */
   return exp.approximateToRealScalar<T>(
-      simplificationParameters.user,
-      ApproximationPolicy{.optimize = !reductionFailure});
+      userParameters, ApproximationPolicy{.optimize = !reductionFailure});
 }
 
 constexpr char ordinateName[] = {CodePoints::k_ordinateSymbol, 0};
@@ -725,8 +721,8 @@ template bool UserExpression::hasDefinedComplexApproximation<float>(
 template bool UserExpression::hasDefinedComplexApproximation<double>(
     AngleUnit, ComplexFormat, const SymbolContext&, double*, double*) const;
 template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-    float>(const char*, const SimplificationParameters&);
+    float>(const char*, const UserParameters&, SymbolicComputation);
 template double UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-    double>(const char*, const SimplificationParameters&);
+    double>(const char*, const UserParameters&, SymbolicComputation);
 
 }  // namespace Poincare

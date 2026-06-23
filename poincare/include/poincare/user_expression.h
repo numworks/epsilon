@@ -170,8 +170,9 @@ class UserExpression : public Expression {
   // Return NAN for all non real scalar expressions
   template <typename T>
   static T ParseAndSimplifyAndApproximateToRealScalar(
-      const char* text,
-      const SimplificationParameters& simplificationParameters);
+      const char* text, const UserParameters& userParameters,
+      SymbolicComputation symbolicPolicy =
+          SymbolicComputation::ReplaceAllSymbols);
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,

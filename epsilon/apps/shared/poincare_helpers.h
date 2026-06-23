@@ -104,14 +104,11 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   (void)numberOfChar;
   // Extract displayed value
   return Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-      T>(
-      buffer,
-      Poincare::SimplificationParameters{
-          .user = {.complexFormat = SharedGlobalPrefs().complexFormat(),
-                   .angleUnit = SharedGlobalPrefs().angleUnit(),
-                   .context = symbolContext},
-          .projectionPolicy = {
-              Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined}});
+      T>(buffer,
+         {.complexFormat = SharedGlobalPrefs().complexFormat(),
+          .angleUnit = SharedGlobalPrefs().angleUnit(),
+          .context = symbolContext},
+         Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 }
 
 // Conversions to float

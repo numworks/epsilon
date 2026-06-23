@@ -44,12 +44,10 @@ bool HypothesisEditableController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
       Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-          double>(
-          textField->draftText(),
-          Poincare::SimplificationParameters{
-              .user = {.complexFormat = SharedGlobalPrefs().complexFormat(),
-                       .angleUnit = SharedGlobalPrefs().angleUnit(),
-                       .context = Shared::GlobalContextAccessor::Context()}});
+          double>(textField->draftText(),
+                  {.complexFormat = SharedGlobalPrefs().complexFormat(),
+                   .angleUnit = SharedGlobalPrefs().angleUnit(),
+                   .context = Shared::GlobalContextAccessor::Context()});
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);

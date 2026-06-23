@@ -269,12 +269,19 @@ double TrigonometricRegression::modelScore(
   constexpr static double lambda_f = 0.1;
 
   assert(meanSquaredError >= 0.);
-  assert(m_dataMetrics.amplitude > OMG::Float::Epsilon<double>());
   assert(modelCoefficients[1] >= 0.);
-  assert(m_dataMetrics.frequency > OMG::Float::Epsilon<double>());
 
-  return (std::sqrt(meanSquaredError) / m_dataMetrics.amplitude) +
-         lambda_f * (modelCoefficients[1] / m_dataMetrics.frequency);
+  double epsilon = OMG::Float::Epsilon<double>();
+  // To prevent division by zero, use either amplitude, yDelta or 1
+  double amplitude =
+      m_dataMetrics.amplitude > epsilon
+          ? m_dataMetrics.amplitude
+          : (m_dataMetrics.yDelta > epsilon ? m_dataMetrics.yDelta : 1.0);
+  // To prevent division by zero, use either frequency, or 1
+  double frequency =
+      m_dataMetrics.frequency > epsilon ? m_dataMetrics.frequency : 1.0;
+  return (std::sqrt(meanSquaredError) / amplitude) +
+         lambda_f * (modelCoefficients[1] / frequency);
 }
 
 }  // namespace Poincare::Internal

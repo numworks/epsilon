@@ -661,6 +661,17 @@ QUIZ_CASE(regression_trigonometric_9) {
                                      Poincare::AngleUnit::Radian, sr);
 }
 
+QUIZ_CASE(regression_trigonometric_constant_y) {
+  constexpr double x[] = {0, 1, 2, 3, 4};
+  constexpr double y[] = {4, 4, 4, 4, 4};
+  static_assert(std::size(x) == std::size(y), "Column sizes are different");
+
+  constexpr Coefficients coefficients = {0.0, 1.5708, 1.5708, 4.0};
+  constexpr double sr = 0;
+  assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
+                                     Poincare::AngleUnit::Radian, sr);
+}
+
 QUIZ_CASE(regression_logistic) {
   /* This data was generated without the random error, otherwise it did not pass
    * the test. */

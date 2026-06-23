@@ -192,7 +192,6 @@ static CalculationResult compute(
                   .context = GlobalContextAccessor::Context(),
               },
           .projectionPolicy = {.symbolic = symbolicComputation},
-          .unitPolicy = UnitDisplay::MainOutput,
           .allowedDimensions = AllowedDimensions::Any()},
       CAS::Enabled());
   if (isStore) {

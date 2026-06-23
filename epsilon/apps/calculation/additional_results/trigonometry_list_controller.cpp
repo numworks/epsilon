@@ -31,7 +31,6 @@ void TrigonometryListController::computeAdditionalResults(
                .angleUnit = angleUnit(),
                .context = App::app()->localContext()},
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
-      .unitPolicy = UnitDisplay::MainOutput,
       .allowedDimensions = AllowedDimensions::Any()};
 
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =

@@ -48,10 +48,6 @@ enum class UnitDisplay : uint8_t {
   BasicSI,
   // Units are unchanged
   None,
-  // Expression is replaced by undef if it contains units
-  /* TODO: remove Forbidden from UnitDisplay, this will become a reduction
-   * parameter (UnitDisplay is a beautification parameter) */
-  Forbidden,
 };
 
 }  // namespace Poincare

@@ -280,7 +280,6 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to(
       "ln(2/2)_°", "0×_°",
       SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree},
-                               .unitPolicy = UnitDisplay::MainOutput,
                                .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "5×_°-5×_°", "0×_°",
@@ -310,12 +309,10 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to(
       "π×π×_rad", "180×π×_°",
       SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree},
-                               .unitPolicy = UnitDisplay::MainOutput,
                                .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "1×π×_°", "π×_°",
       SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree},
-                               .unitPolicy = UnitDisplay::MainOutput,
                                .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to("π×π×_rad×_m", "9.8696044010894×_rad×_m");
   simplifies_to("π×π×_rad×_rad", "π^2×_rad^2");
@@ -405,7 +402,6 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
   simplifies_to(
       "-5_cm→_m", "-0.05×_m",
       SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = Poincare::UnitDisplay::MainOutput,
                                .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to("10_m/_s→_km", "undef");
   simplifies_to("_hplanck→_eV×_s", "4.1356676969239ᴇ-15×_s×_eV");
@@ -418,7 +414,6 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
           .user = {.context = symbolStore},
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceAllSymbols},
-          .unitPolicy = UnitDisplay::MainOutput,
           .allowedDimensions = AllowedDimensions::Any()});
 }
 
@@ -521,7 +516,6 @@ QUIZ_CASE(pcj_simplification_unit_imperial) {
   simplifies_to(
       "2×π×_cK", "6.2831853071796×_cK",
       SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::MainOutput,
                                .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "_lgtn", "1.0160469088×_t",
@@ -743,6 +737,5 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
       SimplificationParameters{
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceAllSymbols},
-          .unitPolicy = UnitDisplay::MainOutput,
           .allowedDimensions = AllowedDimensions::Any()});
 }

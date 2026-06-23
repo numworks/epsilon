@@ -139,7 +139,6 @@ bool ProjectToBestUnits(Tree* e, Dimension dimension,
       assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);
       break;
-    case UnitDisplay::Forbidden:
     case UnitDisplay::None:
       OMG_UNREACHABLE;
   }

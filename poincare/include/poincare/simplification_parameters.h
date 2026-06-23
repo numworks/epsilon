@@ -19,14 +19,14 @@ struct SimplificationParameters {
   UserParameters user = {};
   ProjectionPolicy projectionPolicy = {};
   ReductionPolicy reductionPolicy = {};
-  UnitDisplay unitPolicy = UnitDisplay::Forbidden;
+  UnitDisplay unitPolicy = UnitDisplay::MainOutput;
   AllowedDimensions allowedDimensions = AllowedDimensions::AnyNoUnit();
 };
 
 struct BeautificationParameters {
   UserParameters user = {};
   ReductionPolicy reductionPolicy = {};
-  UnitDisplay unitPolicy = UnitDisplay::Forbidden;
+  UnitDisplay unitPolicy = UnitDisplay::MainOutput;
 };
 
 struct UnitParameters {
@@ -39,12 +39,6 @@ struct UnitParameters {
 
 inline ProjectionParameters ToProjectionParameters(
     const SimplificationParameters& simplificationParameters) {
-  /* UnitDisplay::Forbidden is redundant with the unit part of
-   * AllowedDimensions. TODO: remove Forbidden from the UnitDisplay enum, that
-   * will only represent how units are represented when they are allowed. */
-  assert(simplificationParameters.allowedDimensions.allows(
-             Internal::DimensionType::Unit) ==
-         (simplificationParameters.unitPolicy != UnitDisplay::Forbidden));
   return ProjectionParameters{
       .user = simplificationParameters.user,
       .allowedDimensions = simplificationParameters.allowedDimensions,

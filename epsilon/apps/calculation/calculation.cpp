@@ -290,7 +290,6 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
                SimplificationParameters{
                    .user = {.complexFormat = complexFormat,
                             .angleUnit = angleUnit},
-                   .unitPolicy = UnitDisplay::MainOutput,
                    .allowedDimensions = AllowedDimensions::Any()})
                ? EqualSign::Equal
                : EqualSign::Approximation;

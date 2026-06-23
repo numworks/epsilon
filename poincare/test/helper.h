@@ -59,48 +59,39 @@ constexpr Poincare::UserParameters k_gradianPolarParams = {
 constexpr Poincare::SimplificationParameters k_realSimplification =
     Poincare::SimplificationParameters{
         .user = k_realParams,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 constexpr Poincare::SimplificationParameters k_cartesianSimplification =
     Poincare::SimplificationParameters{
         .user = k_cartesianParams,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 constexpr Poincare::SimplificationParameters k_polarSimplification =
     Poincare::SimplificationParameters{
         .user = k_polarParams,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 
 constexpr Poincare::SimplificationParameters k_degreeSimplification =
     Poincare::SimplificationParameters{
         .user = k_degreeParams,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 constexpr Poincare::SimplificationParameters k_gradianSimplification =
     Poincare::SimplificationParameters{
         .user = k_gradianParams,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 constexpr Poincare::SimplificationParameters k_degreeCartesianSimplification =
     Poincare::SimplificationParameters{
         .user = k_degreeCartesianParams,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 constexpr Poincare::SimplificationParameters k_gradianCartesianSimplification =
     Poincare::SimplificationParameters{
         .user = k_gradianCartesianParams,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 constexpr Poincare::SimplificationParameters k_degreePolarSimplification =
     Poincare::SimplificationParameters{
         .user = k_degreePolarParam,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 constexpr Poincare::SimplificationParameters k_gradianPolarSimplification =
     Poincare::SimplificationParameters{
         .user = k_gradianPolarParams,
-        .unitPolicy = Poincare::UnitDisplay::MainOutput,
         .allowedDimensions = Poincare::AllowedDimensions::Any()};
 
 constexpr Poincare::SimplificationParameters k_keepAllSymbolsParams = {

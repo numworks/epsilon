@@ -16,7 +16,7 @@ constexpr uint8_t TypeFlag(Internal::DimensionType type) {
 }
 }  // namespace AllowedDimensionsInternal
 
-/* Precondition on an expression's dimension. The class holds on one byte and
+/* Precondition on an expression's dimension. The class fits on one byte and
  * uses bit fields:
  *  - one bit per DimensionType for the allowed element types,
  *  - one bit for whether being a list is allowed.

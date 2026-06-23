@@ -175,8 +175,7 @@ Tree* Representative::pushReducedRatioExpression() const {
   /* Representative's ratio expressions are quite simple and not dependent on
    * any context. */
   Simplification::ProjectAndReduce(
-      result, SimplificationParameters{.reductionPolicy = {.advanced = false},
-                                       .unitPolicy = UnitDisplay::MainOutput});
+      result, SimplificationParameters{.reductionPolicy = {.advanced = false}});
   return result;
 }
 

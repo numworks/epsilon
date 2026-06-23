@@ -14,6 +14,7 @@ enum class DimensionType : uint8_t {
   Point,
   None,
 };
+// Note: AllowedDimensions should be updated if DimensionType changes
 
 struct MatrixDimension {
   uint8_t rows;

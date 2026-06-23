@@ -195,9 +195,7 @@ ToSystemOutput ToSystem(Tree* e,
                         const ProjectionParameters& projectionParameters) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionParameters);
-  /* 2 - Check and compute expression's dimension
-   * Note: dimension computation can only be done after having replaced symbols
-   * and functions */
+  /* 2 - Check and compute expression's dimension */
   Dimension dim =
       CheckAndComputeDimension(e, projectionParameters.allowUnits, changed);
   /* 3 - Project */

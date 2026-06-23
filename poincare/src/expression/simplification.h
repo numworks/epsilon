@@ -1,5 +1,6 @@
 #pragma once
 
+#include <poincare/allowed_dimensions.h>
 #include <poincare/src/memory/tree.h>
 
 #include "projection.h"
@@ -19,7 +20,8 @@ bool BeautifyReduced(Tree* e,
 bool PrepareForProjection(Tree* e,
                           const ProjectionParameters& projectionParameters);
 
-Dimension CheckAndComputeDimension(Tree* e, bool allowUnits, bool& hasChanged);
+Dimension CheckAndComputeDimension(Tree* e, AllowedDimensions allowedDimensions,
+                                   bool& hasChanged);
 
 struct ToSystemOutput {
   bool changed;

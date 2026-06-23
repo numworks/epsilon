@@ -1,5 +1,6 @@
 #pragma once
 
+#include "allowed_dimensions.h"
 #include "preferences.h"
 #include "simplification_policies.h"
 #include "user_parameters.h"
@@ -10,7 +11,7 @@ struct ProjectionParameters {
   /* UnitFormat isn't needed for projection but it's more convenient to reuse
    * the same struct. */
   UserParameters user = {};
-  bool allowUnits = false;
+  AllowedDimensions allowedDimensions = AllowedDimensions::AnyNoUnit();
   ProjectionPolicy projectionPolicy = {};
 };
 
@@ -19,6 +20,7 @@ struct SimplificationParameters {
   ProjectionPolicy projectionPolicy = {};
   ReductionPolicy reductionPolicy = {};
   UnitDisplay unitPolicy = UnitDisplay::Forbidden;
+  AllowedDimensions allowedDimensions = AllowedDimensions::AnyNoUnit();
 };
 
 struct BeautificationParameters {
@@ -37,10 +39,15 @@ struct UnitParameters {
 
 inline ProjectionParameters ToProjectionParameters(
     const SimplificationParameters& simplificationParameters) {
+  /* UnitDisplay::Forbidden is redundant with the unit part of
+   * AllowedDimensions. TODO: remove Forbidden from the UnitDisplay enum, that
+   * will only represent how units are represented when they are allowed. */
+  assert(simplificationParameters.allowedDimensions.allows(
+             Internal::DimensionType::Unit) ==
+         (simplificationParameters.unitPolicy != UnitDisplay::Forbidden));
   return ProjectionParameters{
       .user = simplificationParameters.user,
-      .allowUnits =
-          (simplificationParameters.unitPolicy != UnitDisplay::Forbidden),
+      .allowedDimensions = simplificationParameters.allowedDimensions,
       .projectionPolicy = simplificationParameters.projectionPolicy};
 }
 
@@ -48,8 +55,6 @@ inline ProjectionParameters ToProjectionParameters(
     const BeautificationParameters& beautificationParameters) {
   return ProjectionParameters{
       .user = beautificationParameters.user,
-      .allowUnits =
-          (beautificationParameters.unitPolicy != UnitDisplay::Forbidden),
       .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols}};
 }
 

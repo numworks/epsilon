@@ -166,7 +166,10 @@ Tree* parse_and_reduce(const char* input, bool beautify, bool allowUnits) {
                .user = {.complexFormat = Poincare::ComplexFormat::Real,
                         .angleUnit = Poincare::AngleUnit::Radian},
                .unitPolicy = allowUnits ? Poincare::UnitDisplay::MainOutput
-                                        : Poincare::UnitDisplay::Forbidden},
+                                        : Poincare::UnitDisplay::Forbidden,
+               .allowedDimensions =
+                   allowUnits ? Poincare::AllowedDimensions::Any()
+                              : Poincare::AllowedDimensions::AnyNoUnit()},
            beautify);
   return e;
 }

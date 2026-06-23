@@ -211,7 +211,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
                .angleUnit = angleUnit,
                .context = symbolContext},
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
-      .unitPolicy = UnitDisplay::MainOutput};
+      .unitPolicy = UnitDisplay::MainOutput,
+      .allowedDimensions = AllowedDimensions::Any()};
 
   /* TODO: Second Simplify could be avoided by calling
    * intermediate steps, and handle units right after projection. */

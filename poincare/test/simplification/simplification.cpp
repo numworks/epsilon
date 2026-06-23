@@ -818,7 +818,8 @@ QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
                .context = symbolStore},
       .projectionPolicy = {.symbolic =
                                SymbolicComputation::ReplaceDefinedSymbols},
-      .unitPolicy = UnitDisplay::MainOutput};
+      .unitPolicy = UnitDisplay::MainOutput,
+      .allowedDimensions = Poincare::AllowedDimensions::Any()};
   simplifies_to("abc", "a×b×c", parameters, false);
   simplifies_to("\"abc\"", "\"abc\"", parameters, false);
   store("2→a", symbolStore);

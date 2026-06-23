@@ -192,7 +192,8 @@ static CalculationResult compute(
                   .context = GlobalContextAccessor::Context(),
               },
           .projectionPolicy = {.symbolic = symbolicComputation},
-          .unitPolicy = UnitDisplay::MainOutput},
+          .unitPolicy = UnitDisplay::MainOutput,
+          .allowedDimensions = AllowedDimensions::Any()},
       CAS::Enabled());
   if (isStore) {
     /*  Restore store structure in the exact output. The store operation itself

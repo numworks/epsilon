@@ -177,14 +177,16 @@ bool PrepareForProjection(Tree* e,
   return changed;
 }
 
-Dimension CheckAndComputeDimension(Tree* e, bool allowUnits, bool& hasChanged) {
+Dimension CheckAndComputeDimension(Tree* e, AllowedDimensions allowedDimensions,
+                                   bool& hasChanged) {
   // No need to pass SymbolContext as variables have already been replaced
   if (!Dimension::DeepCheck(e)) {
     e->cloneTreeOverTree(KUndefUnhandledDimension);
     hasChanged = true;
   }
   Dimension dimension = Dimension::Get(e);
-  if (!allowUnits && dimension.isUnit()) {
+  if (!allowedDimensions.allows(dimension.type) ||
+      (Dimension::IsList(e) && !allowedDimensions.listAllowed())) {
     e->cloneTreeOverTree(KUndefUnhandledDimension);
     hasChanged = true;
   }
@@ -195,9 +197,9 @@ ToSystemOutput ToSystem(Tree* e,
                         const ProjectionParameters& projectionParameters) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionParameters);
-  /* 2 - Check and compute expression's dimension */
-  Dimension dim =
-      CheckAndComputeDimension(e, projectionParameters.allowUnits, changed);
+  /* 2 - Check and compute expression's dimension  */
+  Dimension dim = CheckAndComputeDimension(
+      e, projectionParameters.allowedDimensions, changed);
   /* 3 - Project */
   changed =
       Projection::DeepSystemProject(e, projectionParameters, dim) || changed;
@@ -257,7 +259,8 @@ bool CanBeSystem(const Tree* e) {
 #if POINCARE_COMPLEX
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
   ProjectionParameters projectionParameters = {
-      .user = {.complexFormat = ComplexFormat::Cartesian}, .allowUnits = true};
+      .user = {.complexFormat = ComplexFormat::Cartesian},
+      .allowedDimensions = AllowedDimensions::Any()};
 #else
   /* Pow is used both in UserExpressions to represent all the types of powers
    * and in system for some specific powers (simple integral powers for
@@ -266,7 +269,8 @@ bool CanBeSystem(const Tree* e) {
    * CanBeSystem while they are produced by the reduction.
    * TODO: introduce a PowUser node similar to LnUser to clarify the situation ?
    */
-  ProjectionParameters projectionParameters = {.allowUnits = true};
+  ProjectionParameters projectionParameters = {.allowedDimensions =
+                                                   AllowedDimensions::Any()};
   for (Tree* d : c->selfAndDescendants()) {
     if (d->isPow()) {
       d->cloneNodeOverNode(KPowReal);

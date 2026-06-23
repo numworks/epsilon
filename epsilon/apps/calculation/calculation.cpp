@@ -287,9 +287,11 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
     return Poincare::IsCalculationOutputStrictEquality(
                exactDisplayOutput, approximateDisplayOutput,
                SharedGlobalPrefs().numberOfSignificantDigits(),
-               SimplificationParameters{.user = {.complexFormat = complexFormat,
-                                                 .angleUnit = angleUnit},
-                                        .unitPolicy = UnitDisplay::MainOutput})
+               SimplificationParameters{
+                   .user = {.complexFormat = complexFormat,
+                            .angleUnit = angleUnit},
+                   .unitPolicy = UnitDisplay::MainOutput,
+                   .allowedDimensions = AllowedDimensions::Any()})
                ? EqualSign::Equal
                : EqualSign::Approximation;
   } else {

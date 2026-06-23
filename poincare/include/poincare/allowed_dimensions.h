@@ -11,6 +11,7 @@ namespace AllowedDimensionsInternal {
  * technical reasons (the constexpr static members of AllowedDimensions need to
  * be initialized by a constant expression)  */
 constexpr uint8_t TypeFlag(Internal::DimensionType type) {
+  static_assert(sizeof(Internal::DimensionType) == 1);
   return 1 << static_cast<uint8_t>(type);
 }
 }  // namespace AllowedDimensionsInternal
@@ -59,5 +60,7 @@ class AllowedDimensions {
 
   uint8_t m_bits;
 };
+
+static_assert(sizeof(AllowedDimensions) == 1);
 
 }  // namespace Poincare

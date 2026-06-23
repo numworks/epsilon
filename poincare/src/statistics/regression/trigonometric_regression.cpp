@@ -222,9 +222,9 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
     modelCoefficients[1] = 0.0;
     modelCoefficients[2] = 0.0;
   } else {
-    /* Not expected when modelCoefficients[0] isn't null. If this happens, A
-     * and C should be set to 0, and D should be set to D + A*sin(C), taking
-     * piInAngleUnit into account. */
+    /* B should not be null when A isn't. If this happens, A, B and C should be
+     * set to 0, and D should be set to D + A*sin(C), taking piInAngleUnit into
+     * account. */
     assert(std::abs(modelCoefficients[1]) > OMG::Float::Epsilon<double>());
 
     // A must be positive.

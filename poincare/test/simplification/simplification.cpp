@@ -373,7 +373,7 @@ QUIZ_CASE(pcj_simplification_percent) {
   simplifies_to("-25%", "-25/100");
   simplifies_to("2↗30%", "2×(1+30/100)");
   simplifies_to("-2-30%", "(-2)×(1-30/100)");
-  simplifies_to("x-30%", "x×(1-30/100)", SimplificationParameters{});
+  simplifies_to("x-30%", "x×(1-30/100)", k_realSimplification);
   simplifies_to("20%", "20/100");
   simplifies_to("20%%", "(20/100)/100");
   simplifies_to("80*20%", "80×20/100");
@@ -514,6 +514,7 @@ QUIZ_CASE(pcj_simplification_piecewise) {
   simplifies_to("piecewise(-x/x,x>0,0)", "piecewise(dep(-1,{x^0}),x>0,0)");
   simplifies_to("piecewise(3,4>0,2,2<a)", "undef",
                 SimplificationParameters{
+                    .user = {.angleUnit = Radian},
                     .projectionPolicy = {
                         .symbolic = SymbolicComputation::ReplaceAllSymbols}});
   simplifies_to("diff(piecewise(1,x>1,2,x>=2,3,x<3,4,x<=4,7),x,x)",
@@ -546,7 +547,7 @@ QUIZ_CASE(pcj_simplification_function) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
   SimplificationParameters simplificationParameters = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols}};
   simplifies_to("f(x)", "f(x)", simplificationParameters);
   simplifies_to("f(2+2)", "f(4)");
@@ -556,7 +557,7 @@ QUIZ_CASE(pcj_simplification_function) {
 QUIZ_CASE(pcj_simplification_variable_replace) {
   PoincareTest::SymbolStore symbolStore;
   SimplificationParameters simplificationParameters = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic =
                                SymbolicComputation::ReplaceDefinedSymbols}};
 
@@ -579,7 +580,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   // TODO_PCJ: implement list access and list slice on lists of points
 
   SimplificationParameters simplificationParameters2 = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
   simplifies_to("y+2", "6", simplificationParameters2);
   simplifies_to("y+x", "undef", simplificationParameters2);
@@ -663,7 +664,7 @@ QUIZ_CASE(pcj_simplification_undef) {
 
 QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
   SimplificationParameters parameters = {
-      .user = {.complexFormat = ComplexFormat::Real},
+      .user = {.complexFormat = ComplexFormat::Real, .angleUnit = Radian},
       .reductionPolicy = {.target = ReductionTarget::System}};
   projects_and_reduces_to("(2+x)^2", "(x+2)^2", parameters);
   projects_and_reduces_for_analysis_to("(2+x)^2", "x^2+4×x+4", parameters);
@@ -685,7 +686,7 @@ QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
 QUIZ_CASE(pcj_simplification_user_function) {
   PoincareTest::SymbolStore symbolStore;
   SimplificationParameters parameters = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic =
                                SymbolicComputation::ReplaceDefinedSymbols}};
   // User defined function
@@ -701,7 +702,7 @@ QUIZ_CASE(pcj_simplification_user_function) {
 QUIZ_CASE(pcj_simplification_context) {
   PoincareTest::SymbolStore symbolStore;
   SimplificationParameters parameters = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic =
                                SymbolicComputation::ReplaceDefinedSymbols}};
 
@@ -854,12 +855,12 @@ QUIZ_CASE(pcj_simplification_capped) {
   (1_e)->cloneTree();
 
   Tree* simplifiedAlmostBigTree = almostBigTree->cloneTree();
-  quiz_assert(Simplification::Simplify(simplifiedAlmostBigTree,
-                                       SimplificationParameters()));
+  quiz_assert(
+      Simplification::Simplify(simplifiedAlmostBigTree, k_realSimplification));
   quiz_assert(simplifiedAlmostBigTree->treeIsIdenticalTo(1_e));
   simplifiedAlmostBigTree->removeTree();
 
-  quiz_assert(!Simplification::Simplify(bigTree, SimplificationParameters()));
+  quiz_assert(!Simplification::Simplify(bigTree, k_realSimplification));
 #endif
 }
 

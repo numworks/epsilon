@@ -227,7 +227,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   // TODO: should return 1×_m+1×_cm
   simplifies_to(
       "1_m+1_cm", "1×_cm+1×_m",
-      SimplificationParameters{.unitPolicy = UnitDisplay::None,
+      SimplificationParameters{.user = {.angleUnit = Radian},
+                               .unitPolicy = UnitDisplay::None,
                                .allowedDimensions = AllowedDimensions::Any()});
 
   // Volumes
@@ -236,7 +237,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1_mL+1_m^3", "1.000001×_m^3");
   simplifies_to(
       "4_tsp", "1.3333333333333×_tbsp",
-      SimplificationParameters{.unitPolicy = UnitDisplay::AutomaticImperial,
+      SimplificationParameters{.user = {.angleUnit = Radian},
+                               .unitPolicy = UnitDisplay::AutomaticImperial,
                                .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to("3_L*_c", "899377.374×_m^4×_s^(-1)");
 
@@ -271,7 +273,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("3h300min", "28800×_s");
   simplifies_to(
       "3h300min", "8×_h",
-      SimplificationParameters{.unitPolicy = UnitDisplay::AutomaticMetric,
+      SimplificationParameters{.user = {.angleUnit = Radian},
+                               .unitPolicy = UnitDisplay::AutomaticMetric,
                                .allowedDimensions = AllowedDimensions::Any()});
 
   // 0
@@ -289,11 +292,13 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0×0×2×(_km + _m)×_km×_s", "0×_m^2×_s");
   simplifies_to(
       "0×_°C", "0×_°C",
-      SimplificationParameters{.unitPolicy = UnitDisplay::None,
+      SimplificationParameters{.user = {.angleUnit = Radian},
+                               .unitPolicy = UnitDisplay::None,
                                .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "6×0×_°F", "0×_°F",
-      SimplificationParameters{.unitPolicy = UnitDisplay::None,
+      SimplificationParameters{.user = {.angleUnit = Radian},
+                               .unitPolicy = UnitDisplay::None,
                                .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to("0×_K", "0×_K");
   simplifies_to("0×_K×_s×_s×(_g+4×_kg)", "0×_s^2×_kg×_K");
@@ -326,6 +331,7 @@ QUIZ_CASE(pcj_simplification_unit) {
 
 QUIZ_CASE(pcj_simplification_unit_automatic) {
   SimplificationParameters parametersMetric = {
+      .user = {.angleUnit = Radian},
       .unitPolicy = UnitDisplay::AutomaticMetric,
       .allowedDimensions = AllowedDimensions::Any()};
   // BestRepresentative
@@ -348,6 +354,7 @@ QUIZ_CASE(pcj_simplification_unit_automatic) {
   simplifies_to("180_MΩ", "180×_MΩ", parametersMetric);
   simplifies_to("180_MH", "180×_MH", parametersMetric);
   SimplificationParameters parametersImperial = {
+      .user = {.angleUnit = Radian},
       .unitPolicy = UnitDisplay::AutomaticImperial,
       .allowedDimensions = AllowedDimensions::Any()};
   simplifies_to("1×_A×_kg", "2.2046226218488×_A×_lb", parametersImperial);
@@ -355,6 +362,7 @@ QUIZ_CASE(pcj_simplification_unit_automatic) {
 
 QUIZ_CASE(pcj_simplification_unit_basicSI) {
   SimplificationParameters parametersBasicSI = {
+      .user = {.angleUnit = Radian},
       .unitPolicy = UnitDisplay::BasicSI,
       .allowedDimensions = AllowedDimensions::Any()};
   simplifies_to("_km", "1000×_m", parametersBasicSI);
@@ -401,8 +409,9 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
   simplifies_to("-5_cm→_m", "-0.05×_m");
   simplifies_to(
       "-5_cm→_m", "-0.05×_m",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to("10_m/_s→_km", "undef");
   simplifies_to("_hplanck→_eV×_s", "4.1356676969239ᴇ-15×_s×_eV");
 
@@ -411,7 +420,7 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
   simplifies_to(
       "a→g", "2000×_g",
       SimplificationParameters{
-          .user = {.context = symbolStore},
+          .user = {.angleUnit = Radian, .context = symbolStore},
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceAllSymbols},
           .allowedDimensions = AllowedDimensions::Any()});
@@ -419,6 +428,7 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
 
 QUIZ_CASE(pcj_simplification_unit_decomposition) {
   SimplificationParameters parametersUnitDecompositionMetric = {
+      .user = {.angleUnit = Radian},
       .unitPolicy = UnitDisplay::Decomposition,
       .allowedDimensions = AllowedDimensions::Any()};
   simplifies_to("123_m", "undef", parametersUnitDecompositionMetric);
@@ -436,7 +446,7 @@ QUIZ_CASE(pcj_simplification_unit_decomposition) {
   simplifies_to("35_gon", "31×_°+30×_'", parametersUnitDecompositionMetric);
 
   SimplificationParameters parametersUnitDecompositionImperial = {
-      .user = {.unitFormat = UnitFormat::Imperial},
+      .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
       .unitPolicy = UnitDisplay::Decomposition,
       .allowedDimensions = AllowedDimensions::Any()};
   simplifies_to("1241_yd", "1241×_yd", parametersUnitDecompositionImperial);
@@ -464,6 +474,7 @@ QUIZ_CASE(pcj_simplification_unit_decomposition) {
 
 QUIZ_CASE(pcj_simplification_unit_equivalent) {
   SimplificationParameters parametersUnitEquivalentMetric = {
+      .user = {.angleUnit = Radian},
       .unitPolicy = UnitDisplay::Equivalent,
       .allowedDimensions = AllowedDimensions::Any()};
   simplifies_to("3_s", "undef", parametersUnitEquivalentMetric);
@@ -487,7 +498,7 @@ QUIZ_CASE(pcj_simplification_unit_equivalent) {
                 parametersUnitEquivalentMetric);
 
   SimplificationParameters parametersUnitEquivalentImperial = {
-      .user = {.unitFormat = UnitFormat::Imperial},
+      .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
       .unitPolicy = UnitDisplay::Equivalent,
       .allowedDimensions = AllowedDimensions::Any()};
   simplifies_to("0.3_acre", "13068×_ft^2", parametersUnitEquivalentImperial);
@@ -510,53 +521,63 @@ QUIZ_CASE(pcj_simplification_unit_equivalent) {
 QUIZ_CASE(pcj_simplification_unit_imperial) {
   simplifies_to(
       "1609.344_m", "1.609344×_km",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticMetric,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticMetric,
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "2×π×_cK", "6.2831853071796×_cK",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "_lgtn", "1.0160469088×_t",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticMetric,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticMetric,
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "_lgtn", "1.12×_shtn",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticImperial,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticImperial,
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "_in", "2.54×_cm",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticMetric,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticMetric,
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "_in", "1×_in",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticImperial,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticImperial,
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "_ft", "1×_ft",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticImperial,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticImperial,
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "_yd", "1×_yd",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticImperial,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticImperial,
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "1_qt", "1×_qt",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticImperial,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticImperial,
+          .allowedDimensions = AllowedDimensions::Any()});
   simplifies_to(
       "1_qt", "9.46352946×_dL",
-      SimplificationParameters{.user = {.unitFormat = UnitFormat::Imperial},
-                               .unitPolicy = UnitDisplay::AutomaticMetric,
-                               .allowedDimensions = AllowedDimensions::Any()});
+      SimplificationParameters{
+          .user = {.angleUnit = Radian, .unitFormat = UnitFormat::Imperial},
+          .unitPolicy = UnitDisplay::AutomaticMetric,
+          .allowedDimensions = AllowedDimensions::Any()});
 }
 
 QUIZ_CASE(pcj_simplification_unit_undef) {
@@ -735,6 +756,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to(
       "(_A×x)^2×_s", "undef",
       SimplificationParameters{
+          .user = {.angleUnit = Radian},
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceAllSymbols},
           .allowedDimensions = AllowedDimensions::Any()});

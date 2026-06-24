@@ -56,7 +56,8 @@ static void assert_rational_approximation_is(int numerator, int denominator,
   const Internal::Tree* rational =
       Internal::Rational::Push(numerator, denominator);
   Layout l = AdditionalResultsHelper::CreateRationalApproximation(
-      SystemExpression::Builder(rational), BeautificationParameters{});
+      SystemExpression::Builder(rational),
+      BeautificationParameters{.user = {.angleUnit = AngleUnit::Radian}});
   if (!approximate) {
     quiz_assert(l.isUninitialized());
   } else {

@@ -46,9 +46,10 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(-1008/6895)", "undef");
   simplifies_to("factor(floor(x))", "undef");
   simplifies_to("factor(10007^2)", "undef");
-  simplifies_to("factor(42*3)", "2×3^2×7",
-                SimplificationParameters{
-                    .user = {.complexFormat = ComplexFormat::Polar}});
+  simplifies_to(
+      "factor(42*3)", "2×3^2×7",
+      SimplificationParameters{.user = {.complexFormat = ComplexFormat::Polar,
+                                        .angleUnit = Radian}});
   simplifies_to("factor(i)", "undef", k_cartesianSimplification);
   // Factor is only allowed at the root
   simplifies_to("asin(factor(-2)b)", "undef");

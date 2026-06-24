@@ -52,7 +52,7 @@ struct FastSolve {
 template <typename SolverPolicy = solver_policies::ExactSolve>
 void assert_roots_are(const char* coefficients, const char* expectedRoots) {
   Poincare::SimplificationParameters simplificationParameters = {
-      .user = {.complexFormat = Cartesian}};
+      .user = {.complexFormat = Cartesian, .angleUnit = Radian}};
   process_tree_and_compare(
       coefficients, expectedRoots,
       [](Tree* tree,

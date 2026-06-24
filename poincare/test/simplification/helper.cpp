@@ -37,8 +37,9 @@ void reduces_to_tree(const Tree* input, const Tree* output) {
   Tree* reduced = input->cloneTree();
   simplify(
       reduced,
-      SimplificationParameters{.user = {.complexFormat = ComplexFormat::Real},
-                               .allowedDimensions = AllowedDimensions::Any()},
+      SimplificationParameters{
+          .user = {.complexFormat = ComplexFormat::Real, .angleUnit = Radian},
+          .allowedDimensions = AllowedDimensions::Any()},
       false);
   assert_trees_are_equal(reduced, output);
   reduced->removeTree();

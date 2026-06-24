@@ -53,7 +53,8 @@ void assert_beautifies_serializes_to(
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal) {
   Tree* clone = rational->cloneTree();
   // Serialization is supposed to be performed on beautified expressions
-  Beautification::DeepBeautify(clone, Poincare::BeautificationParameters{});
+  Beautification::DeepBeautify(
+      clone, Poincare::BeautificationParameters{.user = {.angleUnit = Radian}});
   assert_expression_serializes_to(clone, serialization, mode,
                                   numberOfSignificantDigits, base);
   clone->removeTree();

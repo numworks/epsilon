@@ -122,7 +122,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
   SimplificationParameters parameters = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic =
                                Poincare::SymbolicComputation::KeepAllSymbols},
   };
@@ -193,7 +193,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   PoincareTest::store("f'(x)→g(x)", symbolStore);
   PoincareTest::store("diff(f(x),x,x)→h(x)", symbolStore);
   SimplificationParameters parametersWithFunctions = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy =
           {.symbolic = Poincare::SymbolicComputation::ReplaceDefinedFunctions},
   };
@@ -206,11 +206,13 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to(
       "sum(n,n,1,5)", "15",
       SimplificationParameters{
+          .user = {.angleUnit = Radian},
           .projectionPolicy = {
               .symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols}});
   simplifies_to(
       "sum(1/n,n,1,2)", "3/2",
       SimplificationParameters{
+          .user = {.angleUnit = Radian},
           .projectionPolicy = {
               .symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols}});
 }

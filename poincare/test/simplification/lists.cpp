@@ -23,6 +23,7 @@ QUIZ_CASE(pcj_simplification_list_bubble_up) {
 
 QUIZ_CASE(pcj_simplification_list) {
   Poincare::SimplificationParameters parametersReplaceAll = {
+      .user = {.angleUnit = Radian},
       .projectionPolicy = {
           .symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols}};
   simplifies_to("{1,2}+3", "{4,5}");
@@ -131,7 +132,7 @@ QUIZ_CASE(pcj_simplification_list) {
     // Access to an element
     PoincareTest::SymbolStore symbolStore;
     Poincare::SimplificationParameters parametersReplaceDefined = {
-        .user = {.context = symbolStore},
+        .user = {.angleUnit = Radian, .context = symbolStore},
         .projectionPolicy =
             {.symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols},
     };
@@ -269,7 +270,7 @@ QUIZ_CASE(pcj_simplification_list) {
     simplifies_to(
         "L{2}", "{6}",
         Poincare::SimplificationParameters{
-            .user = {.context = symbolStore},
+            .user = {.angleUnit = Radian, .context = symbolStore},
             .projectionPolicy = {.symbolic = Poincare::SymbolicComputation::
                                      ReplaceDefinedSymbols}});  // L*{2}
   }

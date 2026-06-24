@@ -819,7 +819,8 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
 void assert_sign_sets_to(const char* input,
                          NonStrictSign isPositive = NonStrictSign::Positive) {
   Tree* e = parse(input);
-  Simplification::ProjectAndReduce(e, SimplificationParameters{});
+  Simplification::ProjectAndReduce(
+      e, SimplificationParameters{.user = {.angleUnit = Radian}});
   ComplexProperties eSign = GetComplexProperties(e);
   bool eIsPositive = OMG::TrooleanToBool(
       OMG::TrooleanAnd(eSign.imagSign().trooleanIsNull(),

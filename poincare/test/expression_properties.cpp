@@ -21,7 +21,8 @@ void assert_is_number(const char* input, bool isNumber = true) {
 
 void assert_reduced_is_number(const char* input, bool isNumber = true) {
   UserExpression e1 = UserExpression::Builder(parse(input));
-  SystemExpression e2 = e1.cloneAndReduce(SimplificationParameters{});
+  SystemExpression e2 = e1.cloneAndReduce(
+      SimplificationParameters{.user = {.angleUnit = Radian}});
   quiz_assert(!e2.isUndefinedFailedSimplification());
   quiz_assert_print_if_failure(e2.isConstantNumber() == isNumber, input);
 }
@@ -62,7 +63,8 @@ QUIZ_CASE(pcj_properties_is_number) {
 
 void assert_reduced_is_rational(const char* input, bool isRational = true) {
   UserExpression e1 = UserExpression::Builder(parse(input));
-  SystemExpression e2 = e1.cloneAndReduce(SimplificationParameters{});
+  SystemExpression e2 = e1.cloneAndReduce(
+      SimplificationParameters{.user = {.angleUnit = Radian}});
   quiz_assert(!e2.isUndefinedFailedSimplification());
   quiz_assert_print_if_failure(e2.isRational() == isRational, input);
 }
@@ -183,7 +185,7 @@ void assert_projected_is_infinity(
 QUIZ_CASE(pcj_properties_is_infinity) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionParameters projectionParameters = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
   assert_projected_is_infinity("3.4+inf", projectionParameters);
   assert_projected_is_infinity("2.3+1", projectionParameters, false);
@@ -213,7 +215,7 @@ QUIZ_CASE(pcj_properties_get_variables) {
    * - m, g, h, l, s, t, A which are units and can be parsed without '_' now. */
   PoincareTest::SymbolStore symbolStore;
   ProjectionParameters projectionParameters = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic =
                                SymbolicComputation::ReplaceDefinedFunctions},
   };

@@ -110,6 +110,7 @@ QUIZ_CASE(pcj_simplification_random) {
   simplifies_to_no_beautif(
       "randint(1,3)", "randint(1,3)",
       SimplificationParameters{
+          .user = {.angleUnit = Radian},
           .reductionPolicy = {.target = ReductionTarget::System}});
 }
 

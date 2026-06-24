@@ -94,7 +94,7 @@ void assert_sorts_to(const char* input, const char* output,
       [](Tree* e, const Poincare::SimplificationParameters&) {
         NAry::Sort(e, s_order);
       },
-      Poincare::SimplificationParameters{});
+      Poincare::SimplificationParameters{.user = {.angleUnit = Radian}});
 }
 
 QUIZ_CASE(pcj_sort) {

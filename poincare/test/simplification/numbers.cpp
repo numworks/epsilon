@@ -185,7 +185,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
   Poincare::SimplificationParameters parametersWithStore = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic =
                                Poincare::SymbolicComputation::KeepAllSymbols}
 

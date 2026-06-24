@@ -248,7 +248,7 @@ static const Tree* GetMixedFractionTree(const Tree* rational,
                                         bool mixedFractionsEnabled) {
   return AdditionalResultsHelper::CreateMixedFraction(
              SystemExpression::Builder(rational), mixedFractionsEnabled,
-             BeautificationParameters{})
+             BeautificationParameters{.user = {.angleUnit = Radian}})
       .tree();
 }
 

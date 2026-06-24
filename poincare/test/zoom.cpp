@@ -149,8 +149,8 @@ QUIZ_CASE(pcj_zoom_fit_points_of_interest) {
 void assert_intersections_range_is(const char* expression1,
                                    const char* expression2,
                                    Range2D<float> expectedRange) {
-  TreeRef e1 = parseAndPrepareForApproximation(expression1, {});
-  TreeRef e2 = parseAndPrepareForApproximation(expression2, {});
+  TreeRef e1 = parseAndPrepareForApproximation(expression1, k_realParams);
+  TreeRef e2 = parseAndPrepareForApproximation(expression2, k_realParams);
   ZoomTest<float> zoom;
   zoom.zoom()->fitIntersections(expressionEvaluator, e1, expressionEvaluator,
                                 e2, Range1D<float>(-k_maxFloat, k_maxFloat));

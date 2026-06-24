@@ -268,8 +268,11 @@ QUIZ_CASE(pcj_approximation_keeping_symbols) {
 QUIZ_CASE(pcj_approximation_context) {
   PoincareTest::SymbolStore symbolStore;
   UserParameters cartesianParameters = {
-      .complexFormat = ComplexFormat::Cartesian, .context = symbolStore};
+      .complexFormat = ComplexFormat::Cartesian,
+      .angleUnit = AngleUnit::Radian,
+      .context = symbolStore};
   UserParameters realParameters = {.complexFormat = ComplexFormat::Real,
+                                   .angleUnit = AngleUnit::Radian,
                                    .context = symbolStore};
 
   PoincareTest::store("2x+5→f(x)", symbolStore);
@@ -327,7 +330,9 @@ QUIZ_CASE(pcj_prepare_function) {
 
 void assert_expression_prepares_to(const Tree* input, const Tree* expected) {
   Tree* clone = input->cloneTree();
-  assert(!Simplification::ToSystem(clone, ProjectionParameters{}).changed);
+  assert(!Simplification::ToSystem(
+              clone, ProjectionParameters{.user = {.angleUnit = Radian}})
+              .changed);
   Approximation::Private::PrepareExpressionForApproximation(clone);
   assert_trees_are_equal(clone, expected);
 }

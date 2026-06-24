@@ -20,8 +20,8 @@ bool check_singularities(
   Variables::ReplaceUserVariable(e, "x", 0,
                                  Parametric::k_continuousVariableProperties);
   EquationSolver::SingularitySolverResult result =
-      EquationSolver::ExactSolveFindSingularities(e,
-                                                  Poincare::UserParameters{});
+      EquationSolver::ExactSolveFindSingularities(
+          e, Poincare::UserParameters{.angleUnit = Radian});
   assert(result.exactSolutionList->isList());
   bool hasCorrectNumberOfSingularities =
       result.exactSolutionList->numberOfChildren() ==

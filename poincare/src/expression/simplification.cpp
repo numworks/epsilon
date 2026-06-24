@@ -258,8 +258,10 @@ bool CanBeSystem(const Tree* e) {
   Tree* c = e->cloneTree();
 #if POINCARE_COMPLEX
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
+  // Use AngleUnit::Radian to avoid angle issues
   ProjectionParameters projectionParameters = {
-      .user = {.complexFormat = ComplexFormat::Cartesian},
+      .user = {.complexFormat = ComplexFormat::Cartesian,
+               .angleUnit = AngleUnit::Radian},
       .allowedDimensions = AllowedDimensions::Any()};
 #else
   /* Pow is used both in UserExpressions to represent all the types of powers
@@ -269,8 +271,9 @@ bool CanBeSystem(const Tree* e) {
    * CanBeSystem while they are produced by the reduction.
    * TODO: introduce a PowUser node similar to LnUser to clarify the situation ?
    */
-  ProjectionParameters projectionParameters = {.allowedDimensions =
-                                                   AllowedDimensions::Any()};
+  ProjectionParameters projectionParameters = {
+      .user = {.angleUnit = AngleUnit::Radian},
+      .allowedDimensions = AllowedDimensions::Any()};
   for (Tree* d : c->selfAndDescendants()) {
     if (d->isPow()) {
       d->cloneNodeOverNode(KPowReal);

@@ -664,7 +664,7 @@ QUIZ_CASE(pcj_simplification_undef) {
 
 QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
   SimplificationParameters parameters = {
-      .user = {.complexFormat = ComplexFormat::Real, .angleUnit = Radian},
+      .user = k_realParams,
       .reductionPolicy = {.target = ReductionTarget::System}};
   projects_and_reduces_to("(2+x)^2", "(x+2)^2", parameters);
   projects_and_reduces_for_analysis_to("(2+x)^2", "x^2+4×x+4", parameters);

@@ -10,9 +10,7 @@ using namespace Poincare::Internal;
 template <typename T>
 void approximates_to(const Tree* n, T f) {
   T approx = Approximation::To<T>(
-      n, Approximation::Parameters{.expressionParameters = UserParameters{
-                                       .complexFormat = ComplexFormat::Real,
-                                       .angleUnit = AngleUnit::Radian}});
+      n, Approximation::Parameters{.expressionParameters = k_realParams});
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -32,9 +30,7 @@ template <typename T>
 void approximates_to(const Tree* n, const Tree* expected) {
   Tree* approx = Approximation::To<Tree*>(
       n, Precision<T>::value,
-      Approximation::Parameters{.expressionParameters = UserParameters{
-                                    .complexFormat = ComplexFormat::Real,
-                                    .angleUnit = AngleUnit::Radian}});
+      Approximation::Parameters{.expressionParameters = k_realParams});
   bool result = approx->treeIsIdenticalTo(expected);
 #if POINCARE_TREE_LOG
   if (!result) {
@@ -108,9 +104,7 @@ void approximates_to_boolean(const Tree* n,
   Approximation::BooleanOrUndefined approx =
       Approximation::To<Approximation::BooleanOrUndefined>(
           n, FloatPrecision::Single,
-          Approximation::Parameters{.expressionParameters = UserParameters{
-                                        .complexFormat = ComplexFormat::Real,
-                                        .angleUnit = AngleUnit::Radian}});
+          Approximation::Parameters{.expressionParameters = k_realParams});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
     quiz_assert(approx.value() == expected.value());

@@ -35,12 +35,7 @@ void contract_to(const Tree* input, const Tree* output) {
 
 void reduces_to_tree(const Tree* input, const Tree* output) {
   Tree* reduced = input->cloneTree();
-  simplify(
-      reduced,
-      SimplificationParameters{
-          .user = {.complexFormat = ComplexFormat::Real, .angleUnit = Radian},
-          .allowedDimensions = AllowedDimensions::Any()},
-      false);
+  simplify(reduced, k_realSimplification, false);
   assert_trees_are_equal(reduced, output);
   reduced->removeTree();
 }

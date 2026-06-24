@@ -155,6 +155,7 @@ static void compareSolutions(SystemOfEquations* system,
         UserExpression::Parse(expectedValue, tempContext)
             .cloneAndReduce(SimplificationParameters{
                 .user = {.complexFormat = ComplexFormat::Cartesian,
+                         .angleUnit = Radian,
                          .context = tempContext},
                 .projectionPolicy =
                     {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
@@ -175,6 +176,7 @@ static void compareSolutions(SystemOfEquations* system,
     SystemExpression obtainedExpression =
         parsedExpression.cloneAndReduce(SimplificationParameters{
             .user = {.complexFormat = ComplexFormat::Cartesian,
+                     .angleUnit = Radian,
                      .context = tempContext},
             .projectionPolicy =
                 {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},

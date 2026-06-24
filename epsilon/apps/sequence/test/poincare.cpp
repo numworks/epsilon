@@ -12,7 +12,7 @@ using namespace Poincare::Internal;
 QUIZ_CASE(poincare_sequence) {
   PoincareTest::SymbolStore symbolStore;
   SimplificationParameters simplificationParameters = {
-      .user = {.context = symbolStore},
+      .user = {.angleUnit = Radian, .context = symbolStore},
       .projectionPolicy = {.symbolic =
                                SymbolicComputation::ReplaceDefinedSymbols}};
 

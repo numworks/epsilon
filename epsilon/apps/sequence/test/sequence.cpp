@@ -901,7 +901,8 @@ QUIZ_CASE(sequence_evaluation) {
 QUIZ_CASE(sequence_store) {
   SequenceStore* sequenceStore = &GlobalContextAccessor::SequenceStore();
   GlobalStore& globalStore = GlobalContextAccessor::Store();
-  UserParameters userParameters = UserParameters{.context = globalStore};
+  UserParameters userParameters =
+      UserParameters{.angleUnit = AngleUnit::Radian, .context = globalStore};
 
   PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());
   approximates_to<double>("f(u(0))", "undef", userParameters);

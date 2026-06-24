@@ -147,7 +147,8 @@ void WithPolarGrid::FormatAngleLabel(std::span<char> buffer, int index,
           {.KA = UserExpression::Builder(index),
            .KB = UserExpression::BuildPeriod(angleUnit),
            .KC = UserExpression::Builder(k_numberOfGraduations)})
-          .cloneAndSimplify({.reductionPolicy = {.advanced = false}},
+          .cloneAndSimplify({.user = {.angleUnit = angleUnit},
+                             .reductionPolicy = {.advanced = false}},
                             &reductionFailure);
   assert(!reductionFailure);
   size_t len = label.serialize(buffer, true);
@@ -378,7 +379,8 @@ ExpressionOrFloat SimpleAxis::tickPosition(size_t labelIndex,
           KMult(KA, KB), {.KA = step.expression(),
                           .KB = UserExpression::Builder(
                               static_cast<int>(labelIndex) - indexOfOrigin)})
-          .cloneAndTrySimplify({}),
+          .cloneAndTrySimplify(
+              {.user = {.angleUnit = SharedGlobalPrefs().angleUnit()}}),
       PoincareHelpers::ApproximateToRealScalar);
 }
 
@@ -392,7 +394,8 @@ ExpressionOrFloat SimpleAxis::tickStep(const AbstractPlotView* plotView,
   }
   return ExpressionOrFloat::Builder(
       UserExpression::Create(KMult(2_e, KA), {.KA = step.expression()})
-          .cloneAndTrySimplify({}),
+          .cloneAndTrySimplify(
+              {.user = {.angleUnit = SharedGlobalPrefs().angleUnit()}}),
       PoincareHelpers::ApproximateToRealScalar);
 }
 

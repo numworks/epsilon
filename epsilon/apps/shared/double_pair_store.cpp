@@ -1,5 +1,6 @@
 #include "double_pair_store.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/theme/data_colors.h>
 #include <ion.h>
@@ -51,7 +52,8 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
         continue;
       }
 
-      SystemExpression reducedList = e.cloneAndReduce({});
+      SystemExpression reducedList = e.cloneAndReduce(
+          {.user = {.angleUnit = SharedGlobalPrefs().angleUnit()}});
       assert(!reducedList.isUndefinedFailedSimplification());
       setList(reducedList, s, i, true);
     }

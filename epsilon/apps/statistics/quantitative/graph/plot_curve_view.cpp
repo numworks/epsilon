@@ -1,5 +1,6 @@
 #include "plot_curve_view.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/theme/color_picker.h>
 
@@ -26,7 +27,8 @@ ExpressionOrFloat LabeledAxisWithOptionalPercent::tickStep(
                      .expression(),
            .KB = UserExpression::Builder(
                m_plotController->labelStepMultiplicator(axis))})
-          .cloneAndTrySimplify({}),
+          .cloneAndTrySimplify(
+              {.user = {.angleUnit = SharedGlobalPrefs().angleUnit()}}),
       PoincareHelpers::ApproximateToRealScalar);
 }
 

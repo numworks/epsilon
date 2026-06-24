@@ -113,7 +113,8 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
         return ExpressionOrFloat::Builder(
             UserExpression::Create(KMult(2_e, KA),
                                    {.KA = computedGridUnit.expression()})
-                .cloneAndTrySimplify({}),
+                .cloneAndTrySimplify(
+                    {.user = {.angleUnit = SharedGlobalPrefs().angleUnit()}}),
             PoincareHelpers::ApproximateToRealScalar);
       }
     }
@@ -475,11 +476,13 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   }
   assert(range > 0.0f && std::isfinite(range));
 
+  SimplificationParameters params = {
+      .user = {.angleUnit = SharedGlobalPrefs().angleUnit()}};
   // The grid unit is half of the user step parameter
   ExpressionOrFloat userGridUnit = ExpressionOrFloat::Builder(
       UserExpression::Create(KMult(1_e / 2_e, KA),
                              {.KA = m_userStep(axis).expression()})
-          .cloneAndTrySimplify({}),
+          .cloneAndTrySimplify(params),
       PoincareHelpers::ApproximateToRealScalar);
   assert(PoincareHelpers::ToFloat(userGridUnit) > 0.0f);
   float numberOfUnits = range / PoincareHelpers::ToFloat(userGridUnit);
@@ -508,7 +511,7 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   return ExpressionOrFloat::Builder(
       UserExpression::Create(KMult(KA, KB),
                              {.KA = userGridUnit.expression(), .KB = factor})
-          .cloneAndTrySimplify({}),
+          .cloneAndTrySimplify(params),
       PoincareHelpers::ApproximateToRealScalar);
 
   // clang-format off

@@ -31,15 +31,6 @@ void Runner::innerRun() {
     if (m_testFilter && !testMatchesFilter(Cases::s_names[i], m_testFilter)) {
       continue;
     }
-#if ASAN
-    /* When ASAN=1, "python_numpy" reaches an assert due to an error in python
-     * "RuntimeError: maximum recursion depth exceeded" */
-    // TODO: pass this test even when ASAN=1
-    if (strcmp(Cases::s_names[i], "python_numpy") == 0) {
-      totalCases--;
-      continue;
-    }
-#endif
     caseIndex++;
     if (clearConsole()) {
       // Avoid cluttering the display if it can't be cleared

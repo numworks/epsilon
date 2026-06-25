@@ -174,7 +174,14 @@ void MicroPython::init(void* heapStart, void* heapEnd) {
   /* The stack limit is set to roughly mimic the maximal recursion depth of the
    * device - and actually to be slightly less to be sure not to beat the device
    * performance.  */
-  mp_stack_set_limit(29152);
+  size_t stackLimit = 29152;
+#ifdef ASAN
+  /* Measured locally, one Python recursion level costs ~9.5KB under ASAN
+   * versus ~1.4KB on a normal DEBUG build. Scale the limit by a factor of 7 to
+   * keep roughly the same recursion depth. */
+  stackLimit *= 7;
+#endif
+  mp_stack_set_limit(stackLimit);
 #endif
   gc_init(heapStart, heapEnd);
   mp_init();

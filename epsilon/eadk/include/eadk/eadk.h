@@ -1,10 +1,6 @@
 #ifndef EADK_H
 #define EADK_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -290,9 +286,5 @@ extern size_t eadk_external_data_size;
 
 bool eadk_usb_is_plugged();
 uint32_t eadk_random();
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

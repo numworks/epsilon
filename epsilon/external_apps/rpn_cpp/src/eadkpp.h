@@ -1,8 +1,8 @@
 #pragma once
 
-#include <eadk.h>
-
 extern "C" {
+
+#include <eadk.h>
 extern const char eadk_app_name[];
 extern const uint32_t eadk_api_level;
 }

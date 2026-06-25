@@ -58,11 +58,6 @@ jobs:
         with:
           platform: android
       - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ASSERTIONS=1 epsilon_aligned.apk"
-        # TODO test.apk
-      - uses: actions/upload-artifact@master
-        with:
-          name: epsilon-android.apk
-          path: epsilon/output/debug/optimized/android/epsilon_aligned.apk
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
@@ -125,10 +120,6 @@ jobs:
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon_test.exe
       - run: ./epsilon/output/debug/optimized/windows/epsilon_test.exe --headless --limit-stack-usage
       - run: make -j8 userland.A.elf
-      - uses: actions/upload-artifact@v6
-        with:
-          name: epsilon-windows.exe
-          path: epsilon/output/debug/optimized/windows/epsilon.exe
   web:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
@@ -226,10 +217,6 @@ jobs:
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 epsilon_test.bin
       - run: epsilon/output/debug/optimized/macos/x86_64/epsilon_test.bin --headless --limit-stack-usage
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.app
-      - uses: actions/upload-artifact@v6
-        with:
-          name: epsilon-macos.zip
-          path: epsilon/output/debug/optimized/macos/epsilon.app
   ios:
     timeout-minutes: 15
     runs-on: macOS-latest
@@ -242,10 +229,6 @@ jobs:
       - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
       - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
       - run: make -C epsilon PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator
-      - uses: actions/upload-artifact@v6
-        with:
-          name: epsilon-ios.ipa
-          path: epsilon/output/debug/optimized/ios/epsilon.ipa
 
   screenshots:
     if: ${{ github.event_name == 'pull_request' }}

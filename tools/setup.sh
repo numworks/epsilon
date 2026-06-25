@@ -79,11 +79,34 @@ install_macos_binary_deps() {
     libpng \
     libusb \
     lcov \
+    make \
     pkg-config \
     python3
 
   if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
     brew install numworks/tap/arm-none-eabi-gcc
+  fi
+
+  setup_gnu_make
+}
+
+setup_gnu_make() {
+  # macOS ships GNU Make 3.81, but the build requires >= 4.3. Homebrew installs
+  # the recent version as "gmake" and exposes a "make" symlink under gnubin so
+  # that "make" resolves to it when gnubin is first in PATH.
+  local gnubin
+  gnubin="$(brew --prefix make)/libexec/gnubin"
+
+  if [[ $CI == "1" ]]; then
+    # Make the recent "make" visible to the following steps of the GitHub job.
+    echo "$gnubin" >> "$GITHUB_PATH"
+  else
+    echo
+    echo "GNU Make >= 4.3 installed via Homebrew as \"gmake\". To make \"make\" point to it,"
+    echo "add this line to your shell config (e.g. ~/.zshrc) and restart your shell:"
+    echo
+    echo "  export PATH=\"$gnubin:\$PATH\""
+    echo
   fi
 }
 

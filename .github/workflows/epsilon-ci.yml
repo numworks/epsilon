@@ -222,7 +222,7 @@ jobs:
       MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v6
-      - run: tools/setup.sh --only-simulator
+      - run: tools/setup.sh --ci --only-simulator
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 epsilon_test.bin
       - run: epsilon/output/debug/optimized/macos/x86_64/epsilon_test.bin --headless --limit-stack-usage
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.app
@@ -238,7 +238,7 @@ jobs:
       MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v6
-      - run: tools/setup.sh --only-simulator
+      - run: tools/setup.sh --ci --only-simulator
       - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
       - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
       - run: make -C epsilon PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator

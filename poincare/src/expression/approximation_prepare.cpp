@@ -104,7 +104,6 @@ static bool SplitAtSingularities(Tree* e, void* ctx) {
    * splitting point. The initial value of upper bound is the first splitting
    * point candidate. */
   const Tree* movingLowerBound = lowerBound;
-  const Tree* movingUpperBound = splittingPoints->nextNode();
   const Tree* lastPoint = splittingPoints->lastChild();
 
   TreeRef result = SharedTreeStack->pushAdd(0);
@@ -117,7 +116,7 @@ static bool SplitAtSingularities(Tree* e, void* ctx) {
     if ((point != lastPoint) && (value <= a || value >= b)) {
       continue;
     }
-    movingUpperBound = point;
+    const Tree* movingUpperBound = point;
     NAry::AddChild(result, PatternMatching::Create(
                                reversed ? KMult(-1_e, KIntegral(KA, KB, KC, KD))
                                         : KIntegral(KA, KB, KC, KD),

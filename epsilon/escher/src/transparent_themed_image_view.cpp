@@ -9,8 +9,15 @@ namespace Escher {
 void TransparentThemedImageView::drawRect(KDContext* ctx, KDRect rect) const {
   const Image* image = currentImage();
 
+  /* It can happen that a TransparentThemedImageView does not hold a transparent
+   * image (for example for external app icons). In that case, use the
+   * non-transparent image drawing method. */
+  if (!image->hasTransparency()) {
+    ThemedImageView::drawRect(ctx, rect);
+    return;
+  }
+
   assert(image != nullptr);
-  assert(image->hasTransparency());
   assert(bounds().width() == image->width());
   assert(bounds().height() == image->height());
 

@@ -10,6 +10,7 @@
 #include <omg/utf8_helper.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/xnt.h>
+#include <string.h>
 
 #include <algorithm>
 
@@ -97,8 +98,8 @@ void AbstractTextField::ContentView::setText(const char* text) {
     buffer[0] = 0;
     return;
   }
-  // Copy the text
-  strlcpy(buffer, text, maxBufferSize);
+  // Copy the text. Use memmove since regions may overlap.
+  memmove(buffer, text, textRealLength + 1);
   /* Replace System parentheses (used to keep layout tree structure) by normal
    * parentheses */
   UTF8Helper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);

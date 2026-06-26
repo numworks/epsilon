@@ -503,9 +503,6 @@ Record::Data FileSystem::valueOfRecord(Record record) const {
 Record::ErrorStatus FileSystem::setValueOfRecord(Record record,
                                                  Record::Data data) {
   char* p = pointerOfRecord(record);
-  /* TODO: if data.buffer == p, assert that size hasn't change and do not do any
-   * memcopy, but still notify the delegate. Beware of scripts and the accordion
-   * routine.*/
   if (p) {
     if (m_delegate &&
         !m_delegate->storageCanChangeForRecordName(record.name())) {
@@ -521,8 +518,10 @@ Record::ErrorStatus FileSystem::setValueOfRecord(Record record,
     }
     record_size_t nameSize = Record::SizeOfName(name);
     overrideSizeAtPosition(p, newRecordSize);
-    overrideValueAtPosition(p + sizeof(record_size_t) + nameSize, data.buffer,
-                            data.size);
+    char* valuePosition = p + sizeof(record_size_t) + nameSize;
+    if (data.buffer != valuePosition) {
+      overrideValueAtPosition(valuePosition, data.buffer, data.size);
+    }
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;

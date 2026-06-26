@@ -20,7 +20,8 @@ void assert_variables_are(const char* script,
   // Add the script
   ScriptStore::AddNewScript();
   constexpr int dataBufferSize = 500;
-  char dataBuffer[dataBufferSize];
+  // Zero-initialize since the whole buffer is copied into the file system
+  char dataBuffer[dataBufferSize] = {0};
   Ion::Storage::Record::Data data = {.buffer = &dataBuffer,
                                      .size = dataBufferSize};
   strlcpy(dataBuffer, script, dataBufferSize);

@@ -917,7 +917,8 @@ MP_DEFINE_CONST_FUN_OBJ_1(ndarray_copy_obj, ndarray_copy);
 #endif
 
 ndarray_obj_t *ndarray_new_linear_array(size_t len, uint8_t dtype) {
-    size_t *shape = m_new(size_t, ULAB_MAX_DIMS);
+    // Zero-initialise since only the last slot is filled
+    size_t *shape = m_new0(size_t, ULAB_MAX_DIMS);
     if(len == 0) {
         return ndarray_new_dense_ndarray(0, shape, dtype);
     }
@@ -935,7 +936,8 @@ ndarray_obj_t *ndarray_from_iterable(mp_obj_t obj, uint8_t dtype) {
 
     // First, we have to figure out, whether the elements of the iterable are iterables themself
     uint8_t ndim = 0;
-    size_t shape[ULAB_MAX_DIMS];
+    // Zero-initialise since only the last `ndim` slots are filled
+    size_t shape[ULAB_MAX_DIMS] = {0};
     mp_obj_iter_buf_t iter_buf[ULAB_MAX_DIMS];
     mp_obj_t iterable[ULAB_MAX_DIMS];
     mp_obj_t item = obj;

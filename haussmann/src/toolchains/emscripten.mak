@@ -64,5 +64,5 @@ else
 #
 # We'll go for -O3 as it's significantly faster and almost as small as -Os
 # Also a few KB don't matter much in the context of web apps, while speed does
-LDFLAGS += -O3
+LDFLAGS += $(_emscripten_binaryen_opt)
 endif

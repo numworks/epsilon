@@ -77,7 +77,7 @@ void move_pointer() {
 
 int main(int argc, char* argv[]) {
   printf("External data : '%s'\n", eadk_external_data);
-  eadk_timing_msleep(3000);
+  eadk_timing_msleep(100);
   draw_random_colorful_rectangles();
   draw_random_buffer();
   eadk_display_draw_string(eadk_external_data, (eadk_point_t){0, 0}, true,

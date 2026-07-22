@@ -34,7 +34,9 @@ _eadk_exported_functions := \
   eadk_timing_msleep \
   _eadk_timing_millis_low \
   _eadk_timing_millis_high \
-  eadk_usb_is_plugged
+  eadk_usb_is_plugged \
+  __stack_low \
+  __stack_high
 
 # Additional exported functions to support newlib in external apps. Their
 # implementation is not dummy (unlike device's platform.c) so the app will be

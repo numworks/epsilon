@@ -6,7 +6,7 @@
 
 #### Install EMSDK
 
-From the [external_apps folder](/external_apps), depending on your system, run
+From the [external_apps folder](../../), depending on your system, run
 - Windows:
 ```shell
 ./setup_web.ps1
@@ -19,7 +19,7 @@ Follow the setup's next steps to set `EMSDK` in your path.
 
 #### Epsilon setup
 
-If not already done, you need to run the epsilon's setup script from [Epsilon's root](/).
+If not already done, you need to run the epsilon's setup script from [Epsilon's root](https://github.com/numworks/epsilon/tree/master/epsilon).
 ```bash
 chmod +x tools/setup.sh && ./tools/setup.sh
 ```
@@ -30,7 +30,7 @@ Make sure your environment variable `EMSDK` has been set to the emsdk clone you 
 
 ## Simulator
 
-From [Epsilon's root](/), build a simulator and copy it there:
+from [Epsilon's root](https://github.com/numworks/epsilon/tree/master/epsilon), build a simulator and copy it there:
 ```bash
 make PLATFORM=web WEB_EXTERNAL_APPS=1 epsilon.html
 cp output/release/web/epsilon.html external_apps/epsilon_simulators/web/

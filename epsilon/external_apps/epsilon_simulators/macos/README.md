@@ -1,6 +1,6 @@
 # Prepare a MacOS simulator
 
-Follow next instructions from epsilon's root.
+Follow next instructions from [Epsilon's root](https://github.com/numworks/epsilon/tree/master/epsilon).
 
 ## Setup
 

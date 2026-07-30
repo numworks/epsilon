@@ -2,10 +2,9 @@
 
 The [NumWorks calculator](https://www.numworks.com) allows you to install and run external apps created by yourself or the community.
 
-Resets will remove external apps from the device.
-Since version 24.3.0, the external apps are only hidden in exam-mode,
-and are available again once the exam-mode is removed.
-Since version 25.0.0, the external apps are kept after most crashes. 
+Resets will remove external apps from the device, crashes will preserve them.
+
+The external apps are only hidden in exam-mode, and are available again once the exam-mode is removed.
 
 Numworks provides a few example external apps:
 - [sample_c](sample_c): a C application plotting squares and using external data

@@ -10,10 +10,10 @@ on:
 
 jobs:
   perf:
-    timeout-minutes: 30
-    runs-on: bob-usain
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     env:
-      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=host DEBUG=0 VERBOSE=0
+      MAKEFLAGS: -j2 PLATFORM=host DEBUG=0 VERBOSE=0
     steps:
       - name: Fetch target branch and PR branch
         uses: actions/checkout@v6

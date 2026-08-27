@@ -13,14 +13,14 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+  MAKEFLAGS: -j2
 
 jobs:
   poincarejs:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.RUNNER_LABELS_LARGE) }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     env:
-      MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
+      MAKEFLAGS: "-j2 STRICT_WARNINGS=1"
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -41,13 +41,11 @@ jobs:
 
   poincare_test:
     name: Poincare (matrix host tests)
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.RUNNER_LABELS_LARGE) }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         platform: [linux, web, n0120]
-    env:
-      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - name: Fetch PR branch
         uses: actions/checkout@v6

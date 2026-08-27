@@ -6,6 +6,7 @@ on:
       - '**/*.md'
       - 'tests/**'
       - '**/scandium/**'
+      - 'poincare/doc/**'
       - 'ion/src/simulator/**'
       - 'external_apps/**'
 
@@ -14,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+  MAKEFLAGS: -j2
 
 jobs:
   perf:

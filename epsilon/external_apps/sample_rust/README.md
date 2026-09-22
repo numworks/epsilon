@@ -27,7 +27,7 @@ To build this sample app, you will need to install an embedded ARM rust compiler
 rustup target add thumbv7em-none-eabihf
 ```
 
-The SDK for Epsilon apps is shipped as an npm module called [nwlink](https://www.npmjs.com/package/nwlink) that will automatically be installed at compile time.
+[nwlink](https://www.npmjs.com/package/nwlink), the command-line tool that builds and installs external apps, will be fetched automatically at compile time.
 
 ## Build the app
 

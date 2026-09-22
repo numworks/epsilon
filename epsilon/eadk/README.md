@@ -4,7 +4,7 @@ EADK is the software development kit to build independent, external apps for Eps
 
 ## Versions
 
-The sources correspond to the js code embedded in **nwlink@0.0.15**.
+The sources correspond to the js code embedded in **nwlink@1.0.0**.
 There are designed to work with epsilon build with **EXTERNAL_APPS_API_LEVEL = 0**.
 
 ## Functions you may use

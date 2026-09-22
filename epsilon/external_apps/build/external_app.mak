@@ -81,7 +81,7 @@ else
   SIMULATOR ?= $(SIMULATORS_DIR)/$(PLATFORM)/$(SIMULATOR_FILENAME)
 endif
 
-NWLINK = npx --yes -- nwlink
+NWLINK = npx --yes -- nwlink@1.0.0
 BUILD_DIR = $(OUTPUT_DIR)/$(PLATFORM)
 
 define object_for

@@ -241,6 +241,7 @@ QUIZ_CASE(pcj_approximation_constant) {
   approximates_to<float>("_ε0", 8.854187817e-12);
   approximates_to<float>("_μ0", 1.25663706212e-6);
   approximates_to<float>("_hplanck", 6.62607015e-34);
+  approximates_to<float>("_mu", 1.66053906892e-27);
 
   approximates_to(π_e, M_PI);
   approximates_to(e_e, M_E);

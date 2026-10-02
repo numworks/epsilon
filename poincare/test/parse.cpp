@@ -164,6 +164,7 @@ QUIZ_CASE(pcj_parse_tokenize_constants) {
   assert_tokenizes_as_constant("_ε0");
   assert_tokenizes_as_constant("_μ0");
   assert_tokenizes_as_constant("_hplanck");
+  assert_tokenizes_as_constant("_mu");
 }
 
 QUIZ_CASE(pcj_parse_layout) {

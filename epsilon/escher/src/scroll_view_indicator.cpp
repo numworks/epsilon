@@ -32,9 +32,13 @@ void ScrollViewHorizontalBar::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = k_indicatorThickness;
   ctx->fillRect(KDRect(k_leftMargin, y, totalLength(), height), k_trackColor);
 
+  /* Round both ends of the thumb, so that it reaches the end of the track when
+   * scrolled to the end, instead of truncating its length. */
   KDCoordinate x = int(std::round(m_offset * totalLength()));
   KDCoordinate width =
-      std::min(int(m_visibleLength * totalLength()), totalLength() - x);
+      std::min(int(std::round((m_offset + m_visibleLength) * totalLength())),
+               int(totalLength())) -
+      x;
   ctx->fillRect(KDRect(k_leftMargin + x, y, width, height), k_color);
 }
 
@@ -49,9 +53,13 @@ void ScrollViewVerticalBar::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate width = k_indicatorThickness;
   ctx->fillRect(KDRect(x, m_margins.top(), width, totalLength()), k_trackColor);
 
+  /* Round both ends of the thumb, so that it reaches the end of the track when
+   * scrolled to the end, instead of truncating its length. */
   KDCoordinate y = int(std::round(m_offset * totalLength()));
   KDCoordinate height =
-      std::min(int(m_visibleLength * totalLength()), totalLength() - y);
+      std::min(int(std::round((m_offset + m_visibleLength) * totalLength())),
+               int(totalLength())) -
+      y;
   ctx->fillRect(KDRect(x, m_margins.top() + y, width, height), k_color);
 }
 

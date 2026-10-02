@@ -5,6 +5,8 @@ extern "C" {
 }
 #include <ion/display.h>
 
+#include <algorithm>
+
 #include "port.h"
 
 static mp_obj_t TupleForKDColor(KDColor c) {
@@ -93,5 +95,68 @@ mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t *args) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()
       ->displaySandbox();
   Ion::Display::Context::SharedContext->fillRect(rect, color);
+  return mp_const_none;
+}
+
+mp_obj_t modkandinsky_fill_triangle(size_t n_args, const mp_obj_t *args) {
+  int64_t x[3], y[3];
+  for (int i = 0; i < 3; i++) {
+    x[i] = mp_obj_get_int(args[2 * i]);
+    y[i] = mp_obj_get_int(args[2 * i + 1]);
+  }
+  KDColor color = MicroPython::Color::Parse(args[6]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()
+      ->displaySandbox();
+  int64_t yMin = std::min({y[0], y[1], y[2]});
+  int64_t yMax = std::max({y[0], y[1], y[2]});
+  // Only the visible rows are drawn
+  yMin = std::max<int64_t>(yMin, 0);
+  yMax = std::min<int64_t>(yMax, Ion::Display::Height - 1);
+  for (int64_t row = yMin; row <= yMax; row++) {
+    // Find the horizontal extent of the triangle on this row
+    bool found = false;
+    int64_t left = 0;
+    int64_t right = 0;
+    auto include = [&](int64_t px) {
+      left = found ? std::min(left, px) : px;
+      right = found ? std::max(right, px) : px;
+      found = true;
+    };
+    for (int i = 0; i < 3; i++) {
+      int j = (i + 1) % 3;
+      if (row < std::min(y[i], y[j]) || row > std::max(y[i], y[j])) {
+        continue;
+      }
+      if (y[i] == y[j]) {
+        include(x[i]);
+        include(x[j]);
+      } else {
+        // Nearest integer abscissa of the edge on this row
+        int64_t num = (x[j] - x[i]) * (row - y[i]);
+        int64_t den = y[j] - y[i];
+        if (den < 0) {
+          num = -num;
+          den = -den;
+        }
+        int64_t numerator = 2 * num + den;
+        int64_t denominator = 2 * den;
+        int64_t offset = numerator / denominator;
+        if (numerator % denominator < 0) {
+          offset--;  // Floor division
+        }
+        include(x[i] + offset);
+      }
+    }
+    if (!found) {
+      continue;
+    }
+    left = std::max<int64_t>(left, 0);
+    right = std::min<int64_t>(right, Ion::Display::Width - 1);
+    if (left > right) {
+      continue;
+    }
+    Ion::Display::Context::SharedContext->fillRect(
+        KDRect(left, row, right - left + 1, 1), color);
+  }
   return mp_const_none;
 }

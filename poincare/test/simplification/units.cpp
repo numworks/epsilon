@@ -89,6 +89,9 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("_°C", "1×_°C");
   simplifies_to("_°F", "1×_°F");
   simplifies_to("_atm", "1×_atm");
+  simplifies_to("_psi", "1×_psi");
+  simplifies_to("1×_psi→_hPa", "68.94757293168×_hPa");
+  simplifies_to("1×_psi→_Pa", "6894.757293168×_Pa");
   simplifies_to("_Hz", "1×_Hz");
   simplifies_to("_S", "1×_S");
   simplifies_to("_L", "1×_L");

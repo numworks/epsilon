@@ -80,7 +80,8 @@ const Force::Representatives<const Force> Force::representatives = {
 const Pressure::Representatives<const Pressure> Pressure::representatives = {
     .pascal = {"Pa", 1_e, All, LongScale},
     .bar = {"bar", 100000_e, All, LongScale},
-    .atmosphere = {"atm", 101325_e, None, None}};
+    .atmosphere = {"atm", 101325_e, None, None},
+    .psi = {"psi", 6894.757293168_e, None, None, true}};
 
 const Energy::Representatives<const Energy> Energy::representatives = {
     .joule = {"J", 1_e, All, LongScale},

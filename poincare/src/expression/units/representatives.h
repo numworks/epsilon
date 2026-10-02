@@ -232,6 +232,7 @@ class Pressure : public Helper<Pressure> {
     R pascal;
     R bar;
     R atmosphere;
+    R psi;
   };
 
   using Helper::Helper;

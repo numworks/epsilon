@@ -352,7 +352,9 @@ constexpr ToolboxMessage unitPressureChildren[] = {
     ToolboxMessageLeaf(I18n::Message::UnitPressureBarSymbol,
                        I18n::Message::UnitPressureBar),
     ToolboxMessageLeaf(I18n::Message::UnitPressureAtmSymbol,
-                       I18n::Message::UnitPressureAtm)};
+                       I18n::Message::UnitPressureAtm),
+    ToolboxMessageLeaf(I18n::Message::UnitPressurePsiSymbol,
+                       I18n::Message::UnitPressurePsi)};
 
 constexpr ToolboxMessage forceAndPressureChildren[] = {
     ToolboxMessageNode(I18n::Message::UnitForceMenu, unitForceNewtonChildren),

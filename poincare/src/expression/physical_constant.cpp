@@ -25,6 +25,7 @@ const PhysicalConstant::Properties PhysicalConstant::k_constants[] = {
     Properties{"_ε0", 8.8541878188e-12, F / m},
     Properties{"_μ0", 1.25663706127e-6, (N * (A ^ -2))},
     Properties{"_hplanck", 6.62607015e-34, (J * s)},
+    Properties{"_mu", 1.66053906892e-27, kg},
 };
 
 int PhysicalConstant::Index(LayoutSpan name) {

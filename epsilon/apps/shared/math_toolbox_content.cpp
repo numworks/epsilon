@@ -467,6 +467,8 @@ constexpr ToolboxMessage ConstantsChildren[] = {
                        I18n::Message::NeutronMass),
     ToolboxMessageLeaf(I18n::Message::ProtonMassSymbol,
                        I18n::Message::ProtonMass),
+    ToolboxMessageLeaf(I18n::Message::AtomicMassConstantSymbol,
+                       I18n::Message::AtomicMassConstant),
     ToolboxMessageLeaf(I18n::Message::AvogadroConstantSymbol,
                        I18n::Message::AvogadroConstant),
     ToolboxMessageLeaf(I18n::Message::MolarGasConstantSymbol,

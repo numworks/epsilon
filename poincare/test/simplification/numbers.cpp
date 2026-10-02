@@ -81,6 +81,7 @@ QUIZ_CASE(pcj_simplification_constants) {
   simplifies_to("_ε0", "8.8541878188ᴇ-12×_F×_m^(-1)");
   simplifies_to("_μ0", "1.25663706127ᴇ-6×_N×_A^(-2)");
   simplifies_to("_hplanck", "6.62607015ᴇ-34×_s×_J");
+  simplifies_to("_mu", "1.66053906892ᴇ-27×_kg");
 }
 
 QUIZ_CASE(pcj_simplification_based_integer) {

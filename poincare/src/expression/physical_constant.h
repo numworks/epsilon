@@ -25,7 +25,7 @@ class PhysicalConstant {
 
   static const Properties& GetProperties(const Tree* constant);
 
-  constexpr static int k_numberOfConstants = 14;
+  constexpr static int k_numberOfConstants = 15;
 
  private:
   static const Properties k_constants[k_numberOfConstants];

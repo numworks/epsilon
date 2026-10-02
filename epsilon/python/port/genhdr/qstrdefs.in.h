@@ -405,6 +405,7 @@ Q(kandinsky)
 Q(color)
 Q(draw_string)
 Q(fill_rect)
+Q(fill_triangle)
 Q(get_pixel)
 Q(set_pixel)
 

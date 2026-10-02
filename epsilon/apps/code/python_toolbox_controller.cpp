@@ -366,7 +366,9 @@ constexpr ToolboxMessage KandinskyModuleChildren[] = {
     ToolboxMessageLeaf(I18n::Message::PythonCommandDrawString,
                        I18n::Message::PythonDrawString),
     ToolboxMessageLeaf(I18n::Message::PythonCommandFillRect,
-                       I18n::Message::PythonFillRect)};
+                       I18n::Message::PythonFillRect),
+    ToolboxMessageLeaf(I18n::Message::PythonCommandFillTriangle,
+                       I18n::Message::PythonFillTriangle)};
 
 constexpr ToolboxMessage IonModuleChildren[] = {
     ToolboxMessageLeaf(I18n::Message::PythonCommandImportIon,
@@ -696,6 +698,8 @@ constexpr ToolboxMessage catalogChildren[] = {
                        I18n::Message::Factorial),
     ToolboxMessageLeaf(I18n::Message::PythonCommandFillRect,
                        I18n::Message::PythonFillRect),
+    ToolboxMessageLeaf(I18n::Message::PythonCommandFillTriangle,
+                       I18n::Message::PythonFillTriangle),
     ToolboxMessageLeaf(I18n::Message::PythonCommandFloat,
                        I18n::Message::PythonFloat),
     ToolboxMessageLeaf(I18n::Message::FloorCommandWithArg,

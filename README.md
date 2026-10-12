@@ -1,4 +1,4 @@
-<img src="docs/epsilon.svg?sanitize=true" alt="NumWorks Epsilon logo" height="70" >
+<img src="epsilon/docs/epsilon.svg?sanitize=true" alt="NumWorks Epsilon logo" height="70" >
 
 [![Build Status](https://github.com/numworks/epsilon/actions/workflows/ci.yml/badge.svg)](https://github.com/numworks/epsilon/actions/workflows/ci.yml)
 
